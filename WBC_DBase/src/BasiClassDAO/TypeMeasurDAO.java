@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Aplication.ResourceLoader;
-import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.TypeMeasur;
 import BasicClassAccessDbase.conectToAccessDB;
 
@@ -278,7 +277,16 @@ public class TypeMeasurDAO {
 		return masive;
 	}
 	
-	
+	public static String[] getMasiveNameTypeMeasur() {
+		List<TypeMeasur> list = getAllValueTypeMeasur() ;
+		String[] masive = new String[list.size()];
+		int i=0;
+		for (TypeMeasur object :list) {
+			masive[i] = object.getNameType();
+			i++;
+		}
+		return masive;
+	}
 	
 	
 }

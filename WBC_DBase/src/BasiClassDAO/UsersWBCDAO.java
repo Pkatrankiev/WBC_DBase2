@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Aplication.ResourceLoader;
-import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.conectToAccessDB;
 

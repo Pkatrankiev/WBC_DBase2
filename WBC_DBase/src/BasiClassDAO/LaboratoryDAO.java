@@ -10,7 +10,6 @@ import java.util.List;
 
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Laboratory;
-import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.conectToAccessDB;
 
 public class LaboratoryDAO {
@@ -164,17 +163,17 @@ public class LaboratoryDAO {
 		return list;
 	}
 	
-	public static List<Laboratory> getValueLaboratoryByObject(String columnName, Object object) {
+	public static List<Laboratory> getValueLaboratoryByName(String name) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Laboratory  where " + columnName + " = ? ";
+		String sql = "SELECT * FROM Laboratory  where LAB = ? ";
 		
 		List<Laboratory> list = new ArrayList<Laboratory>();
 		
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setObject(1, object);
+			preparedStatement.setObject(1, name);
 			ResultSet result = preparedStatement.executeQuery();
 
 

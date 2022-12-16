@@ -6,16 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -30,7 +26,6 @@ import BasiClassDAO.UsersWBCDAO;
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
-import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.TypeMeasur;
 import BasicClassAccessDbase.UsersWBC;
@@ -60,7 +55,7 @@ public class ReadResultFromReport {
 	}
 
 
-	static void PrintListReportMeasurClass(List<ReportMeasurClass> list) {
+	public static void PrintListReportMeasurClass(List<ReportMeasurClass> list) {
 		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		for (ReportMeasurClass reportMeasur : list) {
 		
@@ -71,7 +66,9 @@ public class ReadResultFromReport {
 				 " - " + reportMeasur.getMeasur().getDoseDimension().getDimensionName()+
 				 " - " +  reportMeasur.getMeasur().getLab().getLab()+ 
 				 " - " +  reportMeasur.getMeasur().getUser().getLastName()+
-				 " - " +  reportMeasur.getMeasur().getTypeMeasur().getKodeType());
+				 " - " +  reportMeasur.getMeasur().getTypeMeasur().getKodeType()+
+				 " - " +  reportMeasur.getToExcell()+
+				 " - " +  reportMeasur.getKoment());
 		 
 		 
 		for (String string : reportMeasur.getListNuclideData()) {
@@ -163,6 +160,8 @@ public class ReadResultFromReport {
 		 Measuring measur = new Measuring(per, datе, 0.0, dozeDim, lab, usersWBC, type, file.getName());
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
+		 reportMeasurClass.setToExcell(true);
+		 reportMeasurClass.setKoment("");
 		 
 		 if(per==null) {
 			 if(!egn.equals("001") && !egn.equals("002") && !egn.equals("05") && !egn.equals("6")) {

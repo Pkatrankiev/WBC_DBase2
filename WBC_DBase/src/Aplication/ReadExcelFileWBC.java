@@ -1,7 +1,6 @@
 package Aplication;
 
-import java.awt.Component;
-import java.awt.HeadlessException;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;

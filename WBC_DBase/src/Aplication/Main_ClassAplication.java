@@ -1,13 +1,16 @@
 package Aplication;
 
-import java.util.List;
 
 import FrameViewClass.MainWindowWBC_DBase;
+
 
 public class Main_ClassAplication {
  
 public static void main(String[] args) {
 
+	
+	ReadFileBGTextVariable.CreadMasiveFromReadFile();
+	
 	new MainWindowWBC_DBase();
 	
 //	ReadExcelFileWBC.test ();

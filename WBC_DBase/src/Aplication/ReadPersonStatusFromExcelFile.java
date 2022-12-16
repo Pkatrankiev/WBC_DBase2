@@ -1,7 +1,6 @@
 package Aplication;
 
 import java.util.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
-import FrameViewClass.ObrabDublicateSpisak_Prilogenie;
 
 
 public class ReadPersonStatusFromExcelFile {

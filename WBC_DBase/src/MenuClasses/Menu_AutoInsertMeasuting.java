@@ -17,6 +17,8 @@ import FrameViewClass.AutoInsertMeasutingFrame;
 
 
 public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
+	
+	private static final long serialVersionUID = 1L;
 
 	public Menu_AutoInsertMeasuting() {
 		super("AutoInsertMeasuting");
@@ -31,7 +33,8 @@ public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
 		String[] listLaboratory =  LaboratoryDAO.getMasiveLaboratory();
 		String[] listUserWBC =  UsersWBCDAO.getMasiveUserWBCNames();
 		String[] listTypeMeasur = TypeMeasurDAO.getMasiveTypeMeasur();
-		new AutoInsertMeasutingFrame(new JFrame(), list, listSimbolNuclide, listLaboratory, listUserWBC, listTypeMeasur);
+		String[] listTypeNameMeasur = TypeMeasurDAO.getMasiveNameTypeMeasur();
+		new AutoInsertMeasutingFrame(new JFrame(), list, listSimbolNuclide, listLaboratory, listUserWBC, listTypeMeasur, listTypeNameMeasur, null);
 			
 	}
 	

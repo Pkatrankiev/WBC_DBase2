@@ -1,7 +1,6 @@
 package BasiClassDAO;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,17 +10,10 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 import Aplication.ResourceLoader;
-import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
-import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.ResultsWBC;
-import BasicClassAccessDbase.Spisak_Prilogenia;
-import BasicClassAccessDbase.UsersWBC;
-import BasicClassAccessDbase.Workplace;
-import BasicClassAccessDbase.Zone;
 import BasicClassAccessDbase.conectToAccessDB;
 
 public class ResultsWBCDAO {
