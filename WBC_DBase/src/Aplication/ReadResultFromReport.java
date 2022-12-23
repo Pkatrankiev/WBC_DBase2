@@ -58,8 +58,9 @@ public class ReadResultFromReport {
 	public static void PrintListReportMeasurClass(List<ReportMeasurClass> list) {
 		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		for (ReportMeasurClass reportMeasur : list) {
-		
-			
+			if(reportMeasur.getToExcell()) {
+			InsertMeasurToExcel.InsertMeasurToExcel(reportMeasur);
+			}
 			System.out.println(sdf.format(reportMeasur.getMeasur().getDate()) +
 				" - " +	reportMeasur.getMeasur().getPerson().getFirstName() +
 				 " - " + reportMeasur.getMeasur().getDoze() +
@@ -80,7 +81,7 @@ public class ReadResultFromReport {
 	
 	public static ReportMeasurClass getReadGamaFile(File file) {
 
-		Date dat–µ = null ;
+		Date dat–M = null ;
 		String  egn = "", operatorName = "", wbc = "";
 
 		String[] stringArray = CreadMasiveFromReadFile(file);
@@ -112,7 +113,7 @@ public class ReadResultFromReport {
 					if (stringLine[j].length > 0) {
 
 						if (stringLine[j][0].contains("In-vivo Report")) {
-							dat–µ = reformarDateMeasur(StringUtils.split(stringLine[j][1])[0]);
+							dat–M = reformarDateMeasur(StringUtils.split(stringLine[j][1])[0]);
 							
 						}
 
@@ -157,7 +158,7 @@ public class ReadResultFromReport {
 							
 		
 		
-		 Measuring measur = new Measuring(per, dat–µ, 0.0, dozeDim, lab, usersWBC, type, file.getName());
+		 Measuring measur = new Measuring(per, dat–M, 0.0, dozeDim, lab, usersWBC, type, file.getName());
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
 		 reportMeasurClass.setToExcell(true);

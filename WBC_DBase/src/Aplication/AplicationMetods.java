@@ -16,7 +16,7 @@ public class AplicationMetods {
 	static String year = "2020"; // годината за списък-приложения
 
 	public static void readInfoFromGodExcelFile() {
-
+	
 		String key ="";
 //		 key = "Person";
 //		 key = "Spisak_Prilogenia";
