@@ -198,7 +198,7 @@ public class ZoneDAO {
 	public static Zone getValueZoneByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Zone  where Zone_ID = ? ";
+		String sql = "SELECT * FROM Zone  where Zone_ID = ? LIMIT 1";
 		
 		List<Zone> list = new ArrayList<Zone>();
 		

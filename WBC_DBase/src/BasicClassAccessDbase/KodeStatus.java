@@ -21,15 +21,17 @@ public class KodeStatus implements Serializable {
 	private Zone zone;
 	private boolean freeKode;
 	private String year;
+	private String zabelejkaKodeStatus;
 	
 	public KodeStatus (Person person,
-	String kode, Zone zone, boolean freeKode, String year) {
+	String kode, Zone zone, boolean freeKode, String year, String zabelejkaKodeStatus) {
 		
 		this.person = person;
 		this.kode = kode;
 		this.zone = zone;
 		this.freeKode = freeKode;
 		this.year = year;
+		this.zabelejkaKodeStatus = zabelejkaKodeStatus;
 	}
 	
 	public KodeStatus() {
@@ -83,6 +85,17 @@ public class KodeStatus implements Serializable {
 
 	public void setisFreeKode(boolean freeKode) {
 		this.freeKode = freeKode;
+	}
+
+	public String getZabelejkaKodeStatus() {
+		if(zabelejkaKodeStatus == null) {
+			return "";
+		}
+		return zabelejkaKodeStatus;
+	}
+
+	public void setZabelejkaKodeStatus(String zabelejkaKodeStatus) {
+		this.zabelejkaKodeStatus = zabelejkaKodeStatus;
 	}
 	
 	

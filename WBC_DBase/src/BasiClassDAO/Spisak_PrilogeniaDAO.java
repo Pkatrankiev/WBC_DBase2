@@ -336,7 +336,7 @@ public class Spisak_PrilogeniaDAO {
 	public static Spisak_Prilogenia getValueSpisak_PrilogeniaByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Spisak_Prilogenia  where Spisak_Prilogenia_ID = ? ";
+		String sql = "SELECT * FROM Spisak_Prilogenia  where Spisak_Prilogenia_ID = ? LIMIT 1";
 
 		List<Spisak_Prilogenia> list = new ArrayList<Spisak_Prilogenia>();
 

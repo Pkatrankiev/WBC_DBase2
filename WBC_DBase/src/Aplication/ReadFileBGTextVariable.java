@@ -18,11 +18,11 @@ public class ReadFileBGTextVariable {
 	private static 	Map<String, String> globalTextVariableMap;
 
 	
-	public static void  CreadMasiveFromReadFile() {
+	public static boolean  CreadMasiveFromReadFile() {
 		BufferedReader br = null;
 		globalTextVariableMap = new HashMap<String, String>();
 		try {
-			String respath = "D:\\BGTextVariable.txt";
+			String respath = "BGTextVariable.txt";
 			try {	
 			File fileDir = new File(respath);
 			InputStream in = new FileInputStream(fileDir);
@@ -38,11 +38,13 @@ public class ReadFileBGTextVariable {
 			System.out.println(sCurrentLine.substring(0, index)+"  -  "+sCurrentLine.substring(index+1).trim());
 				}
 			}
+			return true;
 			} catch (FileNotFoundException e) {
 				ResourceLoader.appendToFile(e);
 				JOptionPane.showMessageDialog(null, "Не намирам: D:\\BGTextVariable.txt", "Грешка в данните",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
+				return false;
 			}
 	} catch (IOException  e) {
 		ResourceLoader.appendToFile(e);
@@ -57,6 +59,7 @@ public class ReadFileBGTextVariable {
 			ex.printStackTrace();
 		}
 	}
+		return false;
 	
 	}
 	

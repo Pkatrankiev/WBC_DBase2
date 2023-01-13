@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="Lib/javax.persistence-2.1.0.jar"/>
 	<classpathentry kind="lib" path="Lib/javax.ws.rs-api-2.0.jar"/>
 	<classpathentry kind="lib" path="Lib/poi-4.1.0.jar"/>
+	<classpathentry kind="lib" path="Lib/commons-collections4-4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

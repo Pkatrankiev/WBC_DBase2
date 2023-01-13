@@ -225,7 +225,7 @@ public class PersonDAO {
 	public static Person getValuePersonByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Person where Person_ID = ? ";
+		String sql = "SELECT * FROM Person where Person_ID = ? LIMIT 1";
 
 		List<Person> listPerson = new ArrayList<Person>();
 
@@ -256,7 +256,7 @@ public class PersonDAO {
 	public static Person getValuePersonByEGN(String EGN) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Person where EGN = ? ";
+		String sql = "SELECT * FROM Person where EGN = ? LIMIT 1";
 
 		List<Person> listPerson = new ArrayList<Person>();
 

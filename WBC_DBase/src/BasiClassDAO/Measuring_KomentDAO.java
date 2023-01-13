@@ -234,7 +234,7 @@ public class Measuring_KomentDAO {
 	public static Measuring_Koment getValueMeasuring_KomentByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Measuring_Koment where Measuring_Koment_ID = ? ";
+		String sql = "SELECT * FROM Measuring_Koment where Measuring_Koment_ID = ? LIMIT 1";
 
 		List<Measuring_Koment> listMeasuring_Koment = new ArrayList<Measuring_Koment>();
 

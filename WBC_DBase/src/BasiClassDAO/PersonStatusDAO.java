@@ -19,6 +19,7 @@ import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
+import BasicClassAccessDbase.Zone;
 import BasicClassAccessDbase.conectToAccessDB;
 
 public class PersonStatusDAO {
@@ -235,7 +236,27 @@ public class PersonStatusDAO {
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setObject(1, object);
+			
+			switch (columnName) {
+			case "Person_ID": {
+				preparedStatement.setObject(1, ((Person) object).getId_Person());
+			}
+			break;
+			case "Workplace_ID": {
+				preparedStatement.setObject(1, ((Workplace) object).getId_Workplace());
+			}
+			case "Spisak_Prilogenia_ID": {
+				preparedStatement.setObject(1, ((Spisak_Prilogenia) object).getSpisak_Prilogenia_ID());
+			}
+			break;
+			case "UsersWBC_ID": {
+				preparedStatement.setObject(1, ((UsersWBC) object).getId_Users());
+			}
+			break;
+			default:
+				preparedStatement.setObject(1, object);
+			}
+			
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
@@ -265,10 +286,70 @@ public class PersonStatusDAO {
 		return listPersonStatus;
 	}
 
+	public static List<PersonStatus> getValuePersonStatusByObjectSortByColumnName(String columnName, Object object, String sortColumnName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatus where " + columnName + " = ? ORDER BY " + sortColumnName + " ASC";
+
+		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			switch (columnName) {
+			case "Person_ID": {
+				preparedStatement.setObject(1, ((Person) object).getId_Person());
+			}
+			break;
+			case "Workplace_ID": {
+				preparedStatement.setObject(1, ((Workplace) object).getId_Workplace());
+			}
+			case "Spisak_Prilogenia_ID": {
+				preparedStatement.setObject(1, ((Spisak_Prilogenia) object).getSpisak_Prilogenia_ID());
+			}
+			break;
+			case "UsersWBC_ID": {
+				preparedStatement.setObject(1, ((UsersWBC) object).getId_Users());
+			}
+			break;
+			default:
+				preparedStatement.setObject(1, object);
+			}
+			
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				PersonStatus PersonStatus = new PersonStatus();
+
+				PersonStatus.setPersonStatus_ID(result.getInt("PersonStatus_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				PersonStatus.setPerson(person);
+				Workplace workplace = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				PersonStatus.setWorkplace(workplace);
+				Spisak_Prilogenia spisak_Prilogenia = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(result.getInt("Spisak_Prilogenia_ID"));
+				PersonStatus.setSpisak_prilogenia(spisak_Prilogenia);
+				UsersWBC userWBC = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				PersonStatus.setUserWBC(userWBC);
+				PersonStatus.setDateSet(result.getDate("DateSet"));
+				PersonStatus.setZabelejka(result.getString("Zabelejka"));
+				listPersonStatus.add(PersonStatus);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPersonStatus;
+	}
+
+	
 	public static PersonStatus getValuePersonStatusByPersonStatus(PersonStatus personStatus) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatus where Person_ID = ? AND Workplace_ID = ? and Spisak_Prilogenia_ID = ?";
+		String sql = "SELECT * FROM PersonStatus where Person_ID = ? AND Workplace_ID = ? and Spisak_Prilogenia_ID = ? LIMIT 1";
 
 		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
 
@@ -306,10 +387,48 @@ public class PersonStatusDAO {
 		return listPersonStatus.get(0);
 	}
 
+	public static List<PersonStatus>  getValuePersonStatusByPersonAndWorkplace(Person person, Workplace workplace) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatus where Person_ID = ?  AND  Workplace_ID = ?";
+
+		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, workplace.getId_Workplace());
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				PersonStatus PersonStatus = new PersonStatus();
+
+				PersonStatus.setPersonStatus_ID(result.getInt("PersonStatus_ID"));
+				PersonStatus.setPerson(person);
+				PersonStatus.setWorkplace(workplace);
+				Spisak_Prilogenia spisak_Prilogenia = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(result.getInt("Spisak_Prilogenia_ID"));
+				PersonStatus.setSpisak_prilogenia(spisak_Prilogenia);
+				UsersWBC userWBC = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				PersonStatus.setUserWBC(userWBC);
+				PersonStatus.setDateSet(result.getDate("DateSet"));
+				PersonStatus.setZabelejka(result.getString("Zabelejka"));
+				listPersonStatus.add(PersonStatus);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPersonStatus;
+	}
+	
 	public static PersonStatus getValuePersonStatusByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatus where PersonStatus_ID = ? ";
+		String sql = "SELECT * FROM PersonStatus where PersonStatus_ID = ? LIMIT 1";
 
 		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
 

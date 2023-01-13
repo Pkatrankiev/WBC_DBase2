@@ -233,7 +233,7 @@ public class KodeGenerateDAO {
 	public static KodeGenerate getValueKodeGenerateByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM KodeGenerate where KodeGenerate_ID = ? ";
+		String sql = "SELECT * FROM KodeGenerate where KodeGenerate_ID = ? LIMIT 1";
 
 		List<KodeGenerate> listKodeGenerate = new ArrayList<KodeGenerate>();
 

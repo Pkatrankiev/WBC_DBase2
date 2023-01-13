@@ -220,7 +220,7 @@ public class UsersWBCDAO {
 	public static UsersWBC getValueUsersWBCByID(int id ) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM UsersWBC  where UsersWBC_ID = ? ";
+		String sql = "SELECT * FROM UsersWBC  where UsersWBC_ID = ? LIMIT 1";
 		
 		List<UsersWBC> list = new ArrayList<UsersWBC>();
 		

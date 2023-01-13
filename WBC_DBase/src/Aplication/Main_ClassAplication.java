@@ -9,9 +9,11 @@ public class Main_ClassAplication {
 public static void main(String[] args) {
 
 	
-	ReadFileBGTextVariable.CreadMasiveFromReadFile();
+	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
+		new MainWindowWBC_DBase();
+	}
 	
-	new MainWindowWBC_DBase();
+	
 	
 //	ReadExcelFileWBC.test ();
 	

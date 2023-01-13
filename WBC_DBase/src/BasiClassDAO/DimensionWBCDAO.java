@@ -212,7 +212,7 @@ public class DimensionWBCDAO {
 	public static DimensionWBC getValueDimensionWBCByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM DimensionWBC where DimensionWBC_ID = ? ";
+		String sql = "SELECT * FROM DimensionWBC where DimensionWBC_ID = ? LIMIT 1";
 
 		List<DimensionWBC> listDimensionWBC = new ArrayList<DimensionWBC>();
 
@@ -242,7 +242,7 @@ public class DimensionWBCDAO {
 	public static DimensionWBC getValueDimensionWBCByDimensionName(String dimensionName) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM DimensionWBC where DimensionName = ? ";
+		String sql = "SELECT * FROM DimensionWBC where DimensionName = ? LIMIT 1";
 
 		List<DimensionWBC> listDimensionWBC = new ArrayList<DimensionWBC>();
 

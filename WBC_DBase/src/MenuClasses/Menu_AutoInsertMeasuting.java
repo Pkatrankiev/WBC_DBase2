@@ -7,11 +7,11 @@ import javax.swing.JFrame;
 
 import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
+import AutoInsertMeasuting.AutoInsertMeasutingFrame;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.NuclideWBCDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
-import FrameViewClass.AutoInsertMeasutingFrame;
 
 
 

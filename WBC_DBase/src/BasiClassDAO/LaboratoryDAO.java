@@ -198,7 +198,7 @@ public class LaboratoryDAO {
 	public static Laboratory getValueLaboratoryByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Laboratory  where Lab_ID = ? ";
+		String sql = "SELECT * FROM Laboratory  where Lab_ID = ? LIMIT 1";
 		
 		List<Laboratory> list = new ArrayList<Laboratory>();
 		

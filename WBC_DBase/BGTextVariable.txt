@@ -1,0 +1,22 @@
+
+minYearInDbase = 2000
+filePathExternal = D:\\EXTERNAL_12.xls
+filePathMonthExternal = d:\\month\\wbc_month.xls
+filePathPersonel = D:\\PERSONNEL_12.xls
+filePathMonthPersonel = d:\\month\\wbc_month_P.xls
+klikToCopy = Клилнете за да копирате
+MenuOder_TitleName = Гама Кал. Екстракт
+isEmptyDozeFilds = Има празни полета за дози.
+isEmptyDozeNuclideFilds = Има празни полета за дози на нуклиди.
+isEmptyPostaplenieNuclideFilds = Има дози с празни или нулеви полета за постъпление от нуклиди.
+noSaveRowToBase = Тези редове няма да се запишат в базата.
+rowWithoutSaveToExcellFile = Има редове, които няма да се запишат в ексел файла.
+notSaveMeasur = В ексел файловете не намирам:
+falseData = Грешни данни
+fileIsOpen = Excel файлът е отворен
+notSelectFile = Не е избран excel файл
+dublicateRepFileInDBase = В базата има запис на стойности от репорт файл:
+notResults = Няма намерени резултати
+AEC = АЕЦ Козлодуй
+VO = Външни организации
+

@@ -58,9 +58,6 @@ public class ReadResultFromReport {
 	public static void PrintListReportMeasurClass(List<ReportMeasurClass> list) {
 		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		for (ReportMeasurClass reportMeasur : list) {
-			if(reportMeasur.getToExcell()) {
-			InsertMeasurToExcel.InsertMeasurToExcel(reportMeasur);
-			}
 			System.out.println(sdf.format(reportMeasur.getMeasur().getDate()) +
 				" - " +	reportMeasur.getMeasur().getPerson().getFirstName() +
 				 " - " + reportMeasur.getMeasur().getDoze() +
@@ -125,7 +122,7 @@ public class ReadResultFromReport {
 						if (stringLine[j][0].contains("Operator Name")) {
 							operatorName = StringUtils.split(stringLine[j][1])[1].trim();
 							 if(UsersWBCDAO.getValueUsersWBCByObject("LastName_EG", operatorName).size()<1) {
-									String str = "във файл: "+ file.getName()+" Not Operator Name: "+ operatorName;
+									String str = "In file: "+ file.getName()+" Not Operator Name: "+ operatorName;
 												 MessageDialog(str);
 										 }else {
 							usersWBC = UsersWBCDAO.getValueUsersWBCByObject("LastName_EG", operatorName).get(0);
@@ -166,7 +163,7 @@ public class ReadResultFromReport {
 		 
 		 if(per==null) {
 			 if(!egn.equals("001") && !egn.equals("002") && !egn.equals("05") && !egn.equals("6")) {
-		String str = "във файл: "+ file.getName()+" Identification Number: " +egn;
+		String str = "In file: "+ file.getName()+" Identification Number: " +egn;
 					 MessageDialog(str);
 			 }
 	  reportMeasurClass=null;
@@ -234,7 +231,7 @@ public class ReadResultFromReport {
 				date = sdf.parse(origin_date);
 			}
 		} catch (ParseException e) {
-			JOptionPane.showMessageDialog(null, "Преформатиране на - Датата", "Грешка в данните",
+			JOptionPane.showMessageDialog(null, "nekorektna date", "Error Data",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 
@@ -250,7 +247,7 @@ public class ReadResultFromReport {
 	public static void MessageDialog(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(jf, text, "Error Data", JOptionPane.ERROR_MESSAGE);
 	}
 
 	

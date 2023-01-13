@@ -202,7 +202,7 @@ public class TypeMeasurDAO {
 	public static TypeMeasur getValueTypeMeasurByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM TypeMeasur  where TypeMeasur_ID = ? ";
+		String sql = "SELECT * FROM TypeMeasur  where TypeMeasur_ID = ? LIMIT 1";
 		
 		List<TypeMeasur> list = new ArrayList<TypeMeasur>();
 		

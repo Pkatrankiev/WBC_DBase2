@@ -234,7 +234,7 @@ public class NuclideWBCDAO {
 	public static NuclideWBC getValueNuclideWBCByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM NuclideWBC where NuclideWBC_ID = ? ";
+		String sql = "SELECT * FROM NuclideWBC where NuclideWBC_ID = ? LIMIT 1";
 
 		List<NuclideWBC> listNuclideWBC = new ArrayList<NuclideWBC>();
 

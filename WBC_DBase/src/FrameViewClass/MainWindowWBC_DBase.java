@@ -14,6 +14,8 @@ import javax.swing.UIManager;
 
 import Aplication.ResourceLoader;
 import MenuClasses.Menu_AutoInsertMeasuting;
+import MenuClasses.Menu_PersonReference;
+
 import javax.swing.JMenuBar;
 
 
@@ -42,10 +44,24 @@ public class MainWindowWBC_DBase extends JFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar menu = new JMenuBar();
 		menu.add(createMenu_Measuring());
+		menu.add(createMenu_PersonReference());
+		
 		return menu;
 	}
 	
 	
+	private JMenu createMenu_PersonReference() {
+		JMenu personReferenceMenu = new JMenu("PersonReference");
+		personReferenceMenu.setToolTipText("for reference by Person");
+		personReferenceMenu.setMnemonic(KeyEvent.VK_P);
+		
+		personReferenceMenu.add(new Menu_PersonReference());
+		personReferenceMenu.addSeparator();
+		
+		return personReferenceMenu;
+	}
+
+
 	private JMenu createMenu_Measuring() {
 		JMenu measuringMenu = new JMenu("InsertMeasuring");
 		measuringMenu.setToolTipText("for add measuring");

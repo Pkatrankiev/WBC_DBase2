@@ -1,8 +1,9 @@
-package FrameViewClass;
+package AutoInsertMeasuting;
 
 import java.awt.Frame;
 import java.awt.Point;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,11 +21,17 @@ import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.LaboratoryDAO;
+import BasiClassDAO.MeasuringDAO;
+import BasiClassDAO.Measuring_KomentDAO;
+import BasiClassDAO.NuclideWBCDAO;
+import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Measuring;
+import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.UsersWBC;
+import net.ucanaccess.jdbc.UcanaccessSQLException;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
@@ -33,6 +40,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
@@ -48,6 +57,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("rawtypes")
@@ -93,7 +103,8 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	static DimensionWBC dozeDimension;
 
 	public AutoInsertMeasutingFrame(Frame f, List<ReportMeasurClass> listReportMeasur, String[] listSimbolNuclideIN,
-			String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN, String[] listNameTypeMeasurIN, Point pointFrame) {
+			String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN, String[] listNameTypeMeasurIN,
+			Point pointFrame) {
 
 		setResizable(false);
 		int numberLine = 0;
@@ -242,6 +253,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				dispose(); //Destroy the JFrame object
 			}
 		});
 		panelButtons.add(btnCancel);
@@ -250,16 +262,51 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		btnSave.setEnabled(true);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(checkEmptryDozeField(countMeasur, listReportMeasurClass)) {
-				List<ReportMeasurClass> listReportMeasurClassToSave = generateListReportMeasurClassForSaveData(
-						countMeasur, listReportMeasurClass);
-				ReadResultFromReport.PrintListReportMeasurClass(listReportMeasurClassToSave);
+				if (checkEmptryPostaplenieField(countMeasur)) {
+					if (checkEmptryDozeField(countMeasur)) {
+						List<ReportMeasurClass> listReportMeasurClassToSave = generateListReportMeasurClassForSaveData(
+								countMeasur, listReportMeasurClass);
+						InsertMeasurToExcel.SaveListReportMeasurClassToExcellFile(listReportMeasurClassToSave, false);
+						SaveListReportMeasurClassToDBase(listReportMeasurClassToSave);
+					}
 				}
 			}
 		});
 		btnSave.setAlignmentX(1.0f);
 		panelButtons.add(btnSave);
 		return panelButtons;
+	}
+
+	protected void SaveListReportMeasurClassToDBase(List<ReportMeasurClass> listReportMeasurClassToSave) {
+		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
+		Measuring lastMeasur = null;
+		for (ReportMeasurClass reportMeasur : listReportMeasurClassToSave) {
+			
+				MeasuringDAO.setObjectMeasuringToTable(reportMeasur.getMeasur());
+				lastMeasur = MeasuringDAO.getLastMeasuring();
+				if(!reportMeasur.getKoment().trim().isEmpty()) {
+					Measuring_KomentDAO.setValueMeasuring_Koment(lastMeasur, reportMeasur.getKoment());
+				}
+				if(!reportMeasur.getListNuclideData().isEmpty()) {
+					for (String stringNuclideData : reportMeasur.getListNuclideData()) {
+					
+						stringNuclideData = stringNuclideData.replaceAll("##", "");
+							String[] masiveStrNuclide = stringNuclideData.split(":");
+
+							NuclideWBC nuclide = NuclideWBCDAO.getValueNuclideWBCByObject("Symbol", masiveStrNuclide[1].trim()).get(0);
+							double actyviti = Double.parseDouble(masiveStrNuclide[2].replaceAll(",", "."));
+							double postaplenie = Double.parseDouble(masiveStrNuclide[3].replaceAll(",", "."));
+							double ggp = Double.parseDouble(masiveStrNuclide[4].replaceAll(",", "."));
+							double nuclideDoze = Double.parseDouble(masiveStrNuclide[5].replaceAll(",", "."));
+							
+							ResultsWBCDAO.setValueResultsWBC(lastMeasur, nuclide, actyviti, postaplenie, ggp, nuclideDoze);
+				
+					}
+				
+				}
+			
+			}
+	
 	}
 
 	private JPanel panelcheckAll() {
@@ -476,11 +523,10 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			}
 
 			public void mousePressed(MouseEvent e) {
-				
+
 			}
 
 		});
-		
 
 		textFieldDoza[index] = new JTextField(doze);
 		textFieldDoza[index].setColumns(4);
@@ -901,12 +947,14 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		return listReportMeasurToData;
 	}
 
-	public static boolean checkEmptryDozeField(int countData, List<ReportMeasurClass> listReportMeasur) {
-		String isEmptyDozeFilds  = ReadFileBGTextVariable.getGlobalTextVariableMap().get("isEmptyDozeFilds");
-		String isEmptyDozeNuclideFilds   = ReadFileBGTextVariable.getGlobalTextVariableMap().get("isEmptyDozeNuclideFilds");
-		String noSaveRowToBase   = ReadFileBGTextVariable.getGlobalTextVariableMap().get("noSaveRowToBase");
-		String rowWithoutSaveToExcellFile  = ReadFileBGTextVariable.getGlobalTextVariableMap().get("rowWithoutSaveToExcellFile");
-		
+	public static boolean checkEmptryDozeField(int countData) {
+		String isEmptyDozeFilds = ReadFileBGTextVariable.getGlobalTextVariableMap().get("isEmptyDozeFilds");
+		String isEmptyDozeNuclideFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("isEmptyDozeNuclideFilds");
+		String noSaveRowToBase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("noSaveRowToBase");
+		String rowWithoutSaveToExcellFile = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("rowWithoutSaveToExcellFile");
+
 		boolean emtryDoze = false;
 		boolean emtryDozeNuclide = false;
 		boolean noCheckedInExcell = false;
@@ -931,7 +979,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		}
 
 		if (emtryDoze) {
-			mesage = mesage + "<html>"+isEmptyDozeFilds;
+			mesage = mesage + "<html>" + isEmptyDozeFilds;
 		}
 		if (emtryDozeNuclide) {
 			if (mesage.isEmpty()) {
@@ -939,10 +987,10 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			} else {
 				mesage = mesage + "<br>";
 			}
-			mesage = mesage + isEmptyDozeNuclideFilds+"<br>";
+			mesage = mesage + isEmptyDozeNuclideFilds + "<br>";
 		}
 		if (!mesage.isEmpty()) {
-			mesage = mesage +noSaveRowToBase ;
+			mesage = mesage + noSaveRowToBase;
 		}
 		if (noCheckedInExcell) {
 			if (mesage.isEmpty()) {
@@ -950,18 +998,71 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			} else {
 				mesage = mesage + "<br>";
 			}
-			mesage = mesage +rowWithoutSaveToExcellFile ;
+			mesage = mesage + rowWithoutSaveToExcellFile;
 		}
 		if (!mesage.isEmpty()) {
-			mesage = mesage +"</html>";
+			mesage = mesage + "</html>";
 		}
-		
-		
+
 		if (mesage.isEmpty()) {
 			return true;
-		}else {
-		return OptionDialog(mesage);
+		} else {
+			return OptionDialog(mesage);
 		}
+	}
+
+	public static boolean checkEmptryPostaplenieField(int countData) {
+
+		String isEmptyPostaplenieNuclideFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("isEmptyPostaplenieNuclideFilds");
+		String dozeStr = "";
+		boolean emtryDozeNuclide = false, isnuclide = false, isAllnuclide = true;
+
+		String mesage = "";
+		for (int i = 0; i < countData; i++) {
+			dozeStr = textFieldDoza[i].getText();
+			if (!dozeStr.isEmpty() && Double.parseDouble(dozeStr.replaceAll(",", ".")) > 0) {
+				isnuclide = false;
+				for (int k = 0; k < 20; k++) {
+					if (comboBox_Nuclide[i][k] != null) {
+						isnuclide = true;
+						if (textField_DozeNuclide[i][k].getText().isEmpty()
+								|| !(Double.parseDouble(textField_DozeNuclide[i][k].getText().replaceAll(",", ".")) > 0)
+								|| textField_Actyvity[i][k].getText().isEmpty()
+								|| !(Double.parseDouble(textField_Actyvity[i][k].getText().replaceAll(",", ".")) > 0)
+								|| textField_Postaplenie[i][k].getText().isEmpty()
+								|| !(Double.parseDouble(textField_Postaplenie[i][k].getText().replaceAll(",", ".")) > 0)
+								|| textField_GGP[i][k].getText().isEmpty()
+								|| !(Double.parseDouble(textField_GGP[i][k].getText().replaceAll(",", ".")) > 0)) {
+
+							emtryDozeNuclide = true;
+
+						}
+					}
+				}
+				if(!isnuclide) {
+					emtryDozeNuclide = true;
+				}
+			}
+		}
+
+		if (emtryDozeNuclide) {
+			mesage = "<html>" + isEmptyPostaplenieNuclideFilds + "</html>";
+			MessageDialog(mesage);
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public static void MessageDialog(String mesage) {
+		Icon otherIcon = null;
+		JFrame jf = new JFrame();
+		jf.setAlwaysOnTop(true);
+
+		JOptionPane.showMessageDialog(jf, mesage, "Info", JOptionPane.PLAIN_MESSAGE, otherIcon);
+
 	}
 
 	public static boolean OptionDialog(String mesage) {
@@ -1056,13 +1157,13 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	private String getNameTapeMeasur(String string) {
 		for (int i = 0; i < listNameTypeMeasur.length; i++) {
-			if(listTypeMeasur[i].equals(string)) {
-			return 	listNameTypeMeasur[i];
+			if (listTypeMeasur[i].equals(string)) {
+				return listNameTypeMeasur[i];
 			}
 		}
 		return "";
 	}
-	
+
 	public static String DoubleToString(Double value) {
 		DecimalFormat df4 = new DecimalFormat("#.##");
 		df4.setRoundingMode(RoundingMode.HALF_UP);

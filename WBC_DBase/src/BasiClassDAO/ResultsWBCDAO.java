@@ -228,7 +228,7 @@ public class ResultsWBCDAO {
 				preparedStatement.setObject(1, object);
 			}
 			
-			preparedStatement.setObject(1, object);
+		
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
@@ -261,7 +261,7 @@ public class ResultsWBCDAO {
 	public static ResultsWBC getValueResultsWBCByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM ResultsWBC where ResultsWBC_ID = ? ";
+		String sql = "SELECT * FROM ResultsWBC where ResultsWBC_ID = ? LIMIT 1";
 
 		List<ResultsWBC> listResultsWBC = new ArrayList<ResultsWBC>();
 

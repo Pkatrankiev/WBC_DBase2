@@ -208,7 +208,7 @@ public class WorkplaceDAO {
 	public static Workplace getValueWorkplaceByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Workplace  where Workplace_ID = ? ";
+		String sql = "SELECT * FROM Workplace  where Workplace_ID = ? LIMIT 1";
 		
 		List<Workplace> list = new ArrayList<Workplace>();
 		
