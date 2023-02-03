@@ -1,9 +1,11 @@
 
-minYearInDbase = 2000
+minYearInDbase = 2006
 filePathExternal = D:\\EXTERNAL_12.xls
-filePathMonthExternal = d:\\month\\wbc_month.xls
 filePathPersonel = D:\\PERSONNEL_12.xls
+filePathMonthExternal = d:\\month\\wbc_month.xls
 filePathMonthPersonel = d:\\month\\wbc_month_P.xls
+filePathArhivePersonel = d:\\Arhive\\PERSONNEL_
+filePathArhiveExternal = d:\\Arhive\\EXTERNAL_
 klikToCopy = Клилнете за да копирате
 MenuOder_TitleName = Гама Кал. Екстракт
 isEmptyDozeFilds = Има празни полета за дози.

@@ -26,11 +26,11 @@ import BasicClassAccessDbase.conectToAccessDB;
 public class MeasuringDAO {
 
 	public static void setValueMeasuring(Person person, Date date, double doze, DimensionWBC dozeDimension,
-			Laboratory lab, UsersWBC user, TypeMeasur typeMeasur, String reportFileName) {
+			Laboratory lab, UsersWBC user, TypeMeasur typeMeasur, String measurKoment, String reportFileName) {
 		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -42,7 +42,8 @@ public class MeasuringDAO {
 			preparedStatement.setObject(5, lab.getLab_ID());
 			preparedStatement.setObject(6, user.getId_Users());
 			preparedStatement.setObject(7, typeMeasur.getId_TypeMeasur());
-			preparedStatement.setObject(8, reportFileName);
+			preparedStatement.setObject(8, measurKoment);
+			preparedStatement.setObject(9, reportFileName);
 
 			preparedStatement.executeUpdate();
 
@@ -63,8 +64,7 @@ public class MeasuringDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(sql);
@@ -76,7 +76,8 @@ public class MeasuringDAO {
 			preparedStatement.setObject(5, measuring.getLab().getLab_ID());
 			preparedStatement.setObject(6, measuring.getUser().getId_Users());
 			preparedStatement.setObject(7, measuring.getTypeMeasur().getId_TypeMeasur());
-			preparedStatement.setObject(8, measuring.getReportFileName());
+			preparedStatement.setObject(8, measuring.getMeasurKoment());
+			preparedStatement.setObject(9, measuring.getReportFileName());
 
 			preparedStatement.executeUpdate();
 
@@ -96,20 +97,23 @@ public class MeasuringDAO {
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sqlUpdate = "Update Measuring SET Person_ID = ?, Date = ?, Doze = ?, DozeDimension_ID = ?, Lab_ID = ?, UsersWBC_ID = ?,"
-				+ " TypeMeasur_ID = ?, ReportFileName = ?  where Measuring_ID = ? ";
+				+ " TypeMeasur_ID = ?, MeasurKoment = ?, ReportFileName = ?  where Measuring_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setObject(1, measuring.getDate());
-			preparedStatement.setObject(2, measuring.getDoze());
-			preparedStatement.setObject(3, measuring.getDoseDimension().getDimensionWBC_ID());
-			preparedStatement.setObject(4, measuring.getLab().getLab_ID());
-			preparedStatement.setObject(5, measuring.getUser().getId_Users());
-			preparedStatement.setObject(6, measuring.getTypeMeasur().getId_TypeMeasur());
-			preparedStatement.setObject(7, measuring.getMeasuring_ID());
-			preparedStatement.setObject(8, measuring.getReportFileName());
+			preparedStatement.setObject(1, measuring.getPerson().getId_Person());
+			preparedStatement.setObject(2, measuring.getDate());
+			preparedStatement.setObject(3, measuring.getDoze());
+			preparedStatement.setObject(4, measuring.getDoseDimension().getDimensionWBC_ID());
+			preparedStatement.setObject(5, measuring.getLab().getLab_ID());
+			preparedStatement.setObject(6, measuring.getUser().getId_Users());
+			preparedStatement.setObject(7, measuring.getTypeMeasur().getId_TypeMeasur());
+			preparedStatement.setObject(8, measuring.getMeasuring_ID());
+			preparedStatement.setObject(9, measuring.getReportFileName());
 
+			preparedStatement.setInt(10, measuring.getMeasuring_ID());
+			
 			preparedStatement.executeUpdate();
 
 			preparedStatement.close();
@@ -122,7 +126,7 @@ public class MeasuringDAO {
 
 	}
 
-	public static void deleteValueMeasuring(int id_Measuring) {
+	public static void deleteValueMeasuring(Measuring measuring) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -131,7 +135,7 @@ public class MeasuringDAO {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setInt(1, id_Measuring);
+			preparedStatement.setInt(1, measuring.getMeasuring_ID());
 
 			preparedStatement.executeUpdate();
 
@@ -169,6 +173,7 @@ public class MeasuringDAO {
 				object.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				object.setTypeMeasur(type);
+				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(object);
@@ -209,6 +214,7 @@ public class MeasuringDAO {
 				object.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				object.setTypeMeasur(type);
+				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(object);
@@ -249,6 +255,7 @@ public class MeasuringDAO {
 				object.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				object.setTypeMeasur(type);
+				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(object);
@@ -316,6 +323,7 @@ public class MeasuringDAO {
 				resultObject.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(resultObject);
@@ -360,6 +368,7 @@ public class MeasuringDAO {
 				resultObject.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(resultObject);
@@ -402,6 +411,7 @@ public class MeasuringDAO {
 				resultObject.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(resultObject);
@@ -448,6 +458,7 @@ public class MeasuringDAO {
 				resultObject.setUser(user);
 				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
 				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
 
 				list.add(resultObject);

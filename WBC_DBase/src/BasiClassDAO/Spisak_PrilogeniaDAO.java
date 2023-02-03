@@ -366,7 +366,11 @@ public class Spisak_PrilogeniaDAO {
 			e.printStackTrace();
 			ResourceLoader.appendToFile(e);
 		}
+		if(list.size()>0) {
 		return list.get(0);
+		}else {
+			return null;	
+		}
 	}
 
 }

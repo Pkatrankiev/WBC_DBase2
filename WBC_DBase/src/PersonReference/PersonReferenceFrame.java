@@ -18,6 +18,7 @@ import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -43,48 +44,57 @@ import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 
 import javax.swing.SwingConstants;
+
 import java.awt.Component;
 import javax.swing.JTextArea;
-import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Insets;
+import javax.swing.JTable;
+import net.coderazzi.filters.gui.AutoChoices;
+import net.coderazzi.filters.gui.TableFilterHeader;
 
 public class PersonReferenceFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JPanel panel_AllSaerch;
 	private JPanel panel_Search;
+	private  JPanel infoPanel;
+	private  JPanel tablePane;
 	private JScrollPane scrollPane;
 	private Choice comboBox_Firm;
-	private Choice comboBox_Otdel;
-	private Choice comboBox_Results;
-
-	private JTextField textField_EGN;
-	private JTextField textField_FName;
-	private JTextField textField_SName;
-	private JTextField textField_LName;
-	private JTextField textField_KZ1;
-	private JTextField textField_KZ2;
-	private JTextField textField_KZHOG;
-	private JTextField textField_Year;
-	private JTextArea textArea;
+	private static Choice comboBox_Otdel;
+	private static Choice comboBox_Results;
 	
-	private JButton btn_SearchDBase;
-	private JButton btn_SearchFromExcel;
+	private static  JTextArea textArea;
+	private  static JTextField textField_EGN;
+	private static  JTextField textField_FName;
+	private  static JTextField textField_SName;
+	private  static JTextField textField_LName;
+	private  static JTextField textField_KZ1;
+	private  static JTextField textField_KZ2;
+	private  static JTextField textField_KZHOG;
+	private static JTextField textField_Year;
+	
+	private  static JButton btn_SearchDBase;
+	private  static JButton btn_SearchFromExcel;
 	
 	private int minYeare;
 	private String notResults;
@@ -94,6 +104,7 @@ public class PersonReferenceFrame extends JFrame {
 	List<String> listOtdelAll;
 	List<String> listAdd;
 	List<String> listFirm;
+	
 
 	public PersonReferenceFrame() {
 		
@@ -122,8 +133,31 @@ public class PersonReferenceFrame extends JFrame {
 		panel_Search = new JPanel();
 		panel_Search.setLayout(new BoxLayout(panel_Search, BoxLayout.Y_AXIS));
 		contentPane.add(panel_Search, BorderLayout.NORTH);
+	
+		panel_AllSaerch = new JPanel();
+		contentPane.add(panel_AllSaerch, BorderLayout.CENTER);
+		panel_AllSaerch.setLayout(new BoxLayout(panel_AllSaerch, BoxLayout.Y_AXIS));
+		
+		infoPanel = new JPanel();
+		infoPanel.setPreferredSize(new Dimension(10, 10));
+		infoPanel.setMaximumSize(new Dimension(32767, 32767));
+		panel_AllSaerch.add(infoPanel);
+		infoPanel.setLayout(new BorderLayout(0, 0));
+		 
+		textArea = new JTextArea();
+		textArea.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		JScrollPane sp = new JScrollPane(textArea);
+		infoPanel.add(sp, BorderLayout.CENTER);
+		
+		tablePane = new JPanel();
+		tablePane.setPreferredSize(new Dimension(10, 0));
+		tablePane.setMaximumSize(new Dimension(32767, 0));
+		panel_AllSaerch.add(tablePane);
+		tablePane.setLayout(new BorderLayout(0, 0));
+		
 		scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
+		tablePane.add(scrollPane, BorderLayout.CENTER);
+
 
 		listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
 		listOtdelKz.add("");
@@ -149,8 +183,6 @@ public class PersonReferenceFrame extends JFrame {
 		panel_3();
 		
 		getRootPane().setDefaultButton(btn_SearchDBase);
-		
-		panel_infoPanel();
 
 		panel_Button();
 
@@ -391,13 +423,13 @@ public class PersonReferenceFrame extends JFrame {
 		btn_SearchFromExcel.setPreferredSize(new Dimension(110, 23));
 		panel2A.add(btn_SearchFromExcel);
 		
-		ActionListenerbBtn_SearchFromExcel();
+		ActionListenerbBtn_SearchFromExcel(notResults);
 		
 		
 		return panel2A;
 	}
 
-	protected void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson, Choice comboBox_Results) {
+	protected static void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson, Choice comboBox_Results) {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (Person person : listSelectionPerson) {
@@ -410,6 +442,59 @@ public class PersonReferenceFrame extends JFrame {
 
 	}
 
+	protected static String[][] addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson) {
+		
+		String[][] dataTable = new String[listSelectionPerson.size()][8];
+	
+//				"EGN", 	"FirstName","SecondName","LastName","Otdel",
+//				"Kod KZ-1",	"Kod KZ-2",	"Kod Hog"	
+				
+		int k = 0;	
+		for (Person person : listSelectionPerson) {
+			System.out.println("egn "+person.getEgn());
+			dataTable[k][0] = person.getEgn() ;
+			dataTable[k][1] = person.getFirstName();
+			dataTable[k][2] = person.getSecondName();
+			dataTable[k][3] = person.getLastName();
+			dataTable[k][4] = getLastWorkplaceByPerson(person);
+			dataTable[k][5] = getLastKodeByPersonAndZone(person, 1);
+			dataTable[k][6] = getLastKodeByPersonAndZone(person, 2);
+			dataTable[k][7] = getLastKodeByPersonAndZone(person, 3);
+			
+			k++;
+		}
+		
+		return dataTable;
+
+	}
+
+	private static String getLastWorkplaceByPerson(Person person) {
+		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person, "DateSet");
+		List<PersonStatus> sortedReversPeStatList = list.stream().sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed())
+				  .collect(Collectors.toList());		
+		if(sortedReversPeStatList.size()>0) {
+	return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
+		}else {
+			return "";
+		}
+	}
+	
+	private static String getLastKodeByPersonAndZone(Person person, int zonaID) {
+		List<KodeStatus> list = KodeStatusDAO.getKodeStatusByPersonZone(person, zonaID);
+		if(list!=null) {
+		List<KodeStatus> sortedReversKodeStatList = list.stream().sorted(Comparator.comparing(KodeStatus::getYear).reversed())
+				  .collect(Collectors.toList());		
+		
+//		List<PersonStatus> sortedList = list.stream().sorted(Comparator.comparing(PersonStatus::getDateSet))
+//				  .collect(Collectors.toList());
+//		List<PersonStatus> sortedReversList = list.stream().sorted(Comparator.comparing(PersonStatus::getDateSet).reversed())
+//				  .collect(Collectors.toList());
+	
+	return sortedReversKodeStatList.get(0).getKode();
+		}
+	return "H";
+	}
+	
 	protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
 		String str = "";
 		for (Person person : listSelectionPerson) {
@@ -418,7 +503,7 @@ public class PersonReferenceFrame extends JFrame {
 		return str;
 	}
 
-	protected String createInfoPanelForPerson(Person person) {
+	protected static String createInfoPanelForPerson(Person person) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
 		String year = textField_Year.getText(); 
@@ -476,7 +561,6 @@ public class PersonReferenceFrame extends JFrame {
 						+ "\n";	
 					}
 				
-				
 			}
 		}
 		
@@ -484,12 +568,14 @@ public class PersonReferenceFrame extends JFrame {
 		return str;
 	}
 
-	private String generateString( PersonStatus perStat) {
+	@SuppressWarnings("deprecation")
+	static String generateString( PersonStatus perStat) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		return 	 perStat.getSpisak_prilogenia().getYear() +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
+		
+		return 	 perStat.getDateSet().getYear() +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
 					+"  от "+ sdf.format(perStat.getSpisak_prilogenia().getStartDate())
 					+"  до "+ sdf.format(perStat.getSpisak_prilogenia().getEndDate())
-					+" "+ perStat.getZabelejka() + "\n";
+					+" "+ perStat.getZabelejka().replaceAll("\n", " ") + "\n";
 		
 	}
 
@@ -526,7 +612,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!firstName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonEGN) {
-				if (checkContainsStrings(person.getFirstName(),firstName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getFirstName(),firstName)) {
 					listSelectionPersonFName.add(person);
 				}
 			}
@@ -536,7 +622,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!secontName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonFName) {
-				if (checkContainsStrings(person.getSecondName(),secontName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getSecondName(),secontName)) {
 					listSelectionPersonSName.add(person);
 				}
 			}
@@ -546,7 +632,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!lastName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonSName) {
-				if (checkContainsStrings(person.getLastName(),lastName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getLastName(),lastName)) {
 					listSelectionPersonLName.add(person);
 				}
 			}
@@ -623,12 +709,6 @@ public class PersonReferenceFrame extends JFrame {
 
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
 	}
-
-	private boolean checkContainsStrings(String str1, String str2) {
-		str1 = str1.toLowerCase().trim();
-		str2 = str2.toLowerCase().trim();
-	return str1.contains(str2);
-	}
 	
  	private void ActionListenerComboBox_Firm() {
 
@@ -643,51 +723,82 @@ public class PersonReferenceFrame extends JFrame {
 		});
 
 	}
- 	
- 	private void ActionListenerbBtn_SearchFromExcel() {
- 		btn_SearchFromExcel.addActionListener(new ActionListener() {
+ 	 	
+	private void ActionListenerbBtn_SearchDBase() {
+		btn_SearchDBase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()){
-				textArea.setText("");
-				repaint();
+				if(!allFieldsEmnty()){
 				comboBox_Results.removeAll();
 				List<Person> listSelectionPerson = getListSearchingPerson();
 				addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
+	
 				if(listSelectionPerson.size()==0) {
 					textArea.setText(notResults);
+					viewInfoPanel();
+					
 				}
 				
 				if(listSelectionPerson.size()==1) {
-				textArea.setText(createInfoPanelForPerson(listSelectionPerson.get(0)));
+					textArea.setText(createInfoPanelForPerson(listSelectionPerson.get(0)));
+					viewInfoPanel();
+				}
+				
+				if(listSelectionPerson.size()>1) {
+					System.out.println("***** "+listSelectionPerson.size());
+					String[][] dataTable = addListStringSelectionPersonToComboBox(listSelectionPerson);
+					panel_infoPanelTablePanel(dataTable);
+					viewTablePanel() ;
+				}
 			}
+			}
+
+			
+
+			
+		});
+
+	}
+
+	private void  ActionListenerbBtn_SearchFromExcel(String notResults) {
+	
+		
+		
+ 		btn_SearchFromExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!PersonReferenceFrame.allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()){
+				textArea.setText("");
+				comboBox_Results.removeAll();
+				List<PersonExcellClass> listSelectionPerson = SearchFromExcellFiles.getListSearchingPerson();
+				SearchFromExcellFiles.addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
+				
+				
+				if(listSelectionPerson.size()==0) {
+					textArea.setText(notResults);
+					viewInfoPanel();
+					
+				}
+				
+				if(listSelectionPerson.size()==1) {
+					textArea.setText(SearchFromExcellFiles.createInfoPanelForPerson(listSelectionPerson.get(0)));
+					viewInfoPanel();
+				}
+				
+				if(listSelectionPerson.size()>1) {
+					System.out.println("***** "+listSelectionPerson.size());
+					String[][] dataTable = SearchFromExcellFiles.addListStringSelectionPersonExcellClassToComboBox(listSelectionPerson);
+					panel_infoPanelTablePanel(dataTable);
+					viewTablePanel() ;
+				}
+				
+				
+				
+				
 				}
 			}
 		});
 
 	}
 	
-	private void ActionListenerbBtn_SearchDBase() {
-		btn_SearchDBase.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(!allFieldsEmnty()){
-				textArea.setText("");
-				repaint();
-				comboBox_Results.removeAll();
-				List<Person> listSelectionPerson = getListSearchingPerson();
-				addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
-				if(listSelectionPerson.size()==0) {
-					textArea.setText(notResults);
-				}
-				
-				if(listSelectionPerson.size()==1) {
-				textArea.setText(createInfoPanelForPerson(listSelectionPerson.get(0)));
-			}
-			}
-			}
-		});
-
-	}
-	 	
 	private void ActionListenerComboBox_Results() {
 
 		comboBox_Results.addItemListener(new ItemListener() {
@@ -698,9 +809,11 @@ public class PersonReferenceFrame extends JFrame {
 					repaint();
 					String str = comboBox_Results.getSelectedItem();
 					int index = str.indexOf(" ");
-					System.out.println(str.substring(0,index));
+					System.out.println("--->> "+str.substring(0,index));
 					Person person = PersonDAO.getValuePersonByEGN(str.substring(0,index));
 					textArea.setText(createInfoPanelForPerson(person));
+					viewInfoPanel();
+					
 				}
 			}
 		});
@@ -730,7 +843,7 @@ public class PersonReferenceFrame extends JFrame {
 		
 	}
 	
-	protected boolean allFieldsEmnty() {
+	protected static boolean allFieldsEmnty() {
 		return (textField_EGN.getText().trim().isEmpty() && textField_FName.getText().trim().isEmpty() &&
 				textField_SName.getText().trim().isEmpty() && textField_LName.getText().trim().isEmpty() &&
 				textField_KZ1.getText().trim().isEmpty() && textField_KZ2.getText().trim().isEmpty() &&
@@ -771,6 +884,8 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private JPanel panel_Button() {
+		
+	
 		JPanel buttonPanel = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.RIGHT);
@@ -780,18 +895,140 @@ public class PersonReferenceFrame extends JFrame {
 		buttonPanel.add(btn_Export);
 		return buttonPanel;
 	}
+	
+	private void viewTablePanel() {
+		infoPanel.setPreferredSize(new Dimension(10, 0));
+		infoPanel.setMaximumSize(new Dimension(32767, 0));
+		
+		tablePane.setPreferredSize(new Dimension(10, 10));
+		tablePane.setMaximumSize(new Dimension(32767,32767));
+		repaint();
+		revalidate();
+	}
 
-	private JPanel panel_infoPanel() {
+	void viewInfoPanel() {
+		infoPanel.setPreferredSize(new Dimension(10, 10));
+		infoPanel.setMaximumSize(new Dimension(32767, 32767));
+		
+		tablePane.setPreferredSize(new Dimension(10, 0));
+		tablePane.setMaximumSize(new Dimension(32767,0));
+		repaint();
+		revalidate();
+	}
+	
+	private void  panel_infoPanelTablePanel(String[][] dataTable) {
+		String[] columnNames = getTabHeader();
+		int egn_code_Colum = 0;
+	
+		DefaultTableModel dtm = new DefaultTableModel();
+		final JTable table = new JTable(dtm);
+		
+		
+		dtm = new DefaultTableModel(dataTable, columnNames) {
 
-		JPanel infoPanel = new JPanel();
-		scrollPane.setViewportView(infoPanel);
-		infoPanel.setLayout(new BorderLayout(5, 5));
+			private static final long serialVersionUID = 1L;
+			
+			
+			@Override
+			public boolean isCellEditable(int row, int column) {
+			return false;
+						}
+			@Override
+			public Object getValueAt(int row, int col) {
+				return dataTable[row][col];
+			}
+			
+			
+			@SuppressWarnings("unused")
+			public void setValueAt(String value, int row, int col) {
 
-		textArea = new JTextArea();
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		infoPanel.add(textArea, BorderLayout.CENTER);
-		return infoPanel;
+				if (!dataTable[row][col].equals(value)) {
+					dataTable[row][col] = value;
+					fireTableCellUpdated(row, col);
+					
+				}
+			}
 
+			
+
+			public int getColumnCount() {
+				return columnNames.length;
+			}
+
+			public int getRowCount() {
+				return dataTable.length;
+			}
+
+		};
+	
+		
+		
+		
+		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+
+			public void mousePressed(MouseEvent e) {
+				DefaultTableModel model =(DefaultTableModel) table.getModel();
+				if (table.getSelectedColumn() == egn_code_Colum ) {
+					table.rowAtPoint(e.getPoint());
+					table.columnAtPoint(e.getPoint());
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
+				
+				System.out.println(reqCodeStr);	
+
+				}
+				
+				if (e.getClickCount() == 2 && getSelectedModelRow(table) != -1) {
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
+					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
+					textArea.setText(createInfoPanelForPerson(person));
+					viewInfoPanel();
+					
+							}
+							}
+		});
+
+		new TableFilterHeader(table, AutoChoices.ENABLED);
+		
+		
+		
+				
+				dtm.fireTableDataChanged();
+				table.setModel(dtm);
+				table.setFillsViewportHeight(true);
+				 table.repaint();
+				 System.out.println("+++++++++++++ "+dataTable.length);
+				 
+				 tablePane.removeAll();
+					tablePane.setPreferredSize(new Dimension(10, 10));
+					tablePane.setMaximumSize(new Dimension(32767, 32767));
+					panel_AllSaerch.add(tablePane);
+					tablePane.setLayout(new BorderLayout(0, 0));
+					
+					scrollPane = new JScrollPane(table);
+					tablePane.add(scrollPane, BorderLayout.CENTER);
+			
+
+	}
+	
+	private int getSelectedModelRow(JTable table) {
+		return  table.convertRowIndexToModel(table.getSelectedRow());
+		}
+	
+	private String[] getTabHeader() {
+		String[] tableHeader = {
+				"EGN", 
+				"FirstName",
+				"SecondName",
+				"LastName",
+				"Otdel",
+				"Kod KZ-1",
+				"Kod KZ-2",
+				"Kod Hog"
+				 };
+		return tableHeader;
 	}
 
 	private ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
@@ -829,5 +1066,52 @@ public class PersonReferenceFrame extends JFrame {
 		JOptionPane.showMessageDialog(jf, textInFrame, textFrame, JOptionPane.PLAIN_MESSAGE, otherIcon);
 
 	}
-	
+
+	public static Choice getComboBox_Otdel() {
+		return comboBox_Otdel;
+	}
+
+	public static JTextField getTextField_EGN() {
+		return textField_EGN;
+	}
+
+	public static JTextField getTextField_FName() {
+		return textField_FName;
+	}
+
+	public static JTextField getTextField_SName() {
+		return textField_SName;
+	}
+
+	public static JTextField getTextField_LName() {
+		return textField_LName;
+	}
+
+	public static JTextField getTextField_KZ1() {
+		return textField_KZ1;
+	}
+
+	public static JTextField getTextField_KZ2() {
+		return textField_KZ2;
+	}
+
+	public static JTextField getTextField_KZHOG() {
+		return textField_KZHOG;
+	}
+
+	public static JTextField getTextField_Year() {
+		return textField_Year;
+	}
+
+	public static JTextArea getTextArea() {
+		return textArea;
+	}
+
+	public static JButton getBtn_SearchFromExcel() {
+		return btn_SearchFromExcel;
+	}
+
+	public static Choice getComboBox_Results() {
+		return comboBox_Results;
+	}
 }

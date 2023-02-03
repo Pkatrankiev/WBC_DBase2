@@ -536,7 +536,7 @@ public class InsertMeasurToExcel {
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-//					System.out.println(row + " -> " + EGN);
+					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
 					if (egnMeasur.equals(EGN)) {
 						return row;
 					}

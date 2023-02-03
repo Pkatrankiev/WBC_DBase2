@@ -1,11 +1,13 @@
 package BasiClassDAO;
 
 import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -43,7 +45,7 @@ public class PersonStatusDAO {
 			preparedStatement.setInt(2, workplace.getId_Workplace());
 			preparedStatement.setInt(3, spisak_prilogenia.getSpisak_Prilogenia_ID());
 			preparedStatement.setInt(4, userWBC.getId_Users());
-			preparedStatement.setDate(5, dateSet);
+			preparedStatement.setDate(5, convertDate(dateSet));
 			preparedStatement.setString(6, zabelejka);
 
 			preparedStatement.executeUpdate();
@@ -74,7 +76,7 @@ public class PersonStatusDAO {
 			preparedStatement.setInt(2, personStatus.getWorkplace().getId_Workplace());
 			preparedStatement.setInt(3, personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
 			preparedStatement.setInt(4, personStatus.getUserWBC().getId_Users());
-			preparedStatement.setDate(5, personStatus.getDateSet());
+			preparedStatement.setDate(5, convertDate(personStatus.getDateSet()));
 			preparedStatement.setString(6, personStatus.getZabelejka());
 
 			preparedStatement.executeUpdate();
@@ -95,6 +97,12 @@ public class PersonStatusDAO {
 		}
 	}
 
+	public static  java.sql.Date convertDate(Date data){
+	java.sql.Date newDate = new java.sql.Date(data.getTime());
+	return newDate;
+	}
+	
+	
 	public static void updateValuePersonStatus(PersonStatus personStatus, int Id_PersonStatus) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -109,7 +117,7 @@ public class PersonStatusDAO {
 			preparedStatement.setInt(2, personStatus.getWorkplace().getId_Workplace());
 			preparedStatement.setInt(3, personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
 			preparedStatement.setInt(4, personStatus.getUserWBC().getId_Users());
-			preparedStatement.setDate(5, personStatus.getDateSet());
+			preparedStatement.setDate(5, convertDate(personStatus.getDateSet()));
 			preparedStatement.setString(6, personStatus.getZabelejka());
 
 			preparedStatement.setInt(7, Id_PersonStatus);

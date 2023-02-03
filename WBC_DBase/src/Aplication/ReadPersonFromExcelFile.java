@@ -16,7 +16,7 @@ public class ReadPersonFromExcelFile {
 	public static List<Person> updatePersonFromExcelFile(String pathFile) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		String EGN = "", FirstName = "", SecondName = "", LastName = "";
-		Sheet sheet = workbook.getSheetAt(3);
+		Sheet sheet = workbook.getSheetAt(0);
 		Cell cell, cell1;
 		List<Person> listPerson = new ArrayList<>();
 		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
@@ -28,7 +28,7 @@ public class ReadPersonFromExcelFile {
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
 					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-				
+					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
 					if (PersonDAO.getValuePersonByEGN(EGN) == null) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						FirstName = ReadExcelFileWBC.getStringfromCell(cell1);

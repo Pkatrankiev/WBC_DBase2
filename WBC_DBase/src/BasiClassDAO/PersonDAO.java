@@ -76,7 +76,7 @@ public class PersonDAO {
 		}
 	}
 
-	public static void updateValuePerson(Person person, int Id_Person) {
+	public static void updateValuePerson(Person person) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -90,7 +90,7 @@ public class PersonDAO {
 			preparedStatement.setString(3, person.getSecondName());
 			preparedStatement.setString(4, person.getLastName());
 
-			preparedStatement.setInt(5, Id_Person);
+			preparedStatement.setInt(5, person.getId_Person());
 
 			preparedStatement.executeUpdate();
 			
@@ -103,7 +103,7 @@ public class PersonDAO {
 		}
 	}
 
-	public static void deleteValuePerson(int Id_person) {
+	public static void deleteValuePerson(Person person) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -112,7 +112,7 @@ public class PersonDAO {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setInt(1, Id_person);
+			preparedStatement.setInt(1, person.getId_Person());
 
 			preparedStatement.executeUpdate();
 			

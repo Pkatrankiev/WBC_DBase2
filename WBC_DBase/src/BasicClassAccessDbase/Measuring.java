@@ -28,6 +28,7 @@ public class Measuring implements Serializable {
 	private UsersWBC user;
 	@ManyToOne
 	private TypeMeasur typeMeasur;
+	private String measurKoment;
 	private String reportFileName;
 	
 	
@@ -39,6 +40,7 @@ public class Measuring implements Serializable {
 			Laboratory lab,
 			UsersWBC user,
 			TypeMeasur typeMeasur,
+			 String measurKoment, 
 			String reportFileName) {
 		
 		this.person = person;
@@ -48,6 +50,7 @@ public class Measuring implements Serializable {
 		this.lab = lab;
 		this.user = user;
 		this.typeMeasur = typeMeasur;
+		this.measurKoment = measurKoment;
 		this.reportFileName = reportFileName;
 		
 	}
@@ -120,6 +123,14 @@ public class Measuring implements Serializable {
 
 	public void setUser(UsersWBC user) {
 		this.user = user;
+	}
+
+	public String getMeasurKoment() {
+		return measurKoment;
+	}
+
+	public void setMeasurKoment(String measurKoment) {
+		this.measurKoment = measurKoment;
 	}
 
 	public TypeMeasur getTypeMeasur() {

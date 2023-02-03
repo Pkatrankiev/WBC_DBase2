@@ -155,7 +155,7 @@ public class ReadResultFromReport {
 							
 		
 		
-		 Measuring measur = new Measuring(per, dat–M, 0.0, dozeDim, lab, usersWBC, type, file.getName());
+		 Measuring measur = new Measuring(per, dat–M, 0.0, dozeDim, lab, usersWBC, type, "", file.getName());
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
 		 reportMeasurClass.setToExcell(true);

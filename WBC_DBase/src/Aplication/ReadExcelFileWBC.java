@@ -4,8 +4,9 @@ package Aplication;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,12 @@ public class ReadExcelFileWBC {
 			FileInputStream fis = new FileInputStream(FILE_PATH);
 			workbook = new HSSFWorkbook(fis);
 
-		} catch (FileNotFoundException | OldExcelFormatException e) {
+		} catch (FileNotFoundException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Не намирам excel файл:\n"+FILE_PATH, "Грешни данни", JOptionPane.ERROR_MESSAGE);
+		
+		} catch (OldExcelFormatException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Excel файлът трябва да е версия 97/2000/XP/2003", "Грешни данни",
@@ -52,6 +58,7 @@ public class ReadExcelFileWBC {
 		Date date = new Date();
 		if (cell != null) {
 			String type = cell.getCellType().toString();
+			System.out.println("Type "+type);
 			switch (type) {
 			case "STRING": {
 				date = isLegalDate(cell.getStringCellValue(), cell);
@@ -83,10 +90,10 @@ public class ReadExcelFileWBC {
 		return cell != null && cell.getCellType() != CellType.BLANK;
 	}
 
-	@SuppressWarnings("deprecation")
+	
 	public static String getStringfromCell(Cell cell) {
 		String str = "";
-
+		try {
 		String type = cell.getCellType().toString();
 		switch (type) {
 		case "STRING": {
@@ -99,12 +106,22 @@ public class ReadExcelFileWBC {
 			break;
 		case "DATA":
 		case "NUMERIC": {
-			cell.setCellType(CellType.STRING);
-			str = cell.getStringCellValue();
+			double doub = cell.getNumericCellValue();
+			str = new DecimalFormat("#").format(doub);
+			
 
 		}
 			break;
 		}
+		
+	} catch (Exception e) {
+		
+		String cellSring = "Cell = " + CellReference.convertNumToColString(cell.getColumnIndex())
+				+ (cell.getRowIndex() + 1) + ", val = " + str;
+		String cel = CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex() + 1);
+		JOptionPane.showInputDialog(null, cellSring, cel);
+		
+	}
 		return str;
 	}
 
@@ -159,9 +176,10 @@ public class ReadExcelFileWBC {
 					sdfrmt = new SimpleDateFormat("dd.M.yy");
 					sdfrmt.setLenient(false);
 				}
-
+				System.out.println(strDate);
 				javaDate = sdfrmt.parse(strDate);
-			} catch (ParseException e) {
+			} catch (Exception e) {
+				
 				String cellSring = "Cell = " + CellReference.convertNumToColString(cell.getColumnIndex())
 						+ (cell.getRowIndex() + 1) + ", val = " + strDate;
 				String cel = CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex() + 1);
@@ -177,7 +195,15 @@ public class ReadExcelFileWBC {
 	public static String[] splitAllName(String firstName) {
 		String[] names = new String[3];
 
-		String[] names1 = firstName.split(" ");
+		String[] names1 = splitName(firstName);
+		int countNames = names1.length;
+		
+		for (int i = 0; i < countNames; i++) {
+			names1[i] = names1[i].trim();
+			System.out.println(names1[i]);
+			if(!names1[i].isEmpty())
+			names1[i] =names1[i].substring(0, 1).toUpperCase() + names1[i].substring(1).toLowerCase();
+		}
 
 		if (names1.length == 1) {
 			names[0] = names1[0];
@@ -209,6 +235,25 @@ public class ReadExcelFileWBC {
 
 	}
 
+	private static String[] splitName(String firstName) {
+		List<String> list = new ArrayList<>();
+		int index = firstName.indexOf(" ");
+		while (index>0) {
+			list.add(firstName.substring(0, index));
+			firstName = firstName.substring(index).trim();
+			index = firstName.indexOf(" ");
+		} 
+		list.add(firstName.trim());
+		String[] masive = new String[list.size()];
+		int i =0;
+		for (String string : list) {
+			masive[i] = string;	
+			System.out.println(masive[i]);
+			i++;
+		}
+		return masive;
+	}
+
 	public static String[] getMasiveString(String firmName) {
 		List<Workplace> list = WorkplaceDAO.getValueWorkplaceByObjectSortByColumnName("FirmName", firmName, "Otdel");
 		String[] str = new String[list.size()];
@@ -220,14 +265,14 @@ public class ReadExcelFileWBC {
 		return str;
 	}
 
-	static Workplace selectWorkplace(String firmMane, String[] masiveWorkplace, String otdelName,
-			List<Workplace> listAllWorkplaceBiFirmName) {
+	static Workplace selectWorkplace(String firmName, String[] masiveWorkplace, String otdelName,
+			List<Workplace> listAllWorkplaceByFirmName) {
 		Workplace workplace;
 		workplace = new Workplace();
 		boolean fl = true;
-		for (Workplace worl : listAllWorkplaceBiFirmName) {
-			System.out.println(worl.getOtdel());
-			if (worl.getOtdel().equals(otdelName) || worl.getSecondOtdelName().equals(otdelName)) {
+		for (Workplace worl : listAllWorkplaceByFirmName) {
+			System.out.println("----->>"+worl.getOtdel());
+			if (worl.getOtdel().equals(otdelName) || (worl.getSecondOtdelName()!= null && worl.getSecondOtdelName().equals(otdelName))) {
 				fl = false;
 				System.out.println(otdelName + " 1 " + worl.getOtdel() + " 2 " + worl.getSecondOtdelName());
 				workplace = worl;
@@ -239,9 +284,9 @@ public class ReadExcelFileWBC {
 			if (ss == null) {
 				String m = JOptionPane.showInputDialog(null, "Въведете нов обект", otdelName);
 				if(m==null) {
-					workplace = selectWorkplace(firmMane, masiveWorkplace,  otdelName, listAllWorkplaceBiFirmName);
+					workplace = selectWorkplace(firmName, masiveWorkplace,  otdelName, listAllWorkplaceByFirmName);
 				}
-				workplace = new Workplace(firmMane, m, "");
+				workplace = new Workplace(firmName, m, "");
 				WorkplaceDAO.setObjectWorkplaceToTable(workplace);
 				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", m).get(0);
 

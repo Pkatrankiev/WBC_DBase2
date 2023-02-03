@@ -3,7 +3,6 @@ package AutoInsertMeasuting;
 import java.awt.Frame;
 import java.awt.Point;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import Aplication.ReportMeasurClass;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.Measuring_KomentDAO;
 import BasiClassDAO.NuclideWBCDAO;
 import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.TypeMeasurDAO;
@@ -31,7 +29,6 @@ import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.UsersWBC;
-import net.ucanaccess.jdbc.UcanaccessSQLException;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
@@ -57,7 +54,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("rawtypes")
@@ -278,15 +274,11 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	}
 
 	protected void SaveListReportMeasurClassToDBase(List<ReportMeasurClass> listReportMeasurClassToSave) {
-		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
 		Measuring lastMeasur = null;
 		for (ReportMeasurClass reportMeasur : listReportMeasurClassToSave) {
 			
 				MeasuringDAO.setObjectMeasuringToTable(reportMeasur.getMeasur());
 				lastMeasur = MeasuringDAO.getLastMeasuring();
-				if(!reportMeasur.getKoment().trim().isEmpty()) {
-					Measuring_KomentDAO.setValueMeasuring_Koment(lastMeasur, reportMeasur.getKoment());
-				}
 				if(!reportMeasur.getListNuclideData().isEmpty()) {
 					for (String stringNuclideData : reportMeasur.getListNuclideData()) {
 					
@@ -1016,7 +1008,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		String isEmptyPostaplenieNuclideFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("isEmptyPostaplenieNuclideFilds");
 		String dozeStr = "";
-		boolean emtryDozeNuclide = false, isnuclide = false, isAllnuclide = true;
+		boolean emtryDozeNuclide = false, isnuclide = false;
 
 		String mesage = "";
 		for (int i = 0; i < countData; i++) {
