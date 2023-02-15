@@ -36,7 +36,7 @@ public class DimensionWBCDAO {
 
 		} catch (SQLException e) {
 			if (e.toString().contains("unique")) {
-				String str = "Съдържа повтарящи се полета";
+				String str = "РЎСЉРґСЉСЂР¶Р° РїРѕРІС‚Р°СЂСЏС‰Рё СЃРµ РїРѕР»РµС‚Р°";
 				MessageDialog(str);
 			}
 			e.printStackTrace();
@@ -176,7 +176,7 @@ public class DimensionWBCDAO {
 	public static void MessageDialog(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(jf, text, "Р“СЂРµС€РєР°", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static List<DimensionWBC> getValueDimensionWBCByObject(String columnName, Object object) {

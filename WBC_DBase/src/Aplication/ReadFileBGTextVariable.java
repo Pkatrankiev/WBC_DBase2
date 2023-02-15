@@ -41,7 +41,7 @@ public class ReadFileBGTextVariable {
 			return true;
 			} catch (FileNotFoundException e) {
 				ResourceLoader.appendToFile(e);
-				JOptionPane.showMessageDialog(null, "Не намирам: D:\\BGTextVariable.txt", "Грешка в данните",
+				JOptionPane.showMessageDialog(null, "РќРµ РЅР°РјРёСЂР°Рј: D:\\BGTextVariable.txt", "Р“СЂРµС€РєР° РІ РґР°РЅРЅРёС‚Рµ",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 				return false;

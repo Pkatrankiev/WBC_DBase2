@@ -197,7 +197,7 @@ public class KodeStatusDAO {
 	public static void MessageDialog(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "Ãðåøêà", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(jf, text, "Ð“Ñ€ÐµÑˆÐºÐ°", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static List<KodeStatus> getValueKodeStatusByObject(String columnName, Object object) {

@@ -329,9 +329,9 @@ public class InsertMeasurToExcel {
 			kode = kodeStat.getKode();
 		} else {
 			if (zoneID == 1) {
-				kode = "ео-2";
+				kode = "п∙п÷-2";
 			} else {
-				kode = "М";
+				kode = "п╫";
 			}
 		}
 		return kode;

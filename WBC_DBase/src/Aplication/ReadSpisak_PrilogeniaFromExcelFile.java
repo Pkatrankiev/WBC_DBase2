@@ -15,7 +15,7 @@ import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 
-//четене на списък-приложения от годишния ексел фаил
+//С‡РµС‚РµРЅРµ РЅР° СЃРїРёСЃСЉРє-РїСЂРёР»РѕР¶РµРЅРёСЏ РѕС‚ РіРѕРґРёС€РЅРёСЏ РµРєСЃРµР» С„Р°РёР»
 
 public class ReadSpisak_PrilogeniaFromExcelFile {
 
@@ -42,7 +42,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 					cell1 = sheet.getRow(row).getCell(6);
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 						otdelName = cell1.getStringCellValue();
-						if (!otdelName.equals("край")) {
+						if (!otdelName.equals("РєСЂР°Р№")) {
 							workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
 									listAllWorkplaceBiFirmName);
 							System.out.println(otdelName + " 1 " + workplace.getOtdel());

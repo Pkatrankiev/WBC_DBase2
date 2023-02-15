@@ -71,7 +71,7 @@ public class ReadPersonStatusFromExcelFile {
 
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 					otdelName = cell1.getStringCellValue().trim();
-					if (!otdelName.contains("Í‡È") && !otdelName.contains(" –¿…")) {
+					if (!otdelName.contains("–∫—Ä–∞–π") && !otdelName.contains("–ö–†–ê–ô")) {
 						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName, listAllWorkplaceBiFirmName);
 					}
 				}
@@ -158,7 +158,7 @@ public class ReadPersonStatusFromExcelFile {
 
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 					otdelName = cell1.getStringCellValue().trim();
-					if (!otdelName.contains("Í‡È") && !otdelName.contains(" –¿…")) {
+					if (!otdelName.contains("–∫—Ä–∞–π") && !otdelName.contains("–ö–†–ê–ô")) {
 						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName, listAllWorkplaceBiFirmName);
 					}
 				}
@@ -230,6 +230,6 @@ public class ReadPersonStatusFromExcelFile {
 	public static void MessageDialog(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "√Â¯Í‡", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(jf, text, "–ì—Ä–µ—à–∫–∞", JOptionPane.ERROR_MESSAGE);
 	}
 }

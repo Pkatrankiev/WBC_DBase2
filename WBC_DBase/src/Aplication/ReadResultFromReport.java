@@ -78,7 +78,7 @@ public class ReadResultFromReport {
 	
 	public static ReportMeasurClass getReadGamaFile(File file) {
 
-		Date dat–M = null ;
+		Date dateM = null ;
 		String  egn = "", operatorName = "", wbc = "";
 
 		String[] stringArray = CreadMasiveFromReadFile(file);
@@ -110,7 +110,7 @@ public class ReadResultFromReport {
 					if (stringLine[j].length > 0) {
 
 						if (stringLine[j][0].contains("In-vivo Report")) {
-							dat–M = reformarDateMeasur(StringUtils.split(stringLine[j][1])[0]);
+							dateM = reformarDateMeasur(StringUtils.split(stringLine[j][1])[0]);
 							
 						}
 
@@ -155,7 +155,7 @@ public class ReadResultFromReport {
 							
 		
 		
-		 Measuring measur = new Measuring(per, dat–M, 0.0, dozeDim, lab, usersWBC, type, "", file.getName());
+		 Measuring measur = new Measuring(per, dateM, 0.0, dozeDim, lab, usersWBC, type, "", file.getName());
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
 		 reportMeasurClass.setToExcell(true);

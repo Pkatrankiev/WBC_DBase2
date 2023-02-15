@@ -509,7 +509,7 @@ public class PersonReferenceFrame extends JFrame {
 		String year = textField_Year.getText(); 
 		String str = person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
 		str = str + year + "\n";
-		str = str + " Ó‰Ó‚Â: \n";
+		str = str + "–ö–æ–¥–æ–≤–µ: \n";
 		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
 		
 			for (KodeStatus kodeStat : listK) {
@@ -522,7 +522,7 @@ public class PersonReferenceFrame extends JFrame {
 		}
 			
 		str = str + "\n";
-		str = str + "«‡ÔÓ‚Â‰Ë \n";
+		str = str + "–ó–∞–ø–æ–≤–µ–¥–∏ \n";
 		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObject("Person_ID", person);
 		if(!year.trim().isEmpty()) {
 			for (PersonStatus perStat : listP) {
@@ -540,7 +540,7 @@ public class PersonReferenceFrame extends JFrame {
 			}
 				
 		str = str + "\n";
-		str = str + "»ÁÏÂ‚‡ÌËˇ —»◊ \n";
+		str = str + "–ò–∑–º–µ—Ä–≤–∞–Ω–∏—è –°–ò–ß \n";
 		List<Measuring> listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
 		String data;
 		
@@ -573,8 +573,8 @@ public class PersonReferenceFrame extends JFrame {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
 		return 	 perStat.getDateSet().getYear() +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
-					+"  ÓÚ "+ sdf.format(perStat.getSpisak_prilogenia().getStartDate())
-					+"  ‰Ó "+ sdf.format(perStat.getSpisak_prilogenia().getEndDate())
+					+"  –æ—Ç "+ sdf.format(perStat.getSpisak_prilogenia().getStartDate())
+					+"  –¥–æ "+ sdf.format(perStat.getSpisak_prilogenia().getEndDate())
 					+" "+ perStat.getZabelejka().replaceAll("\n", " ") + "\n";
 		
 	}
@@ -1044,7 +1044,7 @@ public class PersonReferenceFrame extends JFrame {
 		if (((String) comboBox_Firm.getSelectedItem()).trim().isEmpty()) {
 			listAdd = listOtdelAll;
 		} else {
-			if (((String) comboBox_Firm.getSelectedItem()).trim().equals("¿≈÷  ÓÁÎÓ‰ÛÈ")) {
+			if (((String) comboBox_Firm.getSelectedItem()).trim().equals("–ê–ï–¶ –ö–æ–∑–ª–æ–¥—É–π")) {
 				listAdd = listOtdelKz;
 			}
 		}

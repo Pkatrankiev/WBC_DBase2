@@ -35,7 +35,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 
 	public ObrabDublicateSpisak_Prilogenie(Frame parent, String strDublObject, String pol1_DublObject,
 			String pol2_DublObject, String strNewObject, String pol1_NewObject, String pol2_NewObject) {
-		super(parent, "Дублирани Обекти", true);
+		super(parent, "Р”СѓР±Р»РёСЂР°РЅРё РћР±РµРєС‚Рё", true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		try {
 
@@ -50,7 +50,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 			contentPanel.setLayout(gbl_contentPanel);
 
-			lblDublObject = new JLabel("Дублиран обект");
+			lblDublObject = new JLabel("Р”СѓР±Р»РёСЂР°РЅ РѕР±РµРєС‚");
 			GridBagConstraints gbc_lblDublObject = new GridBagConstraints();
 			gbc_lblDublObject.anchor = GridBagConstraints.NORTH;
 			gbc_lblDublObject.fill = GridBagConstraints.HORIZONTAL;
@@ -69,7 +69,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			gbc_lblDublObjectTxt.gridy = 1;
 			contentPanel.add(lblDublObjectTxt, gbc_lblDublObjectTxt);
 
-			lblNewObject = new JLabel("Нов обект");
+			lblNewObject = new JLabel("РќРѕРІ РѕР±РµРєС‚");
 			GridBagConstraints gbc_lblNewObject = new GridBagConstraints();
 			gbc_lblNewObject.anchor = GridBagConstraints.NORTH;
 			gbc_lblNewObject.fill = GridBagConstraints.HORIZONTAL;
@@ -88,7 +88,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			gbc_lblNewObjectTxt.gridy = 3;
 			contentPanel.add(lblNewObjectTxt, gbc_lblNewObjectTxt);
 
-			lblPolDublObject = new JLabel("Полета на дублирания обект");
+			lblPolDublObject = new JLabel("РџРѕР»РµС‚Р° РЅР° РґСѓР±Р»РёСЂР°РЅРёСЏ РѕР±РµРєС‚");
 			GridBagConstraints gbc_lblPolDublObject = new GridBagConstraints();
 			gbc_lblPolDublObject.anchor = GridBagConstraints.NORTHWEST;
 			gbc_lblPolDublObject.insets = new Insets(0, 0, 5, 5);
@@ -114,7 +114,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			gbc_lblDublObjectPol2.gridy = 4;
 			contentPanel.add(lblDublObjectPol2, gbc_lblDublObjectPol2);
 
-			JLabel lblPolNewObject = new JLabel("Полета на нов обект");
+			JLabel lblPolNewObject = new JLabel("РџРѕР»РµС‚Р° РЅР° РЅРѕРІ РѕР±РµРєС‚");
 			GridBagConstraints gbc_lblPolNewObject = new GridBagConstraints();
 			gbc_lblPolNewObject.fill = GridBagConstraints.HORIZONTAL;
 			gbc_lblPolNewObject.insets = new Insets(0, 0, 0, 5);
@@ -145,7 +145,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-			JButton btnNewObjectSave = new JButton("запиши нов");
+			JButton btnNewObjectSave = new JButton("Р·Р°РїРёС€Рё РЅРѕРІ");
 			buttonPane.add(btnNewObjectSave);
 			getRootPane().setDefaultButton(btnNewObjectSave);
 			btnNewObjectSave.setEnabled(false);
@@ -157,7 +157,7 @@ public class ObrabDublicateSpisak_Prilogenie extends JDialog {
 			});
 			
 
-			JButton cancelButton = new JButton("Пропускане");
+			JButton cancelButton = new JButton("РџСЂРѕРїСѓСЃРєР°РЅРµ");
 			cancelButton.setActionCommand("Cancel");
 			buttonPane.add(cancelButton);
 			

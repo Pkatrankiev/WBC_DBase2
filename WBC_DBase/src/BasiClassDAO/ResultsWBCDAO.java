@@ -201,7 +201,7 @@ public class ResultsWBCDAO {
 	public static void MessageDialog(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "Ãðåøêà", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(jf, text, "Ð“Ñ€ÐµÑˆÐºÐ°", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static List<ResultsWBC> getValueResultsWBCByObject(String columnName, Object object) {

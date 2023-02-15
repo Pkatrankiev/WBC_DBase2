@@ -76,19 +76,19 @@ public class ReadKodeStatusFromExcelFile {
 					}
 
 					
-					if (!kodeKZ1.equals("ео-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("М") && !inCodeNotNumber(kodeKZ1)) {
+					if (!kodeKZ1.equals("п∙п÷-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("п╫") && !inCodeNotNumber(kodeKZ1)) {
 						listKodeStatus.add(new KodeStatus(person, kodeKZ1, ZoneDAO.getValueZoneByID(1), true, year, zab));
 					}
-					if (!kodeKZ2.equals("М") && !kodeKZ2.trim().equals("") && !inCodeNotNumber(kodeKZ2)) {
+					if (!kodeKZ2.equals("п╫") && !kodeKZ2.trim().equals("") && !inCodeNotNumber(kodeKZ2)) {
 						listKodeStatus.add(new KodeStatus(person, kodeKZ2, ZoneDAO.getValueZoneByID(2), true, year, zab));
 					}
-					if (!kodeHOG.equals("М") && !kodeHOG.trim().equals("") && !inCodeNotNumber(kodeHOG)) {
+					if (!kodeHOG.equals("п╫") && !kodeHOG.trim().equals("") && !inCodeNotNumber(kodeHOG)) {
 						listKodeStatus.add(new KodeStatus(person, kodeHOG, ZoneDAO.getValueZoneByID(3), true, year, zab));
 					}
-					if (!kodeT1.equals("М") && !kodeT1.trim().equals("") && !inCodeNotNumber(kodeT1)) {
+					if (!kodeT1.equals("п╫") && !kodeT1.trim().equals("") && !inCodeNotNumber(kodeT1)) {
 						listKodeStatus.add(new KodeStatus(person, kodeT1, ZoneDAO.getValueZoneByID(4), true, year, zab));
 					}
-					if (!kodeT2.equals("М") && !kodeT2.trim().equals("") && !inCodeNotNumber(kodeT2)) {
+					if (!kodeT2.equals("п╫") && !kodeT2.trim().equals("") && !inCodeNotNumber(kodeT2)) {
 						listKodeStatus.add(new KodeStatus(person, kodeT2, ZoneDAO.getValueZoneByID(5), true, year, zab));
 					}
 

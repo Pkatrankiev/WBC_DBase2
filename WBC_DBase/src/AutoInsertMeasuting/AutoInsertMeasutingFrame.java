@@ -429,7 +429,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Koment.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Koment);
 
-		JLabel lbl_L_AddNuclide = new JLabel("± Nuclide");
+		JLabel lbl_L_AddNuclide = new JLabel("Â± Nuclide");
 		lbl_L_AddNuclide.setSize(new Dimension(60, 20));
 		lbl_L_AddNuclide.setPreferredSize(new Dimension(55, 20));
 		lbl_L_AddNuclide.setMinimumSize(new Dimension(60, 20));
