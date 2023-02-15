@@ -511,10 +511,41 @@ public class PersonReferenceFrame extends JFrame {
 		str = str + year + "\n";
 		str = str + "Кодове: \n";
 		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
-		
+		String yearKode="";
+		int index = -1;
+		String[][] masiveKode = new String[listK.size()][4];
 			for (KodeStatus kodeStat : listK) {
 				if (year.trim().isEmpty() || kodeStat.getYear().equals(year)) {
 					
+					if(!kodeStat.getYear().equals(yearKode)) {
+					yearKode = kodeStat.getYear();
+					index++;
+					}
+					
+					switch (kodeStat.getZone().getId_Zone()) {
+					case 1: {
+						masiveKode[index][1] =  kodeStat.getKode();
+					}
+					break;
+					
+					case 2: {
+						masiveKode[index][2] =  kodeStat.getKode();
+					}
+					break;
+					case 3: {
+						masiveKode[index][3] =  kodeStat.getKode();
+					}
+					break;
+					case 4: {
+						masiveKode[index][4] =  kodeStat.getKode();
+					}
+					break;
+					case 5: {
+						masiveKode[index][5] =  kodeStat.getKode();
+					}
+					break;
+					
+					}				
 					str = str + kodeStat.getYear() + "  " + kodeStat.getZone().getNameTerritory() + " - " + kodeStat.getKode() + " "
 							+ kodeStat.getZabelejkaKodeStatus() + "\n";
 				}
@@ -523,10 +554,10 @@ public class PersonReferenceFrame extends JFrame {
 			
 		str = str + "\n";
 		str = str + "Заповеди \n";
-		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObject("Person_ID", person);
+		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		if(!year.trim().isEmpty()) {
 			for (PersonStatus perStat : listP) {
-				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year);
+				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year );
 				for (Spisak_Prilogenia spPr : listS) {
 				if (perStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
 					str = str +generateString( perStat);
@@ -568,11 +599,11 @@ public class PersonReferenceFrame extends JFrame {
 		return str;
 	}
 
-	@SuppressWarnings("deprecation")
+	
 	static String generateString( PersonStatus perStat) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		
-		return 	 perStat.getDateSet().getYear() +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
+		String yaer = sdf.format(perStat.getDateSet()).substring(6);
+		return 	 yaer +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
 					+"  от "+ sdf.format(perStat.getSpisak_prilogenia().getStartDate())
 					+"  до "+ sdf.format(perStat.getSpisak_prilogenia().getEndDate())
 					+" "+ perStat.getZabelejka().replaceAll("\n", " ") + "\n";

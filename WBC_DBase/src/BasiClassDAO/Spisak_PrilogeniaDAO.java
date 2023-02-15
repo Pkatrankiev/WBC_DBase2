@@ -257,8 +257,10 @@ public class Spisak_PrilogeniaDAO {
 			case "Workplace_ID": {
 				preparedStatement.setObject(1, ((Workplace) object).getId_Workplace());
 			}
+			break;
 			default:
 				preparedStatement.setObject(1, object);
+				break;
 			}
 			ResultSet result = preparedStatement.executeQuery();
 
@@ -303,10 +305,13 @@ public class Spisak_PrilogeniaDAO {
 			case "Workplace_ID": {
 				preparedStatement.setObject(1, ((Workplace) object).getId_Workplace());
 			}
+			break;
 			default:
-				preparedStatement.setObject(1, object);
+			preparedStatement.setObject(1, object);
+			break;
 			}
-
+			
+			
 			ResultSet result = preparedStatement.executeQuery();
 			while (result.next()) {
 				Spisak_Prilogenia resultObject = new Spisak_Prilogenia();

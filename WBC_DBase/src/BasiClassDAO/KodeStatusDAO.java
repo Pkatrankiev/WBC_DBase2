@@ -221,6 +221,7 @@ public class KodeStatusDAO {
 			break;
 			default:
 				preparedStatement.setObject(1, object);
+				break;
 			}
 						
 			ResultSet result = preparedStatement.executeQuery();
@@ -266,6 +267,7 @@ public class KodeStatusDAO {
 			break;
 			default:
 				preparedStatement.setObject(1, object);
+				break;
 			}
 						
 			ResultSet result = preparedStatement.executeQuery();

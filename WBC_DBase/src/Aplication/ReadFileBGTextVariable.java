@@ -26,7 +26,7 @@ public class ReadFileBGTextVariable {
 			try {	
 			File fileDir = new File(respath);
 			InputStream in = new FileInputStream(fileDir);
-			br = new BufferedReader(new InputStreamReader(in,"Cp1251"));
+			br = new BufferedReader(new InputStreamReader(in,"UTF-8"));
 			String sCurrentLine;
 			int index;
 			while ((sCurrentLine = br.readLine()) != null) {

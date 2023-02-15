@@ -200,12 +200,15 @@ public class KodeGenerateDAO {
 			case "Workplace_ID": {
 				preparedStatement.setObject(1, ((Workplace) object).getId_Workplace());
 			}
+			break;
 			case "Zone_ID": {
 				preparedStatement.setObject(1, ((Zone) object).getId_Zone());
 			}
+			break;
 			
 			default:
 				preparedStatement.setObject(1, object);
+				break;
 			}
 						
 			ResultSet result = preparedStatement.executeQuery();
