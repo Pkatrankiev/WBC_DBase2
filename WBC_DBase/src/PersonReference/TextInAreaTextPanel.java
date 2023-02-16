@@ -103,10 +103,11 @@ public class TextInAreaTextPanel {
 	private static String[][] generateMasiveMeasur(String year, List<Measuring> listM) {
 		String[][] masiveMeasur = new String[listM.size()*3][9];
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		boolean fl = false;
+		boolean fl;
 		String data;
 		int i = 0;
 		for (Measuring measur : listM) {
+			fl = false;
 			List<ResultsWBC> listR = ResultsWBCDAO.getValueResultsWBCByObject("Measuring_ID", measur);
 			data = sdf.format(measur.getDate()).substring(6);
 			System.out.println(data);
