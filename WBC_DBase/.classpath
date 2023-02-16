@@ -18,6 +18,6 @@
 	<classpathentry kind="lib" path="Lib/poi-4.1.0.jar"/>
 	<classpathentry kind="lib" path="Lib/commons-collections4-4.1.jar"/>
 	<classpathentry kind="lib" path="Lib/tablefilter-swing-5.4.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="/JPA_RH_DBase/Lib/lib/tablefilter-swing-5.4.0.jar" sourcepath="C:/Users/Mirsi/.m2/repository/net/coderazzi/tablefilter-swing/5.4.0/tablefilter-swing-5.4.0-sources.jar"/>
+	<classpathentry kind="lib" path="Lib/tablefilter-swing-5.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
