@@ -27,19 +27,15 @@ import javax.swing.text.DocumentFilter;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.RemouveDublikateFromList;
 import AutoInsertMeasuting.InsertMeasurToExcel;
-import BasiClassDAO.DimensionWBCDAO;
+
 import BasiClassDAO.KodeStatusDAO;
-import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
-import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.KodeStatus;
-import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
-import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 
@@ -54,7 +50,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -107,6 +102,7 @@ public class PersonReferenceFrame extends JFrame {
 	
 
 	public PersonReferenceFrame() {
+		setMinimumSize(new Dimension(730, 900));
 		
 		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 		notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
@@ -119,10 +115,7 @@ public class PersonReferenceFrame extends JFrame {
 			MessageDialog("Year not korekt in BGTextVariable", "Error");
 			System.exit(0);
 		}
-		
-		
-		setResizable(false);
-		int y = 900, x = 730;
+	
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -145,7 +138,7 @@ public class PersonReferenceFrame extends JFrame {
 		infoPanel.setLayout(new BorderLayout(0, 0));
 		 
 		textArea = new JTextArea();
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
 		JScrollPane sp = new JScrollPane(textArea);
 		infoPanel.add(sp, BorderLayout.CENTER);
 		
@@ -186,7 +179,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		panel_Button();
 
-		setSize(x, y);
+		setSize(737, 900);
 		setLocationRelativeTo(null);
 		setVisible(true);
 
@@ -502,114 +495,7 @@ public class PersonReferenceFrame extends JFrame {
 		}
 		return str;
 	}
-
-	protected static String createInfoPanelForPerson(Person person) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		
-		String year = textField_Year.getText(); 
-		String str = person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
-		str = str + year + "\n";
-		str = str + "Кодове: \n";
-		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
-		String yearKode="";
-		int index = -1;
-		String[][] masiveKode = new String[listK.size()][4];
-			for (KodeStatus kodeStat : listK) {
-				if (year.trim().isEmpty() || kodeStat.getYear().equals(year)) {
-					
-					if(!kodeStat.getYear().equals(yearKode)) {
-					yearKode = kodeStat.getYear();
-					index++;
-					}
-					
-					switch (kodeStat.getZone().getId_Zone()) {
-					case 1: {
-						masiveKode[index][1] =  kodeStat.getKode();
-					}
-					break;
-					
-					case 2: {
-						masiveKode[index][2] =  kodeStat.getKode();
-					}
-					break;
-					case 3: {
-						masiveKode[index][3] =  kodeStat.getKode();
-					}
-					break;
-					case 4: {
-						masiveKode[index][4] =  kodeStat.getKode();
-					}
-					break;
-					case 5: {
-						masiveKode[index][5] =  kodeStat.getKode();
-					}
-					break;
-					
-					}				
-					str = str + kodeStat.getYear() + "  " + kodeStat.getZone().getNameTerritory() + " - " + kodeStat.getKode() + " "
-							+ kodeStat.getZabelejkaKodeStatus() + "\n";
-				}
-			
-		}
-			
-		str = str + "\n";
-		str = str + "Заповеди \n";
-		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
-		if(!year.trim().isEmpty()) {
-			for (PersonStatus perStat : listP) {
-				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year );
-				for (Spisak_Prilogenia spPr : listS) {
-				if (perStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
-					str = str +generateString( perStat);
-				}
-			}
-				}
-		}else {
-			for (PersonStatus perStat : listP) {
-				str = str +generateString( perStat);
-				}
-			}
-				
-		str = str + "\n";
-		str = str + "Измервания СИЧ \n";
-		List<Measuring> listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
-		String data;
-		
-			for (Measuring measur : listM) {
-				List<ResultsWBC> listR = ResultsWBCDAO.getValueResultsWBCByObject("Measuring_ID", measur);
-				data = sdf.format(measur.getDate()).substring(6);
-				System.out.println(data);
-				if (year.trim().isEmpty() || data.equals(year)) {
-					str = str + data + "  " + sdf.format(measur.getDate()) +" "+ measur.getDoze() 
-							+" "+ measur.getDoseDimension().getDimensionName() 
-							+" "+ measur.getLab().getLab()+ "\n";
-					for (ResultsWBC result : listR) {
-						str = str + result.getNuclideWBC().getSymbol_nuclide() 
-						+" "+ result.getActivity() +" "+  DimensionWBCDAO.getValueDimensionWBCByID(4).getDimensionName()
-						+" "+ result.getPostaplenie()  +" "+  DimensionWBCDAO.getValueDimensionWBCByID(4).getDimensionName() 
-						+" "+ result.getGgp()   +" "+  DimensionWBCDAO.getValueDimensionWBCByID(7).getDimensionName()
-						+" "+ result.getNuclideDoze()  +" "+  DimensionWBCDAO.getValueDimensionWBCByID(2).getDimensionName()
-						+ "\n";	
-					}
-				
-			}
-		}
-		
-		
-		return str;
-	}
-
 	
-	static String generateString( PersonStatus perStat) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		String yaer = sdf.format(perStat.getDateSet()).substring(6);
-		return 	 yaer +"  "+ perStat.getWorkplace().getOtdel()+"  "+ perStat.getSpisak_prilogenia().getFormulyarName()
-					+"  от "+ sdf.format(perStat.getSpisak_prilogenia().getStartDate())
-					+"  до "+ sdf.format(perStat.getSpisak_prilogenia().getEndDate())
-					+" "+ perStat.getZabelejka().replaceAll("\n", " ") + "\n";
-		
-	}
-
 	protected List<Person> getListSearchingPerson() {
 		List<Person> listSelectionPersonEGN = new ArrayList<>();
 		List<Person> listSelectionPersonFName = new ArrayList<>();
@@ -770,7 +656,7 @@ public class PersonReferenceFrame extends JFrame {
 				}
 				
 				if(listSelectionPerson.size()==1) {
-					textArea.setText(createInfoPanelForPerson(listSelectionPerson.get(0)));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0)));
 					viewInfoPanel();
 				}
 				
@@ -842,7 +728,7 @@ public class PersonReferenceFrame extends JFrame {
 					int index = str.indexOf(" ");
 					System.out.println("--->> "+str.substring(0,index));
 					Person person = PersonDAO.getValuePersonByEGN(str.substring(0,index));
-					textArea.setText(createInfoPanelForPerson(person));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person));
 					viewInfoPanel();
 					
 				}
@@ -898,6 +784,8 @@ public class PersonReferenceFrame extends JFrame {
 	
 	private JPanel panel_3() {
 		JPanel panel3 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel3.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel3.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel3);
 
@@ -1014,7 +902,7 @@ public class PersonReferenceFrame extends JFrame {
 				if (e.getClickCount() == 2 && getSelectedModelRow(table) != -1) {
 					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
 					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
-					textArea.setText(createInfoPanelForPerson(person));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person));
 					viewInfoPanel();
 					
 							}

@@ -95,13 +95,13 @@ public class SearchFromExcellFiles {
 				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year);
 				for (Spisak_Prilogenia spPr : listS) {
 				if (perStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
-					str = str +PersonReferenceFrame.generateString( perStat);
+					str = str +TextInAreaTextPanel.generateRowByMasive( perStat);
 				}
 			}
 				}
 		}else {
 			for (PersonStatus perStat : listP) {
-				str = str +PersonReferenceFrame.generateString( perStat);
+				str = str +TextInAreaTextPanel.generateRowByMasive( perStat);
 				}
 			}
 				
