@@ -39,7 +39,7 @@ public static void main(String[] args) {
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
 		new MainWindowWBC_DBase();
-		
+		GeneralMethods.cerateDestinationDir();
 		
 	}
 	

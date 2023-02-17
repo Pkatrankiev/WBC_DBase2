@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JTextField;
 
+import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeStatusDAO;
@@ -24,40 +25,46 @@ import BasicClassAccessDbase.Zone;
 public class TextInAreaTextPanel {
 
 	private static int columnSizeOtdel;
+	private static Person person;
+	private static String[] masivePersonStatusName = {"Year","Otdel","Spisak","start Date","end Date","Koment"};
+	private static String[][] masivePersonStatus;
+	private static String[] masiveZoneName;
+	private static String[][] masiveKode;
+	private static String[] masiveMeasurName = {"Year","Date","Doze[mSv]","Lab","Nuc.","Act.[Bq]","Inc.[%]","GGP[%]","Doze[%]"};
+	private static String[][] masiveMeasur;
 	
-	protected static String createInfoPanelForPerson(JTextField textField_Year, Person person) {
+	protected static String createInfoPanelForPerson(JTextField textField_Year, Person personInport) {
 		
 		String year = textField_Year.getText();
-		
-		String[] masivePersonStatusName = {"Year","Otdel","Spisak","start Date","end Date","Koment"};
+		person = personInport;
 		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
-		String[][] masivePersonStatus = generateMasivePersonStatus(year, listP);
+		masivePersonStatus = generateMasivePersonStatus(year, listP);
 		String textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
 		
-		String[] masiveZoneName = getMasiveZoneName();
+		masiveZoneName = getMasiveZoneName();
 		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
-		String[][] masiveKode = generateMasiveKodeStatus(year, listK, masivePersonStatus);
+		masiveKode = generateMasiveKodeStatus(year, listK, masivePersonStatus);
 		String textKode = setTextInfoKode(masiveKode, masiveZoneName);
 		
-		String[] masiveMeasurName = {"Year","Date","Doze[mSv]","Lab","Nuc.","Act.[Bq]","Inc.[%]","GGP[%]","Doze[%]"};
+		
 		List<Measuring> listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
-		String[][] masiveMeasur = generateMasiveMeasur(year, listM);
+		masiveMeasur = generateMasiveMeasur(year, listM);
 		String textMeasur = setTextInfoMeasur(masiveMeasur, masiveMeasurName);
 		
 		String str = person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
 		
 		str = str + year + "\n";
-		str = str + "Кодове: \n";
+		str = str + ReadFileBGTextVariable.getGlobalTextVariableMap().get("code") + "\n";
 		str = str + textKode;
 			
 		str = str + "\n";
-		str = str + "Заповеди \n";
+		str = str + ReadFileBGTextVariable.getGlobalTextVariableMap().get("orders") +"\n";
 		str = str + textSpis;
 		
 	
 				
 		str = str + "\n";
-		str = str + "Измервания СИЧ \n";
+		str = str + ReadFileBGTextVariable.getGlobalTextVariableMap().get("measurSICH") + "\n";
 		str = str + textMeasur;
 	
 		
@@ -65,6 +72,34 @@ public class TextInAreaTextPanel {
 		return str;
 	}
 	
+	public static Person getPerson() {
+		return person;
+	}
+
+	public static String[] getMasivePersonStatusName() {
+		return masivePersonStatusName;
+	}
+
+	public static String[][] getMasivePersonStatus() {
+		return masivePersonStatus;
+	}
+
+	public static String[][] getMasiveKode() {
+		return masiveKode;
+	}
+
+	public static String[] getZoneNameMasive() {
+		return masiveZoneName;
+	}
+	
+	public static String[] getMasiveMeasurName() {
+		return masiveMeasurName;
+	}
+
+	public static String[][] getMasiveMeasur() {
+		return masiveMeasur;
+	}
+
 	private static String setTextInfoMeasur(String[][] masiveMeasur, String[] masiveMeasurName) {
 		int[] max = {5,12,11,7,12,8,8,8,8};
 		boolean fl=false;
@@ -133,7 +168,7 @@ public class TextInAreaTextPanel {
 			
 		}
 	}
-		String[][] newMasiveMeasur = new String[i-1][9];
+		String[][] newMasiveMeasur = new String[i][9];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			
@@ -142,6 +177,9 @@ public class TextInAreaTextPanel {
 		return newMasiveMeasur;
 	}
 
+	
+	
+	
 	private static String setTextInfoPersonStatus(String[][] masivePersonStatus, String[] masivePersonStatusName) {
 		String personStatusString = "";
 		int[] columnSize = getMaxSize2and3column(masivePersonStatus);
@@ -224,6 +262,7 @@ public class TextInAreaTextPanel {
 	private static String[][] generateMasiveKodeStatus(String year, List<KodeStatus> listK, String[][] masivePersonStatus) {
 		String yearKode="";
 		int index = -1;
+		
 		String[][] masiveKode = new String[listK.size()][7];
 		masiveKode = setDefoutValueInMasive(masiveKode);
 			for (KodeStatus kodeStat : listK) {
@@ -260,11 +299,16 @@ public class TextInAreaTextPanel {
 					
 					}	
 			
-
+					
 				}
-			
+				
 		}
-		return masiveKode;
+			String[][] newMasiveKode = new String[index+1][7];
+			for (int i = 0; i < newMasiveKode.length; i++) {
+				newMasiveKode[i] = masiveKode[i];
+			}
+			
+		return newMasiveKode;
 	}
 	
 	private static String getOtdelByYear(String yearKode, String[][] masivePersonStatus) {
@@ -300,12 +344,12 @@ public class TextInAreaTextPanel {
 		kodeString = kodeString + "\n";	
 		
 		for (int i = 0; i < masiveKode.length; i++) {
-			if(!masiveKode[i][0].equals("-")) {
+//			if(!masiveKode[i][0].equals("-")) {
 			for (int j = 0; j < masiveZoneName.length; j++) {
 			kodeString = kodeString + getAddSpace(max[j], masiveKode[i][j]) + masiveKode[i][j];
 		}
 			kodeString = kodeString + "\n";
-			}
+//			}
 		}
 		return kodeString;
 	}
@@ -321,6 +365,8 @@ public class TextInAreaTextPanel {
 		}
 		return masiveZoneName;
 	}
+	
+	
 	
 	private static String getAddSpace(int space, String kodeString) {
 		 String addString = "";

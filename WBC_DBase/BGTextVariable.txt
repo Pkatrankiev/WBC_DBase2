@@ -6,6 +6,8 @@ filePathMonthExternal = d:\\month\\wbc_month.xls
 filePathMonthPersonel = d:\\month\\wbc_month_P.xls
 filePathArhivePersonel = d:\\Arhive\\PERSONNEL_
 filePathArhiveExternal = d:\\Arhive\\EXTERNAL_
+destinationDir = DIRECTORY/
+destinationIcons = resurce/ICONS/ajaxLoader.gif
 klikToCopy = Клилнете за да копирате
 MenuOder_TitleName = Гама Кал. Екстракт
 isEmptyDozeFilds = Има празни полета за дози.
@@ -21,4 +23,7 @@ dublicateRepFileInDBase = В базата има запис на стойнос�
 notResults = Няма намерени резултати
 AEC = АЕЦ Козлодуй
 VO = Външни организации
-
+cell_maximum_number_exceeded = Броя на клетките са повече от 4000
+code = Кодове
+measurSICH = Измервания СИЧ
+orders = Заповеди

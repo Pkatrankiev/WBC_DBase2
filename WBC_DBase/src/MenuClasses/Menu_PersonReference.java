@@ -1,18 +1,9 @@
 package MenuClasses;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.JFrame;
-
-import Aplication.ReadResultFromReport;
-import Aplication.ReportMeasurClass;
-import AutoInsertMeasuting.AutoInsertMeasutingFrame;
-import BasiClassDAO.LaboratoryDAO;
-import BasiClassDAO.NuclideWBCDAO;
-import BasiClassDAO.TypeMeasurDAO;
-import BasiClassDAO.UsersWBCDAO;
+import Aplication.ActionIcone;
 import PersonReference.PersonReferenceFrame;
+
 
 public class Menu_PersonReference extends AbstractMenuAction{
 	
@@ -26,8 +17,23 @@ public class Menu_PersonReference extends AbstractMenuAction{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-	new PersonReferenceFrame();
-			
+		ActionIcone round = new ActionIcone();
+		 final Thread thread = new Thread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 
+		    	 new PersonReferenceFrame(round);
+		    	     	
+		     }
+		    });
+		    thread.start();	
+		
+		
+		
+		
+		
+	
+
 	}
 	
 }
