@@ -33,23 +33,49 @@ public class TextInAreaTextPanel {
 	private static String[] masiveMeasurName = {"Year","Date","Doze[mSv]","Lab","Nuc.","Act.[Bq]","Inc.[%]","GGP[%]","Doze[%]"};
 	private static String[][] masiveMeasur;
 	
-	protected static String createInfoPanelForPerson(JTextField textField_Year, Person personInport) {
+	protected static String createInfoPanelForPerson(JTextField textField_Year, Person personInport, boolean fromExcell) {
+		List<KodeStatus> listK = null;
+		List<PersonStatus> listP = null;
+		List<Measuring> listM = null;
 		
 		String year = textField_Year.getText();
 		person = personInport;
-		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
+		
+		if(fromExcell) {
+			listP =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, personInport);
+		}else{
+		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
+		}
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
-		String textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
+		String textSpis ="";
+				if(masivePersonStatus.length>0) {
+		textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
+		}
 		
 		masiveZoneName = getMasiveZoneName();
-		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
+		if(fromExcell) {
+			listK = SearchFromExcellFiles.getListKodeStatusFromExcelFile(year, personInport);
+		}else{
+		listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
+		}
 		masiveKode = generateMasiveKodeStatus(year, listK, masivePersonStatus);
-		String textKode = setTextInfoKode(masiveKode, masiveZoneName);
+		String textKode ="";
+		if(masiveKode.length>0) {
+		textKode = setTextInfoKode(masiveKode, masiveZoneName);
+		}
 		
-		
-		List<Measuring> listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
+		if(fromExcell) {
+			masiveMeasur = SearchFromExcellFiles.generateMasiveMeasurFromExcelFile( year, person);
+		}else{
+		listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
 		masiveMeasur = generateMasiveMeasur(year, listM);
-		String textMeasur = setTextInfoMeasur(masiveMeasur, masiveMeasurName);
+		}
+		
+		String textMeasur ="";
+		if(masiveMeasur.length>0) {
+		textMeasur = setTextInfoMeasur(masiveMeasur, masiveMeasurName);
+		}
+		
 		
 		String str = person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
 		
@@ -191,11 +217,13 @@ public class TextInAreaTextPanel {
 		personStatusString = personStatusString + "     "+ masivePersonStatusName[5]+ "\n";	
 		
 		for (int i = 0; i < masivePersonStatus.length; i++) {
+			if(masivePersonStatus[i][0]!=null ) {
 			for (int j = 0; j < 5; j++) {
 				System.out.println(columnSize[j]+" "+masivePersonStatus[i][j]);
 				personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatus[i][j]) + masivePersonStatus[i][j];	
 			}
-			personStatusString = personStatusString + " "+ masivePersonStatus[i][5]+ "\n";		
+			personStatusString = personStatusString + " "+ masivePersonStatus[i][5]+ "\n";	
+			}
 		}
 		
 	
@@ -203,12 +231,12 @@ public class TextInAreaTextPanel {
 	}
 
 	private static int[] getMaxSize2and3column(String[][] masivePersonStatus) {
-		int[] max = {5,0,0,15,15};
+		int[] max = {5,7,8,15,15};
 		for (int i = 0; i < masivePersonStatus.length; i++) {
-			if(masivePersonStatus[i][1].length()>max[1]) {
+			if(masivePersonStatus[i][1]!=null && masivePersonStatus[i][1].length()>max[1]) {
 				max[1] = masivePersonStatus[i][1].length();
 			}
-			if(masivePersonStatus[i][2].length()>max[2]) {
+			if(masivePersonStatus[i][2]!=null && masivePersonStatus[i][2].length()>max[2]) {
 				max[2] = masivePersonStatus[i][2].length();
 			}
 		}
@@ -314,7 +342,7 @@ public class TextInAreaTextPanel {
 	private static String getOtdelByYear(String yearKode, String[][] masivePersonStatus) {
 		String otdel = "";
 		for (int i = 0; i < masivePersonStatus.length; i++) {
-			if(masivePersonStatus[i][0].equals(yearKode)) {
+			if(masivePersonStatus[i][0]!=null && masivePersonStatus[i][0].equals(yearKode)) {
 				return masivePersonStatus[i][1];
 			}
 		}

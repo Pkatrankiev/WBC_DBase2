@@ -422,7 +422,7 @@ public class PersonReferenceFrame extends JFrame {
 		btn_SearchFromExcel.setPreferredSize(new Dimension(110, 23));
 		panel2A.add(btn_SearchFromExcel);
 		
-		ActionListenerbBtn_SearchFromExcel(notResults);
+		ActionListenerbBtn_SearchFromExcel();
 		
 		
 		return panel2A;
@@ -438,7 +438,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		comboBox_Results = new Choice();
 		comboBox_Results.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		comboBox_Results.setPreferredSize(new Dimension(600, 20));
+		comboBox_Results.setPreferredSize(new Dimension(590, 20));
 		panel3.add(comboBox_Results);
 		
 		ActionListenerComboBox_Results();
@@ -676,6 +676,7 @@ public class PersonReferenceFrame extends JFrame {
 				if(!allFieldsEmnty()){
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					dataTable=null;	
+					textArea.setText("");
 				comboBox_Results.removeAll();
 				List<Person> listSelectionPerson = getListSearchingPerson();
 				addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
@@ -687,7 +688,7 @@ public class PersonReferenceFrame extends JFrame {
 				}
 				
 				if(listSelectionPerson.size()==1) {
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0)));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0), false));
 					viewInfoPanel();
 				}
 				
@@ -698,7 +699,7 @@ public class PersonReferenceFrame extends JFrame {
 					viewTablePanel() ;
 				}
 				
-				
+				GeneralMethods.setDefaultCursor(panel_AllSaerch);	
 			}
 			}
 
@@ -709,7 +710,7 @@ public class PersonReferenceFrame extends JFrame {
 
 	}
 
-	private void  ActionListenerbBtn_SearchFromExcel(String notResults) {
+	private void  ActionListenerbBtn_SearchFromExcel() {
 	
 		
 		
@@ -734,7 +735,7 @@ public class PersonReferenceFrame extends JFrame {
 				}
 				
 				if(listSelectionPerson.size()==1) {
-					textArea.setText(SearchFromExcellFiles.createInfoPanelForPerson(listSelectionPerson.get(0)));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0).getPerson(), true));
 					viewInfoPanel();
 				}
 				
@@ -760,15 +761,16 @@ public class PersonReferenceFrame extends JFrame {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					textArea.setText("12");
+					textArea.setText("");
 					repaint();
+					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					String str = comboBox_Results.getSelectedItem();
 					int index = str.indexOf(" ");
 					System.out.println("--->> "+str.substring(0,index));
 					Person person = PersonDAO.getValuePersonByEGN(str.substring(0,index));
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person, false));
 					viewInfoPanel();
-					
+					GeneralMethods.setDefaultCursor(panel_AllSaerch);	
 				}
 			}
 		});
@@ -847,7 +849,7 @@ public class PersonReferenceFrame extends JFrame {
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("888888888888888888888888888888888888");
-				if(btnBackToTable.isEnabled()) {
+				if(btnBackToTable.isEnabled() || dataTable==null) {
 					
 					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(), TextInAreaTextPanel.getMasivePersonStatusName(),  TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(), TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName() ,  TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
 				}else {
@@ -951,11 +953,12 @@ public class PersonReferenceFrame extends JFrame {
 				}
 				
 				if (e.getClickCount() == 2 && getSelectedModelRow(table) != -1) {
+					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
 					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person));
+					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person, false));
 					viewInfoPanel();
-					
+					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 							}
 							}
 		});

@@ -128,8 +128,12 @@ public class PersonReferenceExportToExcell {
 		String excelFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir")
 				+ "exportInfoPerson.xls";
 		try {
-			int size = masivePersonStatus.length * masivePersonStatus[0].length;
+			int size =0;
+			if(masivePersonStatus.length>0)
+			size = masivePersonStatus.length * masivePersonStatus[0].length;
+			if(masiveKode.length>0)
 			size = size +masiveKode.length * masiveKode[0].length;
+			if(masiveMeasur.length>0)
 			size = size +masiveMeasur.length * masiveMeasur[0].length;
 			if ( size < 4000) {
 

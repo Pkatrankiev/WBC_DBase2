@@ -33,7 +33,7 @@ public class ReadResultsWBCFromExcelFile {
 			listResultsWBC = generateListFromResultsWBCFromBigExcelFile(workbook);
 				
 		}else {
-			listResultsWBC = getListPersonStatusFromSmalExcelFile(workbook);	
+			listResultsWBC = generateListFromResultsWBCFromSmalExcelFile(workbook);	
 		}
 		return listResultsWBC;
 	}
@@ -41,7 +41,7 @@ public class ReadResultsWBCFromExcelFile {
 	
 	
 	
-	private static List<ResultsWBC> getListPersonStatusFromSmalExcelFile(Workbook workbook) {
+	private static List<ResultsWBC> generateListFromResultsWBCFromSmalExcelFile(Workbook workbook) {
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
 		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);

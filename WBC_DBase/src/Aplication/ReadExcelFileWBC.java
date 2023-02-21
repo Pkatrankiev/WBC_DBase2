@@ -265,7 +265,7 @@ public class ReadExcelFileWBC {
 		return str;
 	}
 
-	static Workplace selectWorkplace(String firmName, String[] masiveWorkplace, String otdelName,
+	public static Workplace selectWorkplace(String firmName, String[] masiveWorkplace, String otdelName,
 			List<Workplace> listAllWorkplaceByFirmName) {
 		Workplace workplace;
 		workplace = new Workplace();

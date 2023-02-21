@@ -126,8 +126,6 @@ public class ReadPersonStatusFromExcelFile {
 		return listPerStat;
 	}
 
-
-
 	public static List<PersonStatus> getListPersonStatusFromBigExcelFile(Workbook workbook, String firmName, String year) {
 		 
 		List<PersonStatus> listPerStat = new ArrayList<>();
