@@ -1,12 +1,8 @@
 package Aplication;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
+
 import java.util.List;
 
-
-
-import BasiClassDAO.PersonDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;

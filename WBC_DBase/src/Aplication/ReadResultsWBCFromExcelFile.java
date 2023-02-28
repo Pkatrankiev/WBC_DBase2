@@ -50,7 +50,7 @@ public class ReadResultsWBCFromExcelFile {
 		double[] nuclideValue = new double[16];
 		double val;
 		Sheet sheet = workbook.getSheetAt(1);
-		Cell cell, cell1, cell2;
+		Cell cell, cell1;
 	
 		List<ResultsWBC> listResultsWBC = new ArrayList<>();
 		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
@@ -69,7 +69,7 @@ public class ReadResultsWBCFromExcelFile {
 					int k = 7;
 					cell1 = sheet.getRow(row).getCell(k);
 					k++;
-					cell2 = sheet.getRow(row).getCell(k);
+					
 					while (ReadExcelFileWBC.CellNOEmpty(cell1)) {
 						int countNuclide = 0;
 					date = ReadExcelFileWBC.readCellToDate(cell1);
@@ -114,7 +114,7 @@ public class ReadResultsWBCFromExcelFile {
 					k++;
 					cell1 = sheet.getRow(row).getCell(k);
 					k++;
-					cell2 = sheet.getRow(row).getCell(k);
+					
 					
 					
 					}

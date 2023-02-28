@@ -265,6 +265,39 @@ public class KodeGenerateDAO {
 		return listKodeGenerate.get(0);
 	}
 
+	public static KodeGenerate getValueKodeGenerateByWorkplaceAndZone(int workplace_ID, int zone_ID) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM KodeGenerate where Workplace_ID = ? and Zone_ID = ? LIMIT 1";
+
+		List<KodeGenerate> listKodeGenerate = new ArrayList<KodeGenerate>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, workplace_ID);
+			preparedStatement.setObject(2, zone_ID);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				KodeGenerate kodeGenerate = new KodeGenerate();
+				kodeGenerate.setKodeGenerate_ID(result.getInt("KodeGenerate_ID"));
+				Workplace workplace = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				kodeGenerate.setWorkplace(workplace);
+				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
+				kodeGenerate.setZone(zone);
+				kodeGenerate.setLetter_L(result.getString("Letter_L"));
+				kodeGenerate.setLetter_R(result.getString("Letter_R"));
+				kodeGenerate.setStartCount(result.getInt("StartCount"));
+				kodeGenerate.setEndCount(result.getInt("EndCount"));
+				listKodeGenerate.add(kodeGenerate);
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listKodeGenerate.size()>0 ? listKodeGenerate.get(0) : null;
+	}
+
 	
 	
 }

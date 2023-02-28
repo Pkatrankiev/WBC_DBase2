@@ -5,15 +5,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
@@ -55,14 +51,14 @@ public static void main(String[] args) {
 //	String key ="";
 //	String key = "Person";
 //	String key = "Spisak_Prilogenia";
-	String key = "PersonStatus";
+//	String key = "PersonStatus";
 //	String key = "KodeStatus";
 //	String key = "Measuring";
 //	String key = "ResultsWBC";
 	
-	String year = "2009";
+//	String year = "2009";
 	
-	boolean save = true;
+//	boolean save = true;
 //	boolean save = false;
 	
 //	AplicationMetods.readInfoFromGodExcelFile(year,  key, save);

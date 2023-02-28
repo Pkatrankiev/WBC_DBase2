@@ -4,9 +4,6 @@ package Aplication;
 	import java.net.*;
 	import java.util.*;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
 
 	public class NewPosPHPTest {
 	    public static void main(String[] args) throws Exception {
@@ -57,7 +54,7 @@ import org.jsoup.Jsoup;
 			    }
 			    System.out.println(response.toString());
 				       
-	        JSONArray myResponse = new JSONArray (response);
+//	        JSONArray myResponse = new JSONArray (response);
 	        
 	        
 //	        System.out.println(myResponse);

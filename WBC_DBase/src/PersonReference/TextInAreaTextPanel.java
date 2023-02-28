@@ -7,7 +7,6 @@ import javax.swing.JTextField;
 
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
-import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonStatusDAO;

@@ -27,3 +27,4 @@ cell_maximum_number_exceeded = Броя на клетките са повече 
 code = Кодове
 measurSICH = Измервания СИЧ
 orders = Заповеди
+freeKodeComent = Списък на свободните кодове за последните три години

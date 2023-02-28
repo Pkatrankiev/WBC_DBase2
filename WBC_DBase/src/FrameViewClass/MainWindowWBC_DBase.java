@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 
 import Aplication.ResourceLoader;
 import MenuClasses.Menu_AutoInsertMeasuting;
+import MenuClasses.Menu_PersonManagement;
 import MenuClasses.Menu_PersonReference;
 
 import javax.swing.JMenuBar;
@@ -45,6 +46,7 @@ public class MainWindowWBC_DBase extends JFrame {
 		JMenuBar menu = new JMenuBar();
 		menu.add(createMenu_Measuring());
 		menu.add(createMenu_PersonReference());
+		menu.add(createMenu_PersonManagement());
 		
 		return menu;
 	}
@@ -72,6 +74,19 @@ public class MainWindowWBC_DBase extends JFrame {
 		
 		return measuringMenu;
 	}
+	
+	private JMenu createMenu_PersonManagement() {
+		JMenu personReferenceMenu = new JMenu("PersonManagement");
+		personReferenceMenu.setToolTipText("for management by Person");
+		personReferenceMenu.setMnemonic(KeyEvent.VK_M);
+		
+		personReferenceMenu.add(new Menu_PersonManagement());
+		personReferenceMenu.addSeparator();
+		
+		return personReferenceMenu;
+	}
+	
+	
 	
 	private void GetVisibleLAF(final JFrame win) {
 		try {
