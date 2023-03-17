@@ -16,16 +16,23 @@ import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.Zone;
+import PersonReference.PersonReferenceFrame;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import java.awt.Choice;
+import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.Button;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Calendar;
 import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -43,6 +50,7 @@ public class SearchFreeKodeFrame extends JFrame {
 	private JScrollPane scrollPane;
 	
 	private Choice choiceZona;
+	private Choice choiceWorkplace;
 	private JTable table;
 	private JLabel lblComent;
 	
@@ -87,11 +95,12 @@ public class SearchFreeKodeFrame extends JFrame {
 			setLocationRelativeTo(null);
 			setVisible(true);
 			
+			changeTextFild(choiceWorkplace, choiceZona);
+			
 			round.StopWindow();
 			
 		
 	}
-
 
 	private void setButtonPanel() {
 		JPanel buttonPane = new JPanel();
@@ -121,6 +130,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			textField_Leter = new JTextField();
 			panel2.add(textField_Leter);
 			textField_Leter.setColumns(10);
+			ActionListenerLeterTextField(textField_Leter);
 		
 			JLabel lblStart = new JLabel("Start");
 			lblStart.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -130,6 +140,8 @@ public class SearchFreeKodeFrame extends JFrame {
 			textField_Start = new JTextField();
 			panel2.add(textField_Start);
 			textField_Start.setColumns(10);
+			PersonReferenceFrame.TextFieldJustNumbers(textField_Start);
+			ActionListenerTextField(textField_Start);
 		
 			JLabel lblEnd = new JLabel("End");
 			lblEnd.setPreferredSize(new Dimension(50, 14));
@@ -138,6 +150,8 @@ public class SearchFreeKodeFrame extends JFrame {
 		
 			textField_End = new JTextField();
 			textField_End.setColumns(10);
+			PersonReferenceFrame.TextFieldJustNumbers(textField_End);
+			ActionListenerTextField(textField_End);
 			panel2.add(textField_End);
 		
 			JLabel lbl_1 = new JLabel("");
@@ -165,7 +179,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			lblZveno.setPreferredSize(new Dimension(50, 14));
 			panel1.add(lblZveno);
 		
-			Choice choiceWorkplace = new Choice();
+			choiceWorkplace = new Choice();
 			choiceWorkplace.setPreferredSize(new Dimension(300, 20));
 			panel1.add(choiceWorkplace);
 			
@@ -228,12 +242,12 @@ public class SearchFreeKodeFrame extends JFrame {
 		btnSearch.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				if(checkEmptyFields()) {
 				ActionIcone round = new ActionIcone();
 				 final Thread thread = new Thread(new Runnable() {
 				     @Override
 				     public void run() {
-				    	 
-				    	 String leter = textField_Leter.getText();
+				    	  	String leter = textField_Leter.getText();
 							int start = Integer.parseInt(textField_Start.getText());
 							int end = Integer.parseInt(textField_End.getText())+1;
 							int zone_ID = choiceZona.getSelectedIndex()+1; 
@@ -249,13 +263,132 @@ public class SearchFreeKodeFrame extends JFrame {
 				     }
 				    });
 				    thread.start();	
-				
+				}
 			}
+
+		
 		});
 
 	}
 	
+	private void ActionListenerLeterTextField(JTextField field) {
+		field.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent evt) {
+				field.setBackground(Color.WHITE);
+				String str = textField_Leter.getText().trim();
+				if(str.length()>1) {
+					str = str.substring(0, 1);
+					field.setText(str);
+				}
+				field.setText(convertToUpperCyrChart(str));
+	        }
+});
+		
+		field.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				field.setBackground(Color.WHITE);
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			
+				
+			}
+		});
+	}
 	
+	private void ActionListenerTextField(JTextField field) {
+		field.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent evt) {
+				field.setBackground(Color.WHITE);
+				
+	        }
+	    });
+		
+		field.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				field.setBackground(Color.WHITE);
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			
+				
+			}
+		});
+	}
+	
+	private String convertToUpperCyrChart(String str) {
+		if(!str.isEmpty()) {
+			char c = str.charAt(0);
+			int ascii = (int)c;
+			
+			if(ascii>=1040 && ascii<=1103) {
+				return str.toUpperCase(); 
+				}
+		}
+		return "";
+	}
+	
+	private boolean checkEmptyFields() {
+		boolean fl = true;
+		if(textField_Leter.getText().isEmpty()) {
+			fl = false;
+			textField_Leter.setBackground(Color.RED);
+		}
+		if(textField_Start.getText().isEmpty()) {
+			fl = false;
+			textField_Start.setBackground(Color.RED);
+		}
+		if(textField_End.getText().isEmpty()) {
+			fl = false;
+			textField_End.setBackground(Color.RED);
+		}
+		
+		return fl;
+	}
 	
 	private void changeTextFild(Choice choiceWorkplace, Choice choiceZona) {
 		int Work_ID = WorkplaceDAO.getValueWorkplaceByObject("Otdel", choiceWorkplace.getSelectedItem()).get(0).getId_Workplace();	
@@ -268,8 +401,13 @@ public class SearchFreeKodeFrame extends JFrame {
 				let = kodeGen.getLetter_L();
 			}
 		textField_Leter.setText(let);
+		textField_Leter.setBackground(Color.WHITE);
+		
 		textField_Start.setText(kodeGen.getStartCount()+"");
+		textField_Start.setBackground(Color.WHITE);
+		
 		textField_End.setText(kodeGen.getEndCount()+"");
+		textField_End.setBackground(Color.WHITE);
 		}
 	}	
 }

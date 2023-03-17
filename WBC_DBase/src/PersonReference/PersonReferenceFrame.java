@@ -545,6 +545,8 @@ public class PersonReferenceFrame extends JFrame {
 		String otdel = comboBox_Otdel.getSelectedItem();
 		List<Person> listAllPerson = PersonDAO.getAllValuePerson();
 
+		
+		
 		if (!egn.trim().isEmpty()) {
 			for (Person person : listAllPerson) {
 				if (person.getEgn().contains(egn)) {
@@ -584,14 +586,16 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonLName = listSelectionPersonSName;
 		}
-
+		
 		KodeStatus kodeStat;
 		if (!kz1.trim().isEmpty()) {
 			for (Person person : listSelectionPersonLName) {
+				
 				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 1, year);
 				if (kodeStat != null && kodeStat.getKode().contains(kz1)) {
 					listSelectionPersonKZ1.add(kodeStat.getPerson());
 				}
+				
 			}
 		} else {
 			listSelectionPersonKZ1 = listSelectionPersonLName;
@@ -599,10 +603,12 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!kz2.trim().isEmpty()) {
 			for (Person person : listSelectionPersonKZ1) {
+				
 				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 2, year);
 				if (kodeStat != null && kodeStat.getKode().contains(kz2)) {
 					listSelectionPersonKZ2.add(kodeStat.getPerson());
 				}
+				
 			}
 		} else {
 			listSelectionPersonKZ2 = listSelectionPersonKZ1;
@@ -610,14 +616,17 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!kzHog.trim().isEmpty()) {
 			for (Person person : listSelectionPersonKZ2) {
+				
 				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 3, year);
 				if (kodeStat != null && kodeStat.getKode().contains(kzHog)) {
 					listSelectionPersonKZHog.add(kodeStat.getPerson());
 				}
+				
 			}
 		} else {
 			listSelectionPersonKZHog = listSelectionPersonKZ2;
 		}
+		
 		List<PersonStatus> listAllPerStat = new ArrayList<>();
 		if (otdel != null && !otdel.trim().isEmpty()) {
 			Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
@@ -655,7 +664,8 @@ public class PersonReferenceFrame extends JFrame {
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
 	}
 	
- 	private void ActionListenerComboBox_Firm() {
+
+	private void ActionListenerComboBox_Firm() {
 
 		comboBox_Firm.addItemListener(new ItemListener() {
 			@Override
@@ -821,7 +831,7 @@ public class PersonReferenceFrame extends JFrame {
 				textField_KZHOG.getText().trim().isEmpty() && comboBox_Otdel.getSelectedItem().trim().isEmpty());
 	}
 	
-	private void TextFieldJustNumbers(JTextField field) {
+	public static void TextFieldJustNumbers(JTextField field) {
 	((AbstractDocument)field.getDocument()).setDocumentFilter(new DocumentFilter(){
         Pattern regEx = Pattern.compile("\\d*");
 
