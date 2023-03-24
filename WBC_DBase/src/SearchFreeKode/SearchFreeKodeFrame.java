@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ReadKodeStatusFromExcelFile;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
@@ -60,8 +61,8 @@ public class SearchFreeKodeFrame extends JFrame {
 	
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
-		
-		List<String> masiveZvena = SearchFreeKodeMethods.getMasiveZvenaFromDBase();
+//		List<String> masiveZvenaExcell = SearchFreeKodeMethods.getMasiveZvenaFromExcellFiles();
+		List<String> masiveZvena = SearchFreeKodeMethods.generateListZvena();
 		List<Zone> masiveZone = ZoneDAO.getAllValueZone();
 		
 		setMinimumSize(new Dimension(580, 300));
@@ -77,6 +78,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			contentPanel.add(panel);
 			
 			JPanel panel3 = new JPanel();
+			panel3.setMaximumSize(new Dimension(32767, 30));
 			FlowLayout fl_panel3 = (FlowLayout) panel3.getLayout();
 			fl_panel3.setAlignment(FlowLayout.LEFT);
 			contentPanel.add(panel3);
@@ -204,14 +206,14 @@ public class SearchFreeKodeFrame extends JFrame {
 			}
 			
 			
-			actionListenerWorkplaceTextFild( choiceWorkplace, choiceZona);
+			actionListenerChoiceWorkplace( choiceWorkplace, choiceZona);
 			
 			
 			
 			return panel1;
 		}
 	
-	private void actionListenerWorkplaceTextFild(Choice choiceWorkplace, Choice choiceZona) {
+	private void actionListenerChoiceWorkplace(Choice choiceWorkplace, Choice choiceZona) {
 		choiceWorkplace.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -247,11 +249,14 @@ public class SearchFreeKodeFrame extends JFrame {
 				 final Thread thread = new Thread(new Runnable() {
 				     @Override
 				     public void run() {
+				    	 int zone_ID = choiceZona.getSelectedIndex()+1;
+				    	 ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(choiceWorkplace.getSelectedItem(), zone_ID);
 				    	  	String leter = textField_Leter.getText();
 							int start = Integer.parseInt(textField_Start.getText());
 							int end = Integer.parseInt(textField_End.getText())+1;
-							int zone_ID = choiceZona.getSelectedIndex()+1; 
+							 
 							String[] year = SearchFreeKodeMethods.getHeader();
+							
 							String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year);
 							table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year);
 							scrollPane.setViewportView(table);
@@ -391,6 +396,9 @@ public class SearchFreeKodeFrame extends JFrame {
 	}
 	
 	private void changeTextFild(Choice choiceWorkplace, Choice choiceZona) {
+		textField_Leter.setText("");
+		textField_Start.setText("");
+		textField_End.setText("");
 		int Work_ID = WorkplaceDAO.getValueWorkplaceByObject("Otdel", choiceWorkplace.getSelectedItem()).get(0).getId_Workplace();	
 		int zone_ID = choiceZona.getSelectedIndex()+1;
 		KodeGenerate kodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(Work_ID, zone_ID);

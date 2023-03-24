@@ -68,7 +68,7 @@ public class AplicationMetods {
 		
 		case "KodeStatus": {
 			// read and set KodeStatus
-			List<KodeStatus> listKodeStatus = ReadKodeStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile,
+			List<KodeStatus> listKodeStatus = ReadKodeStatusFromExcelFile.getListKodeStatusFromExcelFile(pathFile,
 					firmName, year);
 			ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 			System.out.println("--> "+listKodeStatus.size());

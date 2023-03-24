@@ -4,12 +4,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import Aplication.ReadExcelFileWBC;
+import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.RemouveDublikateFromList;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
@@ -18,223 +25,263 @@ import BasicClassAccessDbase.KodeStatus;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
 
-
 public class SearchFreeKodeMethods {
 
 	public static List<String> getMasiveZvenaFromDBase() {
 		List<String> list = new ArrayList<>();
 		List<KodeGenerate> listKG = KodeGenerateDAO.getAllValueKodeGenerate();
 		for (KodeGenerate kodeGenerate : listKG) {
-			list.add(kodeGenerate.getWorkplace().getOtdel());
+			list.add(kodeGenerate.getWorkplace().getOtdel()+"@"+kodeGenerate.getWorkplace().getSecondOtdelName());
 		}
-		return RemouveDublikateFromList.removeDuplicates(new ArrayList<String>(list));
+		List<String> newlist = RemouveDublikateFromList.removeDuplicates(new ArrayList<String>(list));
+		Collections.sort(newlist);
+		return newlist;
 	}
 
-	
-	public static String generateStringForFreeKode(String leter, int start, int end, int zone_ID) {
-		
-		String[] year = getHeader();
-		 String[][] newMasiveFreeKode = createDataTableMasive(leter, start, end, zone_ID, year);
-		
-		 String str = "           "+ year[0] + "     "+ year[1] +"     "+ year[2] + "\n";
-		
-		
-		 for (int i = 0; i < newMasiveFreeKode.length; i++) {
-			for (int j = 0; j < 4; j++) {
-				str = str + newMasiveFreeKode[i][j] +"     ";	
+	public static List<String> getMasiveZvenaFromExcellFiles() {
+		List<String> list = new ArrayList<>();
+		String[] filePath = ReadKodeStatusFromExcelFile.getFilePathForPersonelAndExternal();
+		for (String pathFile : filePath) {
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+			Sheet sheet = workbook.getSheetAt(0);
+			if (sheet.getRow(0) != null) {
+				int col = 0;
+				Cell cell = sheet.getRow(0).getCell(col);
+				while (cell != null && !cell.getStringCellValue().isEmpty()) {
+					list.add(cell.getStringCellValue());
+					col++;
+					cell = sheet.getRow(0).getCell(col);
+				}
 			}
-			str = str +  "\n";
 		}
-		 
+		List<String> newlist = RemouveDublikateFromList.removeDuplicates(new ArrayList<String>(list));
+		Collections.sort(newlist);
+		System.out.println("getMasiveZvenaFromExcellFiles "+list.size());
+		return newlist;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static List<String> generateListZvena() {
+		List<String> list = new ArrayList<>();
+		List<String> listZvenaFromDBase = getMasiveZvenaFromDBase();
+		List<String> listZvenaFromExcellFiles = getMasiveZvenaFromExcellFiles();
+boolean fl;
+		for (String excelZveno : listZvenaFromExcellFiles) {
+fl = true;
+			for (Iterator iterator = listZvenaFromDBase.iterator(); iterator.hasNext();) {
+				String string = (String) iterator.next();
+				String [] str =  string.split("@",2);
+				if (excelZveno.equals(str[0]) ||excelZveno.equals(str[1])) {
+					list.add(excelZveno);
+					iterator.remove();
+					fl = false;
+				}
+			}
+if(fl) {
+	System.out.println("-> "+excelZveno);	
+}
+		}
+		
+		System.out.println("generateListZvena "+list.size());
+		return list;
+
+	}
+
+	public static String generateStringForFreeKode(String leter, int start, int end, int zone_ID) {
+
+		String[] year = getHeader();
+		String[][] newMasiveFreeKode = createDataTableMasive(leter, start, end, zone_ID, year);
+
+		String str = "           " + year[0] + "     " + year[1] + "     " + year[2] + "\n";
+
+		for (int i = 0; i < newMasiveFreeKode.length; i++) {
+			for (int j = 0; j < 4; j++) {
+				str = str + newMasiveFreeKode[i][j] + "     ";
+			}
+			str = str + "\n";
+		}
+
 		return str;
 	}
 
-
 	static String[] getHeader() {
-		String[] year = {textCurentYear(3), textCurentYear(4),textCurentYear(5)};
+		String[] year = { textCurentYear(0), textCurentYear(1), textCurentYear(2) };
 		return year;
 	}
 
-
 	static String[][] createDataTableMasive(String leter, int start, int end, int zone_ID, String[] year) {
 		List<String> listKode = generateListKode(leter, start, end, zone_ID);
-		 String [][] masiveFreeKode = creatyEmptyMasive(new String[listKode.size()][4]);
+		String[][] masiveFreeKode = creatyEmptyMasive(new String[listKode.size()][4]);
 		for (int i = 1; i <= year.length; i++) {
-			System.out.println(year[i-1]);
-			masiveFreeKode = generateListForFreeKode( masiveFreeKode, listKode, year[i-1], leter, zone_ID, i);
+			System.out.println(year[i - 1]);
+			masiveFreeKode = generateListForFreeKode(masiveFreeKode, listKode, year[i - 1], leter, zone_ID, i);
 		}
-		String [][] newMasive = creatyEmptyMasive(new String[masiveFreeKode.length][4]) ;
-		
-		int k=0;
-		 for (int i = 0; i < masiveFreeKode.length; i++) {
-			 if(!masiveFreeKode[i][1].isEmpty()) {
-				for(int m = 1; m < masiveFreeKode[0].length; m++) {
-				 newMasive[k][m-1] = masiveFreeKode[i][m];
-				 System.out.println(i+"  "+masiveFreeKode[i][1]);
+		String[][] newMasive = creatyEmptyMasive(new String[masiveFreeKode.length][4]);
+
+		int k = 0;
+		for (int i = 0; i < masiveFreeKode.length; i++) {
+			if (!masiveFreeKode[i][1].isEmpty()) {
+				for (int m = 1; m < masiveFreeKode[0].length; m++) {
+					newMasive[k][m - 1] = masiveFreeKode[i][m];
+					System.out.println(i + "  " + masiveFreeKode[i][1]);
 				}
-				 k++;
-			 }
-		 }
-		 String [][] newMasiveFreeKode = creatyEmptyMasive(new String[k][4]); 
-		 for (int i = 0; i < k; i++) {
-			 newMasiveFreeKode[i] =  newMasive[i];
-			 }
+				k++;
+			}
+		}
+		String[][] newMasiveFreeKode = creatyEmptyMasive(new String[k][4]);
+		for (int i = 0; i < k; i++) {
+			newMasiveFreeKode[i] = newMasive[i];
+		}
 		return newMasiveFreeKode;
 	}
 
 	private static String[][] creatyEmptyMasive(String[][] strings) {
 		for (int i = 0; i < strings.length; i++) {
-		for (int j = 0; j < strings[i].length; j++) {
-			strings[i][j] = "";	
-		}	
+			for (int j = 0; j < strings[i].length; j++) {
+				strings[i][j] = "";
+			}
 		}
 		return strings;
 	}
 
-	static JTable  panel_infoPanelTablePanel(String[][] dataTable, String[] year) {
-		String[] columnNames = new String[year.length+1];
-		int k =0;
+	static JTable panel_infoPanelTablePanel(String[][] dataTable, String[] year) {
+		String[] columnNames = new String[year.length + 1];
+		int k = 0;
 		for (String string : year) {
-		columnNames[k] = string;
-		k++;
-				}
-		columnNames[k] ="";
-	
-	
-	DefaultTableModel dtm = new DefaultTableModel();
-	final JTable table = new JTable(dtm);
-	
-	table.setShowGrid(false);
-	table.getTableHeader().setReorderingAllowed(false);
-	
-	table.setCellSelectionEnabled(true);
-	
-	dtm = new DefaultTableModel(dataTable, columnNames) {
-
-		private static final long serialVersionUID = 1L;
-		
-		
-		@Override
-		public boolean isCellEditable(int row, int column) {
-		return false;
-					}
-		@Override
-		public Object getValueAt(int row, int col) {
-			return dataTable[row][col];
+			columnNames[k] = string;
+			k++;
 		}
-		
-		
-		@SuppressWarnings("unused")
-		public void setValueAt(String value, int row, int col) {
+		columnNames[k] = "";
 
-			if (!dataTable[row][col].equals(value)) {
-				dataTable[row][col] = value;
-				fireTableCellUpdated(row, col);
-				
+		DefaultTableModel dtm = new DefaultTableModel();
+		final JTable table = new JTable(dtm);
+
+		table.setShowGrid(false);
+		table.getTableHeader().setReorderingAllowed(false);
+
+		table.setCellSelectionEnabled(true);
+
+		dtm = new DefaultTableModel(dataTable, columnNames) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
 			}
-		}
 
-		
+			@Override
+			public Object getValueAt(int row, int col) {
+				return dataTable[row][col];
+			}
 
-		public int getColumnCount() {
-			return columnNames.length;
-		}
+			@SuppressWarnings("unused")
+			public void setValueAt(String value, int row, int col) {
 
-		public int getRowCount() {
-			return dataTable.length;
-		}
+				if (!dataTable[row][col].equals(value)) {
+					dataTable[row][col] = value;
+					fireTableCellUpdated(row, col);
 
-	};
+				}
+			}
 
+			public int getColumnCount() {
+				return columnNames.length;
+			}
 
-	
-	table.addMouseListener(new MouseAdapter() {
-		@Override
-		public void mouseReleased(MouseEvent e) {}
+			public int getRowCount() {
+				return dataTable.length;
+			}
 
-		public void mousePressed(MouseEvent e) {
-			DefaultTableModel model =(DefaultTableModel) table.getModel();
+		};
+
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e) {
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
 
 				int row = table.rowAtPoint(e.getPoint());
 				int col = table.columnAtPoint(e.getPoint());
 				String reqCodeStr = model.getValueAt(getSelectedModelRow(table), col).toString();
 				copyToClipboard(reqCodeStr);
-			System.out.println(reqCodeStr+" "+ row +" "+ col);	
-						}
-	});
+				System.out.println(reqCodeStr + " " + row + " " + col);
+			}
+		});
 
-	new TableFilterHeader(table, AutoChoices.ENABLED);
-	
-	
-			
-			dtm.fireTableDataChanged();
-			table.setModel(dtm);
-			table.setFillsViewportHeight(true);
-			 table.repaint();
-			 System.out.println("+++++++++++++ "+dataTable.length);
-			 
-			 
-			 System.out.println(columnNames.length);
-				for (int i = 0; i < columnNames.length; i++) {
-					System.out.println(i);
-					table.getColumnModel().getColumn(i).setMinWidth(50);
-					table.getColumnModel().getColumn(i).setMaxWidth(50);
-					table.getColumnModel().getColumn(i).setPreferredWidth(50);
-				}
-				System.out.println(columnNames.length-1);
-				table.getColumnModel().getColumn(columnNames.length-1).setMaxWidth(Integer.MAX_VALUE);
+		new TableFilterHeader(table, AutoChoices.ENABLED);
 
-			 return table;
-	
+		dtm.fireTableDataChanged();
+		table.setModel(dtm);
+		table.setFillsViewportHeight(true);
+		table.repaint();
+		System.out.println("+++++++++++++ " + dataTable.length);
 
-}
-	
-	 
+		System.out.println(columnNames.length);
+		for (int i = 0; i < columnNames.length; i++) {
+			System.out.println(i);
+			table.getColumnModel().getColumn(i).setMinWidth(50);
+			table.getColumnModel().getColumn(i).setMaxWidth(50);
+			table.getColumnModel().getColumn(i).setPreferredWidth(50);
+		}
+		System.out.println(columnNames.length - 1);
+		table.getColumnModel().getColumn(columnNames.length - 1).setMaxWidth(Integer.MAX_VALUE);
 
-	private static int getSelectedModelRow(JTable table) {
-		return  table.convertRowIndexToModel(table.getSelectedRow());
-		}	
-	
-	public static void copyToClipboard(String text) {
-	    java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
-	        .setContents(new java.awt.datatransfer.StringSelection(text), null);
+		return table;
+
 	}
 
-	
-	private static String[][] generateListForFreeKode(String [][] masiveFreeKode, List<String> listKode, String year, String leter, int zone_ID, int index) {
-		
-		 List<KodeStatus> listKodeStat = KodeStatusDAO.getKodeStatusByYearZone(year, zone_ID);
-		 System.out.println(year+"   "+ zone_ID+"  "+ listKodeStat.size());
-		 List<String> sublistKodeStat = getSubListByLeter(listKodeStat, leter);
-		
-		masiveFreeKode = chekFreeKode( masiveFreeKode, sublistKodeStat, listKode, index);
-		
+	private static int getSelectedModelRow(JTable table) {
+		return table.convertRowIndexToModel(table.getSelectedRow());
+	}
+
+	public static void copyToClipboard(String text) {
+		java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
+				.setContents(new java.awt.datatransfer.StringSelection(text), null);
+	}
+
+	private static String[][] generateListForFreeKode(String[][] masiveFreeKode, List<String> listKode, String year,
+			String leter, int zone_ID, int index) {
+		List<String> sublistKodeStat = new ArrayList<>();
+		if (index == 1) {
+			String[] listKodeFromExcell = ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFile(zone_ID);
+			System.out.println(year + "   " + zone_ID + "  " + listKodeFromExcell.length);
+			sublistKodeStat = getSubListByLeter(listKodeFromExcell, leter);
+		} else {
+			List<KodeStatus> listKodeStat = KodeStatusDAO.getKodeStatusByYearZone(year, zone_ID);
+			System.out.println(year + "   " + zone_ID + "  " + listKodeStat.size());
+			sublistKodeStat = getSubListByLeter(listKodeStat, leter);
+		}
+
+		masiveFreeKode = chekFreeKode(masiveFreeKode, sublistKodeStat, listKode, index);
+
 		return masiveFreeKode;
 	}
 
-
 	@SuppressWarnings("rawtypes")
-	private static String [][] chekFreeKode( String [][] masiveFreeKode,  List<String> sublistKodeStat, List<String> listKode, int index) {
-		
-		
+	private static String[][] chekFreeKode(String[][] masiveFreeKode, List<String> sublistKodeStat,
+			List<String> listKode, int index) {
+
 		boolean fl = false;
-		if(sublistKodeStat != null && sublistKodeStat.size()>0) {
-		int k=0;
+		if (sublistKodeStat != null && sublistKodeStat.size() > 0) {
+			int k = 0;
 			for (String lkode : listKode) {
 				masiveFreeKode[k][0] = lkode;
-			fl = false;
-		for (Iterator iterator = sublistKodeStat.iterator(); iterator.hasNext();) {
-			String string = (String) iterator.next();
-			if(lkode.equals(string)) {
-				fl = true;
-				iterator.remove();
+				fl = false;
+				for (Iterator iterator = sublistKodeStat.iterator(); iterator.hasNext();) {
+					String string = (String) iterator.next();
+					if (lkode.equals(string)) {
+						fl = true;
+						iterator.remove();
+					}
+				}
+				if (!fl) {
+					masiveFreeKode[k][index] = lkode;
+				}
+				k++;
 			}
-		}
-		 if(!fl) {
-			 masiveFreeKode[k][index] = lkode ;
-		 }
-		 k++;
-		}
 		}
 		return masiveFreeKode;
 	}
@@ -242,55 +289,64 @@ public class SearchFreeKodeMethods {
 	private static List<String> getSubListByLeter(List<KodeStatus> listKodeStat, String leter) {
 		List<String> listStringKode = new ArrayList<>();
 		for (KodeStatus kodStat : listKodeStat) {
-			if(kodStat.getKode().contains(leter)) {
+			if (kodStat.getKode().contains(leter)) {
 				listStringKode.add(kodStat.getKode());
 			}
 		}
 		return listStringKode;
 	}
 
+	private static List<String> getSubListByLeter(String[] masiveKode, String leter) {
+		List<String> listStringKode = new ArrayList<>();
+		for (String kod : masiveKode) {
+			if (kod.contains(leter)) {
+				listStringKode.add(kod);
+			}
+		}
+		return listStringKode;
+	}
 
 	private static List<String> generateListKode(String leter, int start, int end, int zone_ID) {
 		List<String> listKode = new ArrayList<>();
-		 switch (zone_ID) {
-			case 1: {
-				for (int i = start; i < end; i++) {
-					listKode.add(i+leter);	
-				}
+		switch (zone_ID) {
+		case 1: {
+			for (int i = start; i < end; i++) {
+				listKode.add(i + leter);
 			}
+		}
 			break;
-			case 2: {
-				for (int i = start; i < end; i++) {
-					listKode.add(leter+i);	
-				}
+		case 2: {
+			for (int i = start; i < end; i++) {
+				listKode.add(leter + i);
 			}
+		}
 			break;
-			case 3: {
-				for (int i = start; i < end; i++) {
-					listKode.add("Н"+i+leter);	
-				}
+		case 3: {
+			for (int i = start; i < end; i++) {
+				listKode.add("Н" + i + leter);
 			}
+		}
 			break;
-			case 4: {
-				for (int i = start; i < end; i++) {
-					listKode.add("Т"+i+leter);	
-				}
+		case 4: {
+			for (int i = start; i < end; i++) {
+				listKode.add("Т" + i + leter);
 			}
+		}
 			break;
-			case 5: {
-				for (int i = start; i < end; i++) {
-					listKode.add(leter+i+"Т");	
-				}
+		case 5: {
+			for (int i = start; i < end; i++) {
+				listKode.add(leter + i + "Т");
 			}
+		}
 			break;
-			}
+		}
 		return listKode;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static String textCurentYear (int corection) {
-		return  Calendar.getInstance().getTime().getYear()+1900-corection+"";
-	
+	public static String textCurentYear(int corection) {
+		return Calendar.getInstance().getTime().getYear() + 1900 - corection + "";
+
 	}
-	
+
 }

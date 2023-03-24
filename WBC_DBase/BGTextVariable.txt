@@ -1,11 +1,17 @@
 
-minYearInDbase = 2006
-filePathExternal = D:\\EXTERNAL_12.xls
-filePathPersonel = D:\\PERSONNEL_12.xls
+minYearInDbase = 2005
+
+filePathExternal = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
+
 filePathMonthExternal = d:\\month\\wbc_month.xls
 filePathMonthPersonel = d:\\month\\wbc_month_P.xls
 filePathArhivePersonel = d:\\Arhive\\PERSONNEL_
 filePathArhiveExternal = d:\\Arhive\\EXTERNAL_
+filePathExternal_test = D:\\EXTERNAL_12.xls
+filePathPersonel_test = D:\\PERSONNEL_12.xls
+
 destinationDir = DIRECTORY/
 destinationIcons = ICONS/ajaxLoader.gif
 klikToCopy = Клилнете за да копирате

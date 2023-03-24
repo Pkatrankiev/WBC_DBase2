@@ -42,8 +42,8 @@ public class InsertMeasurToExcel {
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal"); 
-		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel"); 
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_test"); 
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_test"); 
 		List<ReportMeasurClass> listForSaveMeasurToMont = new ArrayList<>();
 		List<ReportMeasurClass> listForNotSaveMeasur = new ArrayList<>();
 		String pathFile = "";
