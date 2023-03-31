@@ -1,6 +1,5 @@
 package Aplication;
 
-
 import java.util.List;
 
 import BasicClassAccessDbase.KodeStatus;
@@ -18,7 +17,7 @@ public class AplicationMetods {
 		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
 		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
 		String[] excellFiles = {filePathArhivePersonel, filePathArhiveExternal};	
-		
+		 
 		for (String pathFile : excellFiles) {
 			String firmName = "АЕЦ Козлодуй";
 			if (pathFile.contains("EXTERNAL")) {
@@ -55,6 +54,7 @@ public class AplicationMetods {
 		
 		case "PersonStatus": {
 			// read and set PersonStatus
+			
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
 					year);
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
@@ -137,9 +137,6 @@ public class AplicationMetods {
 	    }
 	    return builder.toString();
 	}
-
-	
-
 
 	
 }

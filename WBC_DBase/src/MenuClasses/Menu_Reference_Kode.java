@@ -4,17 +4,16 @@ import java.awt.event.ActionEvent;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import PersonManagement.PersonelManegementFrame;
 import SearchFreeKode.SearchFreeKodeFrame;
 
-public class Menu_PersonManagement extends AbstractMenuAction{
+public class Menu_Reference_Kode extends AbstractMenuAction{
 	
 	private static final long serialVersionUID = 1L;
-	static String personManagement = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personManagement");
-	static String personManagementTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personManagementTipText");
-	public Menu_PersonManagement() {
-		super(personManagement);
-		setToolTipText(personManagementTipText);
+	static String kodeReference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference");
+	static String kodeReferenceTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReferenceTipText");
+	public Menu_Reference_Kode() {
+		super(kodeReference);
+		setToolTipText(kodeReferenceTipText);
 	}
 
 	@Override
@@ -28,17 +27,13 @@ public class Menu_PersonManagement extends AbstractMenuAction{
 		     @Override
 		     public void run() {
 		    	 
-		    	new PersonelManegementFrame(round);
+		    	 new SearchFreeKodeFrame(round);
+		    	     	
 		     }
 		    });
 		    thread.start();	
 		
-		
-		
-		
-		
-	
-
+				
 	}
 
-}
+	}

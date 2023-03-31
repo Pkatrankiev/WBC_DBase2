@@ -1,6 +1,7 @@
 package Aplication;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,7 +13,6 @@ import BasiClassDAO.PersonDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
-import SearchFreeKode.SearchFreeKodeMethods;
 
 public class ReadKodeStatusFromExcelFile {
 
@@ -180,7 +180,38 @@ public class ReadKodeStatusFromExcelFile {
 		return listAllKode;
 	}
 
-	public static String[] getUsedKodeFromExcelFileByZoneAndZveno(String zveno, int zoneID) {
+	public static List<String> getUsedKodeFromExcelFileByZoneAndZveno(String zveno, int zoneID) {
+		
+		List<String[]> listKodeStatus = generateListFromMasiveEGNandKode(zveno);
+
+		List<String> list = new ArrayList<>();
+		for (String[] kod : listKodeStatus) {
+			if (!kod[zoneID - 1].isEmpty()) {
+				list.add(kod[zoneID - 1]);
+			}
+		}
+
+		int maxString = list.get(0).length();
+		for (String kod : list) {
+			if (kod.length() > maxString) {
+				maxString = kod.length();
+			}
+		}
+		System.out.println(maxString);
+
+		List<String> kklist = new ArrayList<>();
+		
+		for (String kod : list) {
+			
+			kod = NormKode(maxString, kod);
+			kklist.add(kod);
+		}
+		Collections.sort(kklist);
+
+		return kklist;
+	}
+
+	public static List<String[]> generateListFromMasiveEGNandKode(String zveno) {
 		boolean flOtdel = false;
 		String[] excellFiles = getFilePathForPersonelAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
@@ -188,7 +219,7 @@ public class ReadKodeStatusFromExcelFile {
 		for (String pathFile : excellFiles) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 
-			String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "";
+			String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "", egn = "";
 			Sheet sheet = workbook.getSheetAt(0);
 			Cell cell, cell1;
 			int allRow = sheet.getLastRowNum();
@@ -200,97 +231,131 @@ public class ReadKodeStatusFromExcelFile {
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 						otdelName = cell1.getStringCellValue();
 						if (otdelName.equals(zveno) || flOtdel) {
-							flOtdel = true;		
+							flOtdel = true;
 //*************************************************************************************		
 //			for (int row = globalRow; row <= allRow; row += 1) {
-							int row = globalRow;		
-				while (row < allRow ) {
-					flOtdel = false;	
-				System.out.println(row+"  --  "+otdelName);
-				String[] simpleKode = generateEmptyMasive();
-				kodeKZ1 = "";
-				kodeKZ2 = "";
-				kodeHOG = "";
-				kodeT1 = "";
-				kodeT2 = "";
-				otdelName = "";
-				if (sheet.getRow(row) != null) {
-					cell = sheet.getRow(row).getCell(5);
-					cell1 = sheet.getRow(row).getCell(6);
-					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-						otdelName = cell1.getStringCellValue();
-						if(otdelName.equals("край")) {
-							row = allRow;
-						}
-					}
-					
-					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+							int row = globalRow;
+							while (row < allRow) {
+								flOtdel = false;
+								System.out.println(row + "  --  " + otdelName);
+								String[] simpleKode = generateEmptyMasive();
+								kodeKZ1 = "";
+								kodeKZ2 = "";
+								kodeHOG = "";
+								kodeT1 = "";
+								kodeT2 = "";
+								otdelName = "";
+								egn = "";
+								if (sheet.getRow(row) != null) {
+									cell = sheet.getRow(row).getCell(5);
+									cell1 = sheet.getRow(row).getCell(6);
+									if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+										otdelName = cell1.getStringCellValue();
+										if (otdelName.equals("край")) {
+											row = allRow;
+										}
+									}
 
-						cell = sheet.getRow(row).getCell(0);
-						if (cell != null)
-							kodeKZ1 = cell.getStringCellValue();
+									if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+											egn = ReadExcelFileWBC.getStringfromCell(cell);
+											if(egn.contains("*")) egn = egn.substring(0, egn.length()-1);	
+										
+											
+										cell = sheet.getRow(row).getCell(0);
+										if (cell != null)
+											kodeKZ1 = cell.getStringCellValue();
 
-						cell = sheet.getRow(row).getCell(1);
-						if (cell != null)
-							kodeKZ2 = cell.getStringCellValue();
+										cell = sheet.getRow(row).getCell(1);
+										if (cell != null)
+											kodeKZ2 = cell.getStringCellValue();
 
-						cell = sheet.getRow(row).getCell(2);
-						if (cell != null)
-							kodeHOG = cell.getStringCellValue();
+										cell = sheet.getRow(row).getCell(2);
+										if (cell != null)
+											kodeHOG = cell.getStringCellValue();
 
-						cell = sheet.getRow(row).getCell(3);
-						if (cell != null)
-							kodeT2 = cell.getStringCellValue();
+										cell = sheet.getRow(row).getCell(3);
+										if (cell != null)
+											kodeT2 = cell.getStringCellValue();
 
-						cell = sheet.getRow(row).getCell(4);
-						if (cell != null)
-							kodeT1 = cell.getStringCellValue();
+										cell = sheet.getRow(row).getCell(4);
+										if (cell != null)
+											kodeT1 = cell.getStringCellValue();
 
-						if (pathFile.contains("EXTERNAL")) {
-							kodeT1 = kodeT2;
-							kodeT2 = "";
-						}
+										if (pathFile.contains("EXTERNAL")) {
+											kodeT1 = kodeT2;
+											kodeT2 = "";
+										}
 
-						if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("н")
-								&& !inCodeNotNumber(kodeKZ1)) {
-							simpleKode[0] = kodeKZ1;
-						}
-						if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("") && !inCodeNotNumber(kodeKZ2)) {
-							simpleKode[1] = kodeKZ2;
-						}
-						if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("") && !inCodeNotNumber(kodeHOG)) {
-							simpleKode[2] = kodeHOG;
-						}
-						if (!kodeT1.equals("н") && !kodeT1.trim().equals("") && !inCodeNotNumber(kodeT1)) {
-							simpleKode[3] = kodeT1;
-						}
-						if (!kodeT2.equals("н") && !kodeT2.trim().equals("") && !inCodeNotNumber(kodeT2)) {
-							simpleKode[4] = kodeT2;
-						}
-						listKodeStatus.add(simpleKode);
-					}
-				
-				}
-				row++;
-			}
+										if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("")
+												&& !kodeKZ1.equals("н") && !inCodeNotNumber(kodeKZ1)) {
+											simpleKode[0] = kodeKZ1;
+										}
+										if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("")
+												&& !inCodeNotNumber(kodeKZ2)) {
+											simpleKode[1] = kodeKZ2;
+										}
+										if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("")
+												&& !inCodeNotNumber(kodeHOG)) {
+											simpleKode[2] = kodeHOG;
+										}
+										if (!kodeT1.equals("н") && !kodeT1.trim().equals("")
+												&& !inCodeNotNumber(kodeT1)) {
+											simpleKode[3] = kodeT1;
+										}
+										if (!kodeT2.equals("н") && !kodeT2.trim().equals("")
+												&& !inCodeNotNumber(kodeT2)) {
+											simpleKode[4] = kodeT2;
+										}
+										simpleKode[5] = egn;
+										
+										listKodeStatus.add(simpleKode);
+									}
+
+								}
+								row++;
+							}
 //	*********************************************************************************	
 
-			
-			
 						}
 					}
 				}
 			}
 		}
-		int sizeList = listKodeStatus.size();
-		String[] listAllKode = new String[sizeList];
+		return listKodeStatus;
+	}
 
-		for (int i = 0; i < sizeList; i++) {
-			listAllKode[i] = listKodeStatus.get(i)[zoneID - 1];
-			System.out.println("kod  -  "+listAllKode[i]);
+	private static String NormKode(int maxString, String kod) {
+		boolean fl = true;
+		String subKod = "";
+		String emptyString = "";
+		String firstChar = "";
+		System.out.println(kod.length());
+		firstChar = kod.substring(0, 1);
+		subKod = kod.substring(1);
+		fl = firstCharIsLeter(firstChar);
+
+		if (kod.length() < maxString) {
+
+			for (int i = 0; i < (maxString - kod.length()); i++) {
+				emptyString = emptyString + " ";
+			}
+			if (fl) {
+				kod = firstChar + emptyString + subKod;
+			} else {
+				kod = emptyString + kod;
+			}
+
 		}
+		return kod;
+	}
 
-		return listAllKode;
+	private static boolean firstCharIsLeter(String kod) {
+		try {
+			Integer.parseInt(kod);
+		} catch (Exception e) {
+			return true;
+		}
+		return false;
 	}
 
 	public static String[] getFilePathForPersonelAndExternal() {
@@ -301,7 +366,7 @@ public class ReadKodeStatusFromExcelFile {
 	}
 
 	private static String[] generateEmptyMasive() {
-		String[] sinpleKode = new String[5];
+		String[] sinpleKode = new String[6];
 		for (int i = 0; i < sinpleKode.length; i++) {
 			sinpleKode[i] = "";
 		}

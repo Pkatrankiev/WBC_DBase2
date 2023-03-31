@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
 import AutoInsertMeasuting.AutoInsertMeasutingFrame;
@@ -19,10 +20,11 @@ import BasiClassDAO.UsersWBCDAO;
 public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
 	
 	private static final long serialVersionUID = 1L;
-
+	static String autoInsertMeasuting = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting");
+	static String autoInsertMeasutingTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasutingTipText");
 	public Menu_AutoInsertMeasuting() {
-		super("AutoInsertMeasuting");
-		setToolTipText("add measuring from report file");
+		super(autoInsertMeasuting);
+		setToolTipText(autoInsertMeasutingTipText);
 	}
 
 	@Override

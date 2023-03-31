@@ -1,9 +1,13 @@
 package PersonReference;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
-import javax.swing.JTextField;
 
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
@@ -32,12 +36,11 @@ public class TextInAreaTextPanel {
 	private static String[] masiveMeasurName = {"Year","Date","Doze[mSv]","Lab","Nuc.","Act.[Bq]","Inc.[%]","GGP[%]","Doze[%]"};
 	private static String[][] masiveMeasur;
 	
-	protected static String createInfoPanelForPerson(JTextField textField_Year, Person personInport, boolean fromExcell) {
+	public static String createInfoPanelForPerson(String year, Person personInport, boolean fromExcell) {
 		List<KodeStatus> listK = null;
 		List<PersonStatus> listP = null;
 		List<Measuring> listM = null;
 		
-		String year = textField_Year.getText();
 		person = personInport;
 		
 		if(fromExcell) {
@@ -46,6 +49,9 @@ public class TextInAreaTextPanel {
 		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
+		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
+		sortbyStartDateColumn(masivePersonStatus);
+		
 		String textSpis ="";
 				if(masivePersonStatus.length>0) {
 		textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
@@ -402,6 +408,59 @@ public class TextInAreaTextPanel {
 			addString = addString+" ";	
 		}
 		return addString;
+	}
+
+	
+	 public static void sortbyStartDateColumn(String[][]arr)
+	    {	    		    	
+	       
+	        Arrays.sort(arr, new Comparator<String[]>() {
+	        	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+	        	int columnStartDate = 3;
+	          @Override              
+	          // Compare values according to columns
+	          public int compare(String[] entry1, String[] entry2) {
+	        	  Date dateSet1 = null;
+	        	  Date dateSet2 = null;
+	        	  try {
+	        	 	dateSet1 = sdf.parse(entry1[columnStartDate]);
+					dateSet2 = sdf.parse(entry2[columnStartDate]);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          
+			return dateSet1.compareTo(dateSet2);
+	          }
+	  });  // End of function call sort().
+	        
+	      printArray(arr);  
+	        
+	    }
+
+	private static void printArray(String[][] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr[i].length; j++) {
+				System.out.print(arr[i][j]+",  ");
+			}
+			System.out.println();
+		}
+	}
+
+	private static String[][] remoteNullFromArray(String[][] arr) {
+		List<String[]> list = new ArrayList<>();
+		for (int i = 0; i < arr.length; i++) {
+			if(arr[i][0]!=null) {
+				list.add(arr[i]);
+			}
+			}
+		String[][] masive = new String[list.size()][arr[0].length];
+		int k =0;
+		for (String[] strings : list) {
+			masive[k] = strings;
+			k++;
+		}
+		return masive;
 	}
 	
 }

@@ -1,8 +1,16 @@
 
 minYearInDbase = 2005
 
-filePathExternal = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
-filePathPersonel = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+databaseURL = jdbc:ucanaccess://d://WBC_DBase.mdb
+databaseOID = jdbc:ucanaccess://D://NewOid.mdb
+databaseEncriptOID = qwer1234
+databaseEncript = password
+filePathExternal_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+
+filePathExternal =d:\\Arhive\\EXTERNAL.xls
+filePathPersonel = d:\\Arhive\\PERSONNEL.xls
+
 filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
 
 filePathMonthExternal = d:\\month\\wbc_month.xls
@@ -11,6 +19,25 @@ filePathArhivePersonel = d:\\Arhive\\PERSONNEL_
 filePathArhiveExternal = d:\\Arhive\\EXTERNAL_
 filePathExternal_test = D:\\EXTERNAL_12.xls
 filePathPersonel_test = D:\\PERSONNEL_12.xls
+
+insertMeasuring = Измервания
+insertMeasuringTipText = Въвеждане на резултати от измерванията
+
+autoInsertMeasuting = Авоматично нанасяне на измерванията
+autoInsertMeasutingTipText = въвеждане на измерванията от репорт фаилове
+
+personManagement = Обработка на служители
+personManagementTipText  = въвеждане и промяна на информация за служители
+
+
+reference = Справки
+referenceTipText = извличане на справка
+
+personReference = Справки за служители
+personReferenceTipText = извличане на справка по различни показатели
+
+kodeReference = Справки за кодове
+kodeReferenceTipText = извличане на справка за заети и свободни кодове
 
 destinationDir = DIRECTORY/
 destinationIcons = ICONS/ajaxLoader.gif
@@ -34,3 +61,7 @@ code = Кодове
 measurSICH = Измервания СИЧ
 orders = Заповеди
 freeKodeComent = Списък на свободните кодове за последните три години
+zaDaZatvoriteRamkata = За да затворите рамката кликнете с мишката на този ред
+labelCheckForSearch = маркирайте зона и отдел за търсене на свободни кодове
+
+

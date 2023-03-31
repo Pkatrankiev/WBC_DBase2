@@ -169,7 +169,7 @@ public class ReadPersonStatusFromExcelFile {
 					zab = cell1.getCellComment().getString().getString();
 					}
 					person = PersonDAO.getValuePersonByEGN(EGN);
-					if(person==null) {
+					if( person==null) {
 						MessageDialog(FirstName);
 					}
 			

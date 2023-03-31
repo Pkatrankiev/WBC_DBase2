@@ -2,16 +2,19 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 import Aplication.ActionIcone;
+import Aplication.ReadFileBGTextVariable;
 import PersonReference.PersonReferenceFrame;
 
 
-public class Menu_PersonReference extends AbstractMenuAction{
+public class Menu_Reference_Person extends AbstractMenuAction{
 	
 	private static final long serialVersionUID = 1L;
-
-	public Menu_PersonReference() {
-		super("PersonReference");
-		setToolTipText("Reference Person");
+	static String personReference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personReference");
+	static String personReferenceTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personReferenceTipText");
+	
+	public Menu_Reference_Person() {
+		super(personReference);
+		setToolTipText(personReferenceTipText);
 	}
 
 	@Override

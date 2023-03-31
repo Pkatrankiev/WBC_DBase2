@@ -12,10 +12,12 @@ import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 import MenuClasses.Menu_AutoInsertMeasuting;
 import MenuClasses.Menu_PersonManagement;
-import MenuClasses.Menu_PersonReference;
+import MenuClasses.Menu_Reference_Kode;
+import MenuClasses.Menu_Reference_Person;
 
 import javax.swing.JMenuBar;
 
@@ -45,19 +47,23 @@ public class MainWindowWBC_DBase extends JFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar menu = new JMenuBar();
 		menu.add(createMenu_Measuring());
-		menu.add(createMenu_PersonReference());
+		menu.add(createMenu_Reference());
 		menu.add(createMenu_PersonManagement());
 		
 		return menu;
 	}
 	
 	
-	private JMenu createMenu_PersonReference() {
-		JMenu personReferenceMenu = new JMenu("PersonReference");
-		personReferenceMenu.setToolTipText("for reference by Person");
+	private JMenu createMenu_Reference() {
+		 String reference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("reference");
+		 String referenceTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceTipText");
+		
+		JMenu personReferenceMenu = new JMenu(reference);
+		personReferenceMenu.setToolTipText(referenceTipText);
 		personReferenceMenu.setMnemonic(KeyEvent.VK_P);
 		
-		personReferenceMenu.add(new Menu_PersonReference());
+		personReferenceMenu.add(new Menu_Reference_Person());
+		personReferenceMenu.add(new Menu_Reference_Kode());
 		personReferenceMenu.addSeparator();
 		
 		return personReferenceMenu;
@@ -65,8 +71,10 @@ public class MainWindowWBC_DBase extends JFrame {
 
 
 	private JMenu createMenu_Measuring() {
-		JMenu measuringMenu = new JMenu("InsertMeasuring");
-		measuringMenu.setToolTipText("for add measuring");
+		 String insertMeasuring = ReadFileBGTextVariable.getGlobalTextVariableMap().get("insertMeasuring");
+		 String insertMeasuringTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("insertMeasuringTipText");
+		JMenu measuringMenu = new JMenu(insertMeasuring);
+		measuringMenu.setToolTipText(insertMeasuringTipText);
 		measuringMenu.setMnemonic(KeyEvent.VK_I);
 		
 		measuringMenu.add(new Menu_AutoInsertMeasuting());
@@ -76,8 +84,10 @@ public class MainWindowWBC_DBase extends JFrame {
 	}
 	
 	private JMenu createMenu_PersonManagement() {
-		JMenu personReferenceMenu = new JMenu("PersonManagement");
-		personReferenceMenu.setToolTipText("for management by Person");
+		 String personManagement = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personManagement");
+		 String personManagementTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personManagementTipText");
+		JMenu personReferenceMenu = new JMenu(personManagement);
+		personReferenceMenu.setToolTipText(personManagementTipText);
 		personReferenceMenu.setMnemonic(KeyEvent.VK_M);
 		
 		personReferenceMenu.add(new Menu_PersonManagement());

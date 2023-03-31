@@ -4,11 +4,30 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import Aplication.ReadFileBGTextVariable;
+
 public class conectToAccessDB {
 
 	public static Connection conectionBDtoAccess() {
 		
-		String databaseURL = "jdbc:ucanaccess://d://WBC_DBase.mdb";
+		
+		String databaseURL = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseURL");
+		String databaseEncript = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseEncript");
+	Connection connection = null;
+	 try  {
+		connection = DriverManager.getConnection(databaseURL, "", databaseEncript);
+		
+	 } catch (SQLException ex) {
+         ex.printStackTrace();
+     }
+	return connection;
+	}
+	
+	public static Connection conectionBDtoAccessOID() {
+		
+		
+		String databaseURL = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseOID");
+		String databaseEncript = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseEncript");
 	Connection connection = null;
 	 try  {
 		connection = DriverManager.getConnection(databaseURL);
@@ -18,4 +37,5 @@ public class conectToAccessDB {
      }
 	return connection;
 	}
+	
 }

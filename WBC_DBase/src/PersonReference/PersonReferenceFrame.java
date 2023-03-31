@@ -73,27 +73,27 @@ public class PersonReferenceFrame extends JFrame {
 	private JPanel contentPane;
 	private JPanel panel_AllSaerch;
 	private JPanel panel_Search;
-	private  JPanel infoPanel;
-	private  JPanel tablePane;
+	private JPanel infoPanel;
+	private JPanel tablePane;
 	private JScrollPane scrollPane;
 	private Choice comboBox_Firm;
 	private static Choice comboBox_Otdel;
 	private static Choice comboBox_Results;
-	
-	private static  JTextArea textArea;
-	private  static JTextField textField_EGN;
-	private static  JTextField textField_FName;
-	private  static JTextField textField_SName;
-	private  static JTextField textField_LName;
-	private  static JTextField textField_KZ1;
-	private  static JTextField textField_KZ2;
-	private  static JTextField textField_KZHOG;
+
+	private static JTextArea textArea;
+	private static JTextField textField_EGN;
+	private static JTextField textField_FName;
+	private static JTextField textField_SName;
+	private static JTextField textField_LName;
+	private static JTextField textField_KZ1;
+	private static JTextField textField_KZ2;
+	private static JTextField textField_KZHOG;
 	private static JTextField textField_Year;
-	
-	private  static JButton btn_SearchDBase;
-	private  static JButton btn_SearchFromExcel;
-	private  static JButton btnBackToTable;
-	
+
+	private static JButton btn_SearchDBase;
+	private static JButton btn_SearchFromExcel;
+	private static JButton btnBackToTable;
+
 	private int minYeare;
 	private String notResults;
 
@@ -103,24 +103,23 @@ public class PersonReferenceFrame extends JFrame {
 	List<String> listAdd;
 	List<String> listFirm;
 	String[][] dataTable;
+	static String curentYear = Calendar.getInstance().get(Calendar.YEAR)+"";
 	
-
 	public PersonReferenceFrame(ActionIcone round) {
-		
+
 		setMinimumSize(new Dimension(730, 900));
-		
+
 		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 		notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
 		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
 		String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
-		
+
 		try {
 			minYeare = Integer.parseInt(minYearInDbase);
 		} catch (Exception e) {
 			MessageDialog("Year not korekt in BGTextVariable", "Error");
 			System.exit(0);
 		}
-	
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -131,31 +130,30 @@ public class PersonReferenceFrame extends JFrame {
 		panel_Search = new JPanel();
 		panel_Search.setLayout(new BoxLayout(panel_Search, BoxLayout.Y_AXIS));
 		contentPane.add(panel_Search, BorderLayout.NORTH);
-	
+
 		panel_AllSaerch = new JPanel();
 		contentPane.add(panel_AllSaerch, BorderLayout.CENTER);
 		panel_AllSaerch.setLayout(new BoxLayout(panel_AllSaerch, BoxLayout.Y_AXIS));
-		
+
 		infoPanel = new JPanel();
 		infoPanel.setPreferredSize(new Dimension(10, 10));
 		infoPanel.setMaximumSize(new Dimension(32767, 32767));
 		panel_AllSaerch.add(infoPanel);
 		infoPanel.setLayout(new BorderLayout(0, 0));
-		 
+
 		textArea = new JTextArea();
 		textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
 		JScrollPane sp = new JScrollPane(textArea);
 		infoPanel.add(sp, BorderLayout.CENTER);
-		
+
 		tablePane = new JPanel();
 		tablePane.setPreferredSize(new Dimension(10, 0));
 		tablePane.setMaximumSize(new Dimension(32767, 0));
 		panel_AllSaerch.add(tablePane);
 		tablePane.setLayout(new BorderLayout(0, 0));
-		
+
 		scrollPane = new JScrollPane();
 		tablePane.add(scrollPane, BorderLayout.CENTER);
-
 
 		listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
 		listOtdelKz.add("");
@@ -179,7 +177,7 @@ public class PersonReferenceFrame extends JFrame {
 		panel_2();
 		panel_2A();
 		panel_3();
-		
+
 		getRootPane().setDefaultButton(btn_SearchDBase);
 
 		panel_Button();
@@ -253,7 +251,7 @@ public class PersonReferenceFrame extends JFrame {
 		textField_EGN.setMinimumSize(new Dimension(5, 20));
 		panel1A.add(textField_EGN);
 		textField_EGN.setColumns(10);
-		
+
 		TextFieldJustNumbers(textField_EGN);
 
 		JLabel lblNewLabel_1 = new JLabel("");
@@ -277,21 +275,19 @@ public class PersonReferenceFrame extends JFrame {
 		textField_LName.setMinimumSize(new Dimension(5, 20));
 		textField_LName.setColumns(15);
 		panel1A.add(textField_LName);
-		
+
 		JLabel lblNewLabel_1_1 = new JLabel("");
 		lblNewLabel_1_1.setPreferredSize(new Dimension(50, 14));
 		panel1A.add(lblNewLabel_1_1);
-		
+
 		btn_SearchDBase = new JButton("Search from DBase");
 		btn_SearchDBase.setMargin(new Insets(2, 5, 2, 5));
 		btn_SearchDBase.setIconTextGap(1);
 		btn_SearchDBase.setPreferredSize(new Dimension(110, 23));
 		panel1A.add(btn_SearchDBase);
-		
+
 		ActionListenerbBtn_SearchDBase();
-		
-		
-		
+
 		return panel1A;
 	}
 
@@ -356,8 +352,7 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_L_Otdel.setBorder(null);
 		lbl_L_Otdel.setAlignmentX(1.0f);
 		panel2.add(lbl_L_Otdel);
-		
-	
+
 		return panel2;
 	}
 
@@ -370,7 +365,7 @@ public class PersonReferenceFrame extends JFrame {
 		panel_Search.add(panel2A);
 
 		textField_Year = new JTextField();
-		textField_Year.setText("2023");
+		textField_Year.setText(curentYear);
 		textField_Year.setPreferredSize(new Dimension(5, 20));
 		textField_Year.setMinimumSize(new Dimension(5, 20));
 		textField_Year.setColumns(4);
@@ -378,7 +373,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		TextFieldJustNumbers(textField_Year);
 		ActionListenertextField_Year();
-		
+
 		textField_KZ1 = new JTextField();
 		textField_KZ1.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		textField_KZ1.setPreferredSize(new Dimension(5, 20));
@@ -421,15 +416,14 @@ public class PersonReferenceFrame extends JFrame {
 		btn_SearchFromExcel.setMargin(new Insets(2, 5, 2, 5));
 		btn_SearchFromExcel.setPreferredSize(new Dimension(110, 23));
 		panel2A.add(btn_SearchFromExcel);
-		
+
 		ActionListenerbBtn_SearchFromExcel();
-		
-		
+
 		return panel2A;
 	}
 
 	private JPanel panel_3() {
-		
+
 		JPanel panel3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel3.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -440,23 +434,22 @@ public class PersonReferenceFrame extends JFrame {
 		comboBox_Results.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		comboBox_Results.setPreferredSize(new Dimension(590, 20));
 		panel3.add(comboBox_Results);
-		
+
 		ActionListenerComboBox_Results();
-		
+
 		btnBackToTable = new JButton("BackToTable");
 		btnBackToTable.setEnabled(false);
 		btnBackToTable.setMargin(new Insets(2, 2, 2, 2));
 		btnBackToTable.setPreferredSize(new Dimension(90, 20));
 		panel3.add(btnBackToTable);
-		
+
 		ActionListenerBtnBackToTable();
-		
-		
+
 		return panel3;
 	}
 
-	
-	protected static void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson, Choice comboBox_Results) {
+	public static void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson,
+			Choice comboBox_Results) {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (Person person : listSelectionPerson) {
@@ -470,16 +463,16 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	protected static String[][] addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson) {
-		
+
 		String[][] dataTable = new String[listSelectionPerson.size()][8];
-	
+
 //				"EGN", 	"FirstName","SecondName","LastName","Otdel",
 //				"Kod KZ-1",	"Kod KZ-2",	"Kod Hog"	
-				
-		int k = 0;	
+
+		int k = 0;
 		for (Person person : listSelectionPerson) {
-			System.out.println("egn "+person.getEgn());
-			dataTable[k][0] = person.getEgn() ;
+			System.out.println("egn " + person.getEgn());
+			dataTable[k][0] = person.getEgn();
 			dataTable[k][1] = person.getFirstName();
 			dataTable[k][2] = person.getSecondName();
 			dataTable[k][3] = person.getLastName();
@@ -487,35 +480,36 @@ public class PersonReferenceFrame extends JFrame {
 			dataTable[k][5] = getLastKodeByPersonAndZone(person, 1);
 			dataTable[k][6] = getLastKodeByPersonAndZone(person, 2);
 			dataTable[k][7] = getLastKodeByPersonAndZone(person, 3);
-			
+
 			k++;
 		}
-		
+
 		return dataTable;
 
 	}
 
 	private static String getLastWorkplaceByPerson(Person person) {
-		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person, "DateSet");
-		List<PersonStatus> sortedReversPeStatList = list.stream().sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed())
-				  .collect(Collectors.toList());		
-		if(sortedReversPeStatList.size()>0) {
-	return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
-		}else {
+		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
+				"DateSet");
+		List<PersonStatus> sortedReversPeStatList = list.stream()
+				.sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed()).collect(Collectors.toList());
+		if (sortedReversPeStatList.size() > 0) {
+			return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
+		} else {
 			return "";
 		}
 	}
-	
+
 	private static String getLastKodeByPersonAndZone(Person person, int zonaID) {
 		List<KodeStatus> list = KodeStatusDAO.getKodeStatusByPersonZone(person, zonaID);
-		if(list!=null) {
-		List<KodeStatus> sortedReversKodeStatList = list.stream().sorted(Comparator.comparing(KodeStatus::getYear).reversed())
-				  .collect(Collectors.toList());		
-	return sortedReversKodeStatList.get(0).getKode();
+		if (list != null) {
+			List<KodeStatus> sortedReversKodeStatList = list.stream()
+					.sorted(Comparator.comparing(KodeStatus::getYear).reversed()).collect(Collectors.toList());
+			return sortedReversKodeStatList.get(0).getKode();
 		}
-	return "-";
+		return "-";
 	}
-	
+
 	protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
 		String str = "";
 		for (Person person : listSelectionPerson) {
@@ -523,8 +517,16 @@ public class PersonReferenceFrame extends JFrame {
 		}
 		return str;
 	}
-	
-	protected List<Person> getListSearchingPerson() {
+
+	public static List<Person> getListSearchingPerson(String egn , 
+	String firstName,
+	String secontName ,
+	String lastName ,
+	String kz1 ,
+	String kz2 ,
+	String kzHog ,
+	String year,
+	String otdel) {
 		List<Person> listSelectionPersonEGN = new ArrayList<>();
 		List<Person> listSelectionPersonFName = new ArrayList<>();
 		List<Person> listSelectionPersonSName = new ArrayList<>();
@@ -534,19 +536,9 @@ public class PersonReferenceFrame extends JFrame {
 		List<Person> listSelectionPersonKZHog = new ArrayList<>();
 		List<Person> listSelectionPersonOtdel = new ArrayList<>();
 
-		String egn = textField_EGN.getText();
-		String firstName = textField_FName.getText();
-		String secontName = textField_SName.getText();
-		String lastName = textField_LName.getText();
-		String kz1 = textField_KZ1.getText();
-		String kz2 = textField_KZ2.getText();
-		String kzHog = textField_KZHOG.getText();
-		String year = textField_Year.getText();
-		String otdel = comboBox_Otdel.getSelectedItem();
+		
 		List<Person> listAllPerson = PersonDAO.getAllValuePerson();
 
-		
-		
 		if (!egn.trim().isEmpty()) {
 			for (Person person : listAllPerson) {
 				if (person.getEgn().contains(egn)) {
@@ -559,7 +551,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!firstName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonEGN) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getFirstName(),firstName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getFirstName(), firstName)) {
 					listSelectionPersonFName.add(person);
 				}
 			}
@@ -569,7 +561,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!secontName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonFName) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getSecondName(),secontName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getSecondName(), secontName)) {
 					listSelectionPersonSName.add(person);
 				}
 			}
@@ -579,23 +571,33 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!lastName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonSName) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getLastName(),lastName)) {
+				if (SearchFromExcellFiles.checkContainsStrings(person.getLastName(), lastName)) {
 					listSelectionPersonLName.add(person);
 				}
 			}
 		} else {
 			listSelectionPersonLName = listSelectionPersonSName;
 		}
-		
+
 		KodeStatus kodeStat;
 		if (!kz1.trim().isEmpty()) {
 			for (Person person : listSelectionPersonLName) {
-				
-				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 1, year);
-				if (kodeStat != null && kodeStat.getKode().contains(kz1)) {
-					listSelectionPersonKZ1.add(kodeStat.getPerson());
+				if (year.isEmpty()) {
+					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 1);
+					if (listKodeStst != null) {
+
+						for (KodeStatus kodeStatus : listKodeStst) {
+							if (kodeStatus != null && kodeStatus.getKode().contains(kz1)) {
+								listSelectionPersonKZ1.add(kodeStatus.getPerson());
+							}
+						}
+					}
+				} else {
+					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 1, year);
+					if (kodeStat != null && kodeStat.getKode().contains(kz1)) {
+						listSelectionPersonKZ1.add(kodeStat.getPerson());
+					}
 				}
-				
 			}
 		} else {
 			listSelectionPersonKZ1 = listSelectionPersonLName;
@@ -603,12 +605,21 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!kz2.trim().isEmpty()) {
 			for (Person person : listSelectionPersonKZ1) {
-				
-				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 2, year);
-				if (kodeStat != null && kodeStat.getKode().contains(kz2)) {
-					listSelectionPersonKZ2.add(kodeStat.getPerson());
+				if (year.isEmpty()) {
+					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 2);
+					if (listKodeStst != null) {
+						for (KodeStatus kodeStatus : listKodeStst) {
+							if (kodeStatus != null && kodeStatus.getKode().contains(kz2)) {
+								listSelectionPersonKZ2.add(kodeStatus.getPerson());
+							}
+						}
+					}
+				} else {
+					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 2, year);
+					if (kodeStat != null && kodeStat.getKode().contains(kz2)) {
+						listSelectionPersonKZ2.add(kodeStat.getPerson());
+					}
 				}
-				
 			}
 		} else {
 			listSelectionPersonKZ2 = listSelectionPersonKZ1;
@@ -616,17 +627,26 @@ public class PersonReferenceFrame extends JFrame {
 
 		if (!kzHog.trim().isEmpty()) {
 			for (Person person : listSelectionPersonKZ2) {
-				
-				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 3, year);
-				if (kodeStat != null && kodeStat.getKode().contains(kzHog)) {
-					listSelectionPersonKZHog.add(kodeStat.getPerson());
+				if (year.isEmpty()) {
+					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 3);
+					if (listKodeStst != null) {
+						for (KodeStatus kodeStatus : listKodeStst) {
+							if (kodeStatus != null && kodeStatus.getKode().contains(kzHog)) {
+								listSelectionPersonKZHog.add(kodeStatus.getPerson());
+							}
+						}
+					}
+				} else {
+					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 3, year);
+					if (kodeStat != null && kodeStat.getKode().contains(kzHog)) {
+						listSelectionPersonKZHog.add(kodeStat.getPerson());
+					}
 				}
-				
 			}
 		} else {
 			listSelectionPersonKZHog = listSelectionPersonKZ2;
 		}
-		
+
 		List<PersonStatus> listAllPerStat = new ArrayList<>();
 		if (otdel != null && !otdel.trim().isEmpty()) {
 			Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
@@ -663,7 +683,6 @@ public class PersonReferenceFrame extends JFrame {
 
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
 	}
-	
 
 	private void ActionListenerComboBox_Firm() {
 
@@ -678,93 +697,98 @@ public class PersonReferenceFrame extends JFrame {
 		});
 
 	}
- 	 	
+
 	private void ActionListenerbBtn_SearchDBase() {
 		btn_SearchDBase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(!allFieldsEmnty()){
+
+				if (!allFieldsEmnty()) {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
-					dataTable=null;	
+					dataTable = null;
 					textArea.setText("");
-				comboBox_Results.removeAll();
-				List<Person> listSelectionPerson = getListSearchingPerson();
-				addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
-	
-				if(listSelectionPerson.size()==0) {
-					textArea.setText(notResults);
-					viewInfoPanel();
+					comboBox_Results.removeAll();
+					String egn = textField_EGN.getText();
+					String firstName = textField_FName.getText();
+					String secontName = textField_SName.getText();
+					String lastName = textField_LName.getText();
+					String kz1 = textField_KZ1.getText();
+					String kz2 = textField_KZ2.getText();
+					String kzHog = textField_KZHOG.getText();
+					String year = textField_Year.getText();
+					String otdel = comboBox_Otdel.getSelectedItem();
 					
+					List<Person> listSelectionPerson = getListSearchingPerson(egn ,	firstName,secontName , lastName , kz1 , kz2 , kzHog , year, otdel);
+					addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
+
+					if (listSelectionPerson.size() == 0) {
+						textArea.setText(notResults);
+						viewInfoPanel();
+
+					}
+
+					if (listSelectionPerson.size() == 1) {
+						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(),
+								listSelectionPerson.get(0), false));
+						viewInfoPanel();
+					}
+
+					if (listSelectionPerson.size() > 1) {
+						System.out.println("***** " + listSelectionPerson.size());
+						dataTable = addListStringSelectionPersonToComboBox(listSelectionPerson);
+						panel_infoPanelTablePanel(dataTable);
+						viewTablePanel();
+					}
+
+					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 				}
-				
-				if(listSelectionPerson.size()==1) {
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0), false));
-					viewInfoPanel();
-				}
-				
-				if(listSelectionPerson.size()>1) {
-					System.out.println("***** "+listSelectionPerson.size());
-					dataTable = addListStringSelectionPersonToComboBox(listSelectionPerson);
-					panel_infoPanelTablePanel(dataTable);
-					viewTablePanel() ;
-				}
-				
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);	
-			}
 			}
 
-			
-
-			
 		});
 
 	}
 
-	private void  ActionListenerbBtn_SearchFromExcel() {
-	
-		
-		
- 		btn_SearchFromExcel.addActionListener(new ActionListener() {
- 			
- 			
+	private void ActionListenerbBtn_SearchFromExcel() {
+
+		btn_SearchFromExcel.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
-				
-				if(!PersonReferenceFrame.allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()){
+
+				if (!PersonReferenceFrame.allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()) {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
-					dataTable=null;	
-				textArea.setText("");
-				comboBox_Results.removeAll();
-				List<PersonExcellClass> listSelectionPerson = SearchFromExcellFiles.getListSearchingPerson();
-				SearchFromExcellFiles.addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
-				
-				
-				if(listSelectionPerson.size()==0) {
-					textArea.setText(notResults);
-					viewInfoPanel();
-					
-				}
-				
-				if(listSelectionPerson.size()==1) {
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, listSelectionPerson.get(0).getPerson(), true));
-					viewInfoPanel();
-				}
-				
-				if(listSelectionPerson.size()>1) {
-					System.out.println("***** "+listSelectionPerson.size());
-					dataTable = SearchFromExcellFiles.addListStringSelectionPersonExcellClassToComboBox(listSelectionPerson);
-					panel_infoPanelTablePanel(dataTable);
-					viewTablePanel() ;
-				}
-				
-				
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);
-				
+					dataTable = null;
+					textArea.setText("");
+					comboBox_Results.removeAll();
+					List<PersonExcellClass> listSelectionPerson = SearchFromExcellFiles.getListSearchingPerson();
+					SearchFromExcellFiles.addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
+
+					if (listSelectionPerson.size() == 0) {
+						textArea.setText(notResults);
+						viewInfoPanel();
+
+					}
+
+					if (listSelectionPerson.size() == 1) {
+						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(),
+								listSelectionPerson.get(0).getPerson(), true));
+						viewInfoPanel();
+					}
+
+					if (listSelectionPerson.size() > 1) {
+						System.out.println("***** " + listSelectionPerson.size());
+						dataTable = SearchFromExcellFiles
+								.addListStringSelectionPersonExcellClassToComboBox(listSelectionPerson);
+						panel_infoPanelTablePanel(dataTable);
+						viewTablePanel();
+					}
+
+					GeneralMethods.setDefaultCursor(panel_AllSaerch);
+
 				}
 			}
 		});
 
 	}
-	
+
 	private void ActionListenerComboBox_Results() {
 
 		comboBox_Results.addItemListener(new ItemListener() {
@@ -776,80 +800,79 @@ public class PersonReferenceFrame extends JFrame {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					String str = comboBox_Results.getSelectedItem();
 					int index = str.indexOf(" ");
-					System.out.println("--->> "+str.substring(0,index));
-					Person person = PersonDAO.getValuePersonByEGN(str.substring(0,index));
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person, false));
+					System.out.println("--->> " + str.substring(0, index));
+					Person person = PersonDAO.getValuePersonByEGN(str.substring(0, index));
+					textArea.setText(
+							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false));
 					viewInfoPanel();
-					GeneralMethods.setDefaultCursor(panel_AllSaerch);	
+					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 				}
 			}
 		});
 
 	}
-	
+
 	private void ActionListenertextField_Year() {
 		textField_Year.addKeyListener(new KeyAdapter() {
 
-	        public void keyReleased(KeyEvent evt) {
-	        	 textField_Year.setForeground(Color.BLACK);
-	                btn_SearchFromExcel.setEnabled(true);
-	        	if(!textField_Year.getText().isEmpty()) {
-	            try {
-	                long number = Long.parseLong(textField_Year.getText());
-	                if(number < minYeare || number > Calendar.getInstance().get(Calendar.YEAR)) {
-	                	textField_Year.setForeground(Color.RED);
-	 	               btn_SearchFromExcel.setEnabled(false);
-	                }
-	            } catch (Exception e) {
-	               textField_Year.setForeground(Color.RED);
-	               btn_SearchFromExcel.setEnabled(false);
-	            }
-	        	}
-	        }
-	    });
-		
+			public void keyReleased(KeyEvent evt) {
+				textField_Year.setForeground(Color.BLACK);
+				btn_SearchFromExcel.setEnabled(true);
+				if (!textField_Year.getText().isEmpty()) {
+					try {
+						long number = Long.parseLong(textField_Year.getText());
+						if (number < minYeare || number > Calendar.getInstance().get(Calendar.YEAR)) {
+							textField_Year.setForeground(Color.RED);
+							btn_SearchFromExcel.setEnabled(false);
+						}
+					} catch (Exception e) {
+						textField_Year.setForeground(Color.RED);
+						btn_SearchFromExcel.setEnabled(false);
+					}
+				}
+			}
+		});
+
 	}
-	
+
 	private void ActionListenerBtnBackToTable() {
-		
+
 		btnBackToTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-							
-					panel_infoPanelTablePanel(dataTable);
-					viewTablePanel() ;
-				}
-				
-			
-		});
-		
-	}
-	
-	protected static boolean allFieldsEmnty() {
-		return (textField_EGN.getText().trim().isEmpty() && textField_FName.getText().trim().isEmpty() &&
-				textField_SName.getText().trim().isEmpty() && textField_LName.getText().trim().isEmpty() &&
-				textField_KZ1.getText().trim().isEmpty() && textField_KZ2.getText().trim().isEmpty() &&
-				textField_KZHOG.getText().trim().isEmpty() && comboBox_Otdel.getSelectedItem().trim().isEmpty());
-	}
-	
-	public static void TextFieldJustNumbers(JTextField field) {
-	((AbstractDocument)field.getDocument()).setDocumentFilter(new DocumentFilter(){
-        Pattern regEx = Pattern.compile("\\d*");
 
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {          
-            Matcher matcher = regEx.matcher(text);
-            if(!matcher.matches()){
-                return;
-            }
-            super.replace(fb, offset, length, text, attrs);
-        }
-    });
+				panel_infoPanelTablePanel(dataTable);
+				viewTablePanel();
+			}
+
+		});
+
 	}
-	
-	
+
+	protected static boolean allFieldsEmnty() {
+		return (textField_EGN.getText().trim().isEmpty() && textField_FName.getText().trim().isEmpty()
+				&& textField_SName.getText().trim().isEmpty() && textField_LName.getText().trim().isEmpty()
+				&& textField_KZ1.getText().trim().isEmpty() && textField_KZ2.getText().trim().isEmpty()
+				&& textField_KZHOG.getText().trim().isEmpty() && comboBox_Otdel.getSelectedItem().trim().isEmpty());
+	}
+
+	public static void TextFieldJustNumbers(JTextField field) {
+		((AbstractDocument) field.getDocument()).setDocumentFilter(new DocumentFilter() {
+			Pattern regEx = Pattern.compile("\\d*");
+
+			@Override
+			public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+					throws BadLocationException {
+				Matcher matcher = regEx.matcher(text);
+				if (!matcher.matches()) {
+					return;
+				}
+				super.replace(fb, offset, length, text, attrs);
+			}
+		});
+	}
+
 	private JPanel panel_Button() {
-		
-	
+
 		JPanel buttonPanel = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.RIGHT);
@@ -859,28 +882,32 @@ public class PersonReferenceFrame extends JFrame {
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("888888888888888888888888888888888888");
-				if(btnBackToTable.isEnabled() || dataTable==null) {
-					
-					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(), TextInAreaTextPanel.getMasivePersonStatusName(),  TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(), TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName() ,  TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
-				}else {
-					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,  getTabHeader(),  buttonPanel);
-						
+				if (btnBackToTable.isEnabled() || dataTable == null) {
+
+					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
+							TextInAreaTextPanel.getMasivePersonStatusName(),
+							TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(),
+							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
+							TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
+				} else {
+					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel);
+
 				}
 			}
 		});
 		buttonPanel.add(btn_Export);
-		
+
 		return buttonPanel;
 	}
-	
+
 	private void viewTablePanel() {
 		infoPanel.setPreferredSize(new Dimension(10, 0));
 		infoPanel.setMaximumSize(new Dimension(32767, 0));
-		
+
 		tablePane.setPreferredSize(new Dimension(10, 10));
-		tablePane.setMaximumSize(new Dimension(32767,32767));
+		tablePane.setMaximumSize(new Dimension(32767, 32767));
 		btnBackToTable.setEnabled(false);
-		
+
 		repaint();
 		revalidate();
 	}
@@ -888,50 +915,46 @@ public class PersonReferenceFrame extends JFrame {
 	void viewInfoPanel() {
 		infoPanel.setPreferredSize(new Dimension(10, 10));
 		infoPanel.setMaximumSize(new Dimension(32767, 32767));
-		
+
 		tablePane.setPreferredSize(new Dimension(10, 0));
-		tablePane.setMaximumSize(new Dimension(32767,0));
-		if(dataTable!=null) {
-		btnBackToTable.setEnabled(true);
+		tablePane.setMaximumSize(new Dimension(32767, 0));
+		if (dataTable != null) {
+			btnBackToTable.setEnabled(true);
 		}
 		repaint();
 		revalidate();
 	}
-	
-	private void  panel_infoPanelTablePanel(String[][] dataTable) {
+
+	private void panel_infoPanelTablePanel(String[][] dataTable) {
 		String[] columnNames = getTabHeader();
 		int egn_code_Colum = 0;
-	
+
 		DefaultTableModel dtm = new DefaultTableModel();
 		final JTable table = new JTable(dtm);
-		
-		
+
 		dtm = new DefaultTableModel(dataTable, columnNames) {
 
 			private static final long serialVersionUID = 1L;
-			
-			
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
-			return false;
-						}
+				return false;
+			}
+
 			@Override
 			public Object getValueAt(int row, int col) {
 				return dataTable[row][col];
 			}
-			
-			
+
 			@SuppressWarnings("unused")
 			public void setValueAt(String value, int row, int col) {
 
 				if (!dataTable[row][col].equals(value)) {
 					dataTable[row][col] = value;
 					fireTableCellUpdated(row, col);
-					
+
 				}
 			}
-
-			
 
 			public int getColumnCount() {
 				return columnNames.length;
@@ -942,79 +965,65 @@ public class PersonReferenceFrame extends JFrame {
 			}
 
 		};
-	
-		
-		
-		
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			public void mousePressed(MouseEvent e) {
-				DefaultTableModel model =(DefaultTableModel) table.getModel();
-				if (table.getSelectedColumn() == egn_code_Colum ) {
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				if (table.getSelectedColumn() == egn_code_Colum) {
 					table.rowAtPoint(e.getPoint());
 					table.columnAtPoint(e.getPoint());
-					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
-				
-				System.out.println(reqCodeStr);	
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum).toString();
+
+					System.out.println(reqCodeStr);
 
 				}
-				
+
 				if (e.getClickCount() == 2 && getSelectedModelRow(table) != -1) {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
-					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum ).toString();
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum).toString();
 					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
-					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year, person, false));
+					textArea.setText(
+							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false));
 					viewInfoPanel();
 					GeneralMethods.setDefaultCursor(panel_AllSaerch);
-							}
-							}
+				}
+			}
 		});
 
 		new TableFilterHeader(table, AutoChoices.ENABLED);
-		
-		
-		
-				
-				dtm.fireTableDataChanged();
-				table.setModel(dtm);
-				table.setFillsViewportHeight(true);
-				 table.repaint();
-				 System.out.println("+++++++++++++ "+dataTable.length);
-				 
-				 tablePane.removeAll();
-					tablePane.setPreferredSize(new Dimension(10, 10));
-					tablePane.setMaximumSize(new Dimension(32767, 32767));
-					panel_AllSaerch.add(tablePane);
-					tablePane.setLayout(new BorderLayout(0, 0));
-					
-					scrollPane = new JScrollPane(table);
-					tablePane.add(scrollPane, BorderLayout.CENTER);
-			
+
+		dtm.fireTableDataChanged();
+		table.setModel(dtm);
+		table.setFillsViewportHeight(true);
+		table.repaint();
+		System.out.println("+++++++++++++ " + dataTable.length);
+
+		tablePane.removeAll();
+		tablePane.setPreferredSize(new Dimension(10, 10));
+		tablePane.setMaximumSize(new Dimension(32767, 32767));
+		panel_AllSaerch.add(tablePane);
+		tablePane.setLayout(new BorderLayout(0, 0));
+
+		scrollPane = new JScrollPane(table);
+		tablePane.add(scrollPane, BorderLayout.CENTER);
 
 	}
-	
+
 	private int getSelectedModelRow(JTable table) {
-		return  table.convertRowIndexToModel(table.getSelectedRow());
-		}
-	
+		return table.convertRowIndexToModel(table.getSelectedRow());
+	}
+
 	private String[] getTabHeader() {
-		String[] tableHeader = {
-				"EGN", 
-				"FirstName",
-				"SecondName",
-				"LastName",
-				"Otdel",
-				"Kod KZ-1",
-				"Kod KZ-2",
-				"Kod Hog"
-				 };
+		String[] tableHeader = { "EGN", "FirstName", "SecondName", "LastName", "Otdel", "Kod KZ-1", "Kod KZ-2",
+				"Kod Hog" };
 		return tableHeader;
 	}
 
-	private ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
+	public static ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
 		ArrayList<String> list = new ArrayList<String>();
 		for (Workplace workplace : valueWorkplaceByObject) {
 			list.add(workplace.getOtdel());

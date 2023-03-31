@@ -33,7 +33,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Calendar;
 import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -250,15 +249,16 @@ public class SearchFreeKodeFrame extends JFrame {
 				     @Override
 				     public void run() {
 				    	 int zone_ID = choiceZona.getSelectedIndex()+1;
-				    	 ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(choiceWorkplace.getSelectedItem(), zone_ID);
+				    	 String zveno = choiceWorkplace.getSelectedItem();
+				    	 List<String>  masiveUsedKode = ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(zveno, zone_ID);
 				    	  	String leter = textField_Leter.getText();
 							int start = Integer.parseInt(textField_Start.getText());
 							int end = Integer.parseInt(textField_End.getText())+1;
 							 
 							String[] year = SearchFreeKodeMethods.getHeader();
 							
-							String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year);
-							table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year);
+							String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year, masiveUsedKode);
+							table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year, zveno);
 							scrollPane.setViewportView(table);
 							String freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("freeKodeComent");
 							lblComent.setText(freeKodeComent );

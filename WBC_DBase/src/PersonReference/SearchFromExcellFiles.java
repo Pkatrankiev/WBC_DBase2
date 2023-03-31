@@ -4,6 +4,7 @@ import java.awt.Choice;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -46,8 +47,14 @@ public class SearchFromExcellFiles {
 	
 	static String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
 	static String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
-	static String[] excellFiles = {filePathArhivePersonel, filePathArhiveExternal};
+	static String[] pathToArhiveExcellFiles = {filePathArhivePersonel, filePathArhiveExternal};
 	
+	static String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel");
+	static String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal");
+	static String[] pathToFiles = {filePathPersonel, filePathExternal};
+	
+	
+	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 	
 	protected static void addListStringSelectionPersonToComboBox(List<PersonExcellClass> listSelectionPerson, Choice comboBox_Results) {
 		comboBox_Results.removeAll();
@@ -272,12 +279,23 @@ public class SearchFromExcellFiles {
 	public static List<PersonExcellClass> getPersonFromExcelFile(String year) {
 		
 		List<PersonExcellClass> listExcellPerson = new ArrayList<>();
-		for (String pathFile : excellFiles) {
-				
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile+year+".xls");
+		int insertYear = Integer.parseInt(year);
+		String[] path = pathToArhiveExcellFiles;
+		if(insertYear==curentYear) {
+			path = pathToFiles	;
+		}
+		
+		for (String pathFile : path) {
+			
+			if(insertYear!=curentYear) {
+				pathFile = pathFile+year+".xls";
+			}		
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+		if(workbook != null) {
 		String ExcellEGN = "", FirstName = "", SecondName = "", LastName = "";
 		String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "";
 		String otdel = "";
+		
 		Sheet sheet = workbook.getSheetAt(0);
 		Cell cell, cell1;
 	
@@ -333,13 +351,24 @@ public class SearchFromExcellFiles {
 
 		}
 	}
+		}
 		return listExcellPerson;
 	}	
 
 	public static List<KodeStatus> getListKodeStatusFromExcelFile( String year, Person person) {
 		List<KodeStatus> listKodeStatus = new ArrayList<>();
-		for (String pathFile : excellFiles) {
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile+year+".xls");
+		int insertYear = Integer.parseInt(year);
+		String[] path = pathToArhiveExcellFiles;
+		if(insertYear==curentYear) {
+			path = pathToFiles	;
+		}
+		
+		for (String pathFile : path) {
+			
+			if(insertYear!=curentYear) {
+				pathFile = pathFile+year+".xls";
+			}		
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		String zab = "From Arhive";
 		String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "";
 		String EGN = "";
@@ -416,11 +445,20 @@ public class SearchFromExcellFiles {
 		return kode.replaceAll("\\d*", "").length() == kode.length();
 	}		
 	
-	
-	
 	public static List<PersonStatus> getListPersonStatusFromExcelFile( String year, Person person) {
 		List<PersonStatus> listPerStat = new ArrayList<>();
-		for (String pathFile : excellFiles) {
+		int insertYear = Integer.parseInt(year);
+		String[] path = pathToArhiveExcellFiles;
+		if(insertYear==curentYear) {
+			path = pathToFiles	;
+		}
+		
+		for (String pathFile : path) {
+			
+			if(insertYear!=curentYear) {
+				pathFile = pathFile+year+".xls";
+			}		
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 			
 			
 			String firmName = "АЕЦ Козлодуй";
@@ -428,8 +466,6 @@ public class SearchFromExcellFiles {
 				firmName = "Външни организации";	
 			}	
 			
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile+year+".xls");
-		
 		if(workbook.getNumberOfSheets()>2) {
 			List<PersonStatus> list = getListPersonStatusFromBigExcelFile(workbook, firmName, year, person);
 			for (PersonStatus personStatus : list) {
@@ -588,18 +624,23 @@ public class SearchFromExcellFiles {
 		return listPerStat;
 
 	}
-
-
-	
 	
 	public static  String[][] generateMasiveMeasurFromExcelFile( String year, Person person) {
 		
 		String[][] masiveMeasur = new String[500][9];
 		int k=0;
-		for (String pathFile : excellFiles) {
+		int insertYear = Integer.parseInt(year);
+		String[] path = pathToArhiveExcellFiles;
+		if(insertYear==curentYear) {
+			path = pathToFiles	;
+		}
 		
+		for (String pathFile : path) {
 			
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile+year+".xls");
+			if(insertYear!=curentYear) {
+				pathFile = pathFile+year+".xls";
+			}		
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		
 		if(workbook.getNumberOfSheets()>2) {
 			String[][] measur = generateListFromResultsWBCFromBigExcelFile(workbook, person, year);

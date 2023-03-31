@@ -67,46 +67,14 @@ public static void main(String[] args) {
 //	******************************* first add Data in AccessDBase ****************************
 	
 	
-//	FromExcelFile();
+
 	
 //	List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles();
 //	System.out.println(list.size());
 //	ReadResultFromReport.PrintListReportMeasurClass();
 
-}
 
-public static void FromExcelFile() {
-	
-	Connection connection = conectToAccessDB.conectionBDtoAccess();
-	String sql = "SELECT * FROM PersonStatus";
-	List<Integer> listPersonStatus = new ArrayList<Integer>();
 
-	try {
-		Statement statement = connection.createStatement();
-		ResultSet result = statement.executeQuery(sql);
-
-		while (result.next()) {
-			
-			if(Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(result.getInt("Spisak_Prilogenia_ID"))==null){
-				listPersonStatus.add(result.getInt("PersonStatus_ID"));
-				System.out.println(result.getInt("PersonStatus_ID")+"  "+result.getInt("Spisak_Prilogenia_ID")+"  "+result.getInt("Person_ID")+"  "+result.getDate("DateSet"));
-			}
-			
-			
-			statement.close();
-			connection.close();
-			
-		}
-	} catch (SQLException e) {
-		e.printStackTrace();
-		ResourceLoader.appendToFile( e);
-	}
-		
-//	for (Integer integer : listPersonStatus) {
-//		System.out.println(integer);
-//		PersonStatusDAO.deleteValuePersonStatus(integer);
-//	}
-	
 	
 }
 

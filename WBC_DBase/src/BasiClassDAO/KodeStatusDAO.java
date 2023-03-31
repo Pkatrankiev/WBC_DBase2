@@ -305,7 +305,7 @@ public class KodeStatusDAO {
 			
 			preparedStatement.setInt(1, person.getId_Person());
 		
-			preparedStatement.setInt(2,zoneID );
+			preparedStatement.setInt(2, zoneID );
 			
 			result = preparedStatement.executeQuery();
 	
