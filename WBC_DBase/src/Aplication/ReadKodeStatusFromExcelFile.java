@@ -100,9 +100,9 @@ public class ReadKodeStatusFromExcelFile {
 	}
 
 	public static String[] getUsedKodeFromExcelFile(int zoneID) {
-		String[] excellFiles = getFilePathForPersonelAndExternal();
+		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
-		for (String pathFile : excellFiles) {
+		for (String pathFile : excellFiles_ActualPersonalAndExternal) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 
 			String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "";
@@ -213,10 +213,10 @@ public class ReadKodeStatusFromExcelFile {
 
 	public static List<String[]> generateListFromMasiveEGNandKode(String zveno) {
 		boolean flOtdel = false;
-		String[] excellFiles = getFilePathForPersonelAndExternal();
+		String[] excellFiles_ActualPersonalAndExternal =  AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
 		String otdelName = "";
-		for (String pathFile : excellFiles) {
+		for (String pathFile : excellFiles_ActualPersonalAndExternal) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 
 			String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "", egn = "";
@@ -358,12 +358,7 @@ public class ReadKodeStatusFromExcelFile {
 		return false;
 	}
 
-	public static String[] getFilePathForPersonelAndExternal() {
-		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal");
-		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel");
-		String[] excellFiles = { filePathPersonel, filePathExternal };
-		return excellFiles;
-	}
+	
 
 	private static String[] generateEmptyMasive() {
 		String[] sinpleKode = new String[6];

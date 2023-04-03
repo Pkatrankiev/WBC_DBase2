@@ -40,6 +40,7 @@ import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
+import PersonManagement.PersonelManegementFrame;
 
 import javax.swing.SwingConstants;
 
@@ -103,8 +104,8 @@ public class PersonReferenceFrame extends JFrame {
 	List<String> listAdd;
 	List<String> listFirm;
 	String[][] dataTable;
-	static String curentYear = Calendar.getInstance().get(Calendar.YEAR)+"";
-	
+	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
+
 	public PersonReferenceFrame(ActionIcone round) {
 
 		setMinimumSize(new Dimension(730, 900));
@@ -518,15 +519,7 @@ public class PersonReferenceFrame extends JFrame {
 		return str;
 	}
 
-	public static List<Person> getListSearchingPerson(String egn , 
-	String firstName,
-	String secontName ,
-	String lastName ,
-	String kz1 ,
-	String kz2 ,
-	String kzHog ,
-	String year,
-	String otdel) {
+	public static List<Person> getListSearchingPerson(boolean fromManegementFrame) {
 		List<Person> listSelectionPersonEGN = new ArrayList<>();
 		List<Person> listSelectionPersonFName = new ArrayList<>();
 		List<Person> listSelectionPersonSName = new ArrayList<>();
@@ -536,6 +529,34 @@ public class PersonReferenceFrame extends JFrame {
 		List<Person> listSelectionPersonKZHog = new ArrayList<>();
 		List<Person> listSelectionPersonOtdel = new ArrayList<>();
 
+		String egn = "";
+		String firstName = "";
+		String secontName = "";
+		String lastName = "";
+		String kz1 = "";
+		String kz2 = "";
+		String kzHog = "";
+		String year = "";
+		String otdel = "";
+
+		if (fromManegementFrame) {
+			egn = PersonReferenceFrame.getTextField_EGN().getText();
+			firstName = PersonReferenceFrame.getTextField_FName().getText();
+			secontName = PersonReferenceFrame.getTextField_SName().getText();
+			lastName = PersonReferenceFrame.getTextField_LName().getText();
+			kz1 = PersonReferenceFrame.getTextField_KZ1().getText();
+			kz2 = PersonReferenceFrame.getTextField_KZ2().getText();
+			kzHog = PersonReferenceFrame.getTextField_KZHOG().getText();
+			year = PersonReferenceFrame.getTextField_Year().getText();
+			otdel = PersonReferenceFrame.getComboBox_Otdel().getSelectedItem();
+		} else {
+			egn = PersonelManegementFrame.getTextField_EGN().getText();
+			firstName = PersonelManegementFrame.getTextField_FName().getText();
+			secontName = PersonelManegementFrame.getTextField_SName().getText();
+			lastName = PersonelManegementFrame.getTextField_LName().getText();
+		}
+		
+		KodeStatus kodeStatusNull = null;
 		
 		List<Person> listAllPerson = PersonDAO.getAllValuePerson();
 
@@ -548,6 +569,7 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonEGN = listAllPerson;
 		}
+		System.out.println("listSelectionPersonEGN = " + listSelectionPersonEGN.size());
 
 		if (!firstName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonEGN) {
@@ -558,7 +580,7 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonFName = listSelectionPersonEGN;
 		}
-
+		System.out.println("listSelectionPersonFName = " + listSelectionPersonFName.size());
 		if (!secontName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonFName) {
 				if (SearchFromExcellFiles.checkContainsStrings(person.getSecondName(), secontName)) {
@@ -568,6 +590,7 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonSName = listSelectionPersonFName;
 		}
+		System.out.println("listSelectionPersonSName = " + listSelectionPersonSName.size());
 
 		if (!lastName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonSName) {
@@ -578,23 +601,27 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonLName = listSelectionPersonSName;
 		}
-
+		System.out.println("listSelectionPersonLName = " + listSelectionPersonLName.size());
+		kodeStatusNull = setNullKodeStatus();
 		KodeStatus kodeStat;
 		if (!kz1.trim().isEmpty()) {
-			for (Person person : listSelectionPersonLName) {
-				if (year.isEmpty()) {
-					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 1);
-					if (listKodeStst != null) {
-
+			if (year.isEmpty()) {
+				List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByZoneAndKode(1, kz1);
+				if (listKodeStst != null) {
+					for (Person person : listSelectionPersonLName) {
 						for (KodeStatus kodeStatus : listKodeStst) {
-							if (kodeStatus != null && kodeStatus.getKode().contains(kz1)) {
-								listSelectionPersonKZ1.add(kodeStatus.getPerson());
+							if (kodeStatus != null && kodeStatus.getPerson().getId_Person() == person.getId_Person()) {
+								if(!kodeStatusNull.getPerson().getEgn().equals(kodeStatus.getPerson().getEgn()))
+									listSelectionPersonKZ1.add(kodeStatus.getPerson());
+									kodeStatusNull = kodeStatus;
 							}
 						}
 					}
-				} else {
-					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 1, year);
-					if (kodeStat != null && kodeStat.getKode().contains(kz1)) {
+				}
+			} else {
+				kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(1, year, kz1);
+				for (Person person : listSelectionPersonLName) {
+					if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
 						listSelectionPersonKZ1.add(kodeStat.getPerson());
 					}
 				}
@@ -602,21 +629,29 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonKZ1 = listSelectionPersonLName;
 		}
-
+		System.out.println("listSelectionPersonKZ1 = " + listSelectionPersonKZ1.size());
+		kodeStatusNull = setNullKodeStatus();
 		if (!kz2.trim().isEmpty()) {
-			for (Person person : listSelectionPersonKZ1) {
-				if (year.isEmpty()) {
-					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 2);
-					if (listKodeStst != null) {
+			
+			if (year.isEmpty()) {
+				List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByZoneAndKode(2, kz2);
+				if (listKodeStst != null) {
+					
+					for (Person person : listSelectionPersonKZ1) {
+						
 						for (KodeStatus kodeStatus : listKodeStst) {
-							if (kodeStatus != null && kodeStatus.getKode().contains(kz2)) {
+							if (kodeStatus != null && kodeStatus.getPerson().getId_Person() == person.getId_Person()) {
+								if(!kodeStatusNull.getPerson().getEgn().equals(kodeStatus.getPerson().getEgn()))
 								listSelectionPersonKZ2.add(kodeStatus.getPerson());
+								kodeStatusNull = kodeStatus;
 							}
 						}
 					}
-				} else {
-					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 2, year);
-					if (kodeStat != null && kodeStat.getKode().contains(kz2)) {
+				}
+			} else {
+				kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(2, year, kz2);
+				for (Person person : listSelectionPersonKZ1) {
+					if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
 						listSelectionPersonKZ2.add(kodeStat.getPerson());
 					}
 				}
@@ -624,28 +659,36 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonKZ2 = listSelectionPersonKZ1;
 		}
-
+		System.out.println("listSelectionPersonKZ2 = " + listSelectionPersonKZ2.size());
+		kodeStatusNull = setNullKodeStatus();
 		if (!kzHog.trim().isEmpty()) {
-			for (Person person : listSelectionPersonKZ2) {
+		
 				if (year.isEmpty()) {
-					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonZone(person, 3);
+					List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByZoneAndKode(3, kzHog);
 					if (listKodeStst != null) {
-						for (KodeStatus kodeStatus : listKodeStst) {
-							if (kodeStatus != null && kodeStatus.getKode().contains(kzHog)) {
-								listSelectionPersonKZHog.add(kodeStatus.getPerson());
+						for (Person person : listSelectionPersonKZ2) {
+							for (KodeStatus kodeStatus : listKodeStst) {
+								if (kodeStatus != null && kodeStatus.getPerson().getId_Person() == person.getId_Person()) {
+									if(!kodeStatusNull.getPerson().getEgn().equals(kodeStatus.getPerson().getEgn()))
+										listSelectionPersonKZHog.add(kodeStatus.getPerson());
+										kodeStatusNull = kodeStatus;
+								}
 							}
 						}
 					}
 				} else {
-					kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, 3, year);
-					if (kodeStat != null && kodeStat.getKode().contains(kzHog)) {
-						listSelectionPersonKZHog.add(kodeStat.getPerson());
+					kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(3, year, kzHog);
+					for (Person person : listSelectionPersonKZ2) {
+						if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
+							listSelectionPersonKZHog.add(kodeStat.getPerson());
 					}
 				}
 			}
+				
 		} else {
 			listSelectionPersonKZHog = listSelectionPersonKZ2;
 		}
+		System.out.println("listSelectionPersonKZHog = " + listSelectionPersonKZHog.size());
 
 		List<PersonStatus> listAllPerStat = new ArrayList<>();
 		if (otdel != null && !otdel.trim().isEmpty()) {
@@ -660,7 +703,7 @@ public class PersonReferenceFrame extends JFrame {
 				}
 
 			}
-
+			System.out.println("listSelectionPersonEGN = " + listSelectionPersonEGN.size());
 			if (!year.trim().isEmpty()) {
 
 				for (Spisak_Prilogenia spPr : Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year)) {
@@ -680,8 +723,16 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonOtdel = listSelectionPersonKZHog;
 		}
-
+		System.out.println("listSelectionPersonOtdel = " + listSelectionPersonOtdel.size());
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
+	}
+
+	private static KodeStatus setNullKodeStatus() {
+		Person newPerson = new Person();
+		newPerson.setEgn("9000009");
+		KodeStatus kodeStatusNull = new KodeStatus();
+		kodeStatusNull.setPerson(newPerson);
+		return kodeStatusNull;
 	}
 
 	private void ActionListenerComboBox_Firm() {
@@ -707,17 +758,8 @@ public class PersonReferenceFrame extends JFrame {
 					dataTable = null;
 					textArea.setText("");
 					comboBox_Results.removeAll();
-					String egn = textField_EGN.getText();
-					String firstName = textField_FName.getText();
-					String secontName = textField_SName.getText();
-					String lastName = textField_LName.getText();
-					String kz1 = textField_KZ1.getText();
-					String kz2 = textField_KZ2.getText();
-					String kzHog = textField_KZHOG.getText();
-					String year = textField_Year.getText();
-					String otdel = comboBox_Otdel.getSelectedItem();
-					
-					List<Person> listSelectionPerson = getListSearchingPerson(egn ,	firstName,secontName , lastName , kz1 , kz2 , kzHog , year, otdel);
+					boolean fromManegementFrame = true;
+					List<Person> listSelectionPerson = getListSearchingPerson(fromManegementFrame);
 					addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
 
 					if (listSelectionPerson.size() == 0) {
@@ -753,7 +795,7 @@ public class PersonReferenceFrame extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!PersonReferenceFrame.allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()) {
+				if (!allFieldsEmnty() && !textField_Year.getText().trim().isEmpty()) {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					dataTable = null;
 					textArea.setText("");
@@ -839,9 +881,10 @@ public class PersonReferenceFrame extends JFrame {
 
 		btnBackToTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				if(dataTable!=null) {
 				panel_infoPanelTablePanel(dataTable);
 				viewTablePanel();
+				}
 			}
 
 		});

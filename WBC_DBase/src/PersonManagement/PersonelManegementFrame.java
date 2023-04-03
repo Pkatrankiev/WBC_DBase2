@@ -754,4 +754,20 @@ public class PersonelManegementFrame extends JFrame {
 		return button_Panel;
 	}
 
+	public static JTextField getTextField_EGN() {
+		return textField_EGN;
+	}
+
+	public static JTextField getTextField_FName() {
+		return textField_FName;
+	}
+
+	public static JTextField getTextField_SName() {
+		return textField_SName;
+	}
+
+	public static JTextField getTextField_LName() {
+		return textField_LName;
+	}
+	
 }

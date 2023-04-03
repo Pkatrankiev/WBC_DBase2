@@ -1,24 +1,26 @@
 
 minYearInDbase = 2005
 
-databaseURL = jdbc:ucanaccess://d://WBC_DBase.mdb
-databaseOID = jdbc:ucanaccess://D://NewOid.mdb
+dataBaseFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
+
+databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
+filePathArhivePersonel =  Arhive\\PERSONNEL_
+filePathArhiveExternal =  Arhive\\EXTERNAL_
+filePathActualExternal = Arhive\\EXTERNAL_actual.xls
+filePathActualPersonel =  Arhive\\PERSONNEL_actual.xls
+
 databaseEncriptOID = qwer1234
 databaseEncript = password
+
 filePathExternal_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
 filePathPersonel_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
-
-filePathExternal =d:\\Arhive\\EXTERNAL.xls
-filePathPersonel = d:\\Arhive\\PERSONNEL.xls
+filePathMonthExternal_0ld = d:\\month\\wbc_month.xls
+filePathMonthPersonel_old = d:\\month\\wbc_month_P.xls
 
 filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
 
-filePathMonthExternal = d:\\month\\wbc_month.xls
-filePathMonthPersonel = d:\\month\\wbc_month_P.xls
-filePathArhivePersonel = d:\\Arhive\\PERSONNEL_
-filePathArhiveExternal = d:\\Arhive\\EXTERNAL_
-filePathExternal_test = D:\\EXTERNAL_12.xls
-filePathPersonel_test = D:\\PERSONNEL_12.xls
+databaseOID = jdbc:ucanaccess://D://NewOid_1.mdb
+
 
 insertMeasuring = Измервания
 insertMeasuringTipText = Въвеждане на резултати от измерванията

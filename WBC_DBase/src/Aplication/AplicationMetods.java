@@ -14,9 +14,7 @@ public class AplicationMetods {
 
 	public static void readInfoFromGodExcelFile(String year, String key, boolean save) {
 	
-		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
-		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
-		String[] excellFiles = {filePathArhivePersonel, filePathArhiveExternal};	
+		String[] excellFiles = getDataBaseFilePat_ArhivePersonalAndExternal();	
 		 
 		for (String pathFile : excellFiles) {
 			String firmName = "АЕЦ Козлодуй";
@@ -108,6 +106,26 @@ public class AplicationMetods {
 		}
 	}
 
+	public static String[] getDataBaseFilePat_ArhivePersonalAndExternal() {
+		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
+		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
+		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
+		String[] excellFiles = {dataBaseFilePath+filePathArhivePersonel, dataBaseFilePath+filePathArhiveExternal};
+		return excellFiles;
+	}
+
+	
+	public static String[] getDataBaseFilePat_ActualPersonalAndExternal() {
+		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
+		String filePathActualPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathActualPersonel");
+		String filePathActualExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathActualExternal");
+		String[] excellFiles = {dataBaseFilePath+filePathActualPersonel, dataBaseFilePath+filePathActualExternal};
+		return excellFiles;
+	}
+
+	
+	
+	
 	public static void copyToClipboard(String text) {
 	    java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
 	        .setContents(new java.awt.datatransfer.StringSelection(text), null);

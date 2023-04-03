@@ -300,7 +300,7 @@ public class KodeStatusDAO {
 		try {
 			
 		
-			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Zone_ID = ? LIMIT 1";	
+			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Zone_ID = ? ";	
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setInt(1, person.getId_Person());
@@ -332,6 +332,90 @@ public class KodeStatusDAO {
 			return null;
 		}
 	}
+	
+	
+	public static List<KodeStatus> getKodeStatusByZoneAndKode(int zoneID, String kod) {
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+			
+		
+			sql = "SELECT * FROM KodeStatus where Kode = ? and Zone_ID = ? ";	
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, kod);
+		
+			preparedStatement.setInt(2, zoneID );
+			
+			result = preparedStatement.executeQuery();
+	
+			while (result.next()) {
+				KodeStatus KodeStatus = new KodeStatus();
+				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
+				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				KodeStatus.setPerson(Person);
+				KodeStatus.setKode(result.getString("Kode"));
+				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
+				KodeStatus.setZone(zone);
+				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
+				KodeStatus.setYear(result.getString("Year"));
+				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				listKodeStatus.add(KodeStatus);
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		if(listKodeStatus.size()>0) {
+		return listKodeStatus;
+		}else {
+			return null;
+		}
+	}	
+	
+	public static KodeStatus getKodeStatusByZoneYaerAndKode(int zoneID, String year, String kod) {
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+			sql = "SELECT * FROM KodeStatus where Year = ? and Kode = ? and Zone_ID = ? LIMIT 1";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, year);
+			preparedStatement.setString(2, kod);
+			preparedStatement.setInt(3, zoneID );
+			
+			result = preparedStatement.executeQuery();
+	
+			while (result.next()) {
+				KodeStatus KodeStatus = new KodeStatus();
+				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
+				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				KodeStatus.setPerson(Person);
+				KodeStatus.setKode(result.getString("Kode"));
+				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
+				KodeStatus.setZone(zone);
+				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
+				KodeStatus.setYear(result.getString("Year"));
+				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				listKodeStatus.add(KodeStatus);
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		if(listKodeStatus.size()>0) {
+			return listKodeStatus.get(0);
+			}else {
+				return null;
+			}
+	}	
+	
+	
+	
 	
 	public static List<KodeStatus> getKodeStatusByYearZone(String year, int zoneID) {
 		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();

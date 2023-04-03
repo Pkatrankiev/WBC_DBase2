@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadMeasuringFromExcelFile;
@@ -45,13 +46,10 @@ import BasicClassAccessDbase.Workplace;
 
 public class SearchFromExcellFiles {
 	
-	static String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
-	static String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
-	static String[] pathToArhiveExcellFiles = {filePathArhivePersonel, filePathArhiveExternal};
+	static String[] pathToArhiveExcellFiles = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();	
 	
-	static String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel");
-	static String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal");
-	static String[] pathToFiles = {filePathPersonel, filePathExternal};
+	
+	static String[] pathToFiles_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
 	
 	
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -282,7 +280,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles	;
+			path = pathToFiles_ActualPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
@@ -360,7 +358,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles	;
+			path = pathToFiles_ActualPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
@@ -450,7 +448,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles	;
+			path = pathToFiles_ActualPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
@@ -632,7 +630,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles	;
+			path = pathToFiles_ActualPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {

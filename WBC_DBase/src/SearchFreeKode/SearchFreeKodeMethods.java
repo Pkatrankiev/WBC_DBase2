@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.RemouveDublikateFromList;
@@ -55,8 +56,8 @@ public class SearchFreeKodeMethods {
 
 	public static List<String> getMasiveZvenaFromExcellFiles() {
 		List<String> list = new ArrayList<>();
-		String[] filePath = ReadKodeStatusFromExcelFile.getFilePathForPersonelAndExternal();
-		for (String pathFile : filePath) {
+		String[] filePath_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		for (String pathFile : filePath_ActualPersonalAndExternal) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 			Sheet sheet = workbook.getSheetAt(0);
 			if (sheet.getRow(0) != null) {
