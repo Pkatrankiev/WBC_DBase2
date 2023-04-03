@@ -214,27 +214,35 @@ public class SearchFreeKodeMethods {
 
 				int col = table.columnAtPoint(e.getPoint());
 				if(col>0) {
-				String reqCodeStr = model.getValueAt(getSelectedModelRow(table), col).toString();
-				if(reqCodeStr.isEmpty() ||col==3) {
-					if(col!=3) {
-						col = 0;
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), col).toString();
+
+					String selectYear ="";
+					if(reqCodeStr.isEmpty() || col==3 ) {
+					if(col==3) {
+						selectYear = year[0];
+						
+					}else {
+						
+					 selectYear = year[col];	
+					col =0;
 					}
-				final int column = col;
+					
+					final String setYear = selectYear;	
+					final int selectcol = col;
 				JFrame parent = new JFrame();
 				
 			
 				int[] sizeInfoFrame = {550, 300};
 				int[] Coord = getCurentKoordinates(sizeInfoFrame);
-				
-				
 				ActionIcone round = new ActionIcone();
 				 final Thread thread = new Thread(new Runnable() {
 				     @Override
 				     public void run() {
 				    	 
-				    	 String reqCodeStr2 = model.getValueAt(getSelectedModelRow(table), column).toString();
-				    	 String textForInfoFrame = generateTextForInfoFrame(year[0], reqCodeStr2, zveno);
-							
+				    	 String reqCodeStr2 = model.getValueAt(getSelectedModelRow(table), selectcol).toString();
+				    	 System.out.println(setYear+"------------------" +selectcol+ "++++++++++++++++++"+reqCodeStr2);
+				    	 String textForInfoFrame = generateTextForInfoFrame(setYear, reqCodeStr2, zveno);
+				    	 System.out.println(" --7777777777777777777777777 " +textForInfoFrame);
 							new infoFrame(parent, Coord, textForInfoFrame, sizeInfoFrame, round);
 				    	     	
 				     }
