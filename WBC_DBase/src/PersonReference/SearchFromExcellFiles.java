@@ -598,7 +598,8 @@ public class SearchFromExcellFiles {
 					EGN = ReadExcelFileWBC.getStringfromCell(cell);
 					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
 					if(person.getEgn().equals(EGN)) {
-			
+						
+
 					int k = 7;
 					cell = sheet.getRow(row).getCell(k);
 					while (ReadExcelFileWBC.CellNOEmpty(cell)) {
@@ -606,13 +607,13 @@ public class SearchFromExcellFiles {
 						
 						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
 						listPerStat.add(personStat);
-						
 						k = k+3;
 						cell = sheet.getRow(row).getCell(k);
 					
 					}
 					if(listPerStat.size()>1)
 					listPerStat.get(listPerStat.size() - 1).setZabelejka(zab);
+					row = sheet.getLastRowNum();
 				}
 			}
 			}

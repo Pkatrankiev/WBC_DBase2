@@ -5,9 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.util.List;
 
 
@@ -43,8 +44,10 @@ public static void main(String[] args) {
 		
 	
 //	ReadExcelFileWBC.test ();
-	
-	
+//	List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusWithoutSpisak_Prilogenia("7906113205");
+//	ReadPersonStatusFromExcelFile.ListPersonStatus(list);
+//	
+//	ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
 	
 //	******************************* first add Data in AccessDBase ****************************
 	
@@ -67,7 +70,14 @@ public static void main(String[] args) {
 //	******************************* first add Data in AccessDBase ****************************
 	
 	
-
+	
+	
+//	UpdateBDataFromExcellFiles.updataFromGodExcelFile();
+	
+	
+	
+//	AplicationMetods.testGetListPersonSatatusByPersonAndDateAfterDateSet();
+	
 	
 //	List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles();
 //	System.out.println(list.size());
@@ -77,6 +87,8 @@ public static void main(String[] args) {
 
 	
 }
+
+
 
 
 }

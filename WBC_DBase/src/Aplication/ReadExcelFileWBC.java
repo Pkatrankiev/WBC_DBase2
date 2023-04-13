@@ -271,10 +271,9 @@ public class ReadExcelFileWBC {
 		workplace = new Workplace();
 		boolean fl = true;
 		for (Workplace worl : listAllWorkplaceByFirmName) {
-			System.out.println("----->>"+worl.getOtdel());
+//			System.out.println("----->>"+worl.getOtdel());
 			if (worl.getOtdel().equals(otdelName) || (worl.getSecondOtdelName()!= null && worl.getSecondOtdelName().equals(otdelName))) {
 				fl = false;
-				System.out.println(otdelName + " 1 " + worl.getOtdel() + " 2 " + worl.getSecondOtdelName());
 				workplace = worl;
 			}
 

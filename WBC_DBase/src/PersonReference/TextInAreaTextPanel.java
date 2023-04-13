@@ -40,7 +40,7 @@ public class TextInAreaTextPanel {
 		List<KodeStatus> listK = null;
 		List<PersonStatus> listP = null;
 		List<Measuring> listM = null;
-		
+		columnSizeOtdel =0;
 		person = personInport;
 		
 		if(fromExcell) {
@@ -48,12 +48,14 @@ public class TextInAreaTextPanel {
 		}else{
 		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
+		System.out.println(listP.size()+"  %%%%");
+		if(listP.size()>0) {
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
 		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
 		sortbyStartDateColumn(masivePersonStatus);
-		
+		}
 		String textSpis ="";
-				if(masivePersonStatus.length>0) {
+				if(masivePersonStatus!=null && masivePersonStatus.length>0) {
 		textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
 		}
 		
@@ -63,7 +65,8 @@ public class TextInAreaTextPanel {
 		}else{
 		listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
 		}
-		masiveKode = generateMasiveKodeStatus(year, listK, masivePersonStatus);
+		
+		masiveKode = generateMasiveKodeStatus(year, listK, listP);
 		String textKode ="";
 		if(masiveKode.length>0) {
 		textKode = setTextInfoKode(masiveKode, masiveZoneName);
@@ -102,6 +105,8 @@ public class TextInAreaTextPanel {
 		
 		return str;
 	}
+
+
 	
 	public static Person getPerson() {
 		return person;
@@ -176,8 +181,7 @@ public class TextInAreaTextPanel {
 			fl = false;
 			List<ResultsWBC> listR = ResultsWBCDAO.getValueResultsWBCByObject("Measuring_ID", measur);
 			data = sdf.format(measur.getDate()).substring(6);
-			System.out.println(data);
-			if (year.trim().isEmpty() || data.equals(year)) {
+				if (year.trim().isEmpty() || data.equals(year)) {
 				masiveMeasur[i][0] =  data;
 				masiveMeasur[i][1] = sdf.format(measur.getDate());
 				masiveMeasur[i][2] = measur.getDoze()+""; 
@@ -292,10 +296,10 @@ public class TextInAreaTextPanel {
 	
 	
 	
-	private static String[][] generateMasiveKodeStatus(String year, List<KodeStatus> listK, String[][] masivePersonStatus) {
+	private static String[][] generateMasiveKodeStatus(String year, List<KodeStatus> listK, List<PersonStatus> listP) {
 		String yearKode="";
 		int index = -1;
-		
+		System.out.println(listK.size()+" 11111111111");
 		String[][] masiveKode = new String[listK.size()][7];
 		masiveKode = setDefoutValueInMasive(masiveKode);
 			for (KodeStatus kodeStat : listK) {
@@ -306,7 +310,8 @@ public class TextInAreaTextPanel {
 					index++;
 					}
 					masiveKode[index][0] = yearKode;
-					masiveKode[index][1] = getOtdelByYear(yearKode, masivePersonStatus);
+					System.out.println(yearKode+" 2222222222 "+ listP);
+					masiveKode[index][1] = getOtdelByYear(yearKode, listP);
 					switch (kodeStat.getZone().getId_Zone()) {
 					case 1: {
 						masiveKode[index][2] =  kodeStat.getKode();
@@ -344,11 +349,15 @@ public class TextInAreaTextPanel {
 		return newMasiveKode;
 	}
 	
-	private static String getOtdelByYear(String yearKode, String[][] masivePersonStatus) {
+	private static String getOtdelByYear(String yearKode, List<PersonStatus> listP) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		String otdel = "";
-		for (int i = 0; i < masivePersonStatus.length; i++) {
-			if(masivePersonStatus[i][0]!=null && masivePersonStatus[i][0].equals(yearKode)) {
-				return masivePersonStatus[i][1];
+		String date;
+		for (int i = 0; i < listP.size(); i++) {
+			date = sdf.format(listP.get(i).getDateSet()).substring(6);
+			System.out.println(date+" 333333 "+yearKode);
+			if(date.equals(yearKode)) {
+				return listP.get(i).getWorkplace().getOtdel();
 			}
 		}
 		return otdel;
@@ -368,9 +377,19 @@ public class TextInAreaTextPanel {
 	}
 
 	private static String setTextInfoKode(String[][] masiveKode, String[] masiveZoneName) {
-		int[] max = {5, columnSizeOtdel, 7, 7, 7, 13, 13};
 		String kodeString = "";
+		int maxOtdel = 0;
+		for (int i = 0; i < masiveKode.length; i++) {
+			if(masiveKode[i][1].length() > maxOtdel) {
+				maxOtdel = masiveKode[i][1].length();
+			}
+		}
 		
+		if(columnSizeOtdel<maxOtdel) {
+			columnSizeOtdel = maxOtdel +3;
+		}
+		
+		int[] max = {5, columnSizeOtdel, 7, 7, 7, 13, 13};
 		for (int i = 0; i < masiveZoneName.length; i++) {
 			kodeString = kodeString + getAddSpace(max[i], masiveZoneName[i]) + masiveZoneName[i];
 		}
@@ -401,7 +420,7 @@ public class TextInAreaTextPanel {
 	
 	
 	
-	private static String getAddSpace(int space, String kodeString) {
+	public static String getAddSpace(int space, String kodeString) {
 		 String addString = "";
 		
 		for (int m = 0; m < space-kodeString.length(); m++) {

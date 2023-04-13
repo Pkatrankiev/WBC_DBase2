@@ -1,6 +1,7 @@
 package Aplication;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,6 +16,13 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 
 public class ReadKodeStatusFromExcelFile {
+
+	static String[] pathToArhiveExcellFiles = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();
+
+	static String[] pathToFiles_ActualPersonalAndExternal = AplicationMetods
+			.getDataBaseFilePat_ActualPersonalAndExternal();
+
+	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 
 	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
@@ -100,7 +108,8 @@ public class ReadKodeStatusFromExcelFile {
 	}
 
 	public static String[] getUsedKodeFromExcelFile(int zoneID) {
-		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods
+				.getDataBaseFilePat_ActualPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
 		for (String pathFile : excellFiles_ActualPersonalAndExternal) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
@@ -181,39 +190,43 @@ public class ReadKodeStatusFromExcelFile {
 	}
 
 	public static List<String> getUsedKodeFromExcelFileByZoneAndZveno(String zveno, int zoneID) {
-		
+
 		List<String[]> listKodeStatus = generateListFromMasiveEGNandKode(zveno);
-
-		List<String> list = new ArrayList<>();
-		for (String[] kod : listKodeStatus) {
-			if (!kod[zoneID - 1].isEmpty()) {
-				list.add(kod[zoneID - 1]);
+		if (listKodeStatus.size() > 0) {
+			List<String> list = new ArrayList<>();
+			for (String[] kod : listKodeStatus) {
+				if (!kod[zoneID - 1].isEmpty()) {
+					list.add(kod[zoneID - 1]);
+				}
 			}
-		}
-
-		int maxString = list.get(0).length();
-		for (String kod : list) {
-			if (kod.length() > maxString) {
-				maxString = kod.length();
+			if (list.size() > 0) {
+			int maxString = list.get(0).length();
+			for (String kod : list) {
+				if (kod.length() > maxString) {
+					maxString = kod.length();
+				}
 			}
-		}
-		System.out.println(maxString);
+			System.out.println(maxString);
 
-		List<String> kklist = new ArrayList<>();
-		
-		for (String kod : list) {
-			
-			kod = NormKode(maxString, kod);
-			kklist.add(kod);
-		}
-		Collections.sort(kklist);
+			List<String> kklist = new ArrayList<>();
 
-		return kklist;
+			for (String kod : list) {
+
+				kod = NormKode(maxString, kod);
+				kklist.add(kod);
+			}
+			Collections.sort(kklist);
+
+			return kklist;
+		}
+		}
+		return null;
 	}
 
 	public static List<String[]> generateListFromMasiveEGNandKode(String zveno) {
 		boolean flOtdel = false;
-		String[] excellFiles_ActualPersonalAndExternal =  AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods
+				.getDataBaseFilePat_ActualPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
 		String otdelName = "";
 		for (String pathFile : excellFiles_ActualPersonalAndExternal) {
@@ -230,6 +243,7 @@ public class ReadKodeStatusFromExcelFile {
 					cell1 = sheet.getRow(globalRow).getCell(6);
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 						otdelName = cell1.getStringCellValue();
+
 						if (otdelName.equals(zveno) || flOtdel) {
 							flOtdel = true;
 //*************************************************************************************		
@@ -237,7 +251,6 @@ public class ReadKodeStatusFromExcelFile {
 							int row = globalRow;
 							while (row < allRow) {
 								flOtdel = false;
-								System.out.println(row + "  --  " + otdelName);
 								String[] simpleKode = generateEmptyMasive();
 								kodeKZ1 = "";
 								kodeKZ2 = "";
@@ -253,14 +266,15 @@ public class ReadKodeStatusFromExcelFile {
 										otdelName = cell1.getStringCellValue();
 										if (otdelName.equals("край")) {
 											row = allRow;
+											globalRow = allRow;
 										}
 									}
 
 									if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-											egn = ReadExcelFileWBC.getStringfromCell(cell);
-											if(egn.contains("*")) egn = egn.substring(0, egn.length()-1);	
-										
-											
+										egn = ReadExcelFileWBC.getStringfromCell(cell);
+										if (egn.contains("*"))
+											egn = egn.substring(0, egn.length() - 1);
+
 										cell = sheet.getRow(row).getCell(0);
 										if (cell != null)
 											kodeKZ1 = cell.getStringCellValue();
@@ -307,7 +321,7 @@ public class ReadKodeStatusFromExcelFile {
 											simpleKode[4] = kodeT2;
 										}
 										simpleKode[5] = egn;
-										
+
 										listKodeStatus.add(simpleKode);
 									}
 
@@ -321,6 +335,98 @@ public class ReadKodeStatusFromExcelFile {
 				}
 			}
 		}
+
+		return listKodeStatus;
+	}
+
+	public static List<String[]> generateListForAllFromMasiveEGNandKode(String year) {
+		List<String[]> listKodeStatus = new ArrayList<>();
+		int insertYear = Integer.parseInt(year);
+		String[] path = pathToArhiveExcellFiles;
+		if (insertYear == curentYear) {
+			path = pathToFiles_ActualPersonalAndExternal;
+		}
+
+		for (String pathFile : path) {
+
+			if (insertYear != curentYear) {
+				pathFile = pathFile + year + ".xls";
+			}
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+
+			String kodeKZ1 = "", kodeKZ2 = "", kodeHOG = "", kodeT1 = "", kodeT2 = "", egn = "";
+			Sheet sheet = workbook.getSheetAt(0);
+			Cell cell, cell1;
+			int allRow = sheet.getLastRowNum();
+			for (int row = 5; row <= allRow; row += 1) {
+				if (sheet.getRow(row) != null) {
+
+					String[] simpleKode = generateEmptyMasive();
+					kodeKZ1 = "";
+					kodeKZ2 = "";
+					kodeHOG = "";
+					kodeT1 = "";
+					kodeT2 = "";
+					egn = "";
+
+					cell = sheet.getRow(row).getCell(5);
+					cell1 = sheet.getRow(row).getCell(6);
+
+					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+						egn = ReadExcelFileWBC.getStringfromCell(cell);
+						if (egn.contains("*"))
+							egn = egn.substring(0, egn.length() - 1);
+
+						cell = sheet.getRow(row).getCell(0);
+						if (cell != null)
+							kodeKZ1 = cell.getStringCellValue();
+
+						cell = sheet.getRow(row).getCell(1);
+						if (cell != null)
+							kodeKZ2 = cell.getStringCellValue();
+
+						cell = sheet.getRow(row).getCell(2);
+						if (cell != null)
+							kodeHOG = cell.getStringCellValue();
+
+						cell = sheet.getRow(row).getCell(3);
+						if (cell != null)
+							kodeT2 = cell.getStringCellValue();
+
+						cell = sheet.getRow(row).getCell(4);
+						if (cell != null)
+							kodeT1 = cell.getStringCellValue();
+
+						if (pathFile.contains("EXTERNAL")) {
+							kodeT1 = kodeT2;
+							kodeT2 = "";
+						}
+
+						if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("н")
+								&& !inCodeNotNumber(kodeKZ1)) {
+							simpleKode[0] = kodeKZ1;
+						}
+						if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("") && !inCodeNotNumber(kodeKZ2)) {
+							simpleKode[1] = kodeKZ2;
+						}
+						if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("") && !inCodeNotNumber(kodeHOG)) {
+							simpleKode[2] = kodeHOG;
+						}
+						if (!kodeT1.equals("н") && !kodeT1.trim().equals("") && !inCodeNotNumber(kodeT1)) {
+							simpleKode[3] = kodeT1;
+						}
+						if (!kodeT2.equals("н") && !kodeT2.trim().equals("") && !inCodeNotNumber(kodeT2)) {
+							simpleKode[4] = kodeT2;
+						}
+						simpleKode[5] = egn;
+
+						listKodeStatus.add(simpleKode);
+					}
+
+				}
+			}
+		}
+
 		return listKodeStatus;
 	}
 
@@ -357,8 +463,6 @@ public class ReadKodeStatusFromExcelFile {
 		}
 		return false;
 	}
-
-	
 
 	private static String[] generateEmptyMasive() {
 		String[] sinpleKode = new String[6];

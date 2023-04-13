@@ -25,6 +25,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.RemouveDublikateFromList;
@@ -104,8 +105,8 @@ public class PersonReferenceFrame extends JFrame {
 	List<String> listAdd;
 	List<String> listFirm;
 	String[][] dataTable;
-	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
-
+	
+	static String curentYear = AplicationMetods.getCurentYear();
 	public PersonReferenceFrame(ActionIcone round) {
 
 		setMinimumSize(new Dimension(730, 900));

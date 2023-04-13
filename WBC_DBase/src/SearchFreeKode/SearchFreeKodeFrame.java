@@ -53,11 +53,12 @@ public class SearchFreeKodeFrame extends JFrame {
 	private Choice choiceWorkplace;
 	private JTable table;
 	private JLabel lblComent;
+	private Button btnSearch;
 	
 	
-	public SearchFreeKodeFrame(ActionIcone round) {
-		
-	
+	public SearchFreeKodeFrame(ActionIcone round, String otdel, String zona) {
+		String kodeReference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference");
+		setTitle(kodeReference);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 //		List<String> masiveZvenaExcell = SearchFreeKodeMethods.getMasiveZvenaFromExcellFiles();
@@ -93,13 +94,32 @@ public class SearchFreeKodeFrame extends JFrame {
 			scrollPane.setViewportView(table);
 			
 			setButtonPanel();
+			
+			System.out.println(otdel+"  --  "+zona);
+//			changeTextFild(choiceWorkplace, choiceZona);
+			round.StopWindow();
+			if(!zona.isEmpty() && !otdel.isEmpty()) {
+			autosearch (btnSearch, choiceWorkplace,  choiceZona, zona, otdel);
+			}
+			System.out.println(choiceWorkplace.getSelectedItem()+"  **  "+choiceZona.getSelectedItem());
+			
 			setLocationRelativeTo(null);
 			setVisible(true);
 			
+			
+			
+		
+			
+		
+	}
+
+	private void autosearch(Button btnSearch, Choice choiceWorkplace2, Choice choiceZona2, String zona, String otdel) {
+		
+			choiceWorkplace2.select(otdel);
+			choiceZona2.select(zona);
 			changeTextFild(choiceWorkplace, choiceZona);
-			
-			round.StopWindow();
-			
+			clickedSearchButton();
+		
 		
 	}
 
@@ -108,12 +128,17 @@ public class SearchFreeKodeFrame extends JFrame {
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
-			JButton okButton = new JButton("OK");
-			okButton.setActionCommand("OK");
-			buttonPane.add(okButton);
-			getRootPane().setDefaultButton(okButton);
+//			JButton okButton = new JButton("EXIT");
+//			okButton.setActionCommand("OK");
+//			buttonPane.add(okButton);
+//			getRootPane().setDefaultButton(okButton);
 		
-			JButton cancelButton = new JButton("Cancel");
+			JButton cancelButton = new JButton("EXIT");
+			cancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
 			cancelButton.setActionCommand("Cancel");
 			buttonPane.add(cancelButton);
 	}
@@ -160,7 +185,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			lbl_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			panel2.add(lbl_1);
 		
-			Button btnSearch = new Button("Search");
+			btnSearch = new Button("Search");
 			btnSearch.setPreferredSize(new Dimension(70, 20));
 			panel2.add(btnSearch);
 			
@@ -219,6 +244,7 @@ public class SearchFreeKodeFrame extends JFrame {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					System.out.println("/////////////////////////");
 				changeTextFild(choiceWorkplace, choiceZona);
+				lblComent.setText("" );
 				}
 			}
 
@@ -231,6 +257,7 @@ public class SearchFreeKodeFrame extends JFrame {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					System.out.println("/////////////////////////");
 				changeTextFild(choiceWorkplace, choiceZona);
+				lblComent.setText("" );
 				}
 			}
 
@@ -243,33 +270,10 @@ public class SearchFreeKodeFrame extends JFrame {
 		btnSearch.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				if(checkEmptyFields()) {
-				ActionIcone round = new ActionIcone();
-				 final Thread thread = new Thread(new Runnable() {
-				     @Override
-				     public void run() {
-				    	 int zone_ID = choiceZona.getSelectedIndex()+1;
-				    	 String zveno = choiceWorkplace.getSelectedItem();
-				    	 List<String>  masiveUsedKode = ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(zveno, zone_ID);
-				    	  	String leter = textField_Leter.getText();
-							int start = Integer.parseInt(textField_Start.getText());
-							int end = Integer.parseInt(textField_End.getText())+1;
-							 
-							String[] year = SearchFreeKodeMethods.getHeader();
-							
-							String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year, masiveUsedKode);
-							table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year, zveno);
-							scrollPane.setViewportView(table);
-							String freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("freeKodeComent");
-							lblComent.setText(freeKodeComent );
-							round.StopWindow();
-							table.repaint();
-				    	     	
-				     }
-				    });
-				    thread.start();	
-				}
+				clickedSearchButton();
 			}
+
+	
 
 		
 		});
@@ -286,6 +290,7 @@ public class SearchFreeKodeFrame extends JFrame {
 					field.setText(str);
 				}
 				field.setText(convertToUpperCyrChart(str));
+				lblComent.setText("" );
 	        }
 });
 		
@@ -327,7 +332,7 @@ public class SearchFreeKodeFrame extends JFrame {
 		field.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent evt) {
 				field.setBackground(Color.WHITE);
-				
+				lblComent.setText("" );	
 	        }
 	    });
 		
@@ -393,6 +398,39 @@ public class SearchFreeKodeFrame extends JFrame {
 		}
 		
 		return fl;
+	}
+	
+	private void clickedSearchButton() {
+		if(checkEmptyFields()) {
+		ActionIcone round = new ActionIcone();
+		 final Thread thread = new Thread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 int zone_ID = choiceZona.getSelectedIndex()+1;
+		    	 String zveno = choiceWorkplace.getSelectedItem();
+		    	 List<String>  masiveUsedKode = ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(zveno, zone_ID);
+		    	 String freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("nofreeKodeComent");
+		    	 if(masiveUsedKode!= null) {
+		    	  	String leter = textField_Leter.getText();
+					int start = Integer.parseInt(textField_Start.getText());
+					int end = Integer.parseInt(textField_End.getText())+1;
+					 
+					String[] year = SearchFreeKodeMethods.getHeader();
+					
+					String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year, masiveUsedKode);
+					table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year, zveno);
+					scrollPane.setViewportView(table);
+					freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("freeKodeComent");
+		    	 }
+					
+					lblComent.setText(freeKodeComent );
+					round.StopWindow();
+					table.repaint();
+		    	     	
+		     }
+		    });
+		    thread.start();	
+		}
 	}
 	
 	private void changeTextFild(Choice choiceWorkplace, Choice choiceZona) {

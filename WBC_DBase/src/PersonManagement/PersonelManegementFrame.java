@@ -9,15 +9,13 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,27 +24,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
-
-import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.ActionIcone;
-import Aplication.GeneralMethods;
-import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
-import Aplication.ReadKodeStatusFromExcelFile;
-import Aplication.ReadPersonStatusFromExcelFile;
-import AutoInsertMeasuting.InsertMeasurToExcel;
-import BasiClassDAO.PersonDAO;
-import BasiClassDAO.WorkplaceDAO;
-import BasicClassAccessDbase.KodeStatus;
-import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.Spisak_Prilogenia;
 import PersonReference.PersonReferenceExportToExcell;
-import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
+
 import javax.swing.JRadioButton;
-import java.awt.Rectangle;
 import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -62,11 +47,11 @@ public class PersonelManegementFrame extends JFrame {
 	private JPanel infoPanel;
 	private JPanel tablePane;
 	private JScrollPane scrollPane;
-	private Choice comboBox_Firm;
+	private static Choice comboBox_Firm;
 	private static Choice comboBox_Otdel;
 	private static Choice comboBox_Results;
-	private static Choice comboBox_svePerson_Firm;
-	private static Choice comboBox_svePerson_Otdel;
+	private static Choice comboBox_savePerson_Firm;
+	private static Choice comboBox_savePerson_Otdel;
 
 	private static JTextArea textArea;
 	private static JTextField textField_EGN;
@@ -76,22 +61,40 @@ public class PersonelManegementFrame extends JFrame {
 
 	private static JButton btn_SearchPerson;
 	private static JButton btnBackToTable;
-	private static JButton btn_Clear_1;
+	private static JButton btn_Clear;
 	private static JButton btn_savePerson_Insert;
+	private static JButton btn_Spisak;
+	private static JButton btn_SearchFreeKode;
+
+	private static JRadioButton rdbtn_KodKZ1;
+	private static JRadioButton rdbtn_KodKZ2;
+	private static JRadioButton rdbtn_KodKZHOG;
+	private static JRadioButton rdbtn_KodTerit_1;
+	private static JRadioButton rdbtn_KodTerit_2;
 
 	String[][] dataTable;
 	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 	String labelCheckForSearch = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelCheckForSearch");
-	private JTextField textField_svePerson_Name;
-	private JTextField textField_svePerson_EGN;
-	private JTextField textField_svePerson_KodKZ_1;
-	private JTextField textField_svePersonKodKZ_2;
-	private JTextField textField_svePersonKodKZ_HOG;
-	private JTextField textField_svePersonKodKZ_Terit_1;
-	private JTextField textField_svePersonKodKZ_Terit_2;
-	private JTextField textField_svePerson_Spisak;
-	private JTextField textField_svePerson_StartDate;
-	private JTextField textField_svePerson_EndDate;
+	static List<Spisak_Prilogenia> listSpisak_Prilogenia;
+	
+	static String oldOtdelPerson;
+
+	private static JTextField textField_svePerson_EGN;
+	private static JTextField textField_svePerson_FName;
+	private static JTextField textField_svePerson_SName;
+	private static JTextField textField_svePerson_LName;
+	private static JTextField textField_svePerson_KodKZ_1;
+	private static JTextField textField_svePersonKodKZ_2;
+	private static JTextField textField_svePersonKodKZ_HOG;
+	private static JTextField textField_svePersonKodKZ_Terit_1;
+	private static JTextField textField_svePersonKodKZ_Terit_2;
+	private static JTextField textField_svePerson_Spisak;
+	private static JTextField textField_savePerson_StartDate;
+	private static JTextField textField_savePerson_EndDate;
+	
+	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
+	private JPanel personSave_Panel;
+	
 
 	public PersonelManegementFrame(ActionIcone round) {
 		setTitle("Person Manegement");
@@ -145,39 +148,41 @@ public class PersonelManegementFrame extends JFrame {
 
 		setSize(750, 900);
 		setLocationRelativeTo(null);
+		
+		PersonelManegementMethods.generateListOtdels();
+		PersonelManegementMethods.addItemFirm(comboBox_Firm);
+		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
+		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
+		
+		PersonelManegementMethods.addItemFirm(comboBox_savePerson_Firm);
+		PersonelManegementMethods.setitemInChoise(comboBox_savePerson_Firm, comboBox_savePerson_Otdel);
+		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_savePerson_Firm, comboBox_savePerson_Otdel);
+
+		PersonelManegementMethods.ActionListener_ComboBox_savePerson_Otdel(comboBox_savePerson_Otdel);
+		
+		
+		
+		PersonelManegementMethods.ActionListener_Btn_Clear(btn_savePerson_Insert, btn_Clear, textArea);
+
+		PersonelManegementMethods.ActionListener_TextArea(btn_savePerson_Insert, textArea, panel_AllSaerch);
+
+		PersonelManegementMethods.ActionListener_Btn_SearchPerson(btn_SearchPerson, panel_AllSaerch, textArea, btn_savePerson_Insert);
+
+		PersonelManegementMethods.ActionListener_Btn_savePerson_Insert(btn_savePerson_Insert, panel_AllSaerch, textArea);
+
+		PersonelManegementMethods.ActionListener_Btn_Spisak(btn_Spisak);
+
+		PersonelManegementMethods.ActionListener_Btn_SearchFreeKode(btn_SearchFreeKode, comboBox_Otdel);
+
+		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
+		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
+		
+		PersonelManegementMethods.checInsertNewPerson();
+		
 		setVisible(true);
 		round.StopWindow();
-
 		
 		
-		PersonelManegementMethods. addItemFirm(comboBox_Firm);
-		PersonelManegementMethods. addItemFirm(comboBox_svePerson_Firm);
-		
-		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
-		PersonelManegementMethods.setitemInChoise(comboBox_svePerson_Firm, comboBox_svePerson_Otdel);
-		
-		PersonelManegementMethods.ActionListenerComboBox_Firm( comboBox_Firm,  comboBox_Otdel);
-		
-		PersonelManegementMethods.ActionListenerbBtn_Clear( btn_savePerson_Insert, btn_Clear_1,   textArea,
-				 textField_EGN,  textField_FName,  textField_SName,
-				 textField_LName,  comboBox_Firm,  comboBox_Otdel);
-		
-		PersonelManegementMethods.textAreaActionListener(btn_savePerson_Insert, textArea, panel_AllSaerch, textField_EGN, textField_FName,
-				textField_SName, textField_LName, textField_svePerson_Name, textField_svePerson_EGN,
-				textField_svePerson_KodKZ_1, textField_svePersonKodKZ_2, textField_svePersonKodKZ_HOG,
-				textField_svePersonKodKZ_Terit_1, textField_svePersonKodKZ_Terit_2, comboBox_svePerson_Firm, comboBox_svePerson_Otdel);
-
-		PersonelManegementMethods.ActionListenerbBtn_SearchPerson(btn_SearchPerson, panel_AllSaerch, textArea,
-				textField_EGN, textField_FName, textField_SName, textField_LName, textField_svePerson_Name,
-				textField_svePerson_EGN, textField_svePerson_KodKZ_1, textField_svePersonKodKZ_2,
-				textField_svePersonKodKZ_HOG, textField_svePersonKodKZ_Terit_1, textField_svePersonKodKZ_Terit_2, comboBox_svePerson_Firm, comboBox_svePerson_Otdel, btn_savePerson_Insert);
-
-		PersonelManegementMethods.ActionListenerBtn_savePerson_Insert( btn_savePerson_Insert,  panel_AllSaerch,  textArea,
-				 textField_EGN,  textField_FName,  textField_SName,
-				 textField_LName,  textField_svePerson_Name,  textField_svePerson_EGN,
-				 textField_svePerson_KodKZ_1,  textField_svePersonKodKZ_2,
-				 textField_svePersonKodKZ_HOG,  textField_svePersonKodKZ_Terit_1,
-				 textField_svePersonKodKZ_Terit_2,  comboBox_svePerson_Firm,  comboBox_svePerson_Otdel);
 	}
 
 	private JPanel personLabel_Panel_1() {
@@ -258,12 +263,12 @@ public class PersonelManegementFrame extends JFrame {
 		textField_LName.setPreferredSize(new Dimension(5, 20));
 		textField_LName.setColumns(15);
 		personField_Panel_1A.add(textField_LName);
-		
-		btn_Clear_1 = new JButton("Clear");
-		btn_Clear_1.setPreferredSize(new Dimension(60, 23));
-		btn_Clear_1.setMargin(new Insets(2, 5, 2, 5));
-		btn_Clear_1.setIconTextGap(1);
-		personField_Panel_1A.add(btn_Clear_1);
+
+		btn_Clear = new JButton("Clear");
+		btn_Clear.setPreferredSize(new Dimension(60, 23));
+		btn_Clear.setMargin(new Insets(2, 5, 2, 5));
+		btn_Clear.setIconTextGap(1);
+		personField_Panel_1A.add(btn_Clear);
 
 		btn_SearchPerson = new JButton("Search Person");
 		btn_SearchPerson.setMargin(new Insets(2, 5, 2, 5));
@@ -345,7 +350,7 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_Otdel.setAlignmentX(1.0f);
 		kodeLabel_Panel_3.add(lbl_Otdel);
 
-		JButton btn_SearchFreeKode = new JButton("Search Free Kode");
+		btn_SearchFreeKode = new JButton("Search Free Kode");
 		kodeLabel_Panel_3.add(btn_SearchFreeKode);
 		btn_SearchFreeKode.setPreferredSize(new Dimension(110, 25));
 		btn_SearchFreeKode.setMargin(new Insets(2, 5, 2, 5));
@@ -362,28 +367,28 @@ public class PersonelManegementFrame extends JFrame {
 		kodeRadioButtons_Panel_3A.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(kodeRadioButtons_Panel_3A);
 
-		JRadioButton rdbtn_KodKZ1 = new JRadioButton("");
+		rdbtn_KodKZ1 = new JRadioButton("");
 		rdbtn_KodKZ1.setSelected(true);
 		rdbtn_KodKZ1.setPreferredSize(new Dimension(55, 21));
 		rdbtn_KodKZ1.setHorizontalAlignment(SwingConstants.CENTER);
 		kodeRadioButtons_Panel_3A.add(rdbtn_KodKZ1);
 
-		JRadioButton rdbtn_KodKZ2 = new JRadioButton("");
+		rdbtn_KodKZ2 = new JRadioButton("");
 		rdbtn_KodKZ2.setPreferredSize(new Dimension(55, 21));
 		rdbtn_KodKZ2.setHorizontalAlignment(SwingConstants.CENTER);
 		kodeRadioButtons_Panel_3A.add(rdbtn_KodKZ2);
 
-		JRadioButton rdbtn_KodKZHOG = new JRadioButton("");
+		rdbtn_KodKZHOG = new JRadioButton("");
 		rdbtn_KodKZHOG.setPreferredSize(new Dimension(56, 21));
 		rdbtn_KodKZHOG.setHorizontalAlignment(SwingConstants.CENTER);
 		kodeRadioButtons_Panel_3A.add(rdbtn_KodKZHOG);
 
-		JRadioButton rdbtn_KodTerit_1 = new JRadioButton("");
+		rdbtn_KodTerit_1 = new JRadioButton("");
 		rdbtn_KodTerit_1.setPreferredSize(new Dimension(55, 21));
 		rdbtn_KodTerit_1.setHorizontalAlignment(SwingConstants.CENTER);
 		kodeRadioButtons_Panel_3A.add(rdbtn_KodTerit_1);
 
-		JRadioButton rdbtn_KodTerit_2 = new JRadioButton("");
+		rdbtn_KodTerit_2 = new JRadioButton("");
 		rdbtn_KodTerit_2.setPreferredSize(new Dimension(55, 21));
 		rdbtn_KodTerit_2.setHorizontalAlignment(SwingConstants.CENTER);
 		kodeRadioButtons_Panel_3A.add(rdbtn_KodTerit_2);
@@ -396,15 +401,15 @@ public class PersonelManegementFrame extends JFrame {
 		bg.add(rdbtn_KodTerit_2);
 
 		comboBox_Firm = new Choice();
-//		comboBox_Firm.addItemListener(new ItemListener() {
-//			public void itemStateChanged(ItemEvent e) {
-//			}
-//		});
-//		comboBox_Firm.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//			}
-//		});
+		comboBox_Firm.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+			}
+		});
+		comboBox_Firm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
 		comboBox_Firm.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		comboBox_Firm.setPreferredSize(new Dimension(130, 20));
 		kodeRadioButtons_Panel_3A.add(comboBox_Firm);
@@ -413,8 +418,6 @@ public class PersonelManegementFrame extends JFrame {
 		comboBox_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		comboBox_Otdel.setPreferredSize(new Dimension(255, 20));
 		kodeRadioButtons_Panel_3A.add(comboBox_Otdel);
-
-
 
 		return kodeRadioButtons_Panel_3A;
 	}
@@ -477,14 +480,16 @@ public class PersonelManegementFrame extends JFrame {
 	}
 
 	private JPanel personSave_Panel(JPanel save_Panel) {
-		JPanel personSave_Panel = new JPanel();
+		personSave_Panel = new JPanel();
 		save_Panel.add(personSave_Panel, BorderLayout.SOUTH);
 		personSave_Panel.setLayout(new BoxLayout(personSave_Panel, BoxLayout.Y_AXIS));
 
 		JPanel personSave_Panel_1 = new JPanel();
 		personSave_Panel.add(personSave_Panel_1);
 
-		personSave_Personel_Panel_2(personSave_Panel);
+		personSave_Personel_2_LabelPanel(personSave_Panel);
+		
+		personSave_Personel_2_FildPanel(personSave_Panel);
 
 		personSave_Kode_Panel_3(personSave_Panel);
 
@@ -495,44 +500,92 @@ public class PersonelManegementFrame extends JFrame {
 		return personSave_Panel_5(personSave_Panel);
 	}
 
-	private JPanel personSave_Personel_Panel_2(JPanel personSave_Panel) {
-		JPanel personSave_Personel_Panel_2 = new JPanel();
-		FlowLayout fl_personSave_Personel_Panel_2 = (FlowLayout) personSave_Personel_Panel_2.getLayout();
-		fl_personSave_Personel_Panel_2.setAlignment(FlowLayout.LEFT);
-		personSave_Personel_Panel_2.setPreferredSize(new Dimension(10, 30));
-		personSave_Panel.add(personSave_Personel_Panel_2);
-
-		JLabel lbl_svePerson_EGN = new JLabel("EGN");
-		lbl_svePerson_EGN.setSize(new Dimension(80, 20));
-		lbl_svePerson_EGN.setPreferredSize(new Dimension(35, 15));
-		lbl_svePerson_EGN.setMinimumSize(new Dimension(80, 20));
-		lbl_svePerson_EGN.setHorizontalAlignment(SwingConstants.RIGHT);
-		lbl_svePerson_EGN.setBorder(null);
-		lbl_svePerson_EGN.setAlignmentX(0.5f);
-		personSave_Personel_Panel_2.add(lbl_svePerson_EGN);
-
+	private JPanel personSave_Personel_2_LabelPanel(JPanel personSave_Panel) {
+		
+		JPanel personSave_Personel_2_LabelPanel = new JPanel();
+		FlowLayout fl_personSave_Personel_2_LabelPanel = (FlowLayout) personSave_Personel_2_LabelPanel.getLayout();
+		fl_personSave_Personel_2_LabelPanel.setVgap(0);
+		fl_personSave_Personel_2_LabelPanel.setAlignment(FlowLayout.LEFT);
+		personSave_Panel.add(personSave_Personel_2_LabelPanel);
+		
+		JLabel lbl_EGN = new JLabel("EGN");
+		lbl_EGN.setVerticalAlignment(SwingConstants.BOTTOM);
+		lbl_EGN.setPreferredSize(new Dimension(85, 20));
+		lbl_EGN.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_EGN.setBorder(null);
+		lbl_EGN.setAlignmentX(0.5f);
+		personSave_Personel_2_LabelPanel.add(lbl_EGN);
+		
+		JLabel distantion = new JLabel();
+		distantion.setPreferredSize(new Dimension(30, 14));
+		personSave_Personel_2_LabelPanel.add(distantion);
+		
+		JLabel lbl_svePerson_FirstName = new JLabel("First Name");
+		lbl_svePerson_FirstName.setVerticalAlignment(SwingConstants.BOTTOM);
+		lbl_svePerson_FirstName.setPreferredSize(new Dimension(126, 20));
+		lbl_svePerson_FirstName.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_svePerson_FirstName.setBorder(null);
+		lbl_svePerson_FirstName.setAlignmentX(0.5f);
+		personSave_Personel_2_LabelPanel.add(lbl_svePerson_FirstName);
+		
+		JLabel lbl_svePerson_SecondName = new JLabel("Second Name");
+		lbl_svePerson_SecondName.setVerticalAlignment(SwingConstants.BOTTOM);
+		lbl_svePerson_SecondName.setPreferredSize(new Dimension(126, 20));
+		lbl_svePerson_SecondName.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_svePerson_SecondName.setBorder(null);
+		lbl_svePerson_SecondName.setAlignmentX(1.0f);
+		personSave_Personel_2_LabelPanel.add(lbl_svePerson_SecondName);
+		
+		JLabel lbl_svePerson_LastName = new JLabel("Last Name");
+		lbl_svePerson_LastName.setVerticalAlignment(SwingConstants.BOTTOM);
+		lbl_svePerson_LastName.setPreferredSize(new Dimension(126, 20));
+		lbl_svePerson_LastName.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_svePerson_LastName.setBorder(null);
+		lbl_svePerson_LastName.setAlignmentX(1.0f);
+		personSave_Personel_2_LabelPanel.add(lbl_svePerson_LastName);
+		
+		return personSave_Personel_2_LabelPanel;
+	}
+	
+	private JPanel personSave_Personel_2_FildPanel(JPanel personSave_Panel) {	
+		JPanel personSave_Personel_2_FildPanel = new JPanel();
+		FlowLayout fl_personSave_Personel_2_FildPanel = (FlowLayout) personSave_Personel_2_FildPanel.getLayout();
+		fl_personSave_Personel_2_FildPanel.setVgap(2);
+		fl_personSave_Personel_2_FildPanel.setAlignment(FlowLayout.LEFT);
+		personSave_Personel_2_FildPanel.setPreferredSize(new Dimension(10, 30));
+		personSave_Panel.add(personSave_Personel_2_FildPanel);
+		
 		textField_svePerson_EGN = new JTextField();
+		personSave_Personel_2_FildPanel.add(textField_svePerson_EGN);
 		textField_svePerson_EGN.setPreferredSize(new Dimension(5, 20));
 		textField_svePerson_EGN.setMinimumSize(new Dimension(5, 20));
 		textField_svePerson_EGN.setColumns(10);
-		personSave_Personel_Panel_2.add(textField_svePerson_EGN);
-
-		JLabel lbl_svePerson_Name = new JLabel("Name");
-		lbl_svePerson_Name.setPreferredSize(new Dimension(60, 15));
-		lbl_svePerson_Name.setHorizontalAlignment(SwingConstants.RIGHT);
-		lbl_svePerson_Name.setBorder(null);
-		lbl_svePerson_Name.setAlignmentX(0.5f);
-		personSave_Personel_Panel_2.add(lbl_svePerson_Name);
-
-		textField_svePerson_Name = new JTextField();
-		textField_svePerson_Name.setColumns(55);
-		personSave_Personel_Panel_2.add(textField_svePerson_Name);
+		
+		JLabel lblNewLabel_1 = new JLabel("");
+		lblNewLabel_1.setPreferredSize(new Dimension(29, 14));
+		personSave_Personel_2_FildPanel.add(lblNewLabel_1);
+		
+		textField_svePerson_FName = new JTextField();
+		textField_svePerson_FName.setPreferredSize(new Dimension(5, 20));
+		textField_svePerson_FName.setColumns(15);
+		personSave_Personel_2_FildPanel.add(textField_svePerson_FName);
+		
+		textField_svePerson_SName = new JTextField();
+		textField_svePerson_SName.setPreferredSize(new Dimension(5, 20));
+		textField_svePerson_SName.setColumns(15);
+		personSave_Personel_2_FildPanel.add(textField_svePerson_SName);
+		
+		textField_svePerson_LName = new JTextField();
+		textField_svePerson_LName.setPreferredSize(new Dimension(5, 20));
+		textField_svePerson_LName.setColumns(15);
+		personSave_Personel_2_FildPanel.add(textField_svePerson_LName);
 		
 		btn_savePerson_Insert = new JButton("Insert");
+		personSave_Personel_2_FildPanel.add(btn_savePerson_Insert);
 		btn_savePerson_Insert.setEnabled(false);
-		personSave_Personel_Panel_2.add(btn_savePerson_Insert);
-		return personSave_Personel_Panel_2;
-
+				
+	return personSave_Personel_2_FildPanel;
+	
 	}
 
 	private JPanel personSave_Kode_Panel_3(JPanel personSave_Panel) {
@@ -621,7 +674,7 @@ public class PersonelManegementFrame extends JFrame {
 		fl_personSave_OtdelSpisakLabel_Panel_4.setVgap(0);
 		fl_personSave_OtdelSpisakLabel_Panel_4.setAlignment(FlowLayout.LEFT);
 		personSave_Panel.add(personSave_OtdelSpisakLabel_Panel_4);
-		
+
 		JLabel lbl_svePerson_Firm = new JLabel("Firm");
 		lbl_svePerson_Firm.setVerticalAlignment(SwingConstants.BOTTOM);
 		lbl_svePerson_Firm.setPreferredSize(new Dimension(130, 25));
@@ -637,6 +690,10 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_svePerson_Otdel.setBorder(null);
 		lbl_svePerson_Otdel.setAlignmentX(1.0f);
 		personSave_OtdelSpisakLabel_Panel_4.add(lbl_svePerson_Otdel);
+
+		JLabel lbl_btn_Spisak = new JLabel("");
+		lbl_btn_Spisak.setPreferredSize(new Dimension(21, 20));
+		personSave_OtdelSpisakLabel_Panel_4.add(lbl_btn_Spisak);
 
 		JLabel lbl_svePerson_Spisak = new JLabel("Spisak");
 		lbl_svePerson_Spisak.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -672,38 +729,44 @@ public class PersonelManegementFrame extends JFrame {
 		fl_personSave_OtdelSpisakField_Panel_4A.setAlignment(FlowLayout.LEFT);
 		personSave_OtdelSpisakField_Panel_4A.setPreferredSize(new Dimension(10, 30));
 		personSave_Panel.add(personSave_OtdelSpisakField_Panel_4A);
-		
-		comboBox_svePerson_Firm = new Choice();
-		comboBox_svePerson_Firm.setPreferredSize(new Dimension(130, 20));
-		comboBox_svePerson_Firm.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		personSave_OtdelSpisakField_Panel_4A.add(comboBox_svePerson_Firm);
 
-		comboBox_svePerson_Otdel = new Choice();
-		comboBox_svePerson_Otdel.setPreferredSize(new Dimension(290, 20));
-		comboBox_svePerson_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		personSave_OtdelSpisakField_Panel_4A.add(comboBox_svePerson_Otdel);
+		comboBox_savePerson_Firm = new Choice();
+		comboBox_savePerson_Firm.setPreferredSize(new Dimension(130, 20));
+		comboBox_savePerson_Firm.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		personSave_OtdelSpisakField_Panel_4A.add(comboBox_savePerson_Firm);
+
+		comboBox_savePerson_Otdel = new Choice();
+		comboBox_savePerson_Otdel.setPreferredSize(new Dimension(290, 20));
+		comboBox_savePerson_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		personSave_OtdelSpisakField_Panel_4A.add(comboBox_savePerson_Otdel);
+
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("modifiIcon");
+		ImageIcon pic = new ImageIcon(getClass().getClassLoader().getResource(iconn));
+		btn_Spisak = new JButton(pic);
+		btn_Spisak.setPreferredSize(new Dimension(21, 21));
+		personSave_OtdelSpisakField_Panel_4A.add(btn_Spisak);
 
 		textField_svePerson_Spisak = new JTextField();
 		textField_svePerson_Spisak.setPreferredSize(new Dimension(5, 20));
 		textField_svePerson_Spisak.setColumns(10);
 		personSave_OtdelSpisakField_Panel_4A.add(textField_svePerson_Spisak);
 
-		textField_svePerson_StartDate = new JTextField();
-		textField_svePerson_StartDate.setText("22.02.2022");
-		textField_svePerson_StartDate.setPreferredSize(new Dimension(5, 20));
-		textField_svePerson_StartDate.setColumns(8);
-		personSave_OtdelSpisakField_Panel_4A.add(textField_svePerson_StartDate);
+		textField_savePerson_StartDate = new JTextField();
+		textField_savePerson_StartDate.setPreferredSize(new Dimension(5, 20));
+		textField_savePerson_StartDate.setColumns(8);
+		personSave_OtdelSpisakField_Panel_4A.add(textField_savePerson_StartDate);
 
-		textField_svePerson_EndDate = new JTextField();
-		textField_svePerson_EndDate.setPreferredSize(new Dimension(5, 20));
-		textField_svePerson_EndDate.setColumns(8);
-		personSave_OtdelSpisakField_Panel_4A.add(textField_svePerson_EndDate);
+		textField_savePerson_EndDate = new JTextField();
+		textField_savePerson_EndDate.setPreferredSize(new Dimension(5, 20));
+		textField_savePerson_EndDate.setColumns(8);
+		personSave_OtdelSpisakField_Panel_4A.add(textField_savePerson_EndDate);
 
-		JLabel lblNewLabel_1_1 = new JLabel("");
-		lblNewLabel_1_1.setPreferredSize(new Dimension(50, 14));
-		personSave_OtdelSpisakField_Panel_4A.add(lblNewLabel_1_1);
+		
+
 		return personSave_OtdelSpisakField_Panel_4A;
 	}
+
+	
 
 	private JPanel personSave_Panel_5(JPanel personSave_Panel) {
 		JPanel personSave_Panel_5 = new JPanel();
@@ -737,7 +800,6 @@ public class PersonelManegementFrame extends JFrame {
 		button_Panel.add(btn_Export);
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("888888888888888888888888888888888888");
 				if (btnBackToTable.isEnabled() || dataTable == null) {
 
 					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
@@ -769,5 +831,235 @@ public class PersonelManegementFrame extends JFrame {
 	public static JTextField getTextField_LName() {
 		return textField_LName;
 	}
+
+	public static String getOldOtdelPerson() {
+		return oldOtdelPerson;
+	}
+
+	public static void setOldOtdelPerson(String oldOtdelPerson) {
+		PersonelManegementFrame.oldOtdelPerson = oldOtdelPerson;
+	}
+
+	public static List<Spisak_Prilogenia> getListSpisak_Prilogenia() {
+		return listSpisak_Prilogenia;
+	}
+
+	public static void setListSpisak_Prilogenia(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
+		PersonelManegementFrame.listSpisak_Prilogenia = listSpisak_Prilogenia;
+	}
+
+	public static JRadioButton getRdbtn_KodKZ1() {
+		return rdbtn_KodKZ1;
+	}
+
+	public static void setRdbtn_KodKZ1(JRadioButton rdbtn_KodKZ1) {
+		PersonelManegementFrame.rdbtn_KodKZ1 = rdbtn_KodKZ1;
+	}
+
+	public static JRadioButton getRdbtn_KodKZ2() {
+		return rdbtn_KodKZ2;
+	}
+
+	public static void setRdbtn_KodKZ2(JRadioButton rdbtn_KodKZ2) {
+		PersonelManegementFrame.rdbtn_KodKZ2 = rdbtn_KodKZ2;
+	}
+
+	public static JRadioButton getRdbtn_KodKZHOG() {
+		return rdbtn_KodKZHOG;
+	}
+
+	public static void setRdbtn_KodKZHOG(JRadioButton rdbtn_KodKZHOG) {
+		PersonelManegementFrame.rdbtn_KodKZHOG = rdbtn_KodKZHOG;
+	}
+
+	public static JRadioButton getRdbtn_KodTerit_1() {
+		return rdbtn_KodTerit_1;
+	}
+
+	public static void setRdbtn_KodTerit_1(JRadioButton rdbtn_KodTerit_1) {
+		PersonelManegementFrame.rdbtn_KodTerit_1 = rdbtn_KodTerit_1;
+	}
+
+	public static JRadioButton getRdbtn_KodTerit_2() {
+		return rdbtn_KodTerit_2;
+	}
+
+	public static void setRdbtn_KodTerit_2(JRadioButton rdbtn_KodTerit_2) {
+		PersonelManegementFrame.rdbtn_KodTerit_2 = rdbtn_KodTerit_2;
+	}
+
+	public static JLabel getLbl_svePerson_Text_Check_EnterInZone() {
+		return lbl_svePerson_Text_Check_EnterInZone;
+	}
+
+	public static void setLbl_svePerson_Text_Check_EnterInZone(JLabel lbl_svePerson_Text_Check_EnterInZone) {
+		PersonelManegementFrame.lbl_svePerson_Text_Check_EnterInZone = lbl_svePerson_Text_Check_EnterInZone;
+	}
+
+	public static Choice getComboBox_Firm() {
+		return comboBox_Firm;
+	}
+
+	public static void setComboBox_Firm(Choice comboBox_Firm, String text) {
+		comboBox_Firm.select(text);
+		PersonelManegementFrame.comboBox_Firm = comboBox_Firm;
+	}
+
+	public static Choice getComboBox_Otdel() {
+		return comboBox_Otdel;
+	}
+
+	public static void setComboBox_Otdel(Choice comboBox_Otdel, String text) {
+		comboBox_Otdel.select(text);
+		PersonelManegementFrame.comboBox_Otdel = comboBox_Otdel;
+	}
+
+	public static Choice getComboBox_savePerson_Firm() {
+		return comboBox_savePerson_Firm;
+	}
+
+	public static void setComboBox_savePerson_Firm(Choice comboBox_savePerson_Firm, String text) {
+		comboBox_savePerson_Firm.select(text);
+		PersonelManegementFrame.comboBox_savePerson_Firm = comboBox_savePerson_Firm;
+	}
+
+	public static Choice getComboBox_savePerson_Otdel() {
+		return comboBox_savePerson_Otdel;
+	}
+
+	public static void setComboBox_savePerson_Otdel(Choice comboBox_savePerson_Otdel, String text) {
+		comboBox_savePerson_Otdel.select(text);
+		PersonelManegementFrame.comboBox_savePerson_Otdel = comboBox_savePerson_Otdel;
+	}
 	
+	public static JTextField getTextField_svePerson_EGN() {
+		return textField_svePerson_EGN;
+	}
+
+	public void setTextField_svePerson_EGN(JTextField textField_svePerson_EGN, String text) {
+		textField_svePerson_EGN.setText(text);
+		PersonelManegementFrame.textField_svePerson_EGN = textField_svePerson_EGN;
+	}
+
+	public static JTextField getTextField_svePerson_KodKZ_1() {
+		return textField_svePerson_KodKZ_1;
+	}
+
+	public void setTextField_svePerson_KodKZ_1(JTextField textField_svePerson_KodKZ_1, String text) {
+		textField_svePerson_KodKZ_1.setText(text);
+		PersonelManegementFrame.textField_svePerson_KodKZ_1 = textField_svePerson_KodKZ_1;
+	}
+
+	public static JTextField getTextField_svePersonKodKZ_2() {
+		return textField_svePersonKodKZ_2;
+	}
+
+	public void setTextField_svePersonKodKZ_2(JTextField textField_svePersonKodKZ_2, String text) {
+		textField_svePersonKodKZ_2.setText(text);
+		PersonelManegementFrame.textField_svePersonKodKZ_2 = textField_svePersonKodKZ_2;
+	}
+
+	public static JTextField getTextField_svePersonKodKZ_HOG() {
+		return textField_svePersonKodKZ_HOG;
+	}
+
+	public void setTextField_svePersonKodKZ_HOG(JTextField textField_svePersonKodKZ_HOG, String text) {
+		textField_svePersonKodKZ_HOG.setText(text);
+		PersonelManegementFrame.textField_svePersonKodKZ_HOG = textField_svePersonKodKZ_HOG;
+	}
+
+	public static JTextField getTextField_svePersonKodKZ_Terit_1() {
+		return textField_svePersonKodKZ_Terit_1;
+	}
+
+	public void setTextField_svePersonKodKZ_Terit_1(JTextField textField_svePersonKodKZ_Terit_1, String text) {
+		textField_svePersonKodKZ_Terit_1.setText(text);
+		PersonelManegementFrame.textField_svePersonKodKZ_Terit_1 = textField_svePersonKodKZ_Terit_1;
+	}
+
+	public static JTextField getTextField_svePersonKodKZ_Terit_2() {
+		return textField_svePersonKodKZ_Terit_2;
+	}
+
+	public void setTextField_svePersonKodKZ_Terit_2(JTextField textField_svePersonKodKZ_Terit_2, String text) {
+		textField_svePersonKodKZ_Terit_2.setText(text);
+		PersonelManegementFrame.textField_svePersonKodKZ_Terit_2 = textField_svePersonKodKZ_Terit_2;
+	}
+
+	public static JTextField getTextField_svePerson_Spisak() {
+		return textField_svePerson_Spisak;
+	}
+
+	public void setTextField_svePerson_Spisak(JTextField textField_svePerson_Spisak, String text) {
+		textField_svePerson_Spisak.setText(text);
+		PersonelManegementFrame.textField_svePerson_Spisak = textField_svePerson_Spisak;
+	}
+
+	public static JTextField getTextField_savePerson_StartDate() {
+		return textField_savePerson_StartDate;
+	}
+
+	public void setTextField_savePerson_StartDate(JTextField textField_savePerson_StartDate, String text) {
+		textField_savePerson_StartDate.setText(text);
+		PersonelManegementFrame.textField_savePerson_StartDate = textField_savePerson_StartDate;
+	}
+
+	public static JTextField getTextField_savePerson_EndDate() {
+		return textField_savePerson_EndDate;
+	}
+
+	public void setTextField_savePerson_EndDate(JTextField textField_savePerson_EndDate, String text) {
+		textField_savePerson_EndDate.setText(text);
+		PersonelManegementFrame.textField_savePerson_EndDate = textField_savePerson_EndDate;
+	}
+
+	public static void setTextField_EGN(JTextField textField_EGN, String text) {
+		textField_EGN.setText(text);
+		PersonelManegementFrame.textField_EGN = textField_EGN;
+		
+	}
+
+	public static void setTextField_FName(JTextField textField_FName, String text) {
+		textField_FName.setText(text);
+		PersonelManegementFrame.textField_FName = textField_FName;
+	}
+
+	public static void setTextField_SName(JTextField textField_SName, String text) {
+		textField_SName.setText(text);
+		PersonelManegementFrame.textField_SName = textField_SName;
+	}
+
+	public static void setTextField_LName(JTextField textField_LName, String text) {
+		textField_LName.setText(text);
+		PersonelManegementFrame.textField_LName = textField_LName;
+	}
+
+	public static JTextField getTextField_svePerson_FName() {
+		return textField_svePerson_FName;
+	}
+
+	public static void setTextField_svePerson_FName(JTextField textField_svePerson_FName) {
+		PersonelManegementFrame.textField_svePerson_FName = textField_svePerson_FName;
+	}
+
+	public static JTextField getTextField_svePerson_SName() {
+		return textField_svePerson_SName;
+	}
+
+	public static void setTextField_svePerson_SName(JTextField textField_svePerson_SName) {
+		PersonelManegementFrame.textField_svePerson_SName = textField_svePerson_SName;
+	}
+
+	public static JTextField getTextField_svePerson_LName() {
+		return textField_svePerson_LName;
+	}
+
+	public static void setTextField_svePerson_LName(JTextField textField_svePerson_LName) {
+		PersonelManegementFrame.textField_svePerson_LName = textField_svePerson_LName;
+	}
+
+	public static void setTextField_svePerson_EGN(JTextField textField_svePerson_EGN) {
+		PersonelManegementFrame.textField_svePerson_EGN = textField_svePerson_EGN;
+	}
+
 }

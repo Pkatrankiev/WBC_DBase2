@@ -12,15 +12,21 @@ filePathActualPersonel =  Arhive\\PERSONNEL_actual.xls
 databaseEncriptOID = qwer1234
 databaseEncript = password
 
-filePathExternal_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
-filePathPersonel_old = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
-filePathMonthExternal_0ld = d:\\month\\wbc_month.xls
+filePathExternal_orig = d:\\EXTERNAL.xls
+filePathPersonel_orig = d:\\PERSONNEL.xls
+
+filePathExternal_orig1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel_orig1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+
+filePathMonthExternal_old = d:\\month\\wbc_month.xls
 filePathMonthPersonel_old = d:\\month\\wbc_month_P.xls
 
 filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
 
 databaseOID = jdbc:ucanaccess://D://NewOid_1.mdb
 
+
+modifiIcon = ICONS/Modify.gif
 
 insertMeasuring = Измервания
 insertMeasuringTipText = Въвеждане на резултати от измерванията
@@ -63,7 +69,9 @@ code = Кодове
 measurSICH = Измервания СИЧ
 orders = Заповеди
 freeKodeComent = Списък на свободните кодове за последните три години
+nofreeKodeComent = Няма въведена област от кодова за този отдел и зона
 zaDaZatvoriteRamkata = За да затворите рамката кликнете с мишката на този ред
 labelCheckForSearch = маркирайте зона и отдел за търсене на свободни кодове
 
-
+imaPromeniVavFayla = Файлът   е бил изменен на 
+preporachvaSe = Препоръчва се актуализацията на базата данни, защото:

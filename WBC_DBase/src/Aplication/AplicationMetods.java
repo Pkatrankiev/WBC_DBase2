@@ -1,7 +1,22 @@
 package Aplication;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import BasiClassDAO.PersonDAO;
+import BasiClassDAO.PersonStatusDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
@@ -122,9 +137,42 @@ public class AplicationMetods {
 		String[] excellFiles = {dataBaseFilePath+filePathActualPersonel, dataBaseFilePath+filePathActualExternal};
 		return excellFiles;
 	}
+	
+	
+	public static String[] getDataBaseFilePat_OriginalPersonalAndExternal() {
+	
+		String filePathExternal_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		String[] excellFiles = {filePathPersonel_orig, filePathExternal_orig };
+		return excellFiles;
+	}
 
 	
-	
+	public static int[] getCurentKoordinates(int[] size) {
+		int[] koordinates = new int[2];
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int koordWidth = gd.getDisplayMode().getWidth();
+		int koorHeight = gd.getDisplayMode().getHeight();
+
+		PointerInfo a = MouseInfo.getPointerInfo();
+		Point b = a.getLocation();
+		int x = (int) b.getX() + 10;
+		int y = (int) b.getY() + 10;
+
+		if ((x + size[0]) > koordWidth)
+			x = x - size[0];
+		if (x < 0) {
+			x = 0;
+		}
+		if ((y + size[1]) > koorHeight)
+			y = y - size[1];
+		if (y < 0) {
+			y = 0;
+		}
+		koordinates[0] = x;
+		koordinates[1] = y;
+		return koordinates;
+	}
 	
 	public static void copyToClipboard(String text) {
 	    java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
@@ -156,5 +204,41 @@ public class AplicationMetods {
 	    return builder.toString();
 	}
 
-	
+	public static Boolean incorrectDate(String date) {
+		
+		Boolean corDate = false;
+		DateTimeFormatter sdf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+		try {
+			LocalDate.parse(date, sdf);
+
+		} catch (DateTimeParseException e) {
+			return corDate = true;
+		}
+		return corDate;
+	}
+
+	public static String getCurentYear() {
+	return Calendar.getInstance().get(Calendar.YEAR) + "";
+	}
+
+
+	@SuppressWarnings("unused")
+	static void testGetListPersonSatatusByPersonAndDateAfterDateSet() {
+		Person per = PersonDAO.getValuePersonByEGN("6902121962");
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		Date startDate;
+		List<Spisak_Prilogenia> listSpisPril = new ArrayList<>();
+		try {
+			startDate = sdfrmt.parse("09.05.2022");
+			List<PersonStatus> list =  PersonStatusDAO.getValuePersonStatusByPersonAndDFateAfterDateSet(per, startDate);
+			for (PersonStatus personStatus : list) {
+				listSpisPril.add(personStatus.getSpisak_prilogenia());
+				System.out.println(personStatus.getSpisak_prilogenia().getStartDate());
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

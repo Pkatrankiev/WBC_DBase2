@@ -27,7 +27,7 @@ public class Menu_Reference_Kode extends AbstractMenuAction{
 		     @Override
 		     public void run() {
 		    	 
-		    	 new SearchFreeKodeFrame(round);
+		    	 new SearchFreeKodeFrame(round, "", "");
 		    	     	
 		     }
 		    });
