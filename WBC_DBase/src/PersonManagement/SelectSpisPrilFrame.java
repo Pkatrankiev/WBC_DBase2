@@ -1,29 +1,19 @@
 package PersonManagement;
 
-import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.LineBorder;
 
 import Aplication.ActionIcone;
-import Aplication.GeneralMethods;
-import Aplication.ReadFileBGTextVariable;
-import BasiClassDAO.PersonDAO;
-import BasicClassAccessDbase.Person;
-import PersonReference.TextInAreaTextPanel;
 
-import javax.swing.JList;
-import java.awt.event.MouseAdapter;
-
+@SuppressWarnings("serial")
 public class SelectSpisPrilFrame extends JDialog {
 
 	private JPanel contentPane;
@@ -31,8 +21,7 @@ public class SelectSpisPrilFrame extends JDialog {
 
 	public SelectSpisPrilFrame(JFrame parent, int[] coord, String [] masiveSipisPril, int[] size, int maxFormulyarName, ActionIcone round) {
 		super(parent, "", true);
-		
-//		setBounds(coord[0], coord[1], 406, 176);
+
 		setBounds(coord[0], coord[1], size[0], size[1]);
 		contentPane = new JPanel();
 

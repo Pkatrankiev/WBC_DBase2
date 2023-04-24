@@ -24,6 +24,8 @@ import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import FrameViewClass.MainWindowWBC_DBase;
+import PersonManagement.PersonelManegementMethods;
+import SearchFreeKode.SearchFreeKodeFrame;
 
 
 public class Main_ClassAplication {
@@ -35,10 +37,11 @@ public static void main(String[] args) {
 //	******************************* MainFarameWindow ****************************	
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
+		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
 		new MainWindowWBC_DBase();
 		GeneralMethods.cerateDestinationDir();
-		
-	}
+//		PersonelManegementMethods.getMasiveKodeStatusFromExcelFiles();
+		}
 	
 //	******************************* MainFarameWindow ****************************	
 		

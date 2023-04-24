@@ -204,9 +204,9 @@ public class AplicationMetods {
 	    return builder.toString();
 	}
 
-	public static Boolean incorrectDate(String date) {
+	public static boolean incorrectDate(String date) {
 		
-		Boolean corDate = false;
+		boolean corDate = false;
 		DateTimeFormatter sdf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 		try {

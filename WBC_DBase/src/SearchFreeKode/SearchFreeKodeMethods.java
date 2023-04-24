@@ -47,6 +47,7 @@ public class SearchFreeKodeMethods {
 		List<String> list = new ArrayList<>();
 		List<KodeGenerate> listKG = KodeGenerateDAO.getAllValueKodeGenerate();
 		for (KodeGenerate kodeGenerate : listKG) {
+			 
 			list.add(kodeGenerate.getWorkplace().getOtdel() + "@" + kodeGenerate.getWorkplace().getSecondOtdelName());
 		}
 		List<String> newlist = RemouveDublikateFromList.removeDuplicates(new ArrayList<String>(list));

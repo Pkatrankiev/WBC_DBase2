@@ -23,12 +23,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import PersonReference.PersonReferenceExportToExcell;
+import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
 
 import javax.swing.JRadioButton;
@@ -37,6 +39,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import java.awt.Color;
+import javax.swing.Icon;
 
 public class PersonelManegementFrame extends JFrame {
 
@@ -65,6 +71,9 @@ public class PersonelManegementFrame extends JFrame {
 	private static JButton btn_savePerson_Insert;
 	private static JButton btn_Spisak;
 	private static JButton btn_SearchFreeKode;
+	private static JButton btn_InsertToHOG;
+	private static JButton btn_InsertToTerit_1;
+	private static JButton btn_InsertToTerit_2;
 
 	private static JRadioButton rdbtn_KodKZ1;
 	private static JRadioButton rdbtn_KodKZ2;
@@ -78,7 +87,8 @@ public class PersonelManegementFrame extends JFrame {
 	static List<Spisak_Prilogenia> listSpisak_Prilogenia;
 	
 	static String oldOtdelPerson;
-
+	static Border defoutBorder;
+	
 	private static JTextField textField_svePerson_EGN;
 	private static JTextField textField_svePerson_FName;
 	private static JTextField textField_svePerson_SName;
@@ -177,7 +187,21 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
 		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
 		
-		PersonelManegementMethods.checInsertNewPerson();
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_EGN, 0);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_FName, 0);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_SName, 0);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_LName, 0);
+		
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_KodKZ_1, 1);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_2, 2);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_HOG, 3);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_Terit_1, 4);
+		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_Terit_2, 5);
+		
+		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToHOG, 3);
+		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_1, 4);
+		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_2, 5);
+		
 		
 		setVisible(true);
 		round.StopWindow();
@@ -242,6 +266,8 @@ public class PersonelManegementFrame extends JFrame {
 		textField_EGN.setPreferredSize(new Dimension(5, 20));
 		personField_Panel_1A.add(textField_EGN);
 		textField_EGN.setColumns(10);
+		defoutBorder = textField_EGN.getBorder();
+		PersonReferenceFrame.TextFieldJustNumbers(textField_EGN);
 
 //		TextFieldJustNumbers(textField_EGN);
 
@@ -560,6 +586,7 @@ public class PersonelManegementFrame extends JFrame {
 		textField_svePerson_EGN.setPreferredSize(new Dimension(5, 20));
 		textField_svePerson_EGN.setMinimumSize(new Dimension(5, 20));
 		textField_svePerson_EGN.setColumns(10);
+		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_EGN);
 		
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setPreferredSize(new Dimension(29, 14));
@@ -630,6 +657,13 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_svePersonKodKZ_HOG.setBorder(null);
 		lbl_svePersonKodKZ_HOG.setAlignmentX(0.5f);
 		personSave_Kode_Panel_3.add(lbl_svePersonKodKZ_HOG);
+		
+		
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("modifiIcon");
+		ImageIcon pic = new ImageIcon(getClass().getClassLoader().getResource(iconn));
+		btn_InsertToHOG = new JButton(pic);
+		btn_InsertToHOG.setPreferredSize(new Dimension(21, 21));
+		personSave_Kode_Panel_3.add(btn_InsertToHOG);
 
 		textField_svePersonKodKZ_HOG = new JTextField();
 		textField_svePersonKodKZ_HOG.setColumns(6);
@@ -643,6 +677,11 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_svePersonKodKZ_Terit_1.setBorder(null);
 		lbl_svePersonKodKZ_Terit_1.setAlignmentX(0.5f);
 		personSave_Kode_Panel_3.add(lbl_svePersonKodKZ_Terit_1);
+		
+		
+		btn_InsertToTerit_1 = new JButton(pic);
+		btn_InsertToTerit_1.setPreferredSize(new Dimension(21, 21));
+		personSave_Kode_Panel_3.add(btn_InsertToTerit_1);
 
 		textField_svePersonKodKZ_Terit_1 = new JTextField();
 		textField_svePersonKodKZ_Terit_1.setColumns(6);
@@ -656,6 +695,11 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_svePersonKodKZ_Terit_2.setBorder(null);
 		lbl_svePersonKodKZ_Terit_2.setAlignmentX(0.5f);
 		personSave_Kode_Panel_3.add(lbl_svePersonKodKZ_Terit_2);
+		
+		
+		btn_InsertToTerit_2 = new JButton(pic);
+		btn_InsertToTerit_2.setPreferredSize(new Dimension(21, 21));
+		personSave_Kode_Panel_3.add(btn_InsertToTerit_2);
 
 		textField_svePersonKodKZ_Terit_2 = new JTextField();
 		textField_svePersonKodKZ_Terit_2.setColumns(6);
@@ -774,7 +818,7 @@ public class PersonelManegementFrame extends JFrame {
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		personSave_Panel.add(personSave_Panel_5);
 
-		JLabel lbl_svePerson_Text_Check_EnterInZone = new JLabel("New label");
+		lbl_svePerson_Text_Check_EnterInZone = new JLabel("New label");
 		lbl_svePerson_Text_Check_EnterInZone.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(646, 14));
 		personSave_Panel_5.add(lbl_svePerson_Text_Check_EnterInZone);
@@ -1061,5 +1105,35 @@ public class PersonelManegementFrame extends JFrame {
 	public static void setTextField_svePerson_EGN(JTextField textField_svePerson_EGN) {
 		PersonelManegementFrame.textField_svePerson_EGN = textField_svePerson_EGN;
 	}
+	public static Border getDefoutBorder() {
+		return defoutBorder;
+	}
+
+	public static JButton getBtn_InsertToHOG() {
+		return btn_InsertToHOG;
+	}
+
+	public static void setBtn_InsertToHOG(JButton btn_InsertToHOG) {
+		PersonelManegementFrame.btn_InsertToHOG = btn_InsertToHOG;
+	}
+
+	public static JButton getBtn_InsertToTerit_1() {
+		return btn_InsertToTerit_1;
+	}
+
+	public static void setBtn_InsertToTerit_1(JButton btn_InsertToTerit_1) {
+		PersonelManegementFrame.btn_InsertToTerit_1 = btn_InsertToTerit_1;
+	}
+
+	public static JButton getBtn_InsertToTerit_2() {
+		return btn_InsertToTerit_2;
+	}
+
+	public static void setBtn_InsertToTerit_2(JButton btn_InsertToTerit_2) {
+		PersonelManegementFrame.btn_InsertToTerit_2 = btn_InsertToTerit_2;
+	}
 
 }
+
+
+

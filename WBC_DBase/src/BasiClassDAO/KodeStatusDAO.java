@@ -341,7 +341,7 @@ public class KodeStatusDAO {
 		try {
 			
 		
-			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Year = ? = ? ";	
+			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Year = ? ";	
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setInt(1, person.getId_Person());

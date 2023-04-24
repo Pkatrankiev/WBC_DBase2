@@ -925,7 +925,6 @@ public class PersonReferenceFrame extends JFrame {
 		JButton btn_Export = new JButton("Export");
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("888888888888888888888888888888888888");
 				if (btnBackToTable.isEnabled() || dataTable == null) {
 
 					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),

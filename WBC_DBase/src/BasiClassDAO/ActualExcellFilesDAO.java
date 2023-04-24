@@ -11,9 +11,6 @@ import java.util.List;
 
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.ActualExcellFiles;
-import BasicClassAccessDbase.ActualExcellFiles;
-import BasicClassAccessDbase.ActualExcellFiles;
-import BasicClassAccessDbase.ActualExcellFiles;
 import BasicClassAccessDbase.conectToAccessDB;
 
 public class ActualExcellFilesDAO {
@@ -51,7 +48,7 @@ public class ActualExcellFilesDAO {
 		try {
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, actualExcellFiles.getActualExcellFiles_Name());
-			preparedStatement.setDate(2, actualExcellFiles.getActualExcellFiles_Date());
+			preparedStatement.setTimestamp(2, actualExcellFiles.getActualExcellFiles_Date());
 			
 			preparedStatement.executeUpdate();
 			
@@ -73,7 +70,7 @@ public class ActualExcellFilesDAO {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
 			preparedStatement.setString(1, actualExcellFiles.getActualExcellFiles_Name());
-			preparedStatement.setDate(2, actualExcellFiles.getActualExcellFiles_Date());
+			preparedStatement.setTimestamp(2, actualExcellFiles.getActualExcellFiles_Date());
 			
 			preparedStatement.setInt(3, actualExcellFiles.getActualExcellFiles_ID());
 
@@ -105,7 +102,7 @@ public class ActualExcellFilesDAO {
 				ActualExcellFiles object = new ActualExcellFiles();
 				object.setActualExcellFiles_ID(result.getInt("ActualExcellFiles_ID"));
 				object.setActualExcellFiles_Name( result.getString("ActualExcellFiles_Name"));
-				object.setActualExcellFiles_Date(result.getDate("ActualExcellFiles_Date"));
+				object.setActualExcellFiles_Date(result.getTimestamp("ActualExcellFiles_Date"));
 				
 				list.add(object);
 			}
@@ -138,7 +135,7 @@ public class ActualExcellFilesDAO {
 				ActualExcellFiles object = new ActualExcellFiles();
 				object.setActualExcellFiles_ID(result.getInt("ActualExcellFiles_ID"));
 				object.setActualExcellFiles_Name( result.getString("ActualExcellFiles_Name"));
-				object.setActualExcellFiles_Date(result.getDate("ActualExcellFiles_Date"));
+				object.setActualExcellFiles_Date(result.getTimestamp("ActualExcellFiles_Date"));
 				
 				list.add(object);
 			}
@@ -171,7 +168,7 @@ public class ActualExcellFilesDAO {
 				ActualExcellFiles object = new ActualExcellFiles();
 				object.setActualExcellFiles_ID(result.getInt("ActualExcellFiles_ID"));
 				object.setActualExcellFiles_Name( result.getString("ActualExcellFiles_Name"));
-				object.setActualExcellFiles_Date(result.getDate("ActualExcellFiles_Date"));
+				object.setActualExcellFiles_Date(result.getTimestamp("ActualExcellFiles_Date"));
 				
 				list.add(object);
 			}

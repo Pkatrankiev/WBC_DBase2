@@ -332,7 +332,7 @@ public class SearchFreeKodeFrame extends JFrame {
 		field.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent evt) {
 				field.setBackground(Color.WHITE);
-				lblComent.setText("" );	
+				lblComent.setText("");	
 	        }
 	    });
 		
@@ -370,7 +370,7 @@ public class SearchFreeKodeFrame extends JFrame {
 		});
 	}
 	
-	private String convertToUpperCyrChart(String str) {
+	public static String convertToUpperCyrChart(String str) {
 		if(!str.isEmpty()) {
 			char c = str.charAt(0);
 			int ascii = (int)c;

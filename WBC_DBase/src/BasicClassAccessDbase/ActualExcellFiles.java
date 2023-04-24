@@ -2,6 +2,7 @@ package BasicClassAccessDbase;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,9 +15,9 @@ public class ActualExcellFiles implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int actualExcellFiles_ID;
 	private String actualExcellFiles_Name;
-	private Date actualExcellFiles_Date;
+	private Timestamp actualExcellFiles_Date;
 
-	public ActualExcellFiles(String actualExcellFiles_Name, Date actualExcellFiles_Date) {
+	public ActualExcellFiles(String actualExcellFiles_Name, Timestamp actualExcellFiles_Date) {
 	
 		this.actualExcellFiles_Name = actualExcellFiles_Name;
 		this.actualExcellFiles_Date = actualExcellFiles_Date;
@@ -42,12 +43,12 @@ public class ActualExcellFiles implements Serializable {
 		this.actualExcellFiles_Name = actualExcellFiles_Name;
 	}
 
-	public Date getActualExcellFiles_Date() {
+	public Timestamp getActualExcellFiles_Date() {
 		return actualExcellFiles_Date;
 	}
 
-	public void setActualExcellFiles_Date(Date actualExcellFiles_Date) {
-		this.actualExcellFiles_Date = actualExcellFiles_Date;
+	public void setActualExcellFiles_Date(Timestamp timestamp) {
+		this.actualExcellFiles_Date = timestamp;
 	}
 
 	
