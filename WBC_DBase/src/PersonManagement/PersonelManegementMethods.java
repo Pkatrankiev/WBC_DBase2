@@ -22,14 +22,12 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
-import javax.swing.event.SwingPropertyChangeSupport;
 import javax.swing.text.BadLocationException;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -44,7 +42,6 @@ import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
-import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
@@ -278,12 +275,7 @@ public class PersonelManegementMethods {
 			}
 		});
 
-		comboBox_Otdel.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				checInsertNewPerson();
-			}
-		});
+	
 
 	}
 
@@ -292,6 +284,8 @@ public class PersonelManegementMethods {
 			public void itemStateChanged(ItemEvent e) {
 				PersonelManegementFrame.setListSpisak_Prilogenia(
 						PersonelManegementMethods.generateListSpisPril(comboBox_savePerson_Otdel));
+				JTextField fild = PersonelManegementFrame.getTextField_svePerson_KodKZ_1();
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, 1);
 
 			}
 
@@ -425,13 +419,10 @@ public class PersonelManegementMethods {
 
 			public void keyReleased(KeyEvent evt) {
 
-				checkIfSetKodeToEnableInsertBtn(fild, zoneID);
-				String text = checkDublicateKodeInNewPerson(fild, zoneID);
-				text += checkKorectKodeInNewPerson(fild, zoneID);
-				text += checInsertNewPerson();
-				PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().setText(text);
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 
 			}
+
 		});
 		fild.addMouseListener(new MouseListener() {
 			@Override
@@ -442,11 +433,7 @@ public class PersonelManegementMethods {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				
-				checkIfSetKodeToEnableInsertBtn(fild, zoneID);
-				String text = checkDublicateKodeInNewPerson(fild, zoneID);
-				text += checkKorectKodeInNewPerson(fild, zoneID);
-				text += checInsertNewPerson();
-				PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().setText(text);
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 
 			}
 
@@ -468,6 +455,15 @@ public class PersonelManegementMethods {
 
 	}
 
+	private static void checkKorectionSetInfoToFieldsInSavePersonPanel(JTextField fild, int zoneID) {
+		checkIfSetKodeToEnableInsertBtn(fild, zoneID);
+		String text = checkDublicateKodeInNewPerson(fild, zoneID);
+		text += checkKorectKodeInNewPerson(fild, zoneID);
+		text += checInsertNewPerson();
+		PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().setText(text);
+	}
+	
+	
 	protected static void checkIfSetKodeToEnableInsertBtn(JTextField fild, int zoneID) {
 		String kode = fild.getText();
 		switch (zoneID) {
@@ -643,7 +639,7 @@ public class PersonelManegementMethods {
 
 		String[] masive = { "", "", "", "", "", "", "", };
 		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods
-				.getDataBaseFilePat_ActualPersonalAndExternal();
+				.getDataBaseFilePat_OriginalPersonalAndExternal();
 		for (int i = 0; i < excellFiles_ActualPersonalAndExternal.length; i++) {
 			String pathFile = excellFiles_ActualPersonalAndExternal[i];
 			String firmName = "АЕЦ Козлодуй";

@@ -104,6 +104,7 @@ public class UpdateBDataFromExcellFiles {
 		String[] key = { "Person", "Spisak_Prilogenia", "PersonStatus", "KodeStatus", "Measuring", "ResultsWBC" };
 		String year = AplicationMetods.getCurentYear();
 		String textIcon;
+		String errorText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorText");
 		boolean save = true;
 		for (int i = 0; i < key.length; i++) {
 			
@@ -124,6 +125,7 @@ public class UpdateBDataFromExcellFiles {
 						listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile);
 						System.out.println("--> " + listPerson.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {
@@ -143,6 +145,7 @@ public class UpdateBDataFromExcellFiles {
 						ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 						System.out.println("--> " + Spisak_PrilogeniaList.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {
@@ -162,6 +165,7 @@ public class UpdateBDataFromExcellFiles {
 						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 						System.out.println("--> " + list.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {
@@ -180,6 +184,7 @@ public class UpdateBDataFromExcellFiles {
 						ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 						System.out.println("--> " + listKodeStatus.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {
@@ -198,6 +203,7 @@ public class UpdateBDataFromExcellFiles {
 						ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
 						System.out.println("--> " + listMeasuring.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {
@@ -216,6 +222,7 @@ public class UpdateBDataFromExcellFiles {
 						ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
 						System.out.println("--> " + listResultsWBC.size());
 					} catch (Exception e) {
+						OptionDialog(errorText);
 						save = false;
 					}
 					if (save) {

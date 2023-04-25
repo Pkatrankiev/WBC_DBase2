@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dimension;
 import java.awt.Font;
 
 

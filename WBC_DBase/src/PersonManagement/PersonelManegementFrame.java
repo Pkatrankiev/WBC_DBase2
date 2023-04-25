@@ -39,10 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
-import java.awt.Color;
-import javax.swing.Icon;
+
 
 public class PersonelManegementFrame extends JFrame {
 
@@ -659,11 +656,12 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_Kode_Panel_3.add(lbl_svePersonKodKZ_HOG);
 		
 		
-		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("modifiIcon");
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("arrowIcon");
 		ImageIcon pic = new ImageIcon(getClass().getClassLoader().getResource(iconn));
 		btn_InsertToHOG = new JButton(pic);
 		btn_InsertToHOG.setPreferredSize(new Dimension(21, 21));
 		personSave_Kode_Panel_3.add(btn_InsertToHOG);
+		btn_InsertToHOG.setEnabled(false);
 
 		textField_svePersonKodKZ_HOG = new JTextField();
 		textField_svePersonKodKZ_HOG.setColumns(6);
@@ -682,6 +680,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_InsertToTerit_1 = new JButton(pic);
 		btn_InsertToTerit_1.setPreferredSize(new Dimension(21, 21));
 		personSave_Kode_Panel_3.add(btn_InsertToTerit_1);
+		btn_InsertToTerit_1.setEnabled(false);
 
 		textField_svePersonKodKZ_Terit_1 = new JTextField();
 		textField_svePersonKodKZ_Terit_1.setColumns(6);
@@ -700,6 +699,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_InsertToTerit_2 = new JButton(pic);
 		btn_InsertToTerit_2.setPreferredSize(new Dimension(21, 21));
 		personSave_Kode_Panel_3.add(btn_InsertToTerit_2);
+		btn_InsertToTerit_2.setEnabled(false);
 
 		textField_svePersonKodKZ_Terit_2 = new JTextField();
 		textField_svePersonKodKZ_Terit_2.setColumns(6);
@@ -824,6 +824,16 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_Panel_5.add(lbl_svePerson_Text_Check_EnterInZone);
 
 		JCheckBox chckbx_svePerson_EnterInZone = new JCheckBox("no");
+		chckbx_svePerson_EnterInZone.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(chckbx_svePerson_EnterInZone.isSelected()) {
+					chckbx_svePerson_EnterInZone.setText("yes");
+				}else {
+					chckbx_svePerson_EnterInZone.setText("no");	
+				}
+			}
+		});
 		personSave_Panel_5.add(chckbx_svePerson_EnterInZone);
 		return personSave_Panel_5;
 	}

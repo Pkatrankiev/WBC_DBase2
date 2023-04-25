@@ -12,11 +12,11 @@ filePathActualPersonel =  Arhive\\PERSONNEL_actual.xls
 databaseEncriptOID = qwer1234
 databaseEncript = password
 
-filePathExternal_orig = d:\\EXTERNAL.xls
-filePathPersonel_orig = d:\\PERSONNEL.xls
+filePathExternal_orig2 = d:\\EXTERNAL.xls
+filePathPersonel_orig2 = d:\\PERSONNEL.xls
 
-filePathExternal_orig1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
-filePathPersonel_orig1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+filePathExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
 
 filePathMonthExternal_old = d:\\month\\wbc_month.xls
 filePathMonthPersonel_old = d:\\month\\wbc_month_P.xls
@@ -27,6 +27,7 @@ databaseOID = jdbc:ucanaccess://D://NewOid_1.mdb
 
 
 modifiIcon = ICONS/Modify.gif
+arrowIcon = ICONS/arrow.gif
 
 insertMeasuring = Измервания
 insertMeasuringTipText = Въвеждане на резултати от измерванията
@@ -75,3 +76,5 @@ labelCheckForSearch = маркирайте зона и отдел за търс�
 
 imaPromeniVavFayla = Файлът   е бил изменен на 
 preporachvaSe = Препоръчва се актуализацията на базата данни, защото:
+
+errorText = Не мога да прочета данни от фаила. 

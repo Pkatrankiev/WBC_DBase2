@@ -223,7 +223,7 @@ public class AplicationMetods {
 	}
 
 
-	@SuppressWarnings("unused")
+
 	static void testGetListPersonSatatusByPersonAndDateAfterDateSet() {
 		Person per = PersonDAO.getValuePersonByEGN("6902121962");
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");

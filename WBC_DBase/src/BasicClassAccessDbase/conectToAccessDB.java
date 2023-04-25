@@ -27,6 +27,7 @@ public class conectToAccessDB {
 		
 		
 		String databaseURL = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseOID");
+		@SuppressWarnings("unused")
 		String databaseEncript = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseEncript");
 	Connection connection = null;
 	 try  {

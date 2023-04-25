@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
-import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
 import Aplication.RemouveDublikateFromList;
