@@ -15,6 +15,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasicClassAccessDbase.KodeStatus;
@@ -222,6 +225,11 @@ public class AplicationMetods {
 	return Calendar.getInstance().get(Calendar.YEAR) + "";
 	}
 
+	public static void MessageDialog(String text) {
+		JFrame jf = new JFrame();
+		jf.setAlwaysOnTop(true);
+		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
+	}
 
 
 	static void testGetListPersonSatatusByPersonAndDateAfterDateSet() {

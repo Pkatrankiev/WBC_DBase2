@@ -84,11 +84,11 @@ public class MeasuringDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-			if (e.toString().indexOf("unique constraint or index violation") > 0) {
-				MessageDialog(mesage + " " + measuring.getReportFileName());
-				e.printStackTrace();
-				ResourceLoader.appendToFile(e);
-			}
+//			if (e.toString().indexOf("unique constraint or index violation") > 0) {
+//				MessageDialog(mesage + " " + measuring.getReportFileName());
+//				e.printStackTrace();
+//				ResourceLoader.appendToFile(e);
+//			}
 		}
 	}
 
@@ -485,4 +485,52 @@ public class MeasuringDAO {
 		JOptionPane.showMessageDialog(jf, mesage, "Info", JOptionPane.PLAIN_MESSAGE, otherIcon);
 
 	}
+
+
+	public static List<Measuring> getAllValueMeasuring1() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring1";
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+int k=0;
+			while (result.next()) {
+				
+				Measuring object = new Measuring();
+				object.setMeasuring_ID(result.getInt("Measuring_ID"));
+				System.out.println(k+" - "+result.getInt("Measuring_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				object.setPerson(person);
+				object.setDate(result.getDate("Date"));
+				object.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				object.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				object.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				object.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				object.setTypeMeasur(type);
+				object.setMeasurKoment(result.getString("MeasurKoment"));
+				object.setReportFileName(result.getString("ReportFileName"));
+
+				list.add(object);
+				k++;
+			}
+
+			statement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		return list;
+	}
+
+
+
 }

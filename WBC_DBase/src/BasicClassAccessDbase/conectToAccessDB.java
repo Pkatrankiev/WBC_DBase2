@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ResourceLoader;
 
 public class conectToAccessDB {
 
@@ -17,8 +19,14 @@ public class conectToAccessDB {
 	 try  {
 		connection = DriverManager.getConnection(databaseURL, "", databaseEncript);
 		
-	 } catch (SQLException ex) {
-         ex.printStackTrace();
+	 } catch (SQLException e) {
+			
+		 String str = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorTextDialogNotDBaseFile");
+				AplicationMetods.MessageDialog(str+"\n"+databaseURL.substring(18).replace("//", "\\"));
+			
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+			System.exit(0);
      }
 	return connection;
 	}

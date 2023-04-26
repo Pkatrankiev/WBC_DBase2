@@ -78,3 +78,5 @@ imaPromeniVavFayla = Файлът   е бил изменен на
 preporachvaSe = Препоръчва се актуализацията на базата данни, защото:
 
 errorText = Не мога да прочета данни от фаила. 
+errorDialogTextDublicateFields = Съдържа повтарящи се полета
+errorTextDialogNotDBaseFile = Не намирам файла с базата данни:

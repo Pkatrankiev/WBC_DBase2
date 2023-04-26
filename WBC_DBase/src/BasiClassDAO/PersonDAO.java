@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import Aplication.AplicationMetods;
+import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.conectToAccessDB;
@@ -39,8 +41,8 @@ public class PersonDAO {
 
 		} catch (SQLException e) {
 			if (e.toString().contains("unique")) {
-				String str = "Съдържа повтарящи се полета";
-				MessageDialog(str);
+				String str = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorDialogTextDublicateFields");
+				AplicationMetods.MessageDialog(str);
 			}
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
@@ -185,12 +187,7 @@ public class PersonDAO {
 		return listPerson;
 	}
 
-	public static void MessageDialog(String text) {
-		JFrame jf = new JFrame();
-		jf.setAlwaysOnTop(true);
-		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
-	}
-
+	
 	public static List<Person> getValuePersonByObject(String columnName, Object object) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
