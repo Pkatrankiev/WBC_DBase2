@@ -14,12 +14,14 @@ import java.util.List;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
@@ -38,21 +40,14 @@ public static void main(String[] args) {
 //	******************************* MainFarameWindow ****************************	
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
-//		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
-//		new MainWindowWBC_DBase();
-//		GeneralMethods.cerateDestinationDir();
+		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
+		new MainWindowWBC_DBase();
+		GeneralMethods.cerateDestinationDir();
 		
 		
 //		PersonelManegementMethods.getMasiveKodeStatusFromExcelFiles();
 		
-		List<Measuring> List = MeasuringDAO.getAllValueMeasuring1();
-		System.out.println("333333333333333333333333333333333333333333333333333333");
-		int k=0;
-		for (Measuring measuring : List) {
-			System.out.println("-> "+k);
-			MeasuringDAO.setObjectMeasuringToTable(measuring);
-			k++;
-		}
+//		ResultsWBCDAO.deleteAllValueResultsWBC();
 		
 		}
 	

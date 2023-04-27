@@ -257,7 +257,6 @@ public class ResultsWBCDAO {
 		return listResultsWBC;
 	}
 
-
 	public static ResultsWBC getValueResultsWBCByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -296,7 +295,35 @@ public class ResultsWBCDAO {
 		return listResultsWBC.get(0);
 	}
 
+	public static List<ResultsWBC> deleteAllValueResultsWBC() {
 
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM ResultsWBC";
+		List<ResultsWBC> listResultsWBC = new ArrayList<ResultsWBC>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+					try {
+				MeasuringDAO.getValueMeasuringByID(result.getInt("Measuring_ID"));
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println(result.getInt("ResultsWBC_ID"));
+					deleteValueResultsWBC(result.getInt("ResultsWBC_ID"));
+				}
+				statement.close();
+				connection.close();
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		return listResultsWBC;
+	}
 	
+
 	
 }

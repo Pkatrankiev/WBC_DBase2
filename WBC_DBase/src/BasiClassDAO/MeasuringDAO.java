@@ -147,7 +147,7 @@ public class MeasuringDAO {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static List<Measuring> getAllValueMeasuring() {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -532,5 +532,6 @@ int k=0;
 	}
 
 
-
+	
+	
 }
