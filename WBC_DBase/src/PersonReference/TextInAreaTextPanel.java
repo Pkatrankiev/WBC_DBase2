@@ -15,14 +15,12 @@ import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.ResultsWBCDAO;
-import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.ResultsWBC;
-import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Zone;
 
 public class TextInAreaTextPanel {
@@ -44,7 +42,7 @@ public class TextInAreaTextPanel {
 		person = personInport;
 		
 		if(fromExcell) {
-			listP =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, personInport);
+			listP =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, person);
 		}else{
 		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
@@ -75,7 +73,7 @@ public class TextInAreaTextPanel {
 		if(fromExcell) {
 			masiveMeasur = SearchFromExcellFiles.generateMasiveMeasurFromExcelFile( year, person);
 		}else{
-		listM = MeasuringDAO.getValueMeasuringByObject("Person_ID", person);
+		listM = MeasuringDAO.getValueMeasuringByObjectSortByColumnName("Person_ID", person, "Date");
 		masiveMeasur = generateMasiveMeasur(year, listM);
 		}
 		
@@ -256,17 +254,18 @@ public class TextInAreaTextPanel {
 	}
 
 	private static String[][] generateMasivePersonStatus(String year, List<PersonStatus> listP) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		String[][] masivePersonStatus = new String[listP.size()][6];
 		if(!year.trim().isEmpty()) {
 			int k=0;
 			for (PersonStatus perStat : listP) {
-				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year );
-				for (Spisak_Prilogenia spPr : listS) {
-				if (perStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
+
+				String yyy = sdf.format(perStat.getDateSet()).substring(6);
+				if (yyy.equals(year)) {
 					masivePersonStatus[k] = generateRowByMasive( perStat);
 					k++;
 				}
-			}
+
 				}
 		}else {
 			int k=0;

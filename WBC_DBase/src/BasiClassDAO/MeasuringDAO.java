@@ -84,11 +84,11 @@ public class MeasuringDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-//			if (e.toString().indexOf("unique constraint or index violation") > 0) {
-//				MessageDialog(mesage + " " + measuring.getReportFileName());
-//				e.printStackTrace();
-//				ResourceLoader.appendToFile(e);
-//			}
+			if (e.toString().indexOf("unique constraint or index violation") > 0) {
+				MessageDialog(mesage + " " + measuring.getReportFileName());
+				e.printStackTrace();
+				ResourceLoader.appendToFile(e);
+			}
 		}
 	}
 
@@ -349,12 +349,36 @@ public class MeasuringDAO {
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setObject(1, object);
+
+			switch (columnName) {
+			case "Person_ID": {
+				preparedStatement.setObject(1, ((Person) object).getId_Person());
+			}
+				break;
+			case "DozeDimension_ID": {
+				preparedStatement.setObject(1, ((DimensionWBC) object).getDimensionWBC_ID());
+			}
+				break;
+			case "Lab_ID": {
+				preparedStatement.setObject(1, ((Laboratory) object).getLab_ID());
+			}
+				break;
+			case "UsersWBC_ID": {
+				preparedStatement.setObject(1, ((UsersWBC) object).getId_Users());
+			}
+				break;
+			case "TypeMeasur_ID": {
+				preparedStatement.setObject(1, ((TypeMeasur) object).getId_TypeMeasur());
+			}
+				break;
+			default:
+				preparedStatement.setObject(1, object);
+			}
+
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
 				Measuring resultObject = new Measuring();
-
 				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
 				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
 				resultObject.setPerson(person);

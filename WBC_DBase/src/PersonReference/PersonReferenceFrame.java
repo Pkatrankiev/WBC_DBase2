@@ -694,22 +694,24 @@ public class PersonReferenceFrame extends JFrame {
 		List<PersonStatus> listAllPerStat = new ArrayList<>();
 		if (otdel != null && !otdel.trim().isEmpty()) {
 			Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
+//			System.out.println("workplace = " + workplace.getOtdel());
 			for (Person person : listSelectionPersonKZHog) {
+				
 				List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByPersonAndWorkplace(person,
 						workplace);
 				if (listPerStat.size() > 0) {
 					listAllPerStat.addAll(listPerStat);
 
-					System.out.println(person.getEgn() + " " + listPerStat.size());
+//					System.out.println(person.getEgn() + " " + listPerStat.size());
 				}
 
 			}
-			System.out.println("listSelectionPersonEGN = " + listSelectionPersonEGN.size());
+//			System.out.println("listAllPerStat = " + listAllPerStat.size());
 			if (!year.trim().isEmpty()) {
-
+//				System.out.println("Spisak_Prilogenia_year " + Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year).size());
 				for (Spisak_Prilogenia spPr : Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year)) {
+					
 					for (PersonStatus prStat : listAllPerStat) {
-
 						if (prStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
 							listSelectionPersonOtdel.add(prStat.getPerson());
 						}

@@ -69,8 +69,7 @@ public class ReadPersonStatusFromExcelFile {
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
 					otdelName = cell1.getStringCellValue().trim();
 					if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
-						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
-								listAllWorkplaceBiFirmName);
+						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName, listAllWorkplaceBiFirmName);
 					}
 				}
 
@@ -165,9 +164,9 @@ public class ReadPersonStatusFromExcelFile {
 					if (EGN.contains("*"))
 						EGN = EGN.substring(0, EGN.length() - 1);
 					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
-					if (cell1.getCellComment() != null) {
-						zab = cell1.getCellComment().getString().getString();
-					}
+					
+					zab = searchComent(workbook, row);
+					
 					person = PersonDAO.getValuePersonByEGN(EGN);
 					if (person == null) {
 						MessageDialog(FirstName);
@@ -179,7 +178,7 @@ public class ReadPersonStatusFromExcelFile {
 						Spisak_Prilogenia spPr = ReadSpisak_PrilogeniaFromExcelFile.getOrCreateSisak_Prilogenie(k, row,
 								sheet, startDate, endDate, formulyarName, workplace, year);
 
-						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
+						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, zab);
 						listPerStat.add(personStat);
 
 						k = k + 3;
@@ -332,4 +331,29 @@ public class ReadPersonStatusFromExcelFile {
 		jf.setAlwaysOnTop(true);
 		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
 	}
+
+
+	private static String searchComent(Workbook workbook,  int row) {
+		String zab0 = "", zab3 = "";
+		
+		Sheet sheet = workbook.getSheetAt(0);
+		Cell cell = sheet.getRow(row).getCell(6);
+		if (cell.getCellComment() != null) {
+			zab0 = cell.getCellComment().getString().getString();
+		}
+		
+		sheet = workbook.getSheetAt(3);
+		cell = sheet.getRow(row).getCell(6);
+		if (cell.getCellComment() != null) {
+			zab3 = cell.getCellComment().getString().getString();
+		}
+		
+		if(zab0.isEmpty()) {
+			zab0 = zab3;
+		}
+		
+		return zab0;
+	}
+
+
 }

@@ -295,35 +295,48 @@ public class ResultsWBCDAO {
 		return listResultsWBC.get(0);
 	}
 
-	public static List<ResultsWBC> deleteAllValueResultsWBC() {
+	public static void moveAllValueResultsWBC() {
 
-		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM ResultsWBC";
-		List<ResultsWBC> listResultsWBC = new ArrayList<ResultsWBC>();
-
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet result = statement.executeQuery(sql);
-
-			while (result.next()) {
-					try {
-				MeasuringDAO.getValueMeasuringByID(result.getInt("Measuring_ID"));
-				} catch (SQLException e) {
-					e.printStackTrace();
-					System.out.println(result.getInt("ResultsWBC_ID"));
-					deleteValueResultsWBC(result.getInt("ResultsWBC_ID"));
-				}
-				statement.close();
-				connection.close();
-				
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			
-		}
-		return listResultsWBC;
+		List<ResultsWBC> listResultsWBC = getAllValueResultsWBC();
+		System.out.println(listResultsWBC.size());
+//	int k =0;
+//		for (ResultsWBC resultsWBC : listResultsWBC) {
+//			setNewObjectResultsWBCToTable(resultsWBC);
+//			System.out.println(k);
+//			k++;
+//		}		
+//			
+		
+		
 	}
 	
+	public static void setNewObjectResultsWBCToTable(ResultsWBC resultsWBC) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+
+		String sql = "INSERT INTO Results (Measuring_ID, Nuclide_ID, Activity_Bq, Postaplenie_Bq, GGP_Percent, NuclideDoze_mSv) VALUES (?, ?, ?, ?, ?, ?)";
+
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setInt(1, resultsWBC.getMeasuring().getMeasuring_ID());
+			preparedStatement.setInt(2, resultsWBC.getNuclideWBC().getId_nuclide());
+			preparedStatement.setDouble(3, resultsWBC.getActivity());
+			preparedStatement.setDouble(4, resultsWBC.getPostaplenie());
+			preparedStatement.setDouble(5, resultsWBC.getGgp());
+			preparedStatement.setDouble(6, resultsWBC.getNuclideDoze());
+			
+			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+	}
 
 	
 }

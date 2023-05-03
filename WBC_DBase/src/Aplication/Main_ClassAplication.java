@@ -45,9 +45,12 @@ public static void main(String[] args) {
 		GeneralMethods.cerateDestinationDir();
 		
 		
+		
+		
+		
 //		PersonelManegementMethods.getMasiveKodeStatusFromExcelFiles();
 		
-//		ResultsWBCDAO.deleteAllValueResultsWBC();
+//		ResultsWBCDAO.moveAllValueResultsWBC();
 		
 		}
 	

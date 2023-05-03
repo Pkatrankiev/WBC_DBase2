@@ -158,7 +158,7 @@ public class ReadExcelFileWBC {
 			strDate = strDate.replaceAll("г.", "");
 			strDate = strDate.replaceAll("г", "");
 			strDate = strDate.trim();
-			System.out.println(strDate);
+			System.out.println("input date "+strDate);
 			try {
 				if (strDate.length() == 8) {
 					sdfrmt = new SimpleDateFormat("dd.MM.yy");
@@ -176,7 +176,7 @@ public class ReadExcelFileWBC {
 					sdfrmt = new SimpleDateFormat("dd.M.yy");
 					sdfrmt.setLenient(false);
 				}
-				System.out.println(strDate);
+				System.out.println("output date "+strDate);
 				javaDate = sdfrmt.parse(strDate);
 			} catch (Exception e) {
 				

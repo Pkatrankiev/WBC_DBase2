@@ -48,8 +48,8 @@ public class SearchFromExcellFiles {
 	static String[] pathToArhiveExcellFiles = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();	
 	
 	
-	static String[] pathToFiles_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
-	
+	static String[] pathToFiles_ActualPersonalAndExternal2 = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+	static String[] pathToFiles_OriginalPersonalAndExternal = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 	
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 	
@@ -279,7 +279,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles_ActualPersonalAndExternal	;
+			path = pathToFiles_OriginalPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
@@ -340,9 +340,9 @@ public class SearchFromExcellFiles {
 						if (kodeHOG.equals("н") || kodeHOG.trim().equals("")) {
 							kodeHOG = "H";
 						}
-												
-						listExcellPerson.add(new PersonExcellClass(new Person(ExcellEGN, FirstName, SecondName, LastName), kodeKZ1, kodeKZ2, kodeHOG, otdel));
-					
+						
+						listExcellPerson = addNewExcellPerson(listExcellPerson, new PersonExcellClass(new Person(ExcellEGN, FirstName, SecondName, LastName), kodeKZ1, kodeKZ2, kodeHOG, otdel));						
+				
 				}
 			}
 
@@ -352,12 +352,25 @@ public class SearchFromExcellFiles {
 		return listExcellPerson;
 	}	
 
+	private static List<PersonExcellClass> addNewExcellPerson(List<PersonExcellClass> listExcellPerson,
+			PersonExcellClass newPersonExcellClass) {
+		
+		for (PersonExcellClass personExcellClass : listExcellPerson) {
+			if(newPersonExcellClass.getPerson().getEgn().equals(personExcellClass.getPerson().getEgn())) {
+				return listExcellPerson;
+			}
+		}
+		
+		listExcellPerson.add(newPersonExcellClass);
+		return listExcellPerson;
+	}
+
 	public static List<KodeStatus> getListKodeStatusFromExcelFile( String year, Person person) {
 		List<KodeStatus> listKodeStatus = new ArrayList<>();
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles_ActualPersonalAndExternal	;
+			path = pathToFiles_OriginalPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
@@ -447,14 +460,16 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles_ActualPersonalAndExternal	;
+			path = pathToFiles_OriginalPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
 			
 			if(insertYear!=curentYear) {
 				pathFile = pathFile+year+".xls";
-			}		
+			}	
+			System.out.println("pathFile: "+pathFile);
+			
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 			
 			
@@ -464,15 +479,14 @@ public class SearchFromExcellFiles {
 			}	
 			
 		if(workbook.getNumberOfSheets()>2) {
-			List<PersonStatus> list = getListPersonStatusFromBigExcelFile(workbook, firmName, year, person);
-			for (PersonStatus personStatus : list) {
-				listPerStat.add(personStatus);
-			}	
+			for (PersonStatus perSt : getListPersonStatusFromBigExcelFile(workbook, firmName, year, person)) {
+			listPerStat.add(perSt);
+			}
+				
 		}else {
-			List<PersonStatus> list = getListPersonStatusFromSmalExcelFile(workbook,firmName,  year, person);
-			for (PersonStatus personStatus : list) {
-				listPerStat.add(personStatus);
-			}	
+			for (PersonStatus perSt :getListPersonStatusFromSmalExcelFile(workbook,firmName,  year, person)) {
+			listPerStat.add(perSt);
+		}	
 		}
 		}
 		return listPerStat;
@@ -597,7 +611,9 @@ public class SearchFromExcellFiles {
 					EGN = ReadExcelFileWBC.getStringfromCell(cell);
 					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
 					if(person.getEgn().equals(EGN)) {
-						
+						if (cell1.getCellComment() != null) {
+							zab = cell1.getCellComment().getString().getString();
+						}	
 
 					int k = 7;
 					cell = sheet.getRow(row).getCell(k);
@@ -630,7 +646,7 @@ public class SearchFromExcellFiles {
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
 		if(insertYear==curentYear) {
-			path = pathToFiles_ActualPersonalAndExternal	;
+			path = pathToFiles_OriginalPersonalAndExternal	;
 		}
 		
 		for (String pathFile : path) {
