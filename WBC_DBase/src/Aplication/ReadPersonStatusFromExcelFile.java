@@ -26,6 +26,9 @@ import BasicClassAccessDbase.Workplace;
 
 public class ReadPersonStatusFromExcelFile {
 
+	static Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
+
+	
 	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatus> listPerStat = new ArrayList<>();
@@ -178,15 +181,20 @@ public class ReadPersonStatusFromExcelFile {
 						Spisak_Prilogenia spPr = ReadSpisak_PrilogeniaFromExcelFile.getOrCreateSisak_Prilogenie(k, row,
 								sheet, startDate, endDate, formulyarName, workplace, year);
 
-						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, zab);
+						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
 						listPerStat.add(personStat);
 
 						k = k + 3;
 						cell = sheet.getRow(row).getCell(k);
 
 					}
-					if (listPerStat.size() > 1)
+					if(listPerStat.size()>0) {
 						listPerStat.get(listPerStat.size() - 1).setZabelejka(zab);
+						}else {
+							if(!zab.isEmpty()) {
+							listPerStat.add(new PersonStatus(person, workplace, spPrNotInfo, userSet, dateSet, zab));
+							}
+						}
 				}
 			}
 
@@ -333,7 +341,7 @@ public class ReadPersonStatusFromExcelFile {
 	}
 
 
-	private static String searchComent(Workbook workbook,  int row) {
+	public static String searchComent(Workbook workbook,  int row) {
 		String zab0 = "", zab3 = "";
 		
 		Sheet sheet = workbook.getSheetAt(0);

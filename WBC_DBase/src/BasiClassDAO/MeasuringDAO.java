@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,11 +86,12 @@ public class MeasuringDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-			if (e.toString().indexOf("unique constraint or index violation") > 0) {
-				MessageDialog(mesage + " " + measuring.getReportFileName());
-				e.printStackTrace();
-				ResourceLoader.appendToFile(e);
-			}
+			e.printStackTrace();
+//			if (e.toString().indexOf("unique constraint or index violation") > 0) {
+//				MessageDialog(mesage + " " + measuring.getReportFileName());
+//				
+//				ResourceLoader.appendToFile(e);
+//			}
 		}
 	}
 
@@ -555,6 +558,54 @@ int k=0;
 		return list;
 	}
 
+	public static List<Measuring> getValueMeasuringByPersonAndYear(Person person, Date dateStart, Date dateEnd) {
+	
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Person_ID = ? AND Date >= ? AND Date <= ?";
+
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, dateStart);
+			preparedStatement.setObject(3, dateEnd);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}
 
 	
 	

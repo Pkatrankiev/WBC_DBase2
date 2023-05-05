@@ -80,3 +80,12 @@ preporachvaSe = Препоръчва се актуализацията на ба
 errorText = Не мога да прочета данни от фаила. 
 errorDialogTextDublicateFields = Съдържа повтарящи се полета
 errorTextDialogNotDBaseFile = Не намирам файла с базата данни:
+
+svePersonManegement_newPerson = Въвеждате нов служител
+svePersonManegement_newKode = Променен код
+svePersonManegement_IsEnteredInZone = Има ли влизания в зоната
+svePersonManegement_newOtdel = Променен Отдел. Записа ще се премести на друга позиция
+svePersonManegement_FirstNameError = Името на съвпада
+svePersonManegement_SekondNameError = Презимето на съвпада
+svePersonManegement_LastNameError = Фамилията на съвпада
+svePersonManegement_KodeIsBusi = Кода е зает

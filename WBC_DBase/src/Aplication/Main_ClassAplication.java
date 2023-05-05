@@ -34,75 +34,14 @@ import SearchFreeKode.SearchFreeKodeFrame;
 public class Main_ClassAplication {
  
 public static void main(String[] args) {
-
-	
-	
-//	******************************* MainFarameWindow ****************************	
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
 		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
 		new MainWindowWBC_DBase();
 		GeneralMethods.cerateDestinationDir();
-		
-		
-		
-		
-		
-//		PersonelManegementMethods.getMasiveKodeStatusFromExcelFiles();
-		
-//		ResultsWBCDAO.moveAllValueResultsWBC();
-		
+	
 		}
-	
-//	******************************* MainFarameWindow ****************************	
-		
-	
-//	ReadExcelFileWBC.test ();
-//	List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusWithoutSpisak_Prilogenia("7906113205");
-//	ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-//	
-//	ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
-	
-//	******************************* first add Data in AccessDBase ****************************
-	
-//	String key ="";
-//	String key = "Person";
-//	String key = "Spisak_Prilogenia";
-//	String key = "PersonStatus";
-//	String key = "KodeStatus";
-//	String key = "Measuring";
-//	String key = "ResultsWBC";
-	
-//	String year = "2022";
-	
-//	boolean save = true;
-//	boolean save = false;
-	
-//	AplicationMetods.readInfoFromGodExcelFile(year,  key, save);
-	
 
-//	******************************* first add Data in AccessDBase ****************************
-	
-	
-	
-	
-//	UpdateBDataFromExcellFiles.updataFromGodExcelFile();
-	
-	
-	
-//	AplicationMetods.testGetListPersonSatatusByPersonAndDateAfterDateSet();
-	
-	
-//	List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles();
-//	System.out.println(list.size());
-//	ReadResultFromReport.PrintListReportMeasurClass();
-
-
-
-	
 }
-
-
-
 
 }

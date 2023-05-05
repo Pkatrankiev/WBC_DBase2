@@ -214,8 +214,7 @@ public class PersonelManegementMethods {
 		});
 	}
 
-	static void ActionListener_Btn_SearchPerson(JButton btn_SearchPerson, JPanel panel_AllSaerch, JTextArea textArea,
-			JButton btn_savePerson_Insert) {
+	static void ActionListener_Btn_SearchPerson(JButton btn_SearchPerson, JPanel panel_AllSaerch, JTextArea textArea, JButton btn_savePerson_Insert) {
 
 		btn_SearchPerson.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -264,7 +263,7 @@ public class PersonelManegementMethods {
 
 	}
 
-	static void ActionListener_ComboBox_Firm(Choice comboBox_Firm, Choice comboBox_Otdel) {
+	public static void ActionListener_ComboBox_Firm(Choice comboBox_Firm, Choice comboBox_Otdel) {
 
 		comboBox_Firm.addItemListener(new ItemListener() {
 			@Override
@@ -457,13 +456,25 @@ public class PersonelManegementMethods {
 
 	private static void checkKorectionSetInfoToFieldsInSavePersonPanel(JTextField fild, int zoneID) {
 		checkIfSetKodeToEnableInsertBtn(fild, zoneID);
-		String text = checkDublicateKodeInNewPerson(fild, zoneID);
-		text += checkKorectKodeInNewPerson(fild, zoneID);
-		text += checInsertNewPerson();
+		String text = checkEGNByNewPerson();
+		text += " "+checkDublicateKodeInNewPerson(fild, zoneID);
+		text += " "+checkKorectKodeInNewPerson(fild, zoneID);
+		text += " "+checInsertNewPerson();
 		PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().setText(text);
 	}
 	
 	
+	private static String checkEGNByNewPerson() {
+		String svePersonManegement_newPerson = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_newPerson");
+		JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
+		String egn = textField_svePerson_EGN.getText();
+		Person person = PersonDAO.getValuePersonByEGN(egn);
+		if(person==null) {
+		return 	svePersonManegement_newPerson;
+		}
+		return "";
+	}
+
 	protected static void checkIfSetKodeToEnableInsertBtn(JTextField fild, int zoneID) {
 		String kode = fild.getText();
 		switch (zoneID) {
@@ -533,7 +544,7 @@ public class PersonelManegementMethods {
 		textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", person, false));
 	}
 
-	static void setitemInChoise(Choice comboBox_Firm, Choice comboBox_Otdel) {
+	public static void setitemInChoise(Choice comboBox_Firm, Choice comboBox_Otdel) {
 
 		List<String> listAdd = new ArrayList<>();
 
@@ -614,7 +625,7 @@ public class PersonelManegementMethods {
 		}
 	}
 
-	static void addItemFirm(Choice comboBox_Firm) {
+	public static void addItemFirm(Choice comboBox_Firm) {
 		addItem(comboBox_Firm, listFirm);
 	}
 
@@ -871,7 +882,7 @@ public class PersonelManegementMethods {
 		return "";
 	}
 
-	static void checkorektDate(JTextField textFieldDate) {
+	public static void checkorektDate(JTextField textFieldDate) {
 		textFieldDate.addKeyListener(new KeyListener() {
 
 			@Override
@@ -899,6 +910,15 @@ public class PersonelManegementMethods {
 
 	public static String checInsertNewPerson() {
 
+		String svePersonManegement_newKode = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_newKode");
+		String svePersonManegement_IsEnteredInZone = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_IsEnteredInZone");
+		String svePersonManegement_newOtdel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_newOtdel");
+		String svePersonManegement_FirstNameError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_FirstNameError");
+		String svePersonManegement_SekondNameError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_SekondNameError");
+		String svePersonManegement_LastNameError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_LastNameError");
+		
+		
+		
 		JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
 		JTextField textField_svePerson_FName = PersonelManegementFrame.getTextField_svePerson_FName();
 		JTextField textField_svePerson_SName = PersonelManegementFrame.getTextField_svePerson_SName();
@@ -921,7 +941,7 @@ public class PersonelManegementMethods {
 				textField_svePerson_FName.setBorder(defoutBorder);
 			} else {
 				textField_svePerson_FName.setBorder(redBorder);
-				textCheck += "FirstName not OK";
+				textCheck += svePersonManegement_FirstNameError;
 			}
 //			Second Name
 			SekondNameOK = false;
@@ -933,7 +953,7 @@ public class PersonelManegementMethods {
 				if (!textCheck.isEmpty()) {
 					textCheck += ", ";
 				}
-				textCheck += "SekondName not OK ";
+				textCheck += svePersonManegement_SekondNameError;
 			}
 //			Last Name
 			LastNameOK = false;
@@ -945,7 +965,7 @@ public class PersonelManegementMethods {
 				if (!textCheck.isEmpty()) {
 					textCheck += ", ";
 				}
-				textCheck += "LastName not OK";
+				textCheck += svePersonManegement_LastNameError;
 			}
 
 			String[] simpleKode = generateMasiveKodeStatus(person);
@@ -1001,16 +1021,17 @@ public class PersonelManegementMethods {
 				if (!textCheck.isEmpty()) {
 					textCheck += ", ";
 				}
-				textCheck += "promenen otdel, zapisa trqbwa da se premesti";
+				textCheck += svePersonManegement_newOtdel;
 			}
 			if (!KodKZ_1_OK || !KodKZ_2_OK || !KZ_HOG_OK || !KZ_Terit_1_OK || !KZ_Terit_2_OK) {
 				if (!textCheck.isEmpty()) {
 					textCheck += ", ";
 				}
-				textCheck += "promenen kod";
-			}
+				textCheck += svePersonManegement_newKode;
+			
 			if (!textCheck.isEmpty()) {
-				textCheck += " Ima li wlizaniq w zonata?";
+				textCheck += " "+svePersonManegement_IsEnteredInZone;
+			}
 			}
 			return textCheck;
 		}
@@ -1018,7 +1039,7 @@ public class PersonelManegementMethods {
 	}
 
 	public static String checkDublicateKodeInNewPerson(JTextField textField, int zoneID) {
-
+		String svePersonManegement_KodeIsBusi = ReadFileBGTextVariable.getGlobalTextVariableMap().get("svePersonManegement_KodeIsBusi");
 		JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
 
 		String textCheck = "";
@@ -1031,7 +1052,7 @@ public class PersonelManegementMethods {
 				if (!egn.equals(list[0]) && kode.equals(list[zoneID])) {
 					textField.setForeground(Color.BLACK);
 					textField.setBackground(Color.RED);
-					return "koda se izpolzva ot drug sluvitel. ";
+					return svePersonManegement_KodeIsBusi;
 
 				} else {
 					textField.setBackground(Color.WHITE);

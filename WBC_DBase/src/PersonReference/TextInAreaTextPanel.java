@@ -47,10 +47,11 @@ public class TextInAreaTextPanel {
 		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
 		System.out.println(listP.size()+"  %%%%");
+		masivePersonStatus = null;
 		if(listP.size()>0) {
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
 		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
-		sortbyStartDateColumn(masivePersonStatus);
+//		sortbyStartDateColumn(masivePersonStatus);
 		}
 		String textSpis ="";
 				if(masivePersonStatus!=null && masivePersonStatus.length>0) {
@@ -286,8 +287,8 @@ public class TextInAreaTextPanel {
 		masivePersonStatus[0] = yaer ;
 		masivePersonStatus[1] = perStat.getWorkplace().getOtdel();
 		masivePersonStatus[2] = perStat.getSpisak_prilogenia().getFormulyarName();
-		masivePersonStatus[3] =  sdf.format(perStat.getSpisak_prilogenia().getStartDate());
-		masivePersonStatus[4] =  sdf.format(perStat.getSpisak_prilogenia().getEndDate());
+		masivePersonStatus[3] =  sdf.format(perStat.getSpisak_prilogenia().getStartDate()).replace("01.01.2000", "-");
+		masivePersonStatus[4] =  sdf.format(perStat.getSpisak_prilogenia().getEndDate()).replace("01.01.2000", "-");;
 		masivePersonStatus[5] =  perStat.getZabelejka().replaceAll("\n", " ");
 		
 		return masivePersonStatus;

@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadMeasuringFromExcelFile;
+import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
 import Aplication.RemouveDublikateFromList;
 import AutoInsertMeasuting.InsertMeasurToExcel;
@@ -52,7 +53,8 @@ public class SearchFromExcellFiles {
 	static String[] pathToFiles_OriginalPersonalAndExternal = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 	
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
-	
+	static Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
+
 	protected static void addListStringSelectionPersonToComboBox(List<PersonExcellClass> listSelectionPerson, Choice comboBox_Results) {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
@@ -494,7 +496,7 @@ public class SearchFromExcellFiles {
 		
 	private static List<PersonStatus> getListPersonStatusFromSmalExcelFile(Workbook workbook, String firmName,
 			String year, Person person) {
-		Spisak_Prilogenia spPr = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
+		Spisak_Prilogenia spPr = spPrNotInfo;
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date dateSet = null;
@@ -611,9 +613,7 @@ public class SearchFromExcellFiles {
 					EGN = ReadExcelFileWBC.getStringfromCell(cell);
 					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
 					if(person.getEgn().equals(EGN)) {
-						if (cell1.getCellComment() != null) {
-							zab = cell1.getCellComment().getString().getString();
-						}	
+						zab = ReadPersonStatusFromExcelFile.searchComent(workbook, row);
 
 					int k = 7;
 					cell = sheet.getRow(row).getCell(k);
@@ -626,8 +626,13 @@ public class SearchFromExcellFiles {
 						cell = sheet.getRow(row).getCell(k);
 					
 					}
-					if(listPerStat.size()>1)
+					if(listPerStat.size()>0) {
 					listPerStat.get(listPerStat.size() - 1).setZabelejka(zab);
+					}else {
+						if(!zab.isEmpty()) {
+						listPerStat.add(new PersonStatus(person, workplace, spPrNotInfo, userSet, dateSet, zab));
+						}
+					}
 					row = sheet.getLastRowNum();
 				}
 			}
