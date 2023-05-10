@@ -1,4 +1,4 @@
-package FrameViewClass;
+package MenuClasses;
 
 
 import java.awt.Dimension;
@@ -14,19 +14,15 @@ import javax.swing.UIManager;
 
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
-import MenuClasses.Menu_AutoInsertMeasuting;
-import MenuClasses.Menu_PersonManagement;
-import MenuClasses.Menu_Reference_Kode;
-import MenuClasses.Menu_Reference_Person;
 
 import javax.swing.JMenuBar;
 
 
-public class MainWindowWBC_DBase extends JFrame {
+public class MainWindowFrame extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public MainWindowWBC_DBase() {
+	public MainWindowFrame() {
 	
 		
 		setTitle("Data Base WBC"); 
@@ -65,6 +61,7 @@ public class MainWindowWBC_DBase extends JFrame {
 		personReferenceMenu.add(new Menu_Reference_Person());
 		personReferenceMenu.add(new Menu_Reference_Kode());
 		personReferenceMenu.addSeparator();
+		personReferenceMenu.add(new Menu_Reference_PersonMeasur());
 		
 		return personReferenceMenu;
 	}

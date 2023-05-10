@@ -12,11 +12,11 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import Aplication.ObrabDublicateSpisak_Prilogenie;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
-import FrameViewClass.ObrabDublicateSpisak_Prilogenie;
 
 
 public class Spisak_PrilogeniaDAO {

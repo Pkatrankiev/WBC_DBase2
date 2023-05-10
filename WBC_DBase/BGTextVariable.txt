@@ -45,8 +45,11 @@ referenceTipText = извличане на справка
 personReference = Справки за служители
 personReferenceTipText = извличане на справка по различни показатели
 
-kodeReference = Справки за кодове
+kodeReference = Справки за свободни кодове
 kodeReferenceTipText = извличане на справка за заети и свободни кодове
+
+referencePersonMeasur = Справки график на служители
+referencePersonMeasurTipText = поименна справка на служители с право на достъп
 
 destinationDir = DIRECTORY/
 destinationIcons = ICONS/ajaxLoader.gif

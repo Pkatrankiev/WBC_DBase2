@@ -1,614 +1,317 @@
 package Reference_PersonMeasur;
 
-	import javax.swing.JFrame;
+import javax.swing.JFrame;
 
-	import javax.swing.JPanel;
-	import java.awt.BorderLayout;
-	import java.awt.Choice;
-	import java.awt.Color;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Choice;
 
-	import javax.swing.BoxLayout;
-	import javax.swing.Icon;
-	import javax.swing.JButton;
-	import javax.swing.JScrollPane;
-	import javax.swing.JTextField;
-	import java.awt.Dimension;
-	import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
-	import javax.swing.JLabel;
-	import javax.swing.JOptionPane;
-	import javax.swing.border.EmptyBorder;
-	import javax.swing.table.DefaultTableModel;
-	import javax.swing.text.AbstractDocument;
-	import javax.swing.text.AttributeSet;
-	import javax.swing.text.BadLocationException;
-	import javax.swing.text.DocumentFilter;
-
-	import Aplication.ActionIcone;
-	import Aplication.AplicationMetods;
-	import Aplication.GeneralMethods;
-	import Aplication.ReadFileBGTextVariable;
-	import Aplication.RemouveDublikateFromList;
-	import AutoInsertMeasuting.InsertMeasurToExcel;
-
-	import BasiClassDAO.KodeStatusDAO;
-import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.PersonDAO;
-	import BasiClassDAO.PersonStatusDAO;
-	import BasiClassDAO.Spisak_PrilogeniaDAO;
-	import BasiClassDAO.WorkplaceDAO;
-	import BasicClassAccessDbase.KodeStatus;
-	import BasicClassAccessDbase.Person;
-	import BasicClassAccessDbase.PersonStatus;
-	import BasicClassAccessDbase.Spisak_Prilogenia;
-	import BasicClassAccessDbase.Workplace;
-	import PersonManagement.PersonelManegementFrame;
-import PersonManagement.PersonelManegementMethods;
-import PersonReference.PersonReferenceExportToExcell;
-import PersonReference.PersonReferenceFrame;
-import PersonReference.TextInAreaTextPanel;
-
+import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.SwingConstants;
+import javax.swing.JTextArea;
 
-	import java.awt.Component;
-	import javax.swing.JTextArea;
-	import java.awt.event.ActionListener;
-	import java.awt.event.ItemEvent;
-	import java.awt.event.ItemListener;
-	import java.awt.event.KeyAdapter;
-	import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-	import java.awt.event.MouseEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
+import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
+import Aplication.GeneralMethods;
+import Aplication.ReadFileBGTextVariable;
+import AutoInsertMeasuting.InsertMeasurToExcel;
+
+import BasicClassAccessDbase.Person;
+
+import PersonManagement.PersonelManegementMethods;
+import PersonReference.PersonReferenceFrame;
+
+
 import java.util.ArrayList;
-	import java.util.Calendar;
-	import java.util.Collections;
-	import java.util.Comparator;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
-	import java.util.regex.Matcher;
-	import java.util.regex.Pattern;
-	import java.util.stream.Collectors;
-	import java.awt.event.ActionEvent;
-	import java.awt.Font;
-	import java.awt.Insets;
-	import javax.swing.JTable;
-	import net.coderazzi.filters.gui.AutoChoices;
-	import net.coderazzi.filters.gui.TableFilterHeader;
+
+import java.awt.Font;
+import java.awt.Insets;
+
+public class Reference_PersonMeasur_Frame extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JPanel panel_AllSaerch;
+	private JPanel panel_Search;
+	private JPanel infoPanel;
+	private JPanel tablePane;
+	private JScrollPane scrollPane;
+	private static Choice comboBox_Firm;
+	private static Choice comboBox_Otdel;
+
+	private static JTextArea textArea;
+	private static JTextField textField_StartDate;
+	private static JTextField textField_EndDate;
+	private static JTextField textField_Year;
+	private static JButton btn_Search;
+	private static JButton btn_Export;
+
+	static String curentYear = AplicationMetods.getCurentYear();
+	String referencePersonMeasurTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasurTipText");
 	
-		
-	public class Reference_PersonMeasur_Frame extends JFrame {
+	public Reference_PersonMeasur_Frame(ActionIcone round, String referencePersonMeasur) {
+		setTitle(referencePersonMeasur);
 
-		private static final long serialVersionUID = 1L;
-		private JPanel contentPane;
-		private JPanel panel_AllSaerch;
-		private JPanel panel_Search;
-		private JPanel infoPanel;
-		private JPanel tablePane;
-		private JScrollPane scrollPane;
-		private Choice comboBox_Firm;
-		private static Choice comboBox_Otdel;
+		setMinimumSize(new Dimension(730, 900));
 
-		private static JTextArea textArea;
-		private static JTextField textField_StartDate;
-		private static JTextField textField_EndDate;
-		private static JTextField textField_Year;
-		private static JButton btn_Search;
-		private static JButton btn_Export;
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		private int minYeare;
-		private String notResults;
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
 
-		ArrayList<String> listOtdelKz;
-		List<String> listOtdelVO;
-		List<String> listOtdelAll;
-		List<String> listAdd;
-		List<String> listFirm;
-		
-		
-		static String curentYear = AplicationMetods.getCurentYear();
-		
-		public Reference_PersonMeasur_Frame(ActionIcone round) {
+		panel_Search = new JPanel();
+		panel_Search.setLayout(new BoxLayout(panel_Search, BoxLayout.Y_AXIS));
+		contentPane.add(panel_Search, BorderLayout.NORTH);
 
-			setMinimumSize(new Dimension(730, 900));
+		panel_AllSaerch = new JPanel();
+		contentPane.add(panel_AllSaerch, BorderLayout.CENTER);
+		panel_AllSaerch.setLayout(new BoxLayout(panel_AllSaerch, BoxLayout.Y_AXIS));
 
-			String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
-			notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
-			String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
-			String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
+		infoPanel = new JPanel();
+		infoPanel.setPreferredSize(new Dimension(10, 10));
+		infoPanel.setMaximumSize(new Dimension(32767, 32767));
+		panel_AllSaerch.add(infoPanel);
+		infoPanel.setLayout(new BorderLayout(0, 0));
 
-			try {
-				minYeare = Integer.parseInt(minYearInDbase);
-			} catch (Exception e) {
-				MessageDialog("Year not korekt in BGTextVariable", "Error");
-				System.exit(0);
-			}
+		textArea = new JTextArea();
+		textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+		JScrollPane sp = new JScrollPane(textArea);
+		infoPanel.add(sp, BorderLayout.CENTER);
 
-			contentPane = new JPanel();
-			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tablePane = new JPanel();
+		tablePane.setPreferredSize(new Dimension(10, 0));
+		tablePane.setMaximumSize(new Dimension(32767, 0));
+		panel_AllSaerch.add(tablePane);
+		tablePane.setLayout(new BorderLayout(0, 0));
 
-			setContentPane(contentPane);
-			contentPane.setLayout(new BorderLayout(0, 0));
+		scrollPane = new JScrollPane();
+		tablePane.add(scrollPane, BorderLayout.CENTER);
 
-			panel_Search = new JPanel();
-			panel_Search.setLayout(new BoxLayout(panel_Search, BoxLayout.Y_AXIS));
-			contentPane.add(panel_Search, BorderLayout.NORTH);
+		panel_1();
+		panel_2();
+		panel_2A();
 
-			panel_AllSaerch = new JPanel();
-			contentPane.add(panel_AllSaerch, BorderLayout.CENTER);
-			panel_AllSaerch.setLayout(new BoxLayout(panel_AllSaerch, BoxLayout.Y_AXIS));
+		panel_Button();
 
-			infoPanel = new JPanel();
-			infoPanel.setPreferredSize(new Dimension(10, 10));
-			infoPanel.setMaximumSize(new Dimension(32767, 32767));
-			panel_AllSaerch.add(infoPanel);
-			infoPanel.setLayout(new BorderLayout(0, 0));
+		setSize(737, 900);
+		setLocationRelativeTo(null);
 
-			textArea = new JTextArea();
-			textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
-			JScrollPane sp = new JScrollPane(textArea);
-			infoPanel.add(sp, BorderLayout.CENTER);
+		PersonelManegementMethods.generateListOtdels();
+		PersonelManegementMethods.addItemFirm(comboBox_Firm);
+		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
+		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
 
-			tablePane = new JPanel();
-			tablePane.setPreferredSize(new Dimension(10, 0));
-			tablePane.setMaximumSize(new Dimension(32767, 0));
-			panel_AllSaerch.add(tablePane);
-			tablePane.setLayout(new BorderLayout(0, 0));
+		Metods.checkorektDate(textField_StartDate);
+		Metods.checkorektDate(textField_EndDate);
 
-			scrollPane = new JScrollPane();
-			tablePane.add(scrollPane, BorderLayout.CENTER);
+		PersonReferenceFrame.TextFieldJustNumbers(textField_Year);
+		Metods.ActionListenertextField_Year(textField_Year, btn_Search);
+		Metods.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
 
-			listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
-			listOtdelKz.add("");
-			Collections.sort(listOtdelKz);
+		Metods.ActionListenerbBtn_Search(panel_Search);
+		Metods.ActionListenerComboBox_Firm();
+		Metods.ActionListenerBtnExportToExcell(panel_Search);
 
-			listOtdelVO = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", VO));
-			listOtdelVO.add("");
-			Collections.sort(listOtdelVO);
-			listOtdelAll = getListStringOtdel(WorkplaceDAO.getAllValueWorkplace());
-			listOtdelAll.add("");
-			Collections.sort(listOtdelAll);
+		Metods.setitemInChoise();
 
-			listAdd = new ArrayList<>();
-			listFirm = new ArrayList<>();
-			listFirm.add("");
-			listFirm.add(AEC);
-			listFirm.add(VO);
-			
-			panel_1();
-			panel_2();
-			panel_2A();
-
-			panel_Button();
-
-			setSize(737, 900);
-			setLocationRelativeTo(null);
-			
-			PersonelManegementMethods.generateListOtdels();
-			PersonelManegementMethods.addItemFirm(comboBox_Firm);
-			PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
-			PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
-			
-//			addItem(comboBox_Firm, listFirm);
-//			addItem(comboBox_Otdel, listOtdelAll);
-			
-			
-			checkorektDate(textField_StartDate);
-			checkorektDate(textField_EndDate);
-			
-			PersonReferenceFrame.TextFieldJustNumbers(textField_Year);
-			ActionListenertextField_Year();
-			ActionListener_ComboBox_Otdel();
-			
-			
-			
-			ActionListenerbBtn_Search();
-			ActionListenerComboBox_Firm();
-			
-			
-			setVisible(true);
-			GeneralMethods.setDefaultCursor(panel_AllSaerch);
-			round.StopWindow();
-		}
-
-		
-
-		
-
-
-
-		private JPanel panel_1() {
-			JPanel panel1 = new JPanel();
-			FlowLayout fl_panel1 = (FlowLayout) panel1.getLayout();
-			fl_panel1.setAlignment(FlowLayout.LEFT);
-			panel_Search.add(panel1);
-			
-			JLabel lbl_Info_1 = new JLabel("Year");
-			lbl_Info_1.setToolTipText("");
-			lbl_Info_1.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_Info_1.setBorder(null);
-			lbl_Info_1.setAlignmentX(0.5f);
-			panel1.add(lbl_Info_1);
-			
-		return panel1;
-		}
-
-		private JPanel panel_2() {
-		
-			JPanel panel2 = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			flowLayout.setVgap(2);
-			panel_Search.add(panel2);
-
-			JLabel lbl_Year = new JLabel("Year");
-			lbl_Year.setToolTipText("");
-			
-			lbl_Year.setPreferredSize(new Dimension(38, 15));
-		
-			lbl_Year.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_Year.setBorder(null);
-			lbl_Year.setAlignmentX(0.5f);
-			panel2.add(lbl_Year);
-
-			JLabel lbl_KodKZ1 = new JLabel("Start Date");
-			lbl_KodKZ1.setPreferredSize(new Dimension(69, 15));
-			lbl_KodKZ1.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_KodKZ1.setBorder(null);
-			lbl_KodKZ1.setAlignmentX(0.5f);
-			panel2.add(lbl_KodKZ1);
-
-			JLabel lbl_KodKZ2 = new JLabel("End Date");
-			lbl_KodKZ2.setPreferredSize(new Dimension(69, 15));
-			lbl_KodKZ2.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_KodKZ2.setBorder(null);
-			lbl_KodKZ2.setAlignmentX(0.5f);
-			panel2.add(lbl_KodKZ2);
-
-			JLabel lbl_L_Firm = new JLabel("Firm");
-			lbl_L_Firm.setPreferredSize(new Dimension(120, 15));
-			lbl_L_Firm.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_L_Firm.setBorder(null);
-			lbl_L_Firm.setAlignmentX(1.0f);
-			panel2.add(lbl_L_Firm);
-
-			JLabel lbl_L_Otdel = new JLabel("Otdel");
-			lbl_L_Otdel.setPreferredSize(new Dimension(200, 15));
-			lbl_L_Otdel.setHorizontalAlignment(SwingConstants.CENTER);
-			lbl_L_Otdel.setBorder(null);
-			lbl_L_Otdel.setAlignmentX(1.0f);
-			panel2.add(lbl_L_Otdel);
-
-			return panel2;
-		}
-
-		private JPanel panel_2A() {
-			JPanel panel2A = new JPanel();
-			FlowLayout flowLayout_2 = (FlowLayout) panel2A.getLayout();
-			flowLayout_2.setVgap(2);
-			flowLayout_2.setAlignment(FlowLayout.LEFT);
-			panel2A.setPreferredSize(new Dimension(10, 30));
-			panel_Search.add(panel2A);
-
-			textField_Year = new JTextField();
-			textField_Year.setText(curentYear);
-			textField_Year.setPreferredSize(new Dimension(5, 20));
-			textField_Year.setMinimumSize(new Dimension(5, 20));
-			textField_Year.setColumns(4);
-			panel2A.add(textField_Year);
-
-			textField_StartDate = new JTextField();
-			textField_StartDate.setText("01.01."+curentYear);
-			textField_StartDate.setPreferredSize(new Dimension(5, 20));
-			textField_StartDate.setMinimumSize(new Dimension(5, 20));
-			textField_StartDate.setColumns(8);
-			panel2A.add(textField_StartDate);
-
-			textField_EndDate = new JTextField("31.12."+curentYear);
-			textField_EndDate.setPreferredSize(new Dimension(5, 20));
-			textField_EndDate.setMinimumSize(new Dimension(5, 20));
-			textField_EndDate.setColumns(8);
-			panel2A.add(textField_EndDate);
-
-			comboBox_Firm = new Choice();
-			comboBox_Firm.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			comboBox_Firm.setPreferredSize(new Dimension(120, 20));
-			panel2A.add(comboBox_Firm);
-
-			comboBox_Otdel = new Choice();
-			comboBox_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			comboBox_Otdel.setPreferredSize(new Dimension(200, 20));
-			panel2A.add(comboBox_Otdel);
-
-			JLabel lblNewLabel_1_1 = new JLabel("");
-			lblNewLabel_1_1.setPreferredSize(new Dimension(20, 14));
-			panel2A.add(lblNewLabel_1_1);
-
-			btn_Search = new JButton("Search");
-			btn_Search.setMargin(new Insets(2, 5, 2, 5));
-			btn_Search.setPreferredSize(new Dimension(110, 23));
-			panel2A.add(btn_Search);
-			btn_Search.setEnabled(false);
-		
-
-			return panel2A;
-		}
-
-		private JPanel panel_Button() {
-
-			JPanel buttonPanel = new JPanel();
-			FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
-			flowLayout_3.setAlignment(FlowLayout.RIGHT);
-			getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-			btn_Export = new JButton("Export");
-			buttonPanel.add(btn_Export);
-
-			btn_Export.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-//						PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
-//								TextInAreaTextPanel.getMasivePersonStatusName(),
-//								TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(),
-//								TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
-//								TextInAreaTextPanel.getMasiveMeasur(), save_Panel);
-					} 
-				
-			});
-			
-			return buttonPanel;
-		}
-		
-		public static void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson,
-				Choice comboBox_Results) {
-			comboBox_Results.removeAll();
-			List<String> list = new ArrayList<>();
-			for (Person person : listSelectionPerson) {
-				list.add(person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person));
-			}
-			Collections.sort(list);
-			for (String str : list) {
-				comboBox_Results.add(str);
-			}
-
-		}
-
-	
-		protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
-			String str = "";
-			for (Person person : listSelectionPerson) {
-				str = str + person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
-			}
-			return str;
-		}
-
-	
-		private void ActionListenerComboBox_Firm() {
-
-			comboBox_Firm.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						System.out.println("/////////////////////////");
-						setitemInChoise();
-					}
-				}
-			});
-
-		}
-
-	
-		private void ActionListenerbBtn_Search() {
-
-			btn_Search.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					String otdel = comboBox_Otdel.getSelectedItem().trim();
-					String year = textField_Year.getText();
-					String startDate = textField_StartDate.getText().trim();
-					String endDate = textField_EndDate.getText().trim();
-							
-					SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-					Date dateStart = null, dateEnd = null;
-					try {
-						if(!year.isEmpty()) {
-						dateStart =  sdf.parse("01.01." + year);
-						}
-						if(!startDate.isEmpty()) {
-							dateStart =  sdf.parse(startDate);
-						}
-						
-						if(!year.isEmpty()) {
-						dateEnd =  sdf.parse("31.12." + year);
-						}
-						if(!endDate.isEmpty()) {
-							dateEnd =  sdf.parse(endDate);
-						
-						}
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					} 
-					System.out.println(endDate+"  "+startDate);
-					if (!allFieldsEmnty() && !otdel.isEmpty()){
-						GeneralMethods.setWaitCursor(panel_AllSaerch);
-						Workplace workPlace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
-						textArea.setText("");
-						spisakPersonFromWorkplace(workPlace, dateStart, dateEnd);
-
-						GeneralMethods.setDefaultCursor(panel_AllSaerch);
-
-					}
-				}
-			});
-
-		}
-
-	
-		private void ActionListenertextField_Year() {
-			textField_Year.addKeyListener(new KeyAdapter() {
-
-				public void keyReleased(KeyEvent evt) {
-					textField_Year.setForeground(Color.BLACK);
-					btn_Search.setEnabled(true);
-					if (!textField_Year.getText().isEmpty()) {
-						try {
-							long number = Long.parseLong(textField_Year.getText());
-							if (number < minYeare || number > Calendar.getInstance().get(Calendar.YEAR)) {
-								textField_Year.setForeground(Color.RED);
-								btn_Search.setEnabled(false);
-							}
-						} catch (Exception e) {
-							textField_Year.setForeground(Color.RED);
-							btn_Search.setEnabled(false);
-						}
-					}
-				}
-			});
-
-		}
-
-		private void ActionListener_ComboBox_Otdel() {
-			comboBox_Otdel.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					btn_Search.setEnabled(true);
-					if(comboBox_Otdel.getSelectedItem().isEmpty()){
-						btn_Search.setEnabled(false);
-					}
-				}
-			});
-			comboBox_Otdel.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					btn_Search.setEnabled(true);
-					if(comboBox_Otdel.getSelectedItem().isEmpty()){
-						btn_Search.setEnabled(false);
-					}
-				}
-			});
-		}
-		
-		
-		protected static boolean allFieldsEmnty() {
-			return ( textField_Year.getText().trim().isEmpty()  && comboBox_Otdel.getSelectedItem().trim().isEmpty());
-		}
-
-		
-		public static void checkorektDate(JTextField textFieldDate) {
-			textFieldDate.addKeyListener(new KeyListener() {
-
-				@Override
-				public void keyTyped(KeyEvent event) {
-
-				}
-
-				@Override
-				public void keyReleased(KeyEvent event) {
-
-					if (AplicationMetods.incorrectDate(textFieldDate.getText()) && !textFieldDate.getText().trim().isEmpty()) {
-						btn_Search.setEnabled(false);
-						textFieldDate.setForeground(Color.RED);
-					} else {
-						btn_Search.setEnabled(true);
-						textFieldDate.setForeground(Color.BLACK);
-
-					}
-				}
-
-				@Override
-				public void keyPressed(KeyEvent event) {
-
-				}
-			});
-		}
-	
-		
-		public static ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
-			ArrayList<String> list = new ArrayList<String>();
-			for (Workplace workplace : valueWorkplaceByObject) {
-				list.add(workplace.getOtdel());
-			}
-			return list;
-		}
-
-		private void setitemInChoise() {
-			listAdd = listOtdelVO;
-			if (((String) comboBox_Firm.getSelectedItem()).trim().isEmpty()) {
-				listAdd = listOtdelAll;
-			} else {
-				if (((String) comboBox_Firm.getSelectedItem()).trim().equals("АЕЦ Козлодуй")) {
-					listAdd = listOtdelKz;
-				}
-			}
-			addItem(comboBox_Otdel, listAdd);
-		}
-
-		private void addItem(Choice comboBox, List<String> list) {
-			comboBox.removeAll();
-			for (String otdel : list) {
-				comboBox.add(otdel);
-			}
-		}
-
-		public static void MessageDialog(String textInFrame, String textFrame) {
-			Icon otherIcon = null;
-			JFrame jf = new JFrame();
-			jf.setAlwaysOnTop(true);
-
-			JOptionPane.showMessageDialog(jf, textInFrame, textFrame, JOptionPane.PLAIN_MESSAGE, otherIcon);
-
-		}
-
-		public static Choice getComboBox_Otdel() {
-			return comboBox_Otdel;
-		}
-		
-		public static JTextField getTextField_StartDate() {
-			return textField_StartDate;
-		}
-
-		public static JTextField getTextField_EndDate() {
-			return textField_EndDate;
-		}
-
-		public static JTextField getTextField_Year() {
-			return textField_Year;
-		}
-
-		public static JTextArea getTextArea() {
-			return textArea;
-		}
-
-		public static JButton getBtn_Search() {
-			return btn_Search;
-		}
-
-		public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, Date dateStart, Date dateEnd){
-			
-			List<Integer> listPersonID = new ArrayList<>();
-			List<Person> listPerson = new ArrayList<>();
-			List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplaceAndYear(workPlace, dateStart, dateEnd);
-			System.out.println(listPerStat.size());
-			
-			for (PersonStatus personStatus : listPerStat) {
-							listPersonID.add(personStatus.getPerson().getId_Person());
-			}
-			
-			 listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
-			System.out.println(listPersonID.size());
-			for (Integer integer : listPersonID) {
-				listPerson.add(PersonDAO.getValuePersonByID(integer));	
-			}
-			String ok = "no";
-			for (Person person : listPerson) {
-				ok = "no";
-				if(MeasuringDAO.getValueMeasuringByPersonAndYear( person, dateStart, dateEnd).size()>0) {
-					ok = "Yes";
-				};
-				System.out.println(person.getEgn()+"  "+person.getLastName()+" -> "+ok);
-			}
-			
-			
-			return listPerson;
-		}
+		setVisible(true);
+		GeneralMethods.setDefaultCursor(panel_AllSaerch);
+		round.StopWindow();
 	}
+
+	private JPanel panel_1() {
+		JPanel panel1 = new JPanel();
+		FlowLayout fl_panel1 = (FlowLayout) panel1.getLayout();
+		fl_panel1.setAlignment(FlowLayout.LEFT);
+		panel_Search.add(panel1);
+
+		JLabel lbl_Info_1 = new JLabel(referencePersonMeasurTipText);
+		lbl_Info_1.setToolTipText("");
+		lbl_Info_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_Info_1.setBorder(null);
+		lbl_Info_1.setAlignmentX(0.5f);
+		panel1.add(lbl_Info_1);
+
+		return panel1;
+	}
+
+	private JPanel panel_2() {
+
+		JPanel panel2 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		flowLayout.setVgap(2);
+		panel_Search.add(panel2);
+
+		JLabel lbl_Year = new JLabel("Year");
+		lbl_Year.setToolTipText("");
+
+		lbl_Year.setPreferredSize(new Dimension(38, 15));
+
+		lbl_Year.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_Year.setBorder(null);
+		lbl_Year.setAlignmentX(0.5f);
+		panel2.add(lbl_Year);
+
+		JLabel lbl_KodKZ1 = new JLabel("Start Date");
+		lbl_KodKZ1.setPreferredSize(new Dimension(69, 15));
+		lbl_KodKZ1.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_KodKZ1.setBorder(null);
+		lbl_KodKZ1.setAlignmentX(0.5f);
+		panel2.add(lbl_KodKZ1);
+
+		JLabel lbl_KodKZ2 = new JLabel("End Date");
+		lbl_KodKZ2.setPreferredSize(new Dimension(69, 15));
+		lbl_KodKZ2.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_KodKZ2.setBorder(null);
+		lbl_KodKZ2.setAlignmentX(0.5f);
+		panel2.add(lbl_KodKZ2);
+
+		JLabel lbl_L_Firm = new JLabel("Firm");
+		lbl_L_Firm.setPreferredSize(new Dimension(120, 15));
+		lbl_L_Firm.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_L_Firm.setBorder(null);
+		lbl_L_Firm.setAlignmentX(1.0f);
+		panel2.add(lbl_L_Firm);
+
+		JLabel lbl_L_Otdel = new JLabel("Otdel");
+		lbl_L_Otdel.setPreferredSize(new Dimension(200, 15));
+		lbl_L_Otdel.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_L_Otdel.setBorder(null);
+		lbl_L_Otdel.setAlignmentX(1.0f);
+		panel2.add(lbl_L_Otdel);
+
+		return panel2;
+	}
+
+	private JPanel panel_2A() {
+		JPanel panel2A = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) panel2A.getLayout();
+		flowLayout_2.setVgap(2);
+		flowLayout_2.setAlignment(FlowLayout.LEFT);
+		panel2A.setPreferredSize(new Dimension(10, 30));
+		panel_Search.add(panel2A);
+
+		textField_Year = new JTextField();
+		textField_Year.setText(curentYear);
+		textField_Year.setPreferredSize(new Dimension(5, 20));
+		textField_Year.setMinimumSize(new Dimension(5, 20));
+		textField_Year.setColumns(4);
+		panel2A.add(textField_Year);
+
+		textField_StartDate = new JTextField();
+		textField_StartDate.setText("01.01." + curentYear);
+		textField_StartDate.setPreferredSize(new Dimension(5, 20));
+		textField_StartDate.setMinimumSize(new Dimension(5, 20));
+		textField_StartDate.setColumns(8);
+		panel2A.add(textField_StartDate);
+
+		textField_EndDate = new JTextField("31.12." + curentYear);
+		textField_EndDate.setPreferredSize(new Dimension(5, 20));
+		textField_EndDate.setMinimumSize(new Dimension(5, 20));
+		textField_EndDate.setColumns(8);
+		panel2A.add(textField_EndDate);
+
+		comboBox_Firm = new Choice();
+		comboBox_Firm.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		comboBox_Firm.setPreferredSize(new Dimension(120, 20));
+		panel2A.add(comboBox_Firm);
+
+		comboBox_Otdel = new Choice();
+		comboBox_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		comboBox_Otdel.setPreferredSize(new Dimension(200, 20));
+		panel2A.add(comboBox_Otdel);
+
+		JLabel lblNewLabel_1_1 = new JLabel("");
+		lblNewLabel_1_1.setPreferredSize(new Dimension(20, 14));
+		panel2A.add(lblNewLabel_1_1);
+
+		btn_Search = new JButton("Search");
+		btn_Search.setMargin(new Insets(2, 5, 2, 5));
+		btn_Search.setPreferredSize(new Dimension(110, 23));
+		panel2A.add(btn_Search);
+		btn_Search.setEnabled(false);
+
+		return panel2A;
+	}
+
+	private JPanel panel_Button() {
+
+		JPanel buttonPanel = new JPanel();
+		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
+		flowLayout_3.setAlignment(FlowLayout.RIGHT);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		btn_Export = new JButton("Export");
+		buttonPanel.add(btn_Export);
+
+		btn_Export.setEnabled(false);
+
+		return buttonPanel;
+	}
+
+	public static void addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson,
+			Choice comboBox_Results) {
+		comboBox_Results.removeAll();
+		List<String> list = new ArrayList<>();
+		for (Person person : listSelectionPerson) {
+			list.add(person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person));
+		}
+		Collections.sort(list);
+		for (String str : list) {
+			comboBox_Results.add(str);
+		}
+
+	}
+
+	protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
+		String str = "";
+		for (Person person : listSelectionPerson) {
+			str = str + person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
+		}
+		return str;
+	}
+
+	public static Choice getComboBox_Otdel() {
+		return comboBox_Otdel;
+	}
+
+	public static JTextField getTextField_StartDate() {
+		return textField_StartDate;
+	}
+
+	public static JTextField getTextField_EndDate() {
+		return textField_EndDate;
+	}
+
+	public static JTextField getTextField_Year() {
+		return textField_Year;
+	}
+
+	public static JTextArea getTextArea() {
+		return textArea;
+	}
+
+	public static JButton getBtn_Search() {
+		return btn_Search;
+	}
+
+	public static JButton getBtn_Export() {
+		return btn_Export;
+	}
+
+	public static Choice getComboBox_Firm() {
+		return comboBox_Firm;
+	}
+}

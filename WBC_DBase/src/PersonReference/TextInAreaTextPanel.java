@@ -363,15 +363,11 @@ public class TextInAreaTextPanel {
 		return otdel;
 	}
 
-	private static String[][] setDefoutValueInMasive(String[][] masiveKode) {
+	public static String[][] setDefoutValueInMasive(String[][] masiveKode) {
 		for (int i = 0; i < masiveKode.length; i++) {
-			masiveKode[i][0] = "-";
-			masiveKode[i][1] = "-";
-			masiveKode[i][2] = "-";
-			masiveKode[i][3] = "-";
-			masiveKode[i][4] = "-";
-			masiveKode[i][5] = "-";
-			masiveKode[i][6] = "-";
+			for (int j = 0; j < masiveKode[0].length; j++) {
+			masiveKode[i][j] = "-";
+			}
 		}
 		return masiveKode;
 	}

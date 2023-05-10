@@ -215,7 +215,7 @@ public class PersonReferenceExportToExcell {
 		return cellStyleHeader;
 	}
 
-	private static CellStyle cellStyleBold(Workbook workbook) {
+	public static CellStyle cellStyleBold(Workbook workbook) {
 		Font fontHeader = workbook.createFont();
 		fontHeader.setColor(IndexedColors.BLACK.getIndex());
 		fontHeader.setBold(true);
@@ -228,7 +228,7 @@ public class PersonReferenceExportToExcell {
 		return cellStyleHeader;
 	}
 	
-	private static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow) {
+	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow) {
 		Cell cell;
 		//				Create header column
 						Row row = sheet.createRow(startRow);

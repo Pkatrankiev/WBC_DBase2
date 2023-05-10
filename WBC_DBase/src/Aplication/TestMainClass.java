@@ -13,7 +13,7 @@ public class TestMainClass {
 			     @Override
 			     public void run() {
 			    	 
-			    	 new Reference_PersonMeasur_Frame(round);
+			    	 new Reference_PersonMeasur_Frame(round, "");
 			    	     	
 			     }
 			    });

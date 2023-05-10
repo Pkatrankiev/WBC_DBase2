@@ -26,7 +26,7 @@ import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
-import FrameViewClass.MainWindowWBC_DBase;
+import MenuClasses.MainWindowFrame;
 import PersonManagement.PersonelManegementMethods;
 import SearchFreeKode.SearchFreeKodeFrame;
 
@@ -37,7 +37,7 @@ public static void main(String[] args) {
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
 		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
-		new MainWindowWBC_DBase();
+		new MainWindowFrame();
 		GeneralMethods.cerateDestinationDir();
 	
 		}

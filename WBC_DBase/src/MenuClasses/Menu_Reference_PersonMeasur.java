@@ -10,12 +10,12 @@ import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
 public class Menu_Reference_PersonMeasur  extends AbstractMenuAction{
 		
 		private static final long serialVersionUID = 1L;
-		static String personReference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personReference");
-		static String personReferenceTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personReferenceTipText");
+		static String referencePersonMeasur = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur");
+		static String referencePersonMeasurTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasurTipText");
 		
 		public Menu_Reference_PersonMeasur() {
-			super(personReference);
-			setToolTipText(personReferenceTipText);
+			super(referencePersonMeasur);
+			setToolTipText(referencePersonMeasurTipText);
 		}
 
 		@Override
@@ -26,7 +26,7 @@ public class Menu_Reference_PersonMeasur  extends AbstractMenuAction{
 			     @Override
 			     public void run() {
 			    	 
-			    	 new Reference_PersonMeasur_Frame(round);
+			    	 new Reference_PersonMeasur_Frame(round, referencePersonMeasur);
 			    	     	
 			     }
 			    });
