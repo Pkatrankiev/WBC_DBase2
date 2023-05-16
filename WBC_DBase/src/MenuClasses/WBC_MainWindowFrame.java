@@ -2,6 +2,7 @@ package MenuClasses;
 
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,16 +16,18 @@ import javax.swing.UIManager;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 
+
 import javax.swing.JMenuBar;
 
 
-public class MainWindowFrame extends JFrame {
+public class WBC_MainWindowFrame extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public MainWindowFrame() {
+	public WBC_MainWindowFrame() {
 	
-		
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("arrowIcon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
 		setTitle("Data Base WBC"); 
 		setMinimumSize(new Dimension(600, 300));
 		GetVisibleLAF(this);	

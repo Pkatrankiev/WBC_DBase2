@@ -113,18 +113,18 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
 		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
 
-		Metods.checkorektDate(textField_StartDate);
-		Metods.checkorektDate(textField_EndDate);
+		MetodsReference_PersonMeasur.checkorektDate(textField_StartDate);
+		MetodsReference_PersonMeasur.checkorektDate(textField_EndDate);
 
 		PersonReferenceFrame.TextFieldJustNumbers(textField_Year);
-		Metods.ActionListenertextField_Year(textField_Year, btn_Search);
-		Metods.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
+		MetodsReference_PersonMeasur.ActionListenertextField_Year(textField_Year, btn_Search);
+		MetodsReference_PersonMeasur.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
 
-		Metods.ActionListenerbBtn_Search(panel_Search);
-		Metods.ActionListenerComboBox_Firm();
-		Metods.ActionListenerBtnExportToExcell(panel_Search);
+		MetodsReference_PersonMeasur.ActionListenerbBtn_Search(panel_Search);
+		MetodsReference_PersonMeasur.ActionListenerComboBox_Firm();
+		MetodsReference_PersonMeasur.ActionListenerBtnExportToExcell(panel_Search);
 
-		Metods.setitemInChoise();
+		MetodsReference_PersonMeasur.setitemInChoise();
 
 		setVisible(true);
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);

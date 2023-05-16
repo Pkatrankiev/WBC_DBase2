@@ -232,7 +232,7 @@ public class AplicationMetods {
 	}
 
 
-	static void testGetListPersonSatatusByPersonAndDateAfterDateSet() {
+	public static void testGetListPersonSatatusByPersonAndDateAfterDateSet() {
 		Person per = PersonDAO.getValuePersonByEGN("6902121962");
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date startDate;
