@@ -132,6 +132,14 @@ public class AplicationMetods {
 		return excellFiles;
 	}
 
+	public static String[] getDataBaseFilePat_ArhivePersonalAndExternal_test() {
+		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
+		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_test");
+		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_test");
+		String[] excellFiles = {dataBaseFilePath+filePathArhivePersonel, dataBaseFilePath+filePathArhiveExternal};
+		return excellFiles;
+	}
+	
 	
 	public static String[] getDataBaseFilePat_ActualPersonalAndExternal() {
 		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");

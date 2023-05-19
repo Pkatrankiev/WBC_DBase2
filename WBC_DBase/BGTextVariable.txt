@@ -8,6 +8,8 @@ filePathArhivePersonel =  Arhive\\PERSONNEL_
 filePathArhiveExternal =  Arhive\\EXTERNAL_
 filePathActualExternal = Arhive\\EXTERNAL_actual.xls
 filePathActualPersonel =  Arhive\\PERSONNEL_actual.xls
+filePathExternal_test = Arhive\\EXTERNAL_test.xls
+filePathPersonel_test =  Arhive\\PERSONNEL_test.xls
 
 databaseEncriptOID = qwer1234
 databaseEncript = password
@@ -18,8 +20,8 @@ filePathPersonel_orig2 = d:\\PERSONNEL.xls
 filePathExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
 filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
 
-filePathMonthExternal_old = d:\\month\\wbc_month.xls
-filePathMonthPersonel_old = d:\\month\\wbc_month_P.xls
+filePathMonthExternal_test = d:\\month\\wbc_month.xls
+filePathMonthPersonel_test = d:\\month\\wbc_month_P.xls
 
 filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
 

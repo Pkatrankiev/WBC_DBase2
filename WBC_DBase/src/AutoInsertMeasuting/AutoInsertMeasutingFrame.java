@@ -859,6 +859,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 				measur.setDoseDimension(dozeDimension);
 				boolean toExcell = chckbxSetToExcel[i].isSelected();
 				String koment = textFieldKoment[i].getText();
+				measur.setMeasurKoment(koment);
 				List<String> listString = new ArrayList<>();
 				String DataNuclide = "";
 				for (int k = 0; k < 20; k++) {
@@ -903,6 +904,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					.getValueTypeMeasurByObject("KodeType", comboBoxTypeMeasur[i].getSelectedItem().toString()).get(0));
 			boolean toExcell = chckbxSetToExcel[i].isSelected();
 			String koment = textFieldKoment[i].getText();
+			measur.setMeasurKoment(koment);
 			try {
 				measur.setDoze(Double.parseDouble(textFieldDoza[i].getText()));
 			} catch (Exception e) {

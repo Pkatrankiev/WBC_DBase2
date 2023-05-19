@@ -20,12 +20,14 @@ import Aplication.UpdateBDataFromExcellFiles;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
@@ -39,17 +41,26 @@ public class TestClasess {
 //	String key ="";
 //	String key = "Person";
 //	String key = "Spisak_Prilogenia";
-	String key = "PersonStatus";
+//	String key = "PersonStatus";
 //	String key = "KodeStatus";
 //	String key = "Measuring";
 //	String key = "ResultsWBC";
 	
-	String year = "2022";
+//	String year = "2010";
 	
 	boolean save = true;
 //	boolean save = false;
 	
-	AplicationMetods.readInfoFromGodExcelFile(year,  key, save);
+	String[] keyM = {"Measuring", "ResultsWBC"};;
+	for (int i = 2011; i < 2023; i++) {
+	
+	for (String key : keyM) {
+		
+		AplicationMetods.readInfoFromGodExcelFile(i+"",  key, save);
+		
+	}
+	}
+	
 	
 	}
 	
@@ -186,9 +197,6 @@ SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 	
 	public static void  test() {
 		
-		
-		
-		
 	
 	List<PersonStatus> list1 = ReadPersonStatusFromExcelFile.getListPersonStatusWithoutSpisak_Prilogenia("7906113205");
 	ReadPersonStatusFromExcelFile.ListPersonStatus(list1);
@@ -207,6 +215,32 @@ SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 	System.out.println(list.size());
 	ReadResultFromReport.PrintListReportMeasurClass(list);
 	
+	}
+
+
+	@SuppressWarnings("unused")
+	private static void testMeasuringToResultWCB() {
+		Measuring measur;
+		List<ResultsWBC> listresulterror = new ArrayList<>();
+		List<ResultsWBC> listresult = ResultsWBCDAO.getAllValueResultsWBC();
+		for (ResultsWBC resultsWBC : listresult) {
+			System.out.println("-> "+resultsWBC.getResultsWBC_ID());
+			measur = resultsWBC.getMeasuring();
+			if(measur==null) {
+				
+				System.out.println("->>> "+resultsWBC.getResultsWBC_ID());
+				listresulterror.add(resultsWBC);
+			}else {
+				if(measur.getDoze()==0.0) {
+					System.out.println("--->>> 000 "+measur.getMeasuring_ID());
+					listresulterror.add(resultsWBC);
+				}
+			}
+		}
+		
+		for (ResultsWBC resultsWBC : listresulterror) {
+			System.out.println(resultsWBC.getResultsWBC_ID());
+		}
 	}
 
 	

@@ -51,11 +51,11 @@ public class MeasuringDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-			if (e.toString().indexOf("unique constraint or index violation") > 0) {
-				MessageDialog(mesage + " " + reportFileName);
-				e.printStackTrace();
-				ResourceLoader.appendToFile(e);
-			}
+//			if (e.toString().indexOf("unique constraint or index violation") > 0) {
+//				MessageDialog(mesage + " " + reportFileName);
+//				e.printStackTrace();
+//				ResourceLoader.appendToFile(e);
+//			}
 		}
 	}
 
@@ -76,7 +76,11 @@ public class MeasuringDAO {
 			preparedStatement.setObject(5, measuring.getLab().getLab_ID());
 			preparedStatement.setObject(6, measuring.getUser().getId_Users());
 			preparedStatement.setObject(7, measuring.getTypeMeasur().getId_TypeMeasur());
-			preparedStatement.setObject(8, measuring.getMeasurKoment());
+			String koment = "";
+			if(measuring.getMeasurKoment()!= null) {
+				koment = measuring.getMeasurKoment();
+			}
+			preparedStatement.setObject(8, koment);
 			preparedStatement.setObject(9, measuring.getReportFileName());
 
 			preparedStatement.executeUpdate();
@@ -84,10 +88,12 @@ public class MeasuringDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 //			if (e.toString().indexOf("unique constraint or index violation") > 0) {
+//				System.out.println(measuring.getPerson().getEgn()+" "+measuring.getLab().getLab_ID()+" "+measuring.getDoze()+" "+measuring.getDate());
+				
 //				MessageDialog(mesage + " " + measuring.getReportFileName());
-//				
+				
 //				ResourceLoader.appendToFile(e);
 //			}
 		}
@@ -110,7 +116,7 @@ public class MeasuringDAO {
 			preparedStatement.setObject(5, measuring.getLab().getLab_ID());
 			preparedStatement.setObject(6, measuring.getUser().getId_Users());
 			preparedStatement.setObject(7, measuring.getTypeMeasur().getId_TypeMeasur());
-			preparedStatement.setObject(8, measuring.getMeasuring_ID());
+			preparedStatement.setObject(8, measuring.getMeasurKoment());
 			preparedStatement.setObject(9, measuring.getReportFileName());
 
 			preparedStatement.setInt(10, measuring.getMeasuring_ID());
@@ -448,8 +454,12 @@ public class MeasuringDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			ResourceLoader.appendToFile(e);
+			
 		}
-		return list.get(0);
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 	public static Measuring getValueMeasuringByPersonDozeDate(Person person, Date date, Double doze, Laboratory lab) {
