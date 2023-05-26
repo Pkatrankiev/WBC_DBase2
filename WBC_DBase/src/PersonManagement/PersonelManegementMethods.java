@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,7 @@ import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
+import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
@@ -343,6 +345,9 @@ public class PersonelManegementMethods {
 			public void actionPerformed(ActionEvent e) {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 				List<Spisak_Prilogenia> listSpisak_Prilogenia = PersonelManegementFrame.getListSpisak_Prilogenia();
+				
+				listSpisak_Prilogenia = addObhodenListToListSpisak_Prilogenia(listSpisak_Prilogenia);
+				
 				if (listSpisak_Prilogenia.size() > 0) {
 					int selectedContent = PersonelManegementMethods.generateSelectSpisPrilFrame(listSpisak_Prilogenia);
 
@@ -363,6 +368,28 @@ public class PersonelManegementMethods {
 					}
 				}
 
+			}
+
+			private List<Spisak_Prilogenia> addObhodenListToListSpisak_Prilogenia(
+					List<Spisak_Prilogenia> listSpisak_Prilogenia) {
+				List<Spisak_Prilogenia> newlistSpisak_Prilogenia = new ArrayList<>();
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+				Spisak_Prilogenia obhodenList_SpPr = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(11177);
+				Calendar curentdate = Calendar.getInstance();
+				Date startDate = curentdate.getTime();
+				Date endDate = null;
+				try {
+					endDate = sdf.parse("01.01.2000");
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+				obhodenList_SpPr.setStartDate(startDate);
+				obhodenList_SpPr.setEndDate(endDate);
+				newlistSpisak_Prilogenia.add(obhodenList_SpPr);
+				for (Spisak_Prilogenia spisak_Prilogenia : listSpisak_Prilogenia) {
+					newlistSpisak_Prilogenia.add(spisak_Prilogenia);
+				}
+				return newlistSpisak_Prilogenia;
 			}
 		});
 	}
@@ -583,11 +610,11 @@ public class PersonelManegementMethods {
 
 	static int generateSelectSpisPrilFrame(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
 		SelectSpisPrilFrame.setSelectedContent(-1);
-
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+				
 		if (listSpisak_Prilogenia != null && listSpisak_Prilogenia.size() > 0) {
 
-			String[] masiveSpisPril = new String[listSpisak_Prilogenia.size()];
+			String[] masiveSpisPril = new String[listSpisak_Prilogenia.size()+1];
 
 			int maxFormulyarName = 0;
 			for (Spisak_Prilogenia spisak_Prilogenia : listSpisak_Prilogenia) {
@@ -596,6 +623,7 @@ public class PersonelManegementMethods {
 				}
 			}
 
+			
 			int k = 0;
 			for (Spisak_Prilogenia spisak_Prilogenia : listSpisak_Prilogenia) {
 				String space = TextInAreaTextPanel.getAddSpace(maxFormulyarName + 3,
