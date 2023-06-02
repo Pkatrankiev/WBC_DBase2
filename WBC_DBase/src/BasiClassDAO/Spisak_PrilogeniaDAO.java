@@ -71,7 +71,7 @@ public class Spisak_PrilogeniaDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 //			if(e.toString().indexOf("unique constraint or index violation")>0) {
 //				obrabDublicateSpisak_Prilogenia(Spisak_Prilogenia);
 //			}
@@ -378,4 +378,46 @@ public class Spisak_PrilogeniaDAO {
 		}
 	}
 
+	public static Spisak_Prilogenia getValueSpisak_PrilogeniaByYear_Workplace_StartDate(String year, Date StartDate, int Workplace_ID) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Spisak_Prilogenia  where Year = ? and StartDate = ? and Workplace_ID = ? ORDER BY Spisak_Prilogenia_ID  DESC";
+
+		List<Spisak_Prilogenia> list = new ArrayList<Spisak_Prilogenia>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, year);
+			preparedStatement.setObject(2, StartDate);
+			preparedStatement.setObject(3, Workplace_ID);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Spisak_Prilogenia resultObject = new Spisak_Prilogenia();
+
+				resultObject.setSpisak_Prilogenia_ID(result.getInt("Spisak_Prilogenia_ID"));
+				resultObject.setFormulyarName(result.getString("FormulyarName"));
+				resultObject.setYear(result.getString("Year"));
+				resultObject.setStartDate(result.getDate("StartDate"));
+				resultObject.setEndDate(result.getDate("EndDate"));
+				Workplace wp = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				resultObject.setWorkplace(wp);
+				resultObject.setZabelejka(result.getString("Zabelejka"));
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		if(list.size()>0) {
+		return list.get(0);
+		}else {
+			return null;	
+		}
+	}
+	
 }

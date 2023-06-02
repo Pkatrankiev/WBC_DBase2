@@ -118,7 +118,17 @@ public class AplicationMetods {
 			}
 		}
 		break;
-		
+		case "ObhodenList": {
+			// read and set ObhodenList in PersonStatus
+			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
+					year);
+			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
+			System.out.println(year+ " --> "+list.size());
+			if(save) {
+			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
+			System.out.println("Save "+firmName);
+			}
+		}
 		
 		}
 		}

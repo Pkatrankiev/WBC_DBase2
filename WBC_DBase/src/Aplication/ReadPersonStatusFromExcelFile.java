@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -27,7 +28,7 @@ import BasicClassAccessDbase.Workplace;
 public class ReadPersonStatusFromExcelFile {
 
 	static Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
-
+	static Spisak_Prilogenia spPrObhodList = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(11177);
 	
 	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
@@ -41,6 +42,65 @@ public class ReadPersonStatusFromExcelFile {
 		return listPerStat;
 	}
 
+	public static List<PersonStatus> getObhodenListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+		List<PersonStatus> listPerStat = new ArrayList<>();
+		if (workbook.getNumberOfSheets() > 2) {
+			listPerStat = getObhodenList_PersonStatusFromBigExcelFile(workbook, firmName, year);
+		} 
+		return listPerStat;
+	}
+	
+	public static Workplace getWorkplaceByEGNFromExcell(Workbook workbook, String firmName, String personEGN) {
+		List<Workplace> listAllWorkplaceBiFirmName = WorkplaceDAO.getValueWorkplaceByObject("FirmName", firmName);
+		String[] masiveWorkplace = ReadExcelFileWBC.getMasiveString(firmName);
+		Sheet sheet = workbook.getSheetAt(0);
+	String otdelName = "";
+	String EGN = "";
+	
+	Cell cell, cell1;
+	Workplace workplace = new Workplace();
+	for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		if (sheet.getRow(row) != null) {
+			cell = sheet.getRow(row).getCell(5);
+			cell1 = sheet.getRow(row).getCell(6);
+
+			if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+				otdelName = cell1.getStringCellValue().trim();
+				if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
+					workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
+							listAllWorkplaceBiFirmName);
+				}
+			}
+
+			if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
+				EGN = ReadExcelFileWBC.getStringfromCell(cell);
+				if (EGN.contains("*")) {
+					EGN = EGN.substring(0, EGN.length() - 1);
+				}
+					if(EGN.equals(personEGN)) {
+					return workplace;
+				}
+							}
+		}
+	}
+	
+	String ss = InputDialog(masiveWorkplace, otdelName);
+	workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", ss).get(0);
+	return workplace;
+	}
+	
+	public static String InputDialog(String[] options, String input) {
+		JFrame jf = new JFrame();
+		jf.setAlwaysOnTop(true);
+
+		ImageIcon icon = new ImageIcon("src/images/turtle32.png");
+		String n = (String) JOptionPane.showInputDialog(null, input, "Изберете отдел", JOptionPane.QUESTION_MESSAGE,
+				icon, options, options[2]);
+		System.out.println(n);
+		return n;
+	}
+	
 	private static List<PersonStatus> getListPersonStatusFromSmalExcelFile(Workbook workbook, String firmName,
 			String year) {
 		Spisak_Prilogenia spPr = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
@@ -204,10 +264,78 @@ public class ReadPersonStatusFromExcelFile {
 
 	}
 
+	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(Workbook workbook,	String firmName, String year) {
+				
+		List<PersonStatus> listPerStat = new ArrayList<>();
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		Date dateSet = null, dateObhList = null;
+		
+
+		Person person;
+		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
+		String EGN = "", FirstName = "", zab = "";
+		Workplace workplace = new Workplace();
+		Sheet sheet = workbook.getSheetAt(4);
+		Cell cell, cell1;
+		for (int row = 0; row <= sheet.getLastRowNum(); row += 1) {
+			zab = "";
+			if (sheet.getRow(row) != null) {
+				cell = sheet.getRow(row).getCell(5);
+				cell1 = sheet.getRow(row).getCell(6);
+
+				if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					EGN = ReadExcelFileWBC.getStringfromCell(cell);
+					if (EGN.contains("*"))
+						EGN = EGN.substring(0, EGN.length() - 1);
+					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
+					person = PersonDAO.getValuePersonByEGN(EGN);
+					if (person == null) {
+						MessageDialog(FirstName);
+					}
+					
+					cell = sheet.getRow(row).getCell(7);
+					String dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
+					dataObhodelist = dataObhodelist.replace("Обходен лист от", "").replace("г.", "").trim();
+					
+					try {
+						dateObhList = sdfrmt.parse(dataObhodelist);
+						dateSet = sdfrmt.parse("31.12." + year);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					System.out.println(person.getEgn()+"  "+ sdfrmt.format(dateObhList));
+					
+					if(!PersonStatusDAO.PersonWithObhodenList(person)) {
+					
+					workplace = getWorkplaceByEGNFromExcell( workbook,  firmName, person.getEgn());
+					
+					System.out.println(workplace.getOtdel());
+					
+					spPrObhodList.setStartDate(dateObhList);
+					spPrObhodList.setYear(year);
+					spPrObhodList.setWorkplace(workplace);
+					
+					Spisak_PrilogeniaDAO.setObjectSpisak_PrilogeniaToTable(spPrObhodList);
+					Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, dateObhList, workplace.getId_Workplace());
+					if(spisPril!=null) {
+					listPerStat.add(new PersonStatus(person, workplace, spisPril, userSet, dateSet, zab));
+					}else {
+						spPrObhodList.getFormulyarName() ;
+					}
+					}	
+				}
+			}
+
+		}
+
+		return listPerStat;
+
+	}
+		
 	public static void ListPersonStatus(List<PersonStatus> list) {
-
+		System.out.println(list.size());
 		for (PersonStatus personStatus : list) {
-
+			System.out.println(personStatus.getPersonStatus_ID());
 			System.out.println(personStatus.getPerson().getEgn() + " " + personStatus.getWorkplace().getOtdel() + " "
 					+ personStatus.getSpisak_prilogenia().getFormulyarName() + " "
 					+ personStatus.getUserWBC().getLastName() + " " + personStatus.getZabelejka().toString() + " "

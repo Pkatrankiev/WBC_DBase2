@@ -109,7 +109,7 @@ public class ReadKodeStatusFromExcelFile {
 
 	public static String[] getUsedKodeFromExcelFile(int zoneID) {
 		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods
-				.getDataBaseFilePat_ActualPersonalAndExternal();
+				.getDataBaseFilePat_OriginalPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
 		for (String pathFile : excellFiles_ActualPersonalAndExternal) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);

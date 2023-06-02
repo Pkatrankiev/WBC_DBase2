@@ -45,21 +45,23 @@ public class TestClasess {
 //	String key = "KodeStatus";
 //	String key = "Measuring";
 //	String key = "ResultsWBC";
-	
-//	String year = "2010";
+	String key = "ObhodenList";
+		
+	String year = "2022";
 	
 	boolean save = true;
 //	boolean save = false;
 	
-	String[] keyM = {"Measuring", "ResultsWBC"};;
-	for (int i = 2011; i < 2023; i++) {
+//	String[] keyM = {"Measuring", "ResultsWBC"};;
+	for (int i = 20; i < 23; i++) {
 	
-	for (String key : keyM) {
-		
-		AplicationMetods.readInfoFromGodExcelFile(i+"",  key, save);
+//	for (String key : key) {
+		String yy = "20"+i;
+		System.out.println(yy);
+		AplicationMetods.readInfoFromGodExcelFile(yy,  key, save);
 		
 	}
-	}
+//	}
 	
 	
 	}
