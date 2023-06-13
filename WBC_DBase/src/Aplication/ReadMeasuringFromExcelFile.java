@@ -145,6 +145,7 @@ public class ReadMeasuringFromExcelFile {
 		}
 		return listMeasuring;
 	}
+	
 	public static  Measuring createMeasur(Person person, DimensionWBC dim, UsersWBC userSet, Sheet sheet, int row, int k, TypeMeasur tipeM_R, Date date, String lab)	{
 		double doze = 0;
 		TypeMeasur tipeM;

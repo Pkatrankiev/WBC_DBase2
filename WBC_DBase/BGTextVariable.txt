@@ -20,6 +20,9 @@ filePathPersonel_orig2 = d:\\PERSONNEL.xls
 filePathExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
 filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
 
+filePathMonthExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
+filePathMonthPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
+
 filePathMonthExternal_test = d:\\month\\wbc_month.xls
 filePathMonthPersonel_test = d:\\month\\wbc_month_P.xls
 

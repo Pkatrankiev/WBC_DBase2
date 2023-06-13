@@ -58,7 +58,6 @@ public class ReadExcelFileWBC {
 		Date date = new Date();
 		if (cell != null) {
 			String type = cell.getCellType().toString();
-			System.out.println("Type "+type);
 			switch (type) {
 			case "STRING": {
 				date = isLegalDate(cell.getStringCellValue(), cell);
@@ -92,7 +91,9 @@ public class ReadExcelFileWBC {
 
 	
 	public static String getStringfromCell(Cell cell) {
+		
 		String str = "";
+		if(cell!= null) {
 		try {
 		String type = cell.getCellType().toString();
 		switch (type) {
@@ -122,6 +123,7 @@ public class ReadExcelFileWBC {
 		JOptionPane.showInputDialog(null, cellSring, cel);
 		
 	}
+		}
 		return str;
 	}
 
@@ -158,7 +160,6 @@ public class ReadExcelFileWBC {
 			strDate = strDate.replaceAll("г.", "");
 			strDate = strDate.replaceAll("г", "");
 			strDate = strDate.trim();
-			System.out.println("input date "+strDate);
 			try {
 				if (strDate.length() == 8) {
 					sdfrmt = new SimpleDateFormat("dd.MM.yy");
@@ -176,8 +177,7 @@ public class ReadExcelFileWBC {
 					sdfrmt = new SimpleDateFormat("dd.M.yy");
 					sdfrmt.setLenient(false);
 				}
-				System.out.println("output date "+strDate);
-				javaDate = sdfrmt.parse(strDate);
+					javaDate = sdfrmt.parse(strDate);
 			} catch (Exception e) {
 				
 				String cellSring = "Cell = " + CellReference.convertNumToColString(cell.getColumnIndex())

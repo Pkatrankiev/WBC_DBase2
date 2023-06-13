@@ -21,13 +21,16 @@ public class TestMainClass {
 //			    });
 //			    thread.start();
 		
+//			ExtractSpectriWithDozaFromSICH2.getFile();
+//			    TestClasess.UpDataFromArhiveExcellFile();
 		
-			    TestClasess.UpDataFromArhiveExcellFile();
+			
+//			TestClasess.CheckCorrectionAllRowInSheets();
+			
+			TestClasess.CheckForCorrectionMeasuringInSheet0AndInMonth() ;
 		
 		}
-		
-		
-		
+	
 	}
 
 }
