@@ -25,7 +25,7 @@ public class Menu_Reference_Person extends AbstractMenuAction{
 		     @Override
 		     public void run() {
 		    	 
-		    	 new PersonReferenceFrame(round);
+		    	 new PersonReferenceFrame(round, personReference);
 		    	     	
 		     }
 		    });

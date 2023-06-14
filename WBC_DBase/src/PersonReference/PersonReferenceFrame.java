@@ -107,8 +107,8 @@ public class PersonReferenceFrame extends JFrame {
 	String[][] dataTable;
 	
 	static String curentYear = AplicationMetods.getCurentYear();
-	public PersonReferenceFrame(ActionIcone round) {
-
+	public PersonReferenceFrame(ActionIcone round, String title) {
+		setTitle(title);
 		setMinimumSize(new Dimension(730, 900));
 
 		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");

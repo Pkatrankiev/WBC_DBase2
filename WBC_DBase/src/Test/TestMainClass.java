@@ -27,7 +27,7 @@ public class TestMainClass {
 			
 //			TestClasess.CheckCorrectionAllRowInSheets();
 			
-			TestClasess.CheckForCorrectionMeasuringInSheet0AndInMonth() ;
+			
 		
 		}
 	

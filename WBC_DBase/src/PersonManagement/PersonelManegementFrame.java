@@ -166,7 +166,7 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_savePerson_Firm, comboBox_savePerson_Otdel);
 
 		PersonelManegementMethods.ActionListener_ComboBox_savePerson_Otdel(comboBox_savePerson_Otdel);
-		
+	
 		
 		
 		PersonelManegementMethods.ActionListener_Btn_Clear(btn_savePerson_Insert, btn_Clear, textArea);

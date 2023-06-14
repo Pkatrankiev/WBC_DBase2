@@ -126,6 +126,45 @@ public class ReadExcelFileWBC {
 		}
 		return str;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public static String getStringEGNfromCell(Cell cell) {
+		
+		String str = "";
+		if(cell!= null) {
+		try {
+		String type = cell.getCellType().toString();
+		switch (type) {
+		case "STRING": {
+			str = cell.getStringCellValue();
+		}
+			break;
+		case "BLANG": {
+			str = "";
+		}
+			break;
+		case "DATA":
+		case "NUMERIC": {
+			cell.setCellType(CellType.STRING);
+			str = cell.getStringCellValue();
+			
+
+		}
+			break;
+		}
+		
+	} catch (Exception e) {
+		
+		String cellSring = "Cell = " + CellReference.convertNumToColString(cell.getColumnIndex())
+				+ (cell.getRowIndex() + 1) + ", val = " + str;
+		String cel = CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex() + 1);
+		JOptionPane.showInputDialog(null, cellSring, cel);
+		
+	}
+		}
+		return str;
+	}
+	
 
 	public static double getDoublefromCell(Cell cell) {
 		double num = -1;

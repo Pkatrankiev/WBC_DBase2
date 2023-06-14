@@ -97,3 +97,16 @@ svePersonManegement_FirstNameError = Името на съвпада
 svePersonManegement_SekondNameError = Презимето на съвпада
 svePersonManegement_LastNameError = Фамилията на съвпада
 svePersonManegement_KodeIsBusi = Кода е зает
+
+checkCorrectinDataInExcell = Проверка за грешни данни в Excell
+checkCorrectinDataInExcell_labelErrorColumn = Проверка за несъвпадения на първите 5 колони в EXTERNAL.xls и PERSONNEL.xls
+checkCorrectinDataInExcell_labelErrorExcell = Проверка за несъвпадения на данните между EXTERNAL.xls, PERSONNEL.xls и wbc_month
+checkCorrectinDataInExcell_ImaGoV = Има го в
+checkCorrectinDataInExcell_NoGoNiamaV = ,но го няма в
+checkCorrectinDataInExcell_IzmerSICH = Изм СИЧ
+checkCorrectinDataInExcell_DOZI = ДОЗИ
+checkCorrectinDataInExcell_ZaMesec = За месец:
+checkCorrectinDataInExcell_ErrorLab = Грешни маркирания на измервания СИЧ в
+checkCorrectinDataInExcell_IzmerVSICH = Изм в СИЧ
+checkCorrectinDataInExcell_MarkKato = маркирано като
+

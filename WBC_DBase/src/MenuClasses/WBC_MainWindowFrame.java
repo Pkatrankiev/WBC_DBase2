@@ -48,6 +48,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		menu.add(createMenu_Measuring());
 		menu.add(createMenu_Reference());
 		menu.add(createMenu_PersonManagement());
+		menu.add(createMenu_CheckErrorData());
 		
 		return menu;
 	}
@@ -96,7 +97,15 @@ public class WBC_MainWindowFrame extends JFrame {
 		return personReferenceMenu;
 	}
 	
-	
+	private JMenu createMenu_CheckErrorData() {
+		 String checkCorrectinDataInExcell = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell");
+		 JMenu checkErrorDataMenu = new JMenu(checkCorrectinDataInExcell);
+		 checkErrorDataMenu.setToolTipText(checkCorrectinDataInExcell);
+		 checkErrorDataMenu.setMnemonic(KeyEvent.VK_E);
+			
+		 checkErrorDataMenu.add(new Menu_CheckErrorDataInExcellFiles());
+		return checkErrorDataMenu;
+	}
 	
 	private void GetVisibleLAF(final JFrame win) {
 		try {

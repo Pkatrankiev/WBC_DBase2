@@ -270,9 +270,7 @@ public class PersonelManegementMethods {
 		comboBox_Firm.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
 					setitemInChoise(comboBox_Firm, comboBox_Otdel);
-				}
 			}
 		});
 
