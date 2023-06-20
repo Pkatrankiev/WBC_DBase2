@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -47,17 +48,20 @@ import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.Workplace;
+import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceExportToExcell;
 
-public class MetodsReference_PersonMeasur {
+public class Reference_PersonMeasur_Metods {
 	static String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 	static int	minYeare = Integer.parseInt(minYearInDbase);
 	
-	static ArrayList<String> listOtdelKz;
+	static List<String> listOtdelKz;
 	static List<String> listOtdelVO;
 	static List<String> listOtdelAll;
 	static List<String> listAdd = new ArrayList<>();
-	static List<String> listFirm = new ArrayList<>();
+	static String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
+	static String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
+	static List<String> listFirm = Arrays.asList("", AEC, VO);
 		
 	private static Choice comboBox_Firm = Reference_PersonMeasur_Frame.getComboBox_Firm();
 	private static Choice comboBox_Otdel = Reference_PersonMeasur_Frame.getComboBox_Otdel();
@@ -116,7 +120,7 @@ public class MetodsReference_PersonMeasur {
 	btn_Export.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			
-			MetodsReference_PersonMeasur.btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(), TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel() ,  panel_Search);
+			Reference_PersonMeasur_Metods.btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(), TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel() ,  panel_Search);
 			} 
 		
 	});
@@ -136,7 +140,41 @@ public class MetodsReference_PersonMeasur {
 
 	}
 	
+	public static void setitemInChoise(Choice comboBox_Firm, Choice comboBox_Otdel) {
 
+		List<String> listAdd = new ArrayList<>();
+
+		listAdd = listOtdelVO;
+
+		if (((String) comboBox_Firm.getSelectedItem()).trim().isEmpty()) {
+			listAdd = listOtdelAll;
+		} else {
+			if (((String) comboBox_Firm.getSelectedItem()).trim().equals("АЕЦ Козлодуй")) {
+				listAdd = listOtdelKz;
+			}
+		}
+		addItem(comboBox_Otdel, listAdd);
+	}
+	
+	public static void ActionListener_ComboBox_Firm(Choice comboBox_Firm, Choice comboBox_Otdel) {
+
+		comboBox_Firm.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+					setitemInChoise(comboBox_Firm, comboBox_Otdel);
+			}
+		});
+
+	
+
+	}
+
+	public static void addItemFirm(Choice comboBox_Firm) {
+		addItem(comboBox_Firm, listFirm);
+	}
+	
+	
+	
 	private static void addItem(Choice comboBox, List<String> list) {
 		comboBox.removeAll();
 		for (String otdel : list) {
@@ -156,25 +194,25 @@ public class MetodsReference_PersonMeasur {
 	
 	static void setitemInChoise() {
 		
-		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
-		String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
+//		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
+//		String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
 
 		
-		listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
-		listOtdelKz.add("");
-		Collections.sort(listOtdelKz);
-
-		listOtdelVO = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", VO));
-		listOtdelVO.add("");
-		Collections.sort(listOtdelVO);
-		listOtdelAll = getListStringOtdel(WorkplaceDAO.getAllValueWorkplace());
-		listOtdelAll.add("");
-		Collections.sort(listOtdelAll);
+//		listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
+//		listOtdelKz.add("");
+//		Collections.sort(listOtdelKz);
+//
+//		listOtdelVO = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", VO));
+//		listOtdelVO.add("");
+//		Collections.sort(listOtdelVO);
+//		listOtdelAll = getListStringOtdel(WorkplaceDAO.getAllValueWorkplace());
+//		listOtdelAll.add("");
+//		Collections.sort(listOtdelAll);
 		
 		
-		listFirm.add("");
-		listFirm.add(AEC);
-		listFirm.add(VO);
+//		listFirm.add("");
+//		listFirm.add(AEC);
+//		listFirm.add(VO);
 		
 		listAdd = listOtdelVO;
 		if (((String) comboBox_Firm.getSelectedItem()).trim().isEmpty()) {
@@ -345,7 +383,39 @@ public class MetodsReference_PersonMeasur {
 		});
 	}
 
+	static List<String> getListKZ() {
+		listOtdelKz = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
+//		listOtdelKz = SearchFreeKodeMethods.generateListZvenaKZ(ListZvenaFromExcellFiles, listZvenaFromDBase);
+		listOtdelKz.add("");
+		Collections.sort(listOtdelKz);
+		return listOtdelKz;
+	}
+
+
+	static List<String> getListVO() {
+		listOtdelVO = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("Външни организации");
+//		listOtdelVO = SearchFreeKodeMethods.generateListZvenaVO(ListZvenaFromExcellFiles, listZvenaFromDBase);
+		listOtdelVO.add("");
+		Collections.sort(listOtdelVO);
+		return listOtdelVO;
+	}
+
+	static List<String> getListALL() {
+		listOtdelAll =  new ArrayList<>();
+		listOtdelAll.addAll(listOtdelKz);
+		listOtdelAll.addAll(listOtdelVO);
+//		listOtdelAll = SearchFreeKodeMethods.generateListZvena();
+//		listOtdelAll.add("");
+		Collections.sort(listOtdelAll);
+		return listOtdelAll;
+	}
 	
+	public static void generateListOtdels() {
+		getListKZ();
+		getListVO();
+		getListALL();
+
+	}
 	
 	
 	public static void MessageDialog(String textInFrame, String textFrame) {

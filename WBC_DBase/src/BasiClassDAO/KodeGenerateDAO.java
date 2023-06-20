@@ -67,29 +67,34 @@ public class KodeGenerateDAO {
 		}
 	}
 
-	public static void updateValueKodeGenerate(KodeGenerate kodeGenerate, int id_KodeGenerate) {
+	public static void updateValueKodeGenerate(KodeGenerate kodeGenerate) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update KodeGenerate SET Workplace_ID = ? , Zone_ID = ? , Letter_L = ? , Letter_R = ? , StartCount = ? , EndCount = ?  where KodeGenerate_ID = ? ";
+		String sqlUpdate = "Update KodeGenerate SET  Zone_ID = ? , Letter_L = ? , Letter_R = ? , StartCount = ? , EndCount = ?  where KodeGenerate_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setInt(1, kodeGenerate.getWorkplace().getId_Workplace());
-			preparedStatement.setInt(2,  kodeGenerate.getZone().getId_Zone());
-			preparedStatement.setString(3,  kodeGenerate.getLetter_L());
-			preparedStatement.setString(4,  kodeGenerate.getLetter_R());
-			preparedStatement.setInt(5,  kodeGenerate.getStartCount());
-			preparedStatement.setInt(6,  kodeGenerate.getEndCount());
+			
+			preparedStatement.setInt(1,  kodeGenerate.getZone().getId_Zone());
+			preparedStatement.setString(2,  kodeGenerate.getLetter_L());
+			preparedStatement.setString(3,  kodeGenerate.getLetter_R());
+			preparedStatement.setInt(4,  kodeGenerate.getStartCount());
+			preparedStatement.setInt(5,  kodeGenerate.getEndCount());
 
-			preparedStatement.setInt(7, id_KodeGenerate);
+			preparedStatement.setInt(6, kodeGenerate.getKodeGenerate_ID());
 
 			preparedStatement.executeUpdate();
 
 		} catch (SQLException e) {
-			ResourceLoader.appendToFile( e);
-			e.printStackTrace();
+			
+			if (e.toString().indexOf("unique")>0) {
+				deleteValueKodeGenerate(kodeGenerate.getKodeGenerate_ID());
+			}
+			
+//			ResourceLoader.appendToFile( e);
+//			e.printStackTrace();
 		}
 	}
 

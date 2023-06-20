@@ -108,23 +108,23 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		setSize(737, 900);
 		setLocationRelativeTo(null);
 
-		PersonelManegementMethods.generateListOtdels();
-		PersonelManegementMethods.addItemFirm(comboBox_Firm);
-		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
-		PersonelManegementMethods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
+		Reference_PersonMeasur_Metods.generateListOtdels();
+		Reference_PersonMeasur_Metods.addItemFirm(comboBox_Firm);
+		Reference_PersonMeasur_Metods.setitemInChoise(comboBox_Firm, comboBox_Otdel);
+		Reference_PersonMeasur_Metods.ActionListener_ComboBox_Firm(comboBox_Firm, comboBox_Otdel);
 
-		MetodsReference_PersonMeasur.checkorektDate(textField_StartDate);
-		MetodsReference_PersonMeasur.checkorektDate(textField_EndDate);
+		Reference_PersonMeasur_Metods.checkorektDate(textField_StartDate);
+		Reference_PersonMeasur_Metods.checkorektDate(textField_EndDate);
 
 		PersonReferenceFrame.TextFieldJustNumbers(textField_Year);
-		MetodsReference_PersonMeasur.ActionListenertextField_Year(textField_Year, btn_Search);
-		MetodsReference_PersonMeasur.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
+		Reference_PersonMeasur_Metods.ActionListenertextField_Year(textField_Year, btn_Search);
+		Reference_PersonMeasur_Metods.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
 
-		MetodsReference_PersonMeasur.ActionListenerbBtn_Search(panel_Search);
-		MetodsReference_PersonMeasur.ActionListenerComboBox_Firm();
-		MetodsReference_PersonMeasur.ActionListenerBtnExportToExcell(panel_Search);
+		Reference_PersonMeasur_Metods.ActionListenerbBtn_Search(panel_Search);
+		Reference_PersonMeasur_Metods.ActionListenerComboBox_Firm();
+		Reference_PersonMeasur_Metods.ActionListenerBtnExportToExcell(panel_Search);
 
-		MetodsReference_PersonMeasur.setitemInChoise();
+		
 
 		setVisible(true);
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);

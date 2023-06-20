@@ -42,7 +42,7 @@ public class WorkplaceDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO Workplace (FirmName, Otdel, SecondOtdelName) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO Workplace (FirmName, Otdel, SecondOtdelName) VALUES (?, ?, ?, ?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -50,6 +50,8 @@ public class WorkplaceDAO {
 			preparedStatement.setString(1, workplace.getFirmName());
 			preparedStatement.setString(2, workplace.getOtdel());
 			preparedStatement.setString(3,workplace.getSecondOtdelName());
+			preparedStatement.setBoolean(4, workplace.getActual());
+			preparedStatement.setString(5,workplace.getNapOtdelSector());
 			
 			preparedStatement.executeUpdate();
 			
@@ -65,7 +67,7 @@ public class WorkplaceDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update Workplace SET FirmName = ?, Otdel = ?, SecondOtdelName = ?  where Workplace_ID = ? ";
+		String sqlUpdate = "Update Workplace SET FirmName = ?, Otdel = ?, SecondOtdelName = ?, Actual = ?, NapOtdelSector = ?  where Workplace_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
@@ -73,8 +75,10 @@ public class WorkplaceDAO {
 			preparedStatement.setString(1, workplace.getFirmName());
 			preparedStatement.setString(2, workplace.getOtdel());
 			preparedStatement.setString(3,workplace.getSecondOtdelName());
+			preparedStatement.setBoolean(4, workplace.getActual());
+			preparedStatement.setString(5,workplace.getNapOtdelSector());
 			
-			preparedStatement.setInt(4, workplace.getId_Workplace());
+			preparedStatement.setInt(6, workplace.getId_Workplace());
 
 			preparedStatement.executeUpdate();
 			
@@ -82,6 +86,7 @@ public class WorkplaceDAO {
 			connection.close();
 
 		} catch (SQLException e) {
+			
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
 		}
@@ -89,7 +94,7 @@ public class WorkplaceDAO {
 		
 	}
 
-	public static void deleteValueWorkplace(int id_Workplace) {
+	public static void deleteValueWorkplace(Workplace workplace) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -98,7 +103,7 @@ public class WorkplaceDAO {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setInt(1, id_Workplace);
+			preparedStatement.setInt(1, workplace.getId_Workplace());
 
 			preparedStatement.executeUpdate();
 			
@@ -127,6 +132,8 @@ public class WorkplaceDAO {
 				object.setFirmName (result.getString("FirmName"));
 				object.setOtdel(result.getString("Otdel"));
 				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
 				
 				list.add(object);
 			}
@@ -140,11 +147,12 @@ public class WorkplaceDAO {
 		}
 		return list;
 	}
-		
-	public static List<Workplace> getValueWorkplaceSortByColumnName(String sortColumnName) {
+	
+	public static List<Workplace> getAllValueWorkplaceInSICH2() {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Workplace  ORDER BY " + sortColumnName + " ASC";
+		String sql = "SELECT * FROM Workplace  where Actual = true and NapOtdelSector is Not Null and NapOtdelSector Not Like '*(1)*'";
+//		String sql = "SELECT * FROM Workplace";
 		List<Workplace> list = new ArrayList<Workplace>();
 
 		try {
@@ -157,11 +165,151 @@ public class WorkplaceDAO {
 				object.setFirmName (result.getString("FirmName"));
 				object.setOtdel(result.getString("Otdel"));
 				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
 				
 				list.add(object);
 			}
 			
 			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	public static List<Workplace> getAllValueWorkplaceInSICH1() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true and  NapOtdelSector  Like '*(1)*'";
+//		String sql = "SELECT * FROM Workplace";
+		List<Workplace> list = new ArrayList<Workplace>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+				Workplace object = new Workplace();
+				object.setId_Workplace(result.getInt("Workplace_ID"));
+				object.setFirmName (result.getString("FirmName"));
+				object.setOtdel(result.getString("Otdel"));
+				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(object);
+			}
+			
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	public static List<Workplace> getAllValueWorkplaceInSICH3() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true and NapOtdelSector is Null ";
+//		String sql = "SELECT * FROM Workplace";
+		List<Workplace> list = new ArrayList<Workplace>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+				Workplace object = new Workplace();
+				object.setId_Workplace(result.getInt("Workplace_ID"));
+				object.setFirmName (result.getString("FirmName"));
+				object.setOtdel(result.getString("Otdel"));
+				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(object);
+			}
+			
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	
+	
+	public static List<Workplace> getAllValueWorkplaceNOTInSICH2() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true and NapOtdelSector is Null or NapOtdelSector Like '*(1)*'";
+//		String sql = "SELECT * FROM Workplace";
+		List<Workplace> list = new ArrayList<Workplace>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+				Workplace object = new Workplace();
+				object.setId_Workplace(result.getInt("Workplace_ID"));
+				object.setFirmName (result.getString("FirmName"));
+				object.setOtdel(result.getString("Otdel"));
+				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(object);
+			}
+			
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	
+	
+	public static List<Workplace> getAllActualValueWorkplace() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true ";
+		
+		List<Workplace> list = new ArrayList<Workplace>();
+		
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				Workplace resultObject = new Workplace();
+				resultObject.setId_Workplace(result.getInt("Workplace_ID"));
+				resultObject.setFirmName (result.getString("FirmName"));
+				resultObject.setOtdel(result.getString("Otdel"));
+				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
 			connection.close();
 			
 		} catch (SQLException e) {
@@ -191,6 +339,77 @@ public class WorkplaceDAO {
 				resultObject.setFirmName (result.getString("FirmName"));
 				resultObject.setOtdel(result.getString("Otdel"));
 				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	
+	public static List<Workplace> getValueWorkplaceSortByColumnName(String sortColumnName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  ORDER BY " + sortColumnName + " ASC";
+		List<Workplace> list = new ArrayList<Workplace>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+				Workplace object = new Workplace();
+				object.setId_Workplace(result.getInt("Workplace_ID"));
+				object.setFirmName (result.getString("FirmName"));
+				object.setOtdel(result.getString("Otdel"));
+				object.setSecondOtdelName(result.getString("SecondOtdelName"));
+				object.setActual(result.getBoolean("Actual"));
+				object.setNapOtdelSector(result.getString("NapOtdelSector"));
+				
+				list.add(object);
+			}
+			
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
+	public static List<Workplace> getActualValueWorkplaceByFirm(String firmName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true and FirmName = ? ";
+		
+		List<Workplace> list = new ArrayList<Workplace>();
+		
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, firmName);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				Workplace resultObject = new Workplace();
+				resultObject.setId_Workplace(result.getInt("Workplace_ID"));
+				resultObject.setFirmName (result.getString("FirmName"));
+				resultObject.setOtdel(result.getString("Otdel"));
+				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
 				
 				list.add(resultObject);
 			}
@@ -225,6 +444,8 @@ public class WorkplaceDAO {
 				resultObject.setFirmName (result.getString("FirmName"));
 				resultObject.setOtdel(result.getString("Otdel"));
 				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
 				
 				list.add(resultObject);
 			}
@@ -260,6 +481,8 @@ public class WorkplaceDAO {
 				resultObject.setFirmName (result.getString("FirmName"));
 				resultObject.setOtdel(result.getString("Otdel"));
 				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
 				
 				list.add(resultObject);
 			}

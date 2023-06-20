@@ -17,7 +17,7 @@ import PersonReference.TextInAreaTextPanel;
 
 public class TextInAreaTextPanel_Reference_PersonMeasur {
 	
-	private static int maxNameLite = 0;
+	private static int maxNameLength = 0;
 	private static String[][] masiveForInfoPanel;
 	private static String[] masiveZoneName;
 
@@ -103,9 +103,9 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 		String kodeString = "";
 		if(masiveKode.length>0) {
 			
-			maxNameLite =  getMaxName(masiveKode);
+			maxNameLength =  getMaxName(masiveKode);
 			sortbyStartDateColumn(masiveKode, 1);
-			int[] max = {5, maxNameLite,7, 7, 7, 13, 13, 20};
+			int[] max = {5, maxNameLength,7, 7, 7, 13, 13, 20};
 			for (int i = 0; i < masiveZoneName.length; i++) {
 				if(i==0) {
 				kodeString +=  masiveZoneName[i] + TextInAreaTextPanel.getAddSpace(max[i], masiveZoneName[i]);

@@ -155,7 +155,6 @@ public class PersonelManegementFrame extends JFrame {
 
 		setSize(750, 900);
 		setLocationRelativeTo(null);
-		
 		PersonelManegementMethods.generateListOtdels();
 		PersonelManegementMethods.addItemFirm(comboBox_Firm);
 		PersonelManegementMethods.setitemInChoise(comboBox_Firm, comboBox_Otdel);

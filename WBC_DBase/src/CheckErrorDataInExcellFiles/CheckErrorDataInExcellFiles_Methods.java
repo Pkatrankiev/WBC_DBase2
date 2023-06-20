@@ -112,8 +112,8 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 			 masiveStrMonth = MasiveFromMonth(sdfrmt, workbookMont[i]);
 			 masiveStrMonthLab = MasiveFromMonthCheckLab(sdfrmt, workbookMont[i]);
-			 masuveMeasur = masuveMeasur(sdfrmt, workbook[i]);
-			 masuveMeasur2 =  masuveMeasur(sdfrmt, workbook[i]);
+			 masuveMeasur = masiveMeasur(sdfrmt, workbook[i]);
+			 masuveMeasur2 =  masiveMeasur(sdfrmt, workbook[i]);
 			 masiveDoze = masiveDoze(workbook[i]);
 				
 			
@@ -353,7 +353,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 		}
 
 		@SuppressWarnings("deprecation")
-		private static String[][][] masuveMeasur(SimpleDateFormat sdfrmt, Workbook workbook) {
+		private static String[][][] masiveMeasur(SimpleDateFormat sdfrmt, Workbook workbook) {
 			Date date;
 			int mont;
 			String EGN = "", strDate = "", doze = "", lab = "";

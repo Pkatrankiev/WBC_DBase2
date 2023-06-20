@@ -100,24 +100,24 @@ public class PersonStatusDAO {
 	}
 	
 	
-	public static void updateValuePersonStatus(PersonStatus personStatus, int Id_PersonStatus) {
+	public static void updateValuePersonStatus(PersonStatus personStatus) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update PersonStatus SET Person_ID = ? , Workplace_ID = ? , Spisak_Prilogenia_ID = ? , UsersWBC_ID = ? , DateSet = ? "
+		String sqlUpdate = "Update PersonStatus SET Workplace_ID = ? , Spisak_Prilogenia_ID = ? , UsersWBC_ID = ? , DateSet = ? "
 				+ ", Zabelejka = ?   where PersonStatus_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
 
-			preparedStatement.setInt(1, personStatus.getPerson().getId_Person());
-			preparedStatement.setInt(2, personStatus.getWorkplace().getId_Workplace());
-			preparedStatement.setInt(3, personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
-			preparedStatement.setInt(4, personStatus.getUserWBC().getId_Users());
-			preparedStatement.setDate(5, convertDate(personStatus.getDateSet()));
-			preparedStatement.setString(6, personStatus.getZabelejka());
+			
+			preparedStatement.setInt(1, personStatus.getWorkplace().getId_Workplace());
+			preparedStatement.setInt(2, personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
+			preparedStatement.setInt(3, personStatus.getUserWBC().getId_Users());
+			preparedStatement.setDate(4, convertDate(personStatus.getDateSet()));
+			preparedStatement.setString(5, personStatus.getZabelejka());
 
-			preparedStatement.setInt(7, Id_PersonStatus);
+			preparedStatement.setInt(6, personStatus.getPersonStatus_ID());
 
 			preparedStatement.executeUpdate();
 			
@@ -125,8 +125,12 @@ public class PersonStatusDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-			ResourceLoader.appendToFile( e);
-			e.printStackTrace();
+			if (e.toString().indexOf("unique")>0) {
+				deleteValuePersonStatus(personStatus);
+			}
+			
+//			ResourceLoader.appendToFile( e);
+//			e.printStackTrace();
 		}
 	}
 

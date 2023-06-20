@@ -1,5 +1,6 @@
 package Test;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,9 @@ import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import Aplication.UpdateBDataFromExcellFiles;
+import BasiClassDAO.ActualExcellFilesDAO;
 import BasiClassDAO.DimensionWBCDAO;
+import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
@@ -33,7 +36,9 @@ import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
+import BasicClassAccessDbase.ActualExcellFiles;
 import BasicClassAccessDbase.DimensionWBC;
+import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
@@ -383,4 +388,206 @@ public class TestClasess {
 
 	}
 
+	
+	public static void checkWorkspaceFordublicate() {
+
+		List<Workplace> list = WorkplaceDAO.getValueWorkplaceSortByColumnName("Otdel");
+		String firstOtdelName = "";
+		Workplace firstWorkplace = list.get(0);
+		for (Workplace workplace : list) {
+			System.out.println(firstOtdelName+" - "+workplace.getOtdel());
+			if(firstOtdelName.equals(workplace.getOtdel())) {
+				ChengeWorkplacefromObgects(firstWorkplace, workplace);
+			}
+			
+				firstWorkplace = workplace;
+				firstOtdelName = firstWorkplace.getOtdel();
+}
+	
+	
+	}
+
+	public static void checkWorkspaceForActual() {
+		List<Workplace> listWorkplace = WorkplaceDAO.getAllValueWorkplace();
+		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
+	List<String> listStr = new ArrayList<>();
+		for (String filePath : excellFiles) {
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath);
+			Sheet sheet = workbook.getSheetAt(0);
+			Cell cell;
+			
+			int i = 0;
+			cell = sheet.getRow(0).getCell(i);
+			while (cell!=null) {
+				listStr.add(cell.getStringCellValue().trim());
+				i++;
+				cell = sheet.getRow(0).getCell(i);
+		}
+		}	
+	
+		for (Workplace workplace : listWorkplace) {
+
+			for (Iterator iterator = listStr.iterator(); iterator.hasNext();) {
+				String strOtdelFromExcell = (String) iterator.next();
+
+				if (strOtdelFromExcell.equals(workplace.getOtdel()) || strOtdelFromExcell.equals(workplace.getSecondOtdelName())) {
+					workplace.setActual(true);
+					WorkplaceDAO.updateValueWorkplace(workplace);
+					iterator.remove();
+				}
+			}
+		}	
+	
+	}
+	
+	public static void checkWorkspaceForDelete() {
+		
+		List<Workplace> listWorkplace = WorkplaceDAO.getValueWorkplaceByObject("SecondOtdelName", "autAll");
+		System.out.println(listWorkplace.size());
+		for (Workplace workpl : listWorkplace) {
+		List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workpl);
+		System.out.println(list.size());
+		List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workpl);
+		System.out.println(listPer.size());
+		if((list.size()+listPer.size())<1) {
+			WorkplaceDAO.deleteValueWorkplace(workpl);
+		}
+
+
+	}
+	
+	}
+	
+	
+	
+	private static void ChengeWorkplacefromObgects(Workplace firstWorkplace, Workplace workplace) {
+	List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workplace);
+	
+		for (KodeGenerate kodeGenerate : list) {
+			kodeGenerate.setWorkplace(firstWorkplace);
+			KodeGenerateDAO.updateValueKodeGenerate(kodeGenerate);
+		}
+		
+		List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workplace);
+		for (PersonStatus perStat : listPer) {
+			perStat.setWorkplace(firstWorkplace);
+			PersonStatusDAO.updateValuePersonStatus(perStat);
+		}
+		workplace.setSecondOtdelName("autAll");
+		 WorkplaceDAO.updateValueWorkplace(workplace);
+		System.out.println(workplace.getSecondOtdelName());
+	}
+	
+	static String[][] MasiveFromMonthCheckMeasurLab(Laboratory laborat) {
+		List<Workplace> listWorkplace = new ArrayList<>();
+		int IndexLab = laborat.getLab_ID();
+		switch (IndexLab) {
+		case 1: {
+			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH1();			
+		}
+		break;
+		case 2: {
+					
+			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH2();			
+				}
+		break;
+		case 3: {
+			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH3();				
+		}
+		break;
+		
+		}
+		
+		
+		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig") };
+
+		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
+				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };
+		
+		String otdel,name,EGN, kode, doze, data, lab;
+		Cell cell;
+		List<String> listIndex = new ArrayList<>();
+		for (int i = 0; i < 2; i++) {
+		String[][][] masiveStrMonth = new String[12][500][7];
+
+		for (int m = 0; m < 12; m++) {
+
+			Sheet sheetMont = workbookMont[i].getSheetAt(m);
+			int row = 0;
+			for (int l = 6; l <= sheetMont.getLastRowNum(); l++) {
+
+				if (sheetMont.getRow(l) != null) {
+					cell = sheetMont.getRow(l).getCell(3);
+					if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+						EGN = ReadExcelFileWBC.getStringfromCell(cell);
+
+						cell = sheetMont.getRow(l).getCell(1);
+						otdel = ReadExcelFileWBC.getStringfromCell(cell);
+						
+						cell = sheetMont.getRow(l).getCell(2);
+						name = ReadExcelFileWBC.getStringfromCell(cell);
+						
+						cell = sheetMont.getRow(l).getCell(4);
+						kode = ReadExcelFileWBC.getStringfromCell(cell);
+						
+						cell = sheetMont.getRow(l).getCell(5);
+						doze = ReadExcelFileWBC.getStringfromCell(cell);
+				
+						cell = sheetMont.getRow(l).getCell(6);
+						data = ReadExcelFileWBC.getStringfromCell(cell);
+						
+						cell = sheetMont.getRow(l).getCell(9);
+						lab ="";
+						if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+						lab = ReadExcelFileWBC.getStringfromCell(cell);
+						}
+
+						masiveStrMonth[m][row][0] = otdel;
+						masiveStrMonth[m][row][1] = name;
+						masiveStrMonth[m][row][2] = EGN;
+						masiveStrMonth[m][row][3] = kode;
+						masiveStrMonth[m][row][4] = doze;
+						masiveStrMonth[m][row][5] = data;
+						masiveStrMonth[m][row][6] = lab;
+
+						row++;
+					}
+				}
+			}
+		}
+		
+	
+		for (int m = 0; m < 12; m++) {
+			for (int k = 0; k < masiveStrMonth[m].length; k++) {
+				if (masiveStrMonth[m][k][2]!=null && !masiveStrMonth[m][k][6].equals(IndexLab+"")) {
+					for (Workplace workplace : listWorkplace) {
+//						System.out.println(workplace.getOtdel()+" - "+(masiveStrMonth[m][k][0]));
+						if(workplace.getOtdel().equals(masiveStrMonth[m][k][0])) {
+							listIndex.add(masiveStrMonth[m][k][0]+"@"+masiveStrMonth[m][k][1]+"@"
+									+masiveStrMonth[m][k][2]+"@"+masiveStrMonth[m][k][3]+"@"
+									+masiveStrMonth[m][k][4]+"@"+masiveStrMonth[m][k][5]+"@"+masiveStrMonth[m][k][6]);
+						}
+					}	
+				}
+			}
+		}
+		}
+		int count=0;
+		String[][] masive = new String[listIndex.size()][7];
+		for (String string : listIndex) {
+			String[] ms = string.split("@",7);
+			masive[count] = ms;
+			count++;
+		}
+		return masive;
+		
+		
+		}
+		
+	
+
+	
+	
+	
 	}

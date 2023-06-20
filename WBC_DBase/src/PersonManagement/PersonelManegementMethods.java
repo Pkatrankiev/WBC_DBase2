@@ -44,6 +44,7 @@ import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
+import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
@@ -70,6 +71,7 @@ public class PersonelManegementMethods {
 	static List<String> listOtdelAll;
 	static List<String> listOtdelKz;
 	static List<String> listOtdelVO;
+		
 	static List<String> listZvenaFromDBase = SearchFreeKodeMethods.generateListZvenaFromDBase();
 	static List<List<String>> ListZvenaFromExcellFiles = SearchFreeKodeMethods.generateListZvenaFromExcellFiles();
 	static List<String[]> kodeStatusFromExcelFiles = getMasiveKodeStatusFromExcelFiles();
@@ -586,26 +588,42 @@ public class PersonelManegementMethods {
 	}
 
 	static List<String> getListKZ() {
-		listOtdelKz = SearchFreeKodeMethods.generateListZvenaKZ(ListZvenaFromExcellFiles, listZvenaFromDBase);
+		listOtdelKz = getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
+//		listOtdelKz = SearchFreeKodeMethods.generateListZvenaKZ(ListZvenaFromExcellFiles, listZvenaFromDBase);
 		listOtdelKz.add("");
 		Collections.sort(listOtdelKz);
 		return listOtdelKz;
 	}
 
+
 	static List<String> getListVO() {
-		listOtdelVO = SearchFreeKodeMethods.generateListZvenaVO(ListZvenaFromExcellFiles, listZvenaFromDBase);
+		listOtdelVO = getStringListFromActualWorkplaceByFirmname("Външни организации");
+//		listOtdelVO = SearchFreeKodeMethods.generateListZvenaVO(ListZvenaFromExcellFiles, listZvenaFromDBase);
 		listOtdelVO.add("");
 		Collections.sort(listOtdelVO);
 		return listOtdelVO;
 	}
 
 	static List<String> getListALL() {
-		listOtdelAll = SearchFreeKodeMethods.generateListZvena();
-		listOtdelAll.add("");
+		listOtdelAll =  new ArrayList<>();
+		listOtdelAll.addAll(listOtdelKz);
+		listOtdelAll.addAll(listOtdelVO);
+//		listOtdelAll = SearchFreeKodeMethods.generateListZvena();
+//		listOtdelAll.add("");
 		Collections.sort(listOtdelAll);
 		return listOtdelAll;
 	}
 
+	public static List<String> getStringListFromActualWorkplaceByFirmname(String string) {
+		List<Workplace> list = WorkplaceDAO.getActualValueWorkplaceByFirm(string);
+		List<String> listStr = new ArrayList<>();
+		for (Workplace workplace : list) {
+			listStr.add(workplace.getOtdel());
+		}
+		return listStr;
+	}
+
+	
 	static int generateSelectSpisPrilFrame(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
 		SelectSpisPrilFrame.setSelectedContent(-1);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -1222,9 +1240,9 @@ public class PersonelManegementMethods {
 	}
 
 	public static void generateListOtdels() {
-		getListKZ();
-		getListVO();
-		getListALL();
+		listOtdelKz =	getListKZ();
+		listOtdelVO = getListVO();
+		listOtdelAll = getListALL();
 
 	}
 

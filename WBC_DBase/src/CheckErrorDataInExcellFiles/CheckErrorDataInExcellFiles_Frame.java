@@ -29,7 +29,7 @@ import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasicClassAccessDbase.Person;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
-import Reference_PersonMeasur.MetodsReference_PersonMeasur;
+import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
 import java.awt.Component;
 
 public class CheckErrorDataInExcellFiles_Frame extends JFrame {

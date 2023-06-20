@@ -162,7 +162,8 @@ public class UpdateBDataFromExcellFiles {
 					try {
 						list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile,
 								firmName, year);
-						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
+						System.out.println("list PersonStatus from Excell " + list.size());
+//						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 						System.out.println("--> " + list.size());
 					} catch (Exception e) {
 						OptionDialog(errorText);

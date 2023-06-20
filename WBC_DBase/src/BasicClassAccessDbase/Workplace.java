@@ -15,13 +15,17 @@ public class Workplace implements Serializable {
 	private String firmName;
 	private String otdel;
 	private String SecondOtdelName;
+	private boolean Actual;
+	private String NapOtdelSector;
 	
-	public Workplace(String firmName, String otdel, String secondOtdelName) {
+	public Workplace(String firmName, String otdel, String secondOtdelName, boolean Actual, String NapOtdelSector) {
 		
 		
 		this.firmName = firmName;
 		this.otdel = otdel;
 		this.SecondOtdelName = secondOtdelName;
+		this.Actual = Actual;
+		this.NapOtdelSector = NapOtdelSector;
 	}
 	
 	public Workplace() {
@@ -58,6 +62,26 @@ public class Workplace implements Serializable {
 
 	public void setOtdel(String otdel) {
 		this.otdel = otdel;
+	}
+
+	public boolean getActual() {
+		return Actual;
+	}
+
+	public void setActual(boolean actual) {
+		Actual = actual;
+	}
+
+	public String getNapOtdelSector() {
+		return NapOtdelSector;
+	}
+
+	public void setNapOtdelSector(String napOtdelSector) {
+		NapOtdelSector = napOtdelSector;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }
