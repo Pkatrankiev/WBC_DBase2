@@ -124,7 +124,7 @@ public class Spisak_PrilogeniaDAO {
 	}
 	
 
-	public static void updateValueSpisak_Prilogenia(Spisak_Prilogenia Spisak_Prilogenia, int id_Spisak_Prilogenia) {
+	public static void updateValueSpisak_Prilogenia(Spisak_Prilogenia Spisak_Prilogenia) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -140,7 +140,7 @@ public class Spisak_PrilogeniaDAO {
 			preparedStatement.setObject(5, Spisak_Prilogenia.getWorkplace().getId_Workplace());
 			preparedStatement.setObject(6, Spisak_Prilogenia.getZabelejka());
 
-			preparedStatement.setObject(7, id_Spisak_Prilogenia);
+			preparedStatement.setObject(7, Spisak_Prilogenia.getSpisak_Prilogenia_ID());
 
 			preparedStatement.executeUpdate();
 

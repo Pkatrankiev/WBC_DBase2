@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 public class Workplace implements Serializable {
 
@@ -17,8 +18,10 @@ public class Workplace implements Serializable {
 	private String SecondOtdelName;
 	private boolean Actual;
 	private String NapOtdelSector;
+	@ManyToOne
+	private Laboratory Lab;
 	
-	public Workplace(String firmName, String otdel, String secondOtdelName, boolean Actual, String NapOtdelSector) {
+	public Workplace(String firmName, String otdel, String secondOtdelName, boolean Actual, String NapOtdelSector, Laboratory Lab) {
 		
 		
 		this.firmName = firmName;
@@ -26,6 +29,7 @@ public class Workplace implements Serializable {
 		this.SecondOtdelName = secondOtdelName;
 		this.Actual = Actual;
 		this.NapOtdelSector = NapOtdelSector;
+		this.setLab(Lab);
 	}
 	
 	public Workplace() {
@@ -82,6 +86,14 @@ public class Workplace implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Laboratory getLab() {
+		return Lab;
+	}
+
+	public void setLab(Laboratory lab) {
+		Lab = lab;
 	}
 
 }

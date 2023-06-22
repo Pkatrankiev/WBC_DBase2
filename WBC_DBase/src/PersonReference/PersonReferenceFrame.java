@@ -620,12 +620,8 @@ public class PersonReferenceFrame extends JFrame {
 					}
 				}
 			} else {
-				kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(1, year, kz1);
-				for (Person person : listSelectionPersonLName) {
-					if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
-						listSelectionPersonKZ1.add(kodeStat.getPerson());
-					}
-				}
+				listSelectionPersonKZ1 = generateListPersonByKodeStatus(listSelectionPersonLName, 1, kz1, year);
+				
 			}
 		} else {
 			listSelectionPersonKZ1 = listSelectionPersonLName;
@@ -650,12 +646,7 @@ public class PersonReferenceFrame extends JFrame {
 					}
 				}
 			} else {
-				kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(2, year, kz2);
-				for (Person person : listSelectionPersonKZ1) {
-					if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
-						listSelectionPersonKZ2.add(kodeStat.getPerson());
-					}
-				}
+				listSelectionPersonKZ2 = generateListPersonByKodeStatus(listSelectionPersonKZ1, 2, kz2, year);
 			}
 		} else {
 			listSelectionPersonKZ2 = listSelectionPersonKZ1;
@@ -678,13 +669,8 @@ public class PersonReferenceFrame extends JFrame {
 						}
 					}
 				} else {
-					kodeStat = KodeStatusDAO.getKodeStatusByZoneYaerAndKode(3, year, kzHog);
-					for (Person person : listSelectionPersonKZ2) {
-						if (kodeStat != null && kodeStat.getPerson().getId_Person() == person.getId_Person()) {
-							listSelectionPersonKZHog.add(kodeStat.getPerson());
-					}
+					listSelectionPersonKZHog = generateListPersonByKodeStatus(listSelectionPersonKZ2, 3, kzHog, year);
 				}
-			}
 				
 		} else {
 			listSelectionPersonKZHog = listSelectionPersonKZ2;
@@ -728,6 +714,21 @@ public class PersonReferenceFrame extends JFrame {
 		}
 		System.out.println("listSelectionPersonOtdel = " + listSelectionPersonOtdel.size());
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
+	}
+
+	private static List<Person> generateListPersonByKodeStatus(List<Person> listSelectionPersonKZ1, int zone,
+			  String kz2, String year) {
+		List<Person> list = new ArrayList<>();
+		
+		List<KodeStatus> listKodeStat = KodeStatusDAO.getListKodeStatusByZoneYaerAndKode(zone, year, kz2);
+		for (Person person : listSelectionPersonKZ1) {
+			for (KodeStatus kodeStatus : listKodeStat) {
+			if (kodeStatus != null && kodeStatus.getPerson().getId_Person() == person.getId_Person()) {
+				list.add(kodeStatus.getPerson());
+			}
+			}
+		}
+		return list;
 	}
 
 	private static KodeStatus setNullKodeStatus() {

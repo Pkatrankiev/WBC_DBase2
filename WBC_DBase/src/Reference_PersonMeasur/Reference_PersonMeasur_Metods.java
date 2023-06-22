@@ -193,26 +193,7 @@ public class Reference_PersonMeasur_Metods {
 
 	
 	static void setitemInChoise() {
-		
-//		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
-//		String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
 
-		
-//		listOtdelKz = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", AEC));
-//		listOtdelKz.add("");
-//		Collections.sort(listOtdelKz);
-//
-//		listOtdelVO = getListStringOtdel(WorkplaceDAO.getValueWorkplaceByObject("FirmName", VO));
-//		listOtdelVO.add("");
-//		Collections.sort(listOtdelVO);
-//		listOtdelAll = getListStringOtdel(WorkplaceDAO.getAllValueWorkplace());
-//		listOtdelAll.add("");
-//		Collections.sort(listOtdelAll);
-		
-		
-//		listFirm.add("");
-//		listFirm.add(AEC);
-//		listFirm.add(VO);
 		
 		listAdd = listOtdelVO;
 		if (((String) comboBox_Firm.getSelectedItem()).trim().isEmpty()) {

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -460,43 +461,185 @@ public class TestClasess {
 	
 	
 	
-	private static void ChengeWorkplacefromObgects(Workplace firstWorkplace, Workplace workplace) {
-	List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workplace);
+	static void ChengeWorkplacefromSpiusakPrilog() {
 	
-		for (KodeGenerate kodeGenerate : list) {
-			kodeGenerate.setWorkplace(firstWorkplace);
-			KodeGenerateDAO.updateValueKodeGenerate(kodeGenerate);
+	List<Integer> listErrorID = getAllValueSpisak_Prilogenia();
+	List<String> listStrErrorID = new ArrayList<>();
+	List<Workplace> listWorkplace = new ArrayList<>();
+	List<Spisak_Prilogenia> listSpisak_Prilogenia = new ArrayList<>();
+
+		System.out.println("listErrorID = "+listErrorID.size());
+		for (int id : listErrorID) {
+			listStrErrorID.add(getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel());
+		}
+		System.out.println("listStrErrorID = "+listStrErrorID.size());
+		for (String string : listStrErrorID) {
+			listWorkplace.add(WorkplaceDAO.getValueWorkplaceByObject("Otdel", string).get(0));
+		}
+		System.out.println("listWorkplace = "+listWorkplace.size());
+		int i = 0;
+		for (int id : listErrorID) {
+			
+			Spisak_Prilogenia  spisPril = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id);
+			
+			spisPril.setWorkplace(listWorkplace.get(i));
+			System.out.println(i+"  -> "+listWorkplace.get(i).getOtdel());
+			Spisak_PrilogeniaDAO.updateValueSpisak_Prilogenia(spisPril);
+			
+			i++;
+		}
+		int k =0;
+		for (int id : listErrorID) {
+			System.out.print (Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel()+" <-> "+listStrErrorID.get(k));
+			if(Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel().equals(listStrErrorID.get(k))) {
+				System.out.println("  -> ok");
+			};
+			k++;
 		}
 		
-		List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workplace);
-		for (PersonStatus perStat : listPer) {
-			perStat.setWorkplace(firstWorkplace);
-			PersonStatusDAO.updateValuePersonStatus(perStat);
-		}
-		workplace.setSecondOtdelName("autAll");
-		 WorkplaceDAO.updateValueWorkplace(workplace);
-		System.out.println(workplace.getSecondOtdelName());
 	}
+	
+	
+	public static List<Integer> getAllValueSpisak_Prilogenia() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Spisak_Prilogenia";
+		List<Integer>  list = new ArrayList<>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+				
+				Workplace wp = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				if(wp==null) {
+					list.add(result.getInt("Spisak_Prilogenia_ID"))	;
+				}
+				
+
+				
+			}
+
+			statement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		return list;
+	}
+	
+	public static Spisak_Prilogenia getValueSpisak_PrilogeniaByID(int id) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Spisak_Prilogenia  where Spisak_Prilogenia_ID = ? LIMIT 1";
+
+		List<Spisak_Prilogenia> list = new ArrayList<Spisak_Prilogenia>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Spisak_Prilogenia resultObject = new Spisak_Prilogenia();
+
+				resultObject.setSpisak_Prilogenia_ID(result.getInt("Spisak_Prilogenia_ID"));
+				resultObject.setFormulyarName(result.getString("FormulyarName"));
+				resultObject.setYear(result.getString("Year"));
+				resultObject.setStartDate(result.getDate("StartDate"));
+				resultObject.setEndDate(result.getDate("EndDate"));
+				Workplace wp = getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				resultObject.setWorkplace(wp);
+				resultObject.setZabelejka(result.getString("Zabelejka"));
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		if(list.size()>0) {
+		return list.get(0);
+		}else {
+			return null;	
+		}
+	}
+
+	
+	
+	
+	
+	public static Workplace getValueWorkplaceByID(int id) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace_old  where Workplace_ID = ? LIMIT 1";
+		
+		List<Workplace> list = new ArrayList<Workplace>();
+		
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				Workplace resultObject = new Workplace();
+				resultObject.setId_Workplace(result.getInt("Workplace_ID"));
+				resultObject.setFirmName (result.getString("FirmName"));
+				resultObject.setOtdel(result.getString("Otdel"));
+				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+			
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+			
+		}
+		
+//		if(list.size()<=0) return null;
+		return list.get(0);
+	}
+	
+	
+	
+	
+	
+	private static void ChengeWorkplacefromObgects(Workplace firstWorkplace, Workplace workplace) {
+		List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workplace);
+		
+			for (KodeGenerate kodeGenerate : list) {
+				kodeGenerate.setWorkplace(firstWorkplace);
+				KodeGenerateDAO.updateValueKodeGenerate(kodeGenerate);
+			}
+			
+			List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workplace);
+			for (PersonStatus perStat : listPer) {
+				perStat.setWorkplace(firstWorkplace);
+				PersonStatusDAO.updateValuePersonStatus(perStat);
+			}
+			workplace.setSecondOtdelName("autAll");
+			 WorkplaceDAO.updateValueWorkplace(workplace);
+			System.out.println(workplace.getSecondOtdelName());
+		}
 	
 	static String[][] MasiveFromMonthCheckMeasurLab(Laboratory laborat) {
 		List<Workplace> listWorkplace = new ArrayList<>();
 		int IndexLab = laborat.getLab_ID();
-		switch (IndexLab) {
-		case 1: {
-			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH1();			
-		}
-		break;
-		case 2: {
-					
-			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH2();			
-				}
-		break;
-		case 3: {
-			listWorkplace = WorkplaceDAO.getAllValueWorkplaceInSICH3();				
-		}
-		break;
-		
-		}
+		listWorkplace = WorkplaceDAO.getAllValueWorkplaceByLab(laborat)	;	
+
 		
 		
 		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),

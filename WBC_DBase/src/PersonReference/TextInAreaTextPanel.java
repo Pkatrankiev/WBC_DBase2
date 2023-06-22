@@ -25,7 +25,6 @@ import BasicClassAccessDbase.Zone;
 
 public class TextInAreaTextPanel {
 
-	private static int columnSizeOtdel;
 	private static Person person;
 	private static String[] masivePersonStatusName = {"Year","Otdel","Spisak","start Date","end Date","Koment"};
 	private static String[][] masivePersonStatus;
@@ -38,7 +37,6 @@ public class TextInAreaTextPanel {
 		List<KodeStatus> listK = null;
 		List<PersonStatus> listP = null;
 		List<Measuring> listM = null;
-		columnSizeOtdel =0;
 		person = personInport;
 		
 		if(fromExcell) {
@@ -46,7 +44,6 @@ public class TextInAreaTextPanel {
 		}else{
 		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
-		System.out.println(listP.size()+"  %%%%");
 		masivePersonStatus = null;
 		if(listP.size()>0) {
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
@@ -216,10 +213,11 @@ public class TextInAreaTextPanel {
 	
 	private static String setTextInfoPersonStatus(String[][] masivePersonStatus, String[] masivePersonStatusName) {
 		String personStatusString = "";
-		int[] columnSize = getMaxSize2and3column(masivePersonStatus);
+		
+		int[] max = {5,7,8,15,15};
+		int[] columnSize = getMaxSizecolumn(masivePersonStatus, max);
 		
 		for (int j = 0; j < 5; j++) {
-			System.out.println(columnSize[j]+" "+masivePersonStatusName[j]);
 			personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatusName[j]) +masivePersonStatusName[j];	
 		}
 		personStatusString = personStatusString + "     "+ masivePersonStatusName[5]+ "\n";	
@@ -227,7 +225,6 @@ public class TextInAreaTextPanel {
 		for (int i = 0; i < masivePersonStatus.length; i++) {
 			if(masivePersonStatus[i][0]!=null ) {
 			for (int j = 0; j < 5; j++) {
-				System.out.println(columnSize[j]+" "+masivePersonStatus[i][j]);
 				personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatus[i][j]) + masivePersonStatus[i][j];	
 			}
 			personStatusString = personStatusString + " "+ masivePersonStatus[i][5]+ "\n";	
@@ -238,19 +235,16 @@ public class TextInAreaTextPanel {
 		return personStatusString;
 	}
 
-	private static int[] getMaxSize2and3column(String[][] masivePersonStatus) {
-		int[] max = {5,7,8,15,15};
+	private static int[] getMaxSizecolumn(String[][] masivePersonStatus, int[] max) {
+		
 		for (int i = 0; i < masivePersonStatus.length; i++) {
-			if(masivePersonStatus[i][1]!=null && masivePersonStatus[i][1].length()>max[1]) {
-				max[1] = masivePersonStatus[i][1].length();
-			}
-			if(masivePersonStatus[i][2]!=null && masivePersonStatus[i][2].length()>max[2]) {
-				max[2] = masivePersonStatus[i][2].length();
+			for (int j = 0; j < max.length; j++) {
+			 if(masivePersonStatus[i][j]!=null && masivePersonStatus[i][j].length()>max[j]) {
+				max[j] = masivePersonStatus[i][j].length();
+			 }
 			}
 		}
-		max[1] = max[1] +2;
-		max[2] = max[2] +2;
-		columnSizeOtdel = max[1];
+	
 		return max;
 	}
 
@@ -299,8 +293,7 @@ public class TextInAreaTextPanel {
 	private static String[][] generateMasiveKodeStatus(String year, List<KodeStatus> listK, List<PersonStatus> listP) {
 		String yearKode="";
 		int index = -1;
-		System.out.println(listK.size()+" 11111111111");
-		String[][] masiveKode = new String[listK.size()][7];
+			String[][] masiveKode = new String[listK.size()][7];
 		masiveKode = setDefoutValueInMasive(masiveKode);
 			for (KodeStatus kodeStat : listK) {
 				if (year.trim().isEmpty() || kodeStat.getYear().equals(year)) {
@@ -310,7 +303,6 @@ public class TextInAreaTextPanel {
 					index++;
 					}
 					masiveKode[index][0] = yearKode;
-					System.out.println(yearKode+" 2222222222 "+ listP);
 					masiveKode[index][1] = getOtdelByYear(yearKode, listP);
 					switch (kodeStat.getZone().getId_Zone()) {
 					case 1: {
@@ -355,7 +347,6 @@ public class TextInAreaTextPanel {
 		String date;
 		for (int i = 0; i < listP.size(); i++) {
 			date = sdf.format(listP.get(i).getDateSet()).substring(6);
-			System.out.println(date+" 333333 "+yearKode);
 			if(date.equals(yearKode)) {
 				return listP.get(i).getWorkplace().getOtdel();
 			}
@@ -374,27 +365,20 @@ public class TextInAreaTextPanel {
 
 	private static String setTextInfoKode(String[][] masiveKode, String[] masiveZoneName) {
 		String kodeString = "";
-		int maxOtdel = 0;
-		for (int i = 0; i < masiveKode.length; i++) {
-			if(masiveKode[i][1].length() > maxOtdel) {
-				maxOtdel = masiveKode[i][1].length();
-			}
-		}
+				
+		int[] max = {5, 7, 7, 7, 7, 13, 13};
 		
-		if(columnSizeOtdel<maxOtdel) {
-			columnSizeOtdel = maxOtdel +3;
-		}
+		int[] columnSize = getMaxSizecolumn(masiveKode, max);
 		
-		int[] max = {5, columnSizeOtdel, 7, 7, 7, 13, 13};
 		for (int i = 0; i < masiveZoneName.length; i++) {
-			kodeString = kodeString + getAddSpace(max[i], masiveZoneName[i]) + masiveZoneName[i];
+			kodeString = kodeString + getAddSpace(columnSize[i], masiveZoneName[i]) + masiveZoneName[i];
 		}
 		kodeString = kodeString + "\n";	
 		
 		for (int i = 0; i < masiveKode.length; i++) {
 //			if(!masiveKode[i][0].equals("-")) {
 			for (int j = 0; j < masiveZoneName.length; j++) {
-			kodeString = kodeString + getAddSpace(max[j], masiveKode[i][j]) + masiveKode[i][j];
+			kodeString = kodeString + getAddSpace(columnSize[j], masiveKode[i][j]) + masiveKode[i][j];
 		}
 			kodeString = kodeString + "\n";
 //			}
@@ -419,7 +403,7 @@ public class TextInAreaTextPanel {
 	public static String getAddSpace(int space, String kodeString) {
 		 String addString = "";
 		
-		for (int m = 0; m < space-kodeString.length(); m++) {
+		for (int m = 0; m < space+2-kodeString.length(); m++) {
 			addString = addString+" ";	
 		}
 		return addString;
@@ -441,7 +425,6 @@ public class TextInAreaTextPanel {
 	        	 	dateSet1 = sdf.parse(entry1[columnStartDate]);
 					dateSet2 = sdf.parse(entry2[columnStartDate]);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	          
@@ -449,18 +432,18 @@ public class TextInAreaTextPanel {
 	          }
 	  });  // End of function call sort().
 	        
-	      printArray(arr);  
+//	      printArray(arr);  
 	        
 	    }
 
-	private static void printArray(String[][] arr) {
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[i].length; j++) {
-				System.out.print(arr[i][j]+",  ");
-			}
-			System.out.println();
-		}
-	}
+//	private static void printArray(String[][] arr) {
+//		for (int i = 0; i < arr.length; i++) {
+//			for (int j = 0; j < arr[i].length; j++) {
+//				System.out.print(arr[i][j]+",  ");
+//			}
+//			System.out.println();
+//		}
+//	}
 
 	private static String[][] remoteNullFromArray(String[][] arr) {
 		List<String[]> list = new ArrayList<>();

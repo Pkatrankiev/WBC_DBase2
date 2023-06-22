@@ -324,7 +324,7 @@ public class ReadExcelFileWBC {
 				if(m==null) {
 					workplace = selectWorkplace(firmName, masiveWorkplace,  otdelName, listAllWorkplaceByFirmName);
 				}
-				workplace = new Workplace(firmName, m, "",true,"");
+				workplace = new Workplace(firmName, m, "",true,"",null);
 				WorkplaceDAO.setObjectWorkplaceToTable(workplace);
 				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", m).get(0);
 

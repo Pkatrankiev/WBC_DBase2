@@ -565,8 +565,8 @@ public class CheckErrorDataInExcellFiles_Methods {
 //							System.out.println(row+" OK "+str1+" "+str2+" "+str3+" "+str4);
 									} else {
 										
-										infotext += fileName[i] + " : " + row + " NO " + str1 + " " + str2 + " "
-												+ str3 + " " + str4+"\n" ;
+										infotext += fileName[i] + " : " + (row+1) + " NO " + str1 + " <-> " + str2 + " <-> "
+												+ str3 + " <-> " + str4+"\n" ;
 									}
 								}
 							}

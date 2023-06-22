@@ -138,13 +138,15 @@ public class UpdateBDataFromExcellFiles {
 				case "Spisak_Prilogenia": {
 					// read and set Spisak_Prilogenia
 					List<Spisak_Prilogenia> Spisak_PrilogeniaList = null;
+										
 					try {
 						Spisak_PrilogeniaList = ReadSpisak_PrilogeniaFromExcelFile
 								.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year);
 
-						ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
+//						ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 						System.out.println("--> " + Spisak_PrilogeniaList.size());
 					} catch (Exception e) {
+						e.printStackTrace();
 						OptionDialog(errorText);
 						save = false;
 					}
@@ -182,7 +184,7 @@ public class UpdateBDataFromExcellFiles {
 					try {
 						listKodeStatus = ReadKodeStatusFromExcelFile.getListKodeStatusFromExcelFile(pathFile,
 								firmName, year);
-						ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
+//						ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 						System.out.println("--> " + listKodeStatus.size());
 					} catch (Exception e) {
 						OptionDialog(errorText);
@@ -201,7 +203,7 @@ public class UpdateBDataFromExcellFiles {
 					try {
 						listMeasuring = ReadMeasuringFromExcelFile
 								.generateListFromMeasuringFromExcelFile(pathFile);
-						ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
+//						ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
 						System.out.println("--> " + listMeasuring.size());
 					} catch (Exception e) {
 						OptionDialog(errorText);
@@ -220,7 +222,7 @@ public class UpdateBDataFromExcellFiles {
 					try {
 						listResultsWBC = ReadResultsWBCFromExcelFile
 								.generateListFromResultsWBCFromExcelFile(pathFile);
-						ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
+//						ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
 						System.out.println("--> " + listResultsWBC.size());
 					} catch (Exception e) {
 						OptionDialog(errorText);
