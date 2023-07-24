@@ -92,7 +92,7 @@ public class Reference_PersonMeasur_Metods {
 
 				CellStyle cellStyleBold = PersonReferenceExportToExcell.cellStyleBold(workbook);
 				int endRow = 0;
-				endRow = PersonReferenceExportToExcell.writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow);
+				endRow = PersonReferenceExportToExcell.writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow, true);
 				endRow++;
 
 				FileOutputStream outFile = new FileOutputStream(new File(excelFilePath));

@@ -4,6 +4,8 @@ package MenuClasses;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,12 +33,18 @@ public class WBC_MainWindowFrame extends JFrame {
 		setTitle("Data Base WBC"); 
 		setMinimumSize(new Dimension(600, 300));
 		GetVisibleLAF(this);	
-//		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(269, 149);
 		setLocationRelativeTo(null);
 		
 			
 		  setJMenuBar(createMenuBar());  
+		  
+		  this.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent evt) {
+					System.exit(0);
+				}
+			});
 		  
 			setVisible(true);
 

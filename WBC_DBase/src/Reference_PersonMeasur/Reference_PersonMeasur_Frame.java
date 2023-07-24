@@ -27,7 +27,6 @@ import AutoInsertMeasuting.InsertMeasurToExcel;
 
 import BasicClassAccessDbase.Person;
 
-import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
 
 

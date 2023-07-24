@@ -48,7 +48,7 @@ public class TextInAreaTextPanel {
 		if(listP.size()>0) {
 		masivePersonStatus = generateMasivePersonStatus(year, listP);
 		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
-//		sortbyStartDateColumn(masivePersonStatus);
+		sortbyStartDateColumn(masivePersonStatus);
 		}
 		String textSpis ="";
 				if(masivePersonStatus!=null && masivePersonStatus.length>0) {
@@ -410,41 +410,40 @@ public class TextInAreaTextPanel {
 	}
 
 	
+
 	 public static void sortbyStartDateColumn(String[][]arr)
 	    {	    		    	
-	       
-	        Arrays.sort(arr, new Comparator<String[]>() {
-	        	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-	        	int columnStartDate = 3;
-	          @Override              
-	          // Compare values according to columns
-	          public int compare(String[] entry1, String[] entry2) {
-	        	  Date dateSet1 = null;
-	        	  Date dateSet2 = null;
-	        	  try {
-	        	 	dateSet1 = sdf.parse(entry1[columnStartDate]);
-					dateSet2 = sdf.parse(entry2[columnStartDate]);
-				} catch (ParseException e) {
-					e.printStackTrace();
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+     	int columnStartDate = 3;
+     	Arrays.sort(arr, new Comparator<String[]>() {
+
+	        
+				@Override
+				public int compare(String[] entry1, String[] entry2) {
+					
+				
+					if( entry1[0].equals(entry2[0])){
+						  Date dateSet1 = null;
+			        	  Date dateSet2 = null;
+			        	 
+			        	  try {
+			        		
+			        	 	dateSet1 = sdf.parse(entry1[columnStartDate]);
+							dateSet2 = sdf.parse(entry2[columnStartDate]);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+			        	 
+			        	  return dateSet1.compareTo(dateSet2);	
+					}
+					
+					return 0;
 				}
-	          
-			return dateSet1.compareTo(dateSet2);
-	          }
-	  });  // End of function call sort().
-	        
-//	      printArray(arr);  
-	        
+	        });
 	    }
+	  
 
-//	private static void printArray(String[][] arr) {
-//		for (int i = 0; i < arr.length; i++) {
-//			for (int j = 0; j < arr[i].length; j++) {
-//				System.out.print(arr[i][j]+",  ");
-//			}
-//			System.out.println();
-//		}
-//	}
-
+	 
 	private static String[][] remoteNullFromArray(String[][] arr) {
 		List<String[]> list = new ArrayList<>();
 		for (int i = 0; i < arr.length; i++) {

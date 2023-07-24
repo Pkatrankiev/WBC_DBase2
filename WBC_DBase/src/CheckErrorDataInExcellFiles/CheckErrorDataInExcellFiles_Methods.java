@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,11 +18,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
-import BasicClassAccessDbase.Person;
-import PersonManagement.PersonelManegementFrame;
-import PersonReference.PersonReferenceFrame;
-import PersonReference.TextInAreaTextPanel;
-import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
 
 public class CheckErrorDataInExcellFiles_Methods {
 

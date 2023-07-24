@@ -604,7 +604,7 @@ public class PersonReferenceFrame extends JFrame {
 		}
 		System.out.println("listSelectionPersonLName = " + listSelectionPersonLName.size());
 		kodeStatusNull = setNullKodeStatus();
-		KodeStatus kodeStat;
+//		KodeStatus kodeStat;
 		if (!kz1.trim().isEmpty()) {
 			if (year.isEmpty()) {
 				List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByZoneAndKode(1, kz1);

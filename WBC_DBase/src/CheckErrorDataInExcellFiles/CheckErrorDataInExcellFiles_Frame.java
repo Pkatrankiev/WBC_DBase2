@@ -17,20 +17,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
-import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.InsertMeasurToExcel;
 import BasicClassAccessDbase.Person;
-import PersonManagement.PersonelManegementMethods;
-import PersonReference.PersonReferenceFrame;
-import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
-import java.awt.Component;
 
 public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 

@@ -13,7 +13,7 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import Aplication.ReadFileBGTextVariable;
+
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Laboratory;
@@ -27,7 +27,7 @@ public class MeasuringDAO {
 
 	public static void setValueMeasuring(Person person, Date date, double doze, DimensionWBC dozeDimension,
 			Laboratory lab, UsersWBC user, TypeMeasur typeMeasur, String measurKoment, String reportFileName) {
-		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
+//		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -569,7 +569,7 @@ int k=0;
 	public static List<Measuring> getValueMeasuringByPersonAndYear(Person person, Date dateStart, Date dateEnd) {
 	
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Measuring  where Person_ID = ? AND Date >= ? AND Date <= ?";
+		String sql = "SELECT * FROM Measuring  where Person_ID = ? AND Date >= ? AND Date <= ? ORDER BY Date ASC";
 
 		List<Measuring> list = new ArrayList<Measuring>();
 

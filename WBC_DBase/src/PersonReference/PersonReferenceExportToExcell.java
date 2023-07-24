@@ -156,7 +156,7 @@ public class PersonReferenceExportToExcell {
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("code"));
 				endRow++;
 								
-				endRow = writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow);
+				endRow = writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow, false);
 				endRow++;
 								
 				row = sheet.createRow(endRow);
@@ -166,7 +166,7 @@ public class PersonReferenceExportToExcell {
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("orders"));
 				endRow++;
 								
-				endRow = writeCells(sheet, cellStyleBold,masivePersonStatusName, masivePersonStatus, endRow);
+				endRow = writeCells(sheet, cellStyleBold,masivePersonStatusName, masivePersonStatus, endRow, false);
 				endRow++;
 								
 				row = sheet.createRow(endRow);
@@ -176,7 +176,7 @@ public class PersonReferenceExportToExcell {
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("measurSICH"));
 				endRow++;
 								
-				endRow = writeCells(sheet, cellStyleBold, masiveMeasurName, masiveMeasur, endRow);
+				endRow = writeCells(sheet, cellStyleBold, masiveMeasurName, masiveMeasur, endRow, false);
 
 				
 				FileOutputStream outFile = new FileOutputStream(new File(excelFilePath));
@@ -228,7 +228,7 @@ public class PersonReferenceExportToExcell {
 		return cellStyleHeader;
 	}
 	
-	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow) {
+	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow, boolean fromMeasuringReference) {
 		Cell cell;
 		//				Create header column
 						Row row = sheet.createRow(startRow);
@@ -249,13 +249,23 @@ public class PersonReferenceExportToExcell {
 		//				Create column	
 					
 						startRow++;
-						
+						int cc = dataTable[0].length;
 						for (int tableRow = 0; tableRow < dataTable.length; tableRow++) {
 							row = sheet.createRow(startRow);
-							for (int tableColumCount = 0; tableColumCount < dataTable[0].length; tableColumCount++) {
+							for (int tableColumCount = 0; tableColumCount < cc; tableColumCount++) {
 		
+								if(fromMeasuringReference && tableColumCount == cc-1) {
+									String[] str = dataTable[tableRow][tableColumCount].split(" ");
+									int k = tableColumCount;
+									for (String string : str) {
+										cell = row.createCell(k, CellType.STRING);
+										cell.setCellValue(string);
+										k++;
+									}
+								}else {
 								cell = row.createCell(tableColumCount, CellType.STRING);
 								cell.setCellValue(dataTable[tableRow][tableColumCount]);
+								}
 		
 							}
 							startRow++;	
