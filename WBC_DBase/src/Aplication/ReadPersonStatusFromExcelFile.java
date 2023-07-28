@@ -316,7 +316,7 @@ public class ReadPersonStatusFromExcelFile {
 					spPrObhodList.setWorkplace(workplace);
 					
 					Spisak_PrilogeniaDAO.setObjectSpisak_PrilogeniaToTable(spPrObhodList);
-					Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, dateObhList, workplace.getId_Workplace());
+					Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, dateObhList, workplace.getId_Workplace());
 					if(spisPril!=null) {
 					listPerStat.add(new PersonStatus(person, workplace, spisPril, userSet, dateSet, zab));
 					}else {

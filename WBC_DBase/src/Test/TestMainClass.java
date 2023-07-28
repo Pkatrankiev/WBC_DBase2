@@ -7,6 +7,7 @@ import Aplication.ReadFileBGTextVariable;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Workplace;
+import PersonManagement.PersonelManegementFrame;
 import PersonReference.TextInAreaTextPanel;
 import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
 
@@ -32,7 +33,15 @@ public class TestMainClass {
 //			TestClasess.CheckCorrectionAllRowInSheets();
 			
  
-			TestClasess.ChengeWorkplacefromSpiusakPrilog();
+			ActionIcone round = new ActionIcone();
+			 final Thread thread = new Thread(new Runnable() {
+			     @Override
+			     public void run() {
+			    	 
+			    	new PersonelManegementFrame(round);
+			     }
+			    });
+			    thread.start();	
 			
 			
 			

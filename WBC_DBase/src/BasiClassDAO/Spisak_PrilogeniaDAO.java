@@ -378,7 +378,7 @@ public class Spisak_PrilogeniaDAO {
 		}
 	}
 
-	public static Spisak_Prilogenia getValueSpisak_PrilogeniaByYear_Workplace_StartDate(String year, Date StartDate, int Workplace_ID) {
+	public static Spisak_Prilogenia getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(String year, Date StartDate, int Workplace_ID) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM Spisak_Prilogenia  where Year = ? and StartDate = ? and Workplace_ID = ? ORDER BY Spisak_Prilogenia_ID  DESC";

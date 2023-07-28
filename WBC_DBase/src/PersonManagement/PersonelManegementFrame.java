@@ -39,6 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.Icon;
 
 
 public class PersonelManegementFrame extends JFrame {
@@ -72,6 +73,8 @@ public class PersonelManegementFrame extends JFrame {
 	private static JButton btn_InsertToTerit_1;
 	private static JButton btn_InsertToTerit_2;
 
+	private static JButton btn_SaveToExcelFile;
+	
 	private static JRadioButton rdbtn_KodKZ1;
 	private static JRadioButton rdbtn_KodKZ2;
 	private static JRadioButton rdbtn_KodKZHOG;
@@ -98,9 +101,14 @@ public class PersonelManegementFrame extends JFrame {
 	private static JTextField textField_svePerson_Spisak;
 	private static JTextField textField_savePerson_StartDate;
 	private static JTextField textField_savePerson_EndDate;
+	private static JTextField textField_svePerson_Coment;
+	private static JTextField textField_svePerson_Year;
 	
 	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
 	private JPanel personSave_Panel;
+	
+
+	
 	
 
 	public PersonelManegementFrame(ActionIcone round) {
@@ -150,7 +158,7 @@ public class PersonelManegementFrame extends JFrame {
 		kodeLabel_Panel_3();
 		kodeRadioButtons_Panel_3A();
 		panel_4();
-
+		
 		save_Panel();
 
 		setSize(750, 900);
@@ -198,6 +206,11 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_1, 4);
 		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_2, 5);
 		
+		PersonelManegementMethods.ActionListener_textField_svePerson_Year(textField_svePerson_Year, btn_SaveToExcelFile);
+		
+		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(btn_SaveToExcelFile);
+		
+		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_Year);
 		
 		setVisible(true);
 		round.StopWindow();
@@ -518,7 +531,9 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_OtdelSpisakLabel_Panel_4(personSave_Panel);
 
 		personSave_OtdelSpisakField_Panel_4A(personSave_Panel);
-
+		
+		personSave_Coment_4B (personSave_Panel);
+		
 		return personSave_Panel_5(personSave_Panel);
 	}
 
@@ -566,6 +581,18 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_svePerson_LastName.setAlignmentX(1.0f);
 		personSave_Personel_2_LabelPanel.add(lbl_svePerson_LastName);
 		
+		JLabel lbldistanetion_1 = new JLabel();
+		lbldistanetion_1.setPreferredSize(new Dimension(115, 14));
+		personSave_Personel_2_LabelPanel.add(lbldistanetion_1);
+		
+		JLabel lbl_Year_1 = new JLabel("Year");
+		lbl_Year_1.setVerticalAlignment(SwingConstants.BOTTOM);
+		lbl_Year_1.setPreferredSize(new Dimension(45, 20));
+		lbl_Year_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_Year_1.setBorder(null);
+		lbl_Year_1.setAlignmentX(0.5f);
+		personSave_Personel_2_LabelPanel.add(lbl_Year_1);
+		
 		return personSave_Personel_2_LabelPanel;
 	}
 	
@@ -584,7 +611,7 @@ public class PersonelManegementFrame extends JFrame {
 		textField_svePerson_EGN.setColumns(10);
 		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_EGN);
 		
-		JLabel lblNewLabel_1 = new JLabel("");
+		JLabel lblNewLabel_1 = new JLabel();
 		lblNewLabel_1.setPreferredSize(new Dimension(29, 14));
 		personSave_Personel_2_FildPanel.add(lblNewLabel_1);
 		
@@ -604,9 +631,23 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_Personel_2_FildPanel.add(textField_svePerson_LName);
 		
 		btn_savePerson_Insert = new JButton("Insert");
+		btn_savePerson_Insert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		personSave_Personel_2_FildPanel.add(btn_savePerson_Insert);
 		btn_savePerson_Insert.setEnabled(false);
+		
+		JLabel lblNewLabel_1_1 = new JLabel();
+		lblNewLabel_1_1.setPreferredSize(new Dimension(45, 14));
+		personSave_Personel_2_FildPanel.add(lblNewLabel_1_1);
+		
+		textField_svePerson_Year = new JTextField(curentYear);
+		textField_svePerson_Year.setColumns(6);
+		personSave_Personel_2_FildPanel.add(textField_svePerson_Year);
 				
+		
+		
 	return personSave_Personel_2_FildPanel;
 	
 	}
@@ -809,15 +850,43 @@ public class PersonelManegementFrame extends JFrame {
 		return personSave_OtdelSpisakField_Panel_4A;
 	}
 
+	private JPanel personSave_Coment_4B (JPanel personSave_Panel) {
+		
+	JPanel personSave_Coment_4B = new JPanel();
+	FlowLayout fl_personSave_Coment_4B = (FlowLayout) personSave_Coment_4B.getLayout();
+	fl_personSave_Coment_4B.setAlignment(FlowLayout.LEFT);
+	personSave_Coment_4B.setPreferredSize(new Dimension(10, 30));
+	personSave_Panel.add(personSave_Coment_4B);
+	
+	JLabel lbl_svePerson_Coment = new JLabel("Coment");
+	lbl_svePerson_Coment.setSize(new Dimension(80, 20));
+	lbl_svePerson_Coment.setPreferredSize(new Dimension(53, 15));
+	lbl_svePerson_Coment.setMinimumSize(new Dimension(80, 20));
+	lbl_svePerson_Coment.setHorizontalAlignment(SwingConstants.LEFT);
+	lbl_svePerson_Coment.setBorder(null);
+	lbl_svePerson_Coment.setAlignmentX(0.5f);
+	personSave_Coment_4B.add(lbl_svePerson_Coment);
+	
+	textField_svePerson_Coment = new JTextField();
+	textField_svePerson_Coment.setFont(new Font("Tahoma", Font.PLAIN, 11));
+	textField_svePerson_Coment.setColumns(78);
+	personSave_Coment_4B.add(textField_svePerson_Coment);
+	
+	return personSave_Coment_4B;
+	
+	}
+	
 	
 
 	private JPanel personSave_Panel_5(JPanel personSave_Panel) {
+	
+		
 		JPanel personSave_Panel_5 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) personSave_Panel_5.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		personSave_Panel.add(personSave_Panel_5);
 
-		lbl_svePerson_Text_Check_EnterInZone = new JLabel("New label");
+		lbl_svePerson_Text_Check_EnterInZone = new JLabel();
 		lbl_svePerson_Text_Check_EnterInZone.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(646, 14));
 		personSave_Panel_5.add(lbl_svePerson_Text_Check_EnterInZone);
@@ -843,12 +912,20 @@ public class PersonelManegementFrame extends JFrame {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		save_Panel.add(button_Panel);
 
-		JButton btn_SearchDBase_1 = new JButton("Search from DBase");
-		button_Panel.add(btn_SearchDBase_1);
-		btn_SearchDBase_1.setPreferredSize(new Dimension(110, 23));
-		btn_SearchDBase_1.setMargin(new Insets(2, 5, 2, 5));
-		btn_SearchDBase_1.setIconTextGap(1);
+		btn_SaveToExcelFile = new JButton("Save");
+		button_Panel.add(btn_SaveToExcelFile);
+		btn_SaveToExcelFile.setPreferredSize(new Dimension(110, 23));
+		btn_SaveToExcelFile.setMargin(new Insets(2, 5, 2, 5));
+		btn_SaveToExcelFile.setIconTextGap(1);
 
+		btn_SaveToExcelFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String text="";
+			
+			}
+
+		});
+		
 		JButton btn_Export = new JButton("Export");
 		button_Panel.add(btn_Export);
 		btn_Export.addActionListener(new ActionListener() {
@@ -1140,6 +1217,23 @@ public class PersonelManegementFrame extends JFrame {
 
 	public static void setBtn_InsertToTerit_2(JButton btn_InsertToTerit_2) {
 		PersonelManegementFrame.btn_InsertToTerit_2 = btn_InsertToTerit_2;
+	}
+
+	public static JButton getBtn_SaveToExcelFile() {
+		return btn_SaveToExcelFile;
+	}
+
+	public static void setBtn_SaveToExcelFile(JButton btn_SaveToExcelFile) {
+		PersonelManegementFrame.btn_SaveToExcelFile = btn_SaveToExcelFile;
+	}
+
+	
+	public static JTextField getTextField_svePerson_Coment() {
+		return textField_svePerson_Coment;
+	}
+
+	public static JTextField getTextField_svePerson_Year() {
+		return textField_svePerson_Year;
 	}
 
 }

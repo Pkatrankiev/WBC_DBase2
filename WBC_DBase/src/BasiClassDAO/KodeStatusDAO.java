@@ -22,7 +22,7 @@ public class KodeStatusDAO {
 
 	public static void setValueKodeStatus(Person Person,
 			String kode,
-			Zone zone,
+			int zone_ID,
 			boolean freeKode,
 			String year,
 			String zabelejkaKodeStatus) {
@@ -36,7 +36,7 @@ public class KodeStatusDAO {
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, Person.getId_Person());
 			preparedStatement.setString(2, kode);
-			preparedStatement.setInt(3, zone.getId_Zone());
+			preparedStatement.setInt(3, zone_ID);
 			preparedStatement.setBoolean(4, freeKode);
 			preparedStatement.setString(5, year);
 			preparedStatement.setString(6, zabelejkaKodeStatus);
@@ -45,8 +45,10 @@ public class KodeStatusDAO {
 			preparedStatement.executeUpdate();
 
 		} catch (SQLException e) {
+			if (!e.toString().contains("unique")) {
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
+			}
 		}
 	}
 

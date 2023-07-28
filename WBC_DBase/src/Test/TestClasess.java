@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -571,7 +573,17 @@ public class TestClasess {
 		}
 	}
 
-	
+	public static boolean OptionDialog(String mesage) {
+		String[] options = { "Skip", "Update" };
+		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		System.out.println(x);
+		
+		if (x > 0) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 	
