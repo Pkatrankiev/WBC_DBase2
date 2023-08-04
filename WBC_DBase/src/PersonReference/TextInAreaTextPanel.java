@@ -281,8 +281,8 @@ public class TextInAreaTextPanel {
 		masivePersonStatus[0] = yaer ;
 		masivePersonStatus[1] = perStat.getWorkplace().getOtdel();
 		masivePersonStatus[2] = perStat.getSpisak_prilogenia().getFormulyarName();
-		masivePersonStatus[3] =  sdf.format(perStat.getSpisak_prilogenia().getStartDate()).replace("01.01.2000", "-");
-		masivePersonStatus[4] =  sdf.format(perStat.getSpisak_prilogenia().getEndDate()).replace("01.01.2000", "-");;
+		masivePersonStatus[3] =  sdf.format(perStat.getSpisak_prilogenia().getStartDate());
+		masivePersonStatus[4] =  sdf.format(perStat.getSpisak_prilogenia().getEndDate());
 		masivePersonStatus[5] =  perStat.getZabelejka().replaceAll("\n", " ");
 		
 		return masivePersonStatus;
@@ -421,13 +421,18 @@ public class TextInAreaTextPanel {
 				@Override
 				public int compare(String[] entry1, String[] entry2) {
 					
-				
+					if(entry1[0].equals("-")) {
+						entry1[0] = "01.01.2000";
+					}
+					if(entry2[0].equals("-")) {
+						entry2[0] = "01.01.2000";
+					}
 					if( entry1[0].equals(entry2[0])){
 						  Date dateSet1 = null;
 			        	  Date dateSet2 = null;
 			        	 
 			        	  try {
-			        		
+//			        		  replace("01.01.2000", "-")
 			        	 	dateSet1 = sdf.parse(entry1[columnStartDate]);
 							dateSet2 = sdf.parse(entry2[columnStartDate]);
 						} catch (ParseException e) {

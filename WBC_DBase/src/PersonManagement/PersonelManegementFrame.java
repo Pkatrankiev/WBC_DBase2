@@ -20,18 +20,25 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import Aplication.ActionIcone;
+import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
+import BasiClassDAO.PersonDAO;
+import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
+import net.coderazzi.filters.gui.AutoChoices;
+import net.coderazzi.filters.gui.TableFilterHeader;
 
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
@@ -45,15 +52,16 @@ import javax.swing.Icon;
 public class PersonelManegementFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private static JPanel contentPane;
 	private JPanel panel_AllSaerch;
 	private JPanel panel_Search;
-	private JPanel infoPanel;
-	private JPanel tablePane;
+	private JPanel save_Panel;
+	private JPanel button_Panel;
+	private static JPanel infoPanel;
+	private static JPanel tablePane;
 	private JScrollPane scrollPane;
 	private static Choice comboBox_Firm;
 	private static Choice comboBox_Otdel;
-	private static Choice comboBox_Results;
 	private static Choice comboBox_savePerson_Firm;
 	private static Choice comboBox_savePerson_Otdel;
 
@@ -64,7 +72,7 @@ public class PersonelManegementFrame extends JFrame {
 	private static JTextField textField_LName;
 
 	private static JButton btn_SearchPerson;
-	private static JButton btnBackToTable;
+	private static JButton btn_ReadFileListPerson;
 	private static JButton btn_Clear;
 	private static JButton btn_savePerson_Insert;
 	private static JButton btn_Spisak;
@@ -74,6 +82,7 @@ public class PersonelManegementFrame extends JFrame {
 	private static JButton btn_InsertToTerit_2;
 
 	private static JButton btn_SaveToExcelFile;
+	private static JButton btn_Export;
 	
 	private static JRadioButton rdbtn_KodKZ1;
 	private static JRadioButton rdbtn_KodKZ2;
@@ -81,7 +90,7 @@ public class PersonelManegementFrame extends JFrame {
 	private static JRadioButton rdbtn_KodTerit_1;
 	private static JRadioButton rdbtn_KodTerit_2;
 
-	String[][] dataTable;
+	
 	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 	String labelCheckForSearch = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelCheckForSearch");
 	static List<Spisak_Prilogenia> listSpisak_Prilogenia;
@@ -106,6 +115,7 @@ public class PersonelManegementFrame extends JFrame {
 	
 	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
 	private JPanel personSave_Panel;
+	private JTextField textField;
 	
 
 	
@@ -187,6 +197,8 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_Btn_Spisak(btn_Spisak);
 
 		PersonelManegementMethods.ActionListener_Btn_SearchFreeKode(btn_SearchFreeKode, comboBox_Otdel);
+		
+		PersonelManegementMethods.ActionListener_Btn_Exportn(btn_Export, save_Panel, button_Panel); 
 
 		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
 		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
@@ -209,6 +221,9 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_textField_svePerson_Year(textField_svePerson_Year, btn_SaveToExcelFile);
 		
 		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(btn_SaveToExcelFile);
+		
+		PersonelManegementMethods.ActionListener_Btn_ReadFileListPerson( btn_ReadFileListPerson,  textArea,  
+				 infoPanel, tablePane,  panel_AllSaerch,  scrollPane, textField_svePerson_Year, textField );
 		
 		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_Year);
 		
@@ -482,19 +497,20 @@ public class PersonelManegementFrame extends JFrame {
 		fl_panel_4.setAlignment(FlowLayout.LEFT);
 		panel_4.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel_4);
-
-		comboBox_Results = new Choice();
-		comboBox_Results.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		comboBox_Results.setPreferredSize(new Dimension(590, 20));
-		panel_4.add(comboBox_Results);
+		
+		textField = new JTextField();
+		panel_4.add(textField);
+		textField.setColumns(41);
 
 //		ActionListenerComboBox_Results();
 
-		btnBackToTable = new JButton("BackToTable");
-		btnBackToTable.setEnabled(false);
-		btnBackToTable.setMargin(new Insets(2, 2, 2, 2));
-		btnBackToTable.setPreferredSize(new Dimension(90, 20));
-		panel_4.add(btnBackToTable);
+		btn_ReadFileListPerson = new JButton("Select File");
+		btn_ReadFileListPerson.setMargin(new Insets(2, 2, 2, 2));
+		btn_ReadFileListPerson.setPreferredSize(new Dimension(90, 20));
+		panel_4.add(btn_ReadFileListPerson);
+		
+		JLabel lblNewLabel = new JLabel("Select List Person from File ");
+		panel_4.add(lblNewLabel);
 
 //		ActionListenerBtnBackToTable();
 
@@ -503,7 +519,7 @@ public class PersonelManegementFrame extends JFrame {
 
 	private JPanel save_Panel() {
 
-		JPanel save_Panel = new JPanel();
+		save_Panel = new JPanel();
 		getContentPane().add(save_Panel, BorderLayout.SOUTH);
 		save_Panel.setLayout(new BoxLayout(save_Panel, BoxLayout.Y_AXIS));
 
@@ -926,23 +942,9 @@ public class PersonelManegementFrame extends JFrame {
 
 		});
 		
-		JButton btn_Export = new JButton("Export");
+		btn_Export = new JButton("Export");
 		button_Panel.add(btn_Export);
-		btn_Export.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (btnBackToTable.isEnabled() || dataTable == null) {
-
-					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
-							TextInAreaTextPanel.getMasivePersonStatusName(),
-							TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(),
-							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
-							TextInAreaTextPanel.getMasiveMeasur(), save_Panel);
-				} else {
-//				PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel);
-
-				}
-			}
-		});
+		
 		return button_Panel;
 	}
 
@@ -1236,6 +1238,31 @@ public class PersonelManegementFrame extends JFrame {
 		return textField_svePerson_Year;
 	}
 
+	
+	static void viewTablePanel() {
+		infoPanel.setPreferredSize(new Dimension(10, 0));
+		infoPanel.setMaximumSize(new Dimension(32767, 0));
+
+		tablePane.setPreferredSize(new Dimension(10, 10));
+		tablePane.setMaximumSize(new Dimension(32767, 32767));
+		
+
+		contentPane.repaint();
+		contentPane.revalidate();
+	}
+
+	static void viewInfoPanel() {
+		infoPanel.setPreferredSize(new Dimension(10, 10));
+		infoPanel.setMaximumSize(new Dimension(32767, 32767));
+
+		tablePane.setPreferredSize(new Dimension(10, 0));
+		tablePane.setMaximumSize(new Dimension(32767, 0));
+		
+		contentPane.repaint();
+		contentPane.revalidate();
+	}
+	
+	
 }
 
 

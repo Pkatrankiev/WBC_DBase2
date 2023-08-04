@@ -91,12 +91,17 @@ public class ReadExcelFileWBC {
 
 	
 	public static String getStringfromCell(Cell cell) {
-		
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
 		String str = "";
 		if(cell!= null) {
 		try {
 		String type = cell.getCellType().toString();
 		switch (type) {
+		case "DATA":
+		{
+			str = sdfrmt.format(cell.getDateCellValue());
+		}
+			break;
 		case "STRING": {
 			str = cell.getStringCellValue();
 		}
@@ -105,10 +110,16 @@ public class ReadExcelFileWBC {
 			str = "";
 		}
 			break;
-		case "DATA":
+		
 		case "NUMERIC": {
-			double doub = cell.getNumericCellValue();
-			str = new DecimalFormat("#").format(doub);
+			try {
+				str = sdfrmt.format(cell.getDateCellValue());	
+			} catch (Exception e) {
+				double doub = cell.getNumericCellValue();
+				str = new DecimalFormat("#").format(doub);
+			}
+			
+			
 			
 
 		}
@@ -129,7 +140,7 @@ public class ReadExcelFileWBC {
 	
 	@SuppressWarnings("deprecation")
 	public static String getStringEGNfromCell(Cell cell) {
-		
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
 		String str = "";
 		if(cell!= null) {
 		try {
@@ -144,6 +155,9 @@ public class ReadExcelFileWBC {
 		}
 			break;
 		case "DATA":
+		{
+			str = sdfrmt.format(cell.getDateCellValue());
+		}
 		case "NUMERIC": {
 			cell.setCellType(CellType.STRING);
 			str = cell.getStringCellValue();

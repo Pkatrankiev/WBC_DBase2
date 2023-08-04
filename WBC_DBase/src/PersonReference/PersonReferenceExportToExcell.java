@@ -35,7 +35,7 @@ import BasicClassAccessDbase.Person;
 
 public class PersonReferenceExportToExcell {
 
-	public static void btnExportTableToExcell(String[][] dataTable, String[] columnNames, JPanel panel_Btn) {
+	public static void btnExportTableToExcell(Object[][] dataTable, String[] columnNames, JPanel panel_Btn) {
 
 		GeneralMethods.setWaitCursor(panel_Btn);
 	
@@ -82,7 +82,7 @@ public class PersonReferenceExportToExcell {
 					for (int excellColumn = 0; excellColumn < dataTable[0].length; excellColumn++) {
 
 						cell = row.createCell(excellColumn, CellType.STRING);
-						cell.setCellValue(dataTable[excellrow][excellColumn]);
+						cell.setCellValue(dataTable[excellrow][excellColumn].toString());
 
 						setBordrCell(cell, workbook);
 

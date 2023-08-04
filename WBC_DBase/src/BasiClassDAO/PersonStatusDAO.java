@@ -678,6 +678,50 @@ public static List<PersonStatus>  getValuePersonStatusByWorkplaceAndYear( Workpl
 		return listPersonStatus;
 	}
 	
+	
+	public static PersonStatus  getLastValuePersonStatusByPerson(Person person) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatus where Person_ID = ?  ORDER BY PersonStatus_ID DESC";
+
+		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, person.getId_Person());
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				PersonStatus PersonStatus = new PersonStatus();
+
+				PersonStatus.setPersonStatus_ID(result.getInt("PersonStatus_ID"));
+				PersonStatus.setPerson(person);
+				Workplace workplace = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				PersonStatus.setWorkplace(workplace);
+				Spisak_Prilogenia spisak_Prilogenia = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(result.getInt("Spisak_Prilogenia_ID"));
+				PersonStatus.setSpisak_prilogenia(spisak_Prilogenia);
+				UsersWBC userWBC = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				PersonStatus.setUserWBC(userWBC);
+				PersonStatus.setDateSet(result.getDate("DateSet"));
+				PersonStatus.setZabelejka(result.getString("Zabelejka"));
+				listPersonStatus.add(PersonStatus);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		
+		if(listPersonStatus.size()==0)
+			return null;
+		
+		return listPersonStatus.get(0);
+	}	
+	
+	
 	public static boolean  PersonWithObhodenList(Person person) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();

@@ -490,7 +490,7 @@ public class PersonReferenceFrame extends JFrame {
 
 	}
 
-	private static String getLastWorkplaceByPerson(Person person) {
+	public static String getLastWorkplaceByPerson(Person person) {
 		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
 				"DateSet");
 		List<PersonStatus> sortedReversPeStatList = list.stream()
@@ -502,7 +502,7 @@ public class PersonReferenceFrame extends JFrame {
 		}
 	}
 
-	private static String getLastKodeByPersonAndZone(Person person, int zonaID) {
+	public static String getLastKodeByPersonAndZone(Person person, int zonaID) {
 		List<KodeStatus> list = KodeStatusDAO.getKodeStatusByPersonZone(person, zonaID);
 		if (list != null) {
 			List<KodeStatus> sortedReversKodeStatList = list.stream()

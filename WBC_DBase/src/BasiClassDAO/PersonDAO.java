@@ -282,5 +282,37 @@ public class PersonDAO {
 		}else return null;
 	}
 	
-	
+	public static List<Person> getValuePersonByAllName(String FName, String SName, String LName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person where FirstName = ? and  SecondName = ? and LastName = ?";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, FName);
+			preparedStatement.setObject(2, SName);
+			preparedStatement.setObject(3, LName);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPerson;
+	}
+
 }

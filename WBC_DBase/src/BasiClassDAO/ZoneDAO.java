@@ -227,6 +227,38 @@ public class ZoneDAO {
 		return list.get(0);
 	}
 	
+	public static Zone getValueZoneByNameTerritory(String nameTerritory) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Zone  where NameTerritory = ? LIMIT 1";
+		
+		List<Zone> list = new ArrayList<Zone>();
+		
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, nameTerritory);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				Zone resultObject = new Zone();
+				resultObject.setId_Zone(result.getInt("Zone_ID"));  
+				resultObject.setNameTerritory(result.getString("NameTerritory"));
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list.get(0);
+	}
+	
 	
 	public static List<Zone> getValueZoneByObjectSortByColumnName(String columnName, Object object, String sortColumnName) {
 
