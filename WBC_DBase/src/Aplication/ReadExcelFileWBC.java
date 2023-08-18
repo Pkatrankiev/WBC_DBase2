@@ -97,11 +97,7 @@ public class ReadExcelFileWBC {
 		try {
 		String type = cell.getCellType().toString();
 		switch (type) {
-		case "DATA":
-		{
-			str = sdfrmt.format(cell.getDateCellValue());
-		}
-			break;
+		
 		case "STRING": {
 			str = cell.getStringCellValue();
 		}
@@ -118,10 +114,12 @@ public class ReadExcelFileWBC {
 				double doub = cell.getNumericCellValue();
 				str = new DecimalFormat("#").format(doub);
 			}
-			
-			
-			
-
+		
+		}
+			break;
+		case "DATA":
+		{
+			str = sdfrmt.format(cell.getDateCellValue());
 		}
 			break;
 		}
@@ -156,7 +154,8 @@ public class ReadExcelFileWBC {
 			break;
 		case "DATA":
 		{
-			str = sdfrmt.format(cell.getDateCellValue());
+			cell.setCellType(CellType.STRING);
+			str = cell.getStringCellValue();
 		}
 		case "NUMERIC": {
 			cell.setCellType(CellType.STRING);

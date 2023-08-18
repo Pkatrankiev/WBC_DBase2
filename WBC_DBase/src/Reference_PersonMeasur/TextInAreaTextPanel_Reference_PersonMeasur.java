@@ -46,7 +46,7 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 		for (Person person : listPersonInport) {
 			List<KodeStatus> listKodeStst = KodeStatusDAO.getKodeStatusByPersonYear(person, year);
 			
-			if(listKodeStst.size()>0) {
+			if(listKodeStst != null && listKodeStst.size()>0) {
 				for (KodeStatus kodeStat : listKodeStst) {
 					masiveKode[index][0] = (index + 1)+"";
 				masiveKode[index][1] = person.getFirstName()+" "+person.getSecondName()+ " " +person.getLastName();

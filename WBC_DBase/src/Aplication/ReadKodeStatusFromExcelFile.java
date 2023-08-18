@@ -44,13 +44,11 @@ public class ReadKodeStatusFromExcelFile {
 				cell1 = sheet.getRow(row).getCell(6);
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if (EGN.contains("*"))
-						EGN = EGN.substring(0, EGN.length() - 1);
-					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
-					person = PersonDAO.getValuePersonByEGN(EGN);
+					person = getPersonFromEGNCell(cell);
+					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
 					if (person == null) {
-						ReadPersonStatusFromExcelFile.MessageDialog(FirstName);
+						System.out.println(EGN+" - "+FirstName);
+						ReadPersonStatusFromExcelFile.MessageDialog(EGN+" - "+FirstName);
 					}
 
 					cell = sheet.getRow(row).getCell(0);
@@ -271,7 +269,7 @@ public class ReadKodeStatusFromExcelFile {
 									}
 
 									if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-										egn = ReadExcelFileWBC.getStringfromCell(cell);
+										egn = ReadExcelFileWBC.getStringEGNfromCell(cell);
 										if (egn.contains("*"))
 											egn = egn.substring(0, egn.length() - 1);
 
@@ -373,9 +371,7 @@ public class ReadKodeStatusFromExcelFile {
 					cell1 = sheet.getRow(row).getCell(6);
 
 					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-						egn = ReadExcelFileWBC.getStringfromCell(cell);
-						if (egn.contains("*"))
-							egn = egn.substring(0, egn.length() - 1);
+						egn = getEGNFromENGCell(cell);
 
 						cell = sheet.getRow(row).getCell(0);
 						if (cell != null)
@@ -455,6 +451,19 @@ public class ReadKodeStatusFromExcelFile {
 		return kod;
 	}
 
+	static Person getPersonFromEGNCell(Cell cell) {
+		String EGN = getEGNFromENGCell(cell);
+Person person = PersonDAO.getValuePersonByEGN(EGN);
+		return person;
+	}
+
+	public static String getEGNFromENGCell(Cell cell) {
+		String EGN = ReadExcelFileWBC.getStringEGNfromCell(cell);
+		if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+		return EGN;
+	}
+	
+	
 	private static boolean firstCharIsLeter(String kod) {
 		try {
 			Integer.parseInt(kod);

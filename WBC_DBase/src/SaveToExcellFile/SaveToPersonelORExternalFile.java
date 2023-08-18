@@ -10,17 +10,10 @@ import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFComment;
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -29,27 +22,15 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.AreaPtgBase;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.hssf.usermodel.*;
 
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ResourceLoader;
-import BasiClassDAO.KodeStatusDAO;
-import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
@@ -85,17 +66,20 @@ public class SaveToPersonelORExternalFile {
 
 		try {
 			FileInputStream inputStream = new FileInputStream(pathFile);
-			Workbook workbook = new HSSFWorkbook(inputStream);
+			HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
 
 			firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
 
 			writePersonToOtdel2(person, workbook);
 
-			if(spPril != null) {
-			writeFormulyarNameToOtdel(firmName, spPril, workbook);
+			if (spPril != null) {
+				writeFormulyarNameToOtdel(firmName, spPril, workbook);
 
-			writeFormulyarNameToPersonRow(workbook, spPril, person);
+				writeFormulyarNameToPersonRow(workbook, spPril, person);
 			}
+
+			createCellComment(workbook, person);
+
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
 			workbook.write(outputStream);
 
@@ -116,10 +100,10 @@ public class SaveToPersonelORExternalFile {
 		}
 	}
 
-	static void writeFormulyarNameToOtdel(String firmName, Spisak_Prilogenia spPril, Workbook workbook) {
+	static void writeFormulyarNameToOtdel(String firmName, Spisak_Prilogenia spPril, HSSFWorkbook workbook) {
 
-		Sheet sheetSpPr = workbook.getSheetAt(3);
-		
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
+
 		firstAndLastRowForOtdel = getAreaOtdel(spPril.getWorkplace(), workbook);
 		int firstRowOtdel = firstAndLastRowForOtdel[0], endRowOtdel = firstAndLastRowForOtdel[1];
 		System.out.println(firstRowOtdel + "  " + endRowOtdel);
@@ -138,11 +122,11 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	private static void writeFormulyarNameToPersonRow(Workbook workbook, Spisak_Prilogenia spPril, Person person) {
+	private static void writeFormulyarNameToPersonRow(HSSFWorkbook workbook, Spisak_Prilogenia spPril, Person person) {
 //		 ТЪРСИМ РЕДА НА СЕЛЕКТИРАНОТО ЛИЦЕ В СПИСЪКА НА ПЕРСОНАЛА НА ФИРМАТА И ВЪВЕЖДАНЕ НА ЗАПОВЕДТА ЗА ЛИЦЕТО
 		int firstRowOtdel = firstAndLastRowForOtdel[0], endRowOtdel = firstAndLastRowForOtdel[1];
-		Sheet sheetSpPr = workbook.getSheetAt(3);
-		Cell cell;
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
+		HSSFCell cell;
 		String str_cell = "";
 		String egn = person.getEgn();
 		for (int i = firstRowOtdel; i <= endRowOtdel + 1; i++) {
@@ -165,14 +149,14 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	static void writePersonToOtdel(Spisak_Prilogenia spPril, Person person, Workbook workbook) {
+	static void writePersonToOtdel(Spisak_Prilogenia spPril, Person person, HSSFWorkbook workbook) {
 
 		int firstRowOtdel = firstAndLastRowForOtdel[0], endRowOtdel = firstAndLastRowForOtdel[1];
-		Sheet sheetSpPr = workbook.getSheetAt(3);
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
 		int maxRow = sheetSpPr.getLastRowNum();
 		int row = 5;
 		boolean fl = false;
-		Cell cell;
+		HSSFCell cell;
 		String str_cell = "";
 		String egn = person.getEgn();
 		while (row < maxRow) {
@@ -186,7 +170,7 @@ public class SaveToPersonelORExternalFile {
 					if (str_cell.equals(egn)) {
 						fl = true;
 						System.out.println("row1 " + row);
-						Row[] infoPersonFromExcell = saveRowsWithInfoPreson(workbook, row);
+						HSSFRow[] infoPersonFromExcell = saveRowsWithInfoPreson(workbook, row);
 						String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
 
 						saveBasicInfoPersonInExcelFile(infoPersonFromExcell, kode, person);
@@ -217,53 +201,50 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	static void writePersonToOtdel2(Person person, Workbook workbook) {
+	static void writePersonToOtdel2(Person person, HSSFWorkbook workbook) {
 		int firstRowOtdel = firstAndLastRowForOtdel[0];
 		int endRowOtdel = firstAndLastRowForOtdel[1];
 
 		int row = searchRowPersonInWorkbook(workbook, person);
 
-		boolean movePerson = false;
 		boolean isNewData = true;
 		if (row > 0) {
-			isNewData = false;
-			saveNewInfoByPersonInExcelFile(person, workbook, row);
-
+			if (firstRowOtdel > row && row > endRowOtdel) {
+				System.out.println("ЛИЦЕТО Е ОТ ОТДЕЛА");
+				saveNewInfoByPersonInExcelFile(person, workbook, row);
+			}
 			if (row < firstRowOtdel || row > endRowOtdel) {
-				movePerson = true;
-				System.out.println("ЛИЦЕТО НЕ Е В ОБЛАСТТА НА ФИРМАТА И ТРЯБВА ДА СЕ ПРЕМЕСТИ");
+				System.out.println("ЛИЦЕТО НЕ Е В ОБЛАСТТА НА ОТДЕЛА И ТРЯБВА ДА СЕ ПРЕМЕСТИ");
 				if (row > endRowOtdel) {
 					row++;
 				}
+				isNewData = false;
+				movePersonInWorkplaceArea(workbook, row, endRowOtdel, isNewData, person);
+				removeOldRow(workbook, row);
 			}
+		} else {
+			System.out.println("ЛИЦЕТО НЕ Е В ТОЗИ ФАЙЛ");
+			isNewData = true;
+			movePersonInWorkplaceArea(workbook, row, endRowOtdel, isNewData, person);
 		}
 
-		if(movePerson) {
-		movePersonInWorkplaceArea(workbook, row, endRowOtdel, isNewData, person);
-		if(!isNewData) {
-		colorInYelloFirst7cell(workbook, endRowOtdel);
-		removeOldRow(workbook, row);
-		}
-		}
+//					colorInYelloFirst7cell(workbook, endRowOtdel);
+
 	}
 
-	private static void saveNewInfoByPersonInExcelFile(Person person, Workbook workbook, int row) {
-		Row[] rowsWithInfoPersonFromExcell = saveRowsWithInfoPreson(workbook, row);
+	private static void saveNewInfoByPersonInExcelFile(Person person, HSSFWorkbook workbook, int row) {
+		HSSFRow[] rowsWithInfoPersonFromExcell = saveRowsWithInfoPreson(workbook, row);
 
 		String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
-
-		if (commentText.length() > 0) {
-			createCellComment(workbook, rowsWithInfoPersonFromExcell);
-		}
 
 		saveBasicInfoPersonInExcelFile(rowsWithInfoPersonFromExcell, kode, person);
 	}
 
-	private static int searchRowPersonInWorkbook(Workbook workbook, Person person) {
-		Sheet sheetSpPr = workbook.getSheetAt(3);
+	private static int searchRowPersonInWorkbook(HSSFWorkbook workbook, Person person) {
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
 		int maxRow = sheetSpPr.getLastRowNum();
 		int row = 5;
-		Cell cell;
+		HSSFCell cell;
 		String str_cell = "";
 		String egn = person.getEgn();
 
@@ -273,8 +254,7 @@ public class SaveToPersonelORExternalFile {
 				cell = sheetSpPr.getRow(row).getCell(5);
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-					str_cell = ReadExcelFileWBC.getStringfromCell(cell);
-					System.out.println(str_cell + " - " + egn);
+					str_cell = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if (str_cell.equals(egn)) {
 						return row;
 					}
@@ -285,16 +265,16 @@ public class SaveToPersonelORExternalFile {
 		return 0;
 	}
 
-	private static void colorInYelloFirst7cell(Workbook workbook, int row) {
-		Cell cell;
-		CellStyle style;
+	private static void colorInYelloFirst7cell(HSSFWorkbook workbook, int row) {
+		HSSFCell cell;
+		HSSFCellStyle style;
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 7; j++) {
 				cell = workbook.getSheetAt(i).getRow(row).getCell(j);
 				System.out.println(row + "/" + i + "/" + j + " style " + cell);
 				style = cell.getCellStyle();
-				style.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.index);
+				style.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
 				// and solid fill pattern produces solid grey cell fill
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 //				style.setFillBackgroundColor(IndexedColors.LIGHT_YELLOW.index);
@@ -305,16 +285,16 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	public static void removeOldRow(Workbook workbook, int rowIndex) {
+	public static void removeOldRow(HSSFWorkbook workbook, int rowIndex) {
 		for (int i = 0; i < 4; i++) {
-			Sheet sheet = workbook.getSheetAt(i);
+			HSSFSheet sheet = workbook.getSheetAt(i);
 
 			int lastRowNum = sheet.getLastRowNum();
 			if (rowIndex >= 0 && rowIndex < lastRowNum) {
 				sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
 			}
 			if (rowIndex == lastRowNum) {
-				Row removingRow = sheet.getRow(rowIndex);
+				HSSFRow removingRow = sheet.getRow(rowIndex);
 				if (removingRow != null) {
 					sheet.removeRow(removingRow);
 				}
@@ -322,7 +302,7 @@ public class SaveToPersonelORExternalFile {
 		}
 	}
 
-	private static void movePersonInWorkplaceArea(Workbook workbook, int row, int endRowOtdel, boolean isNewData,
+	private static void movePersonInWorkplaceArea(HSSFWorkbook workbook, int row, int endRowOtdel, boolean isNewData,
 			Person person) {
 		int lastRow;
 
@@ -330,20 +310,20 @@ public class SaveToPersonelORExternalFile {
 		String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
 
 		for (int i = 0; i < 4; i++) {
-			Sheet worksheet = workbook.getSheetAt(i);
+			HSSFSheet worksheet = workbook.getSheetAt(i);
 
 			lastRow = worksheet.getLastRowNum();
 			worksheet.shiftRows(endRowOtdel, lastRow, 1);
 			worksheet.createRow(endRowOtdel);
 
-			Row sourceRow = worksheet.getRow(row);
+			HSSFRow sourceRow = worksheet.getRow(row);
 
-			Row newRow = worksheet.getRow(endRowOtdel);
+			HSSFRow newRow = worksheet.getRow(endRowOtdel);
 
 			boolean withValues = false;
 			if (isNewData) {
 				sourceRow = worksheet.getRow(endRowOtdel - 1);
-				
+
 			} else {
 				withValues = true;
 			}
@@ -354,23 +334,25 @@ public class SaveToPersonelORExternalFile {
 			newRow.getCell(3).setCellValue(kode[3]);
 			newRow.getCell(4).setCellValue(kode[4]);
 			newRow.getCell(5).setCellValue(person.getEgn());
-			newRow.getCell(6).setCellValue(
-					person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
+			newRow.getCell(6)
+					.setCellValue(person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
 		}
 
 	}
 
-	private static void CopyValueFromOldCellToNewcell(Sheet worksheet, Row sourceRow, Row newRow, boolean withValues) {
+	@SuppressWarnings("deprecation")
+	private static void CopyValueFromOldCellToNewcell(HSSFSheet worksheet, HSSFRow sourceRow, HSSFRow newRow,
+			boolean withValues) {
 		int coldiff;
 		int rowdiff;
 		int columnOfNewFormulaCell;
 		int columnOfOldFormulaCell;
 		int rowOfNewFormulaCell;
 		int rowOfOldFormulaCell;
-		Cell newCell;
+		HSSFCell newCell;
 		for (int m = 0; m < sourceRow.getLastCellNum(); m++) {
 			// Grab a copy of the old/new cell
-			Cell oldCell = sourceRow.getCell(m);
+			HSSFCell oldCell = sourceRow.getCell(m);
 
 			// If the old cell is null jump to next cell
 			if (oldCell == null) {
@@ -380,7 +362,7 @@ public class SaveToPersonelORExternalFile {
 			}
 
 			// Copy style from old cell and apply to new cell
-			CellStyle newCellStyle = worksheet.getWorkbook().createCellStyle();
+			HSSFCellStyle newCellStyle = worksheet.getWorkbook().createCellStyle();
 			newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
 			newCell.setCellStyle(newCellStyle);
 
@@ -437,10 +419,10 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	private static String copyFormula(Sheet sheet, String formula, int coldiff, int rowdiff) {
+	private static String copyFormula(HSSFSheet sheet, String formula, int coldiff, int rowdiff) {
 
-		Workbook workbook = sheet.getWorkbook();
-		EvaluationWorkbook evaluationWorkbook = null;
+		HSSFWorkbook workbook = sheet.getWorkbook();
+		HSSFEvaluationWorkbook evaluationWorkbook = null;
 
 		evaluationWorkbook = HSSFEvaluationWorkbook.create((HSSFWorkbook) workbook);
 
@@ -471,7 +453,7 @@ public class SaveToPersonelORExternalFile {
 		return formula;
 	}
 
-	private static void saveBasicInfoPersonInExcelFile(Row[] infoForPerson, String[] kode, Person person) {
+	private static void saveBasicInfoPersonInExcelFile(HSSFRow[] infoForPerson, String[] kode, Person person) {
 
 		for (int i = 0; i < 4; i++) {
 			infoForPerson[i].getCell(0).setCellValue(kode[0]);
@@ -486,153 +468,201 @@ public class SaveToPersonelORExternalFile {
 
 	}
 
-	@SuppressWarnings("unused")
-	private static Comment createComment(Workbook workbook, String textComment, int sheetIndex, Cell cel) {
+	static void createCellComment(HSSFWorkbook workbook, Person peson) {
 
-		int row = cel.getRowIndex();
-		int cellColumn = cel.getColumnIndex();
-		HSSFPatriarch hpt = (HSSFPatriarch) workbook.getSheetAt(sheetIndex).createDrawingPatriarch();
-		HSSFCell cell1 = (HSSFCell) workbook.getSheetAt(4).createRow(row).createCell(cellColumn);
-		cell1.setCellValue("Excel Comment Example");
-		// Setting size and position of the comment in worksheet
-		HSSFComment comment = hpt.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
-		// Setting comment text
-		comment.setString(new HSSFRichTextString(textComment));
-		// Associating comment to the cell
-		cell1.setCellComment(comment);
+		if (commentText.length() > 0) {
+			int rowPerson = searchRowPersonInWorkbook(workbook, peson);
 
-		comment.setAuthor(comment.getAuthor());
-		return comment;
-	}
+			String authorText = workingUser.getNikName();
+			authorText = authorText + ":";
+			String commentString = authorText + "\n" + commentText;
 
-	static void createCellComment(Workbook workbook, Row[] infoForPerson) {
+			HSSFFont boldFont = workbook.createFont();
+			boldFont.setFontName("Tahoma");
+			boldFont.setFontHeightInPoints((short) 9);
+			boldFont.setBold(true);
 
-		String authorText = workingUser.getNikName();
-		authorText = authorText + ":";
-		String commentString = authorText + "\n" + commentText;
+			HSSFFont commentFont = workbook.createFont();
+			commentFont.setFontName("Tahoma");
+			commentFont.setFontHeightInPoints((short) 9);
+			commentFont.setBold(false);
+			HSSFCreationHelper creationHelper = workbook.getCreationHelper();
 
-		Font boldFont = workbook.createFont();
-		boldFont.setFontName("Tahoma");
-		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBold(true);
+			HSSFRichTextString richTextString = creationHelper.createRichTextString(commentString);
+			richTextString.applyFont(commentFont);
+			richTextString.applyFont(0, authorText.length(), boldFont);
+			HSSFCell cell;
 
-		Font commentFont = workbook.createFont();
-		commentFont.setFontName("Tahoma");
-		commentFont.setFontHeightInPoints((short) 9);
-		commentFont.setBold(false);
-		CreationHelper creationHelper = workbook.getCreationHelper();
+			for (int i = 0; i < 4; i++) {
 
-		RichTextString richTextString = creationHelper.createRichTextString(commentString);
-		richTextString.applyFont(commentFont);
-		richTextString.applyFont(0, authorText.length(), boldFont);
-		Cell cell;
-		for (int i = 0; i < 4; i++) {
-			cell = infoForPerson[i].getCell(6);
-			try {
+				cell = workbook.getSheetAt(i).getRow(rowPerson).getCell(6);
+				try {
+					// try to get the cell comment
+					HSSFComment comment = cell.getCellComment();
+					
+					if (comment == null) {
+						// create a new comment
+						createNewComment(authorText, richTextString, cell);
 
-				// try to get the cell comment
-				Comment comment = cell.getCellComment();
-				if (comment == null) { // create a new comment
-					HSSFPatriarch hpt = (HSSFPatriarch) cell.getSheet().createDrawingPatriarch();
-					// Setting size and position of the comment in worksheet
-					System.out.println("comment " + cell.getSheet().getSheetName() + " - " + cell.getColumnIndex() + "/"
-							+ cell.getRowIndex());
-					HSSFClientAnchor klA = new HSSFClientAnchor(0, 0, 1, 1, (short) (cell.getColumnIndex() + 1),
-							cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 4),
-							(cell.getRow().getRowNum() + 3));
-					HSSFComment commentH = hpt.createComment(klA);
-					// Setting comment text
-					commentH.setAuthor(authorText);
-					commentH.setString(richTextString);
-					// Associating comment to the cell
-					cell.setCellComment(commentH);
-				} else {
-					// apply author and text
-//		  comment.setAuthor(authorText);
-					comment.setString(richTextString);
+					} else {
+						richTextString = updateComment(authorText, commentString, boldFont, commentFont, creationHelper,
+								comment);
+					}
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
 				}
-			} catch (IllegalArgumentException e) {
 			}
 		}
 	}
 
-	static void create2CellComment(Workbook workbook, Cell cell, String authorText, String commentText) {
+	private static int getRowPerson1(HSSFWorkbook workbook, Person peson) {
+		HSSFCell cell;
+		String str_cell;
+		String egn = peson.getEgn();
+		HSSFSheet sheetSpPr = workbook.getSheetAt(0);
+		int lastRow = sheetSpPr.getLastRowNum();
+		int row = 0;
+		for (int i = 5; i <= lastRow; i++) {
+			if (sheetSpPr.getRow(i) != null) {
+				cell = sheetSpPr.getRow(i).getCell(5);
+				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+					str_cell = ReadExcelFileWBC.getStringfromCell(cell);
+					if (str_cell.equals(egn)) {
+						row = i;
+						i = lastRow;
 
-		int offsetX = 0;
-		int offsetY = 0;
-
-		Font boldFont = workbook.createFont();
-		boldFont.setBold(true);
-		Font commentFont = boldFont;
-		commentFont.setFontName("Tahoma");
-		commentFont.setFontHeightInPoints((short) 9);
-
-		boldFont.setFontName("Tahoma");
-		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBold(true);
-
-		// create the text content
-		CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
-		String commentString = authorText + "\n" + commentText;
-		RichTextString richTextString = creationHelper.createRichTextString(commentString);
-		richTextString.applyFont(commentFont);
-		richTextString.applyFont(0, authorText.length(), boldFont);
-		// try to get the cell comment
-		Comment comment = cell.getCellComment();
-		if (comment == null) { // create a new comment
-			// create the anchor
-			ClientAnchor anchor = creationHelper.createClientAnchor();
-			anchor.setCol1(cell.getColumnIndex());
-			anchor.setCol2(cell.getColumnIndex() + offsetX);
-			anchor.setRow1(cell.getRow().getRowNum());
-			anchor.setRow2(cell.getRow().getRowNum() + offsetY);
-			// create the comment and set it to the cell
-			@SuppressWarnings("rawtypes")
-			Drawing drawing = cell.getSheet().createDrawingPatriarch();
-			comment = drawing.createCellComment(anchor);
-			cell.setCellComment(comment);
+					}
+				}
+			}
 		}
+		return row;
+	}
+
+	private static void addCellComments(HSSFWorkbook wb, String authorText, HSSFRichTextString richTextString,
+			HSSFCell cell) {
+		try {
+//        	HSSFWorkbook wb = new HSSFWorkbook(); //or new HSSFWorkbook();
+			HSSFCreationHelper factory = wb.getCreationHelper();
+//        	HSSFSheet sheet = wb.createSheet();
+//        	HSSFRow row = sheet.createRow(3);
+//        	HSSFCell cell = row.createCell(5);
+			cell.setCellValue("F4");
+			HSSFPatriarch drawing = cell.getSheet().createDrawingPatriarch();
+			// When the comment box is visible, have it show in a 1x3 space
+			HSSFClientAnchor anchor = factory.createClientAnchor();
+			anchor.setCol1(cell.getColumnIndex());
+			anchor.setCol2(cell.getColumnIndex() + 1);
+			anchor.setRow1(cell.getRow().getRowNum());
+			anchor.setRow2(cell.getRow().getRowNum() + 3);
+
+			// Create the comment and set the text+author
+			HSSFComment comment = drawing.createCellComment(anchor);
+			HSSFRichTextString str = factory.createRichTextString("Hello, World!");
+			comment.setString(str);
+			comment.setAuthor("Apache POI");
+			// Assign the comment to the cell
+			cell.setCellComment(comment);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void createCellComment2(HSSFWorkbook workbook, String authorText, HSSFRichTextString richTextString,
+			HSSFCell cell) {
+//	Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
+
+		HSSFCreationHelper factory = workbook.getCreationHelper();
+
+		HSSFPatriarch drawing = cell.getSheet().createDrawingPatriarch();
+
+		// When the comment box is visible, have it show in a 1x3 space
+
+		HSSFClientAnchor anchor = factory.createClientAnchor();
+
+		anchor.setCol1(cell.getColumnIndex());
+
+		anchor.setCol2(cell.getColumnIndex() + 1);
+
+		anchor.setRow1(cell.getRow().getRowNum());
+
+		anchor.setRow2(cell.getRow().getRowNum() + 3);
+
+		// Create the comment and set the text+author
+
+		HSSFComment comment = drawing.createCellComment(anchor);
+
+		HSSFRichTextString str = factory.createRichTextString("Hello, World!");
+
+		comment.setString(str);
+
+		comment.setAuthor("Apache POI");
+
+		// Assign the comment to the cell
+
+		cell.setCellComment(comment);
+
+	}
+
+	public static void setComment(String text, HSSFCell cell) {
+		final Map<HSSFSheet, HSSFPatriarch> drawingPatriarches = new HashMap<HSSFSheet, HSSFPatriarch>();
+
+		HSSFCreationHelper createHelper = cell.getSheet().getWorkbook().getCreationHelper();
+		HSSFSheet sheet = (HSSFSheet) cell.getSheet();
+		HSSFPatriarch drawingPatriarch = drawingPatriarches.get(sheet);
+		if (drawingPatriarch == null) {
+			drawingPatriarch = sheet.createDrawingPatriarch();
+			drawingPatriarches.put(sheet, drawingPatriarch);
+		}
+
+		HSSFComment comment = drawingPatriarch
+				.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
+		comment.setString(createHelper.createRichTextString(text));
+		cell.setCellComment(comment);
+	}
+
+	private static HSSFRichTextString updateComment(String authorText, String commentString, HSSFFont boldFont,
+			HSSFFont commentFont, HSSFCreationHelper creationHelper, HSSFComment comment) {
+		HSSFRichTextString richTextString;
 		// apply author and text
 //		  comment.setAuthor(authorText);
-		comment.setString(richTextString);
-	}
+		HSSFRichTextString oldrichTextString = comment.getString();
+		String oldTextStr = oldrichTextString.getString();
+		int indexOldTextStr = oldTextStr.length();
+		int index1Autor = oldTextStr.indexOf(":");
 
-	static void duplicateCellComment(Workbook workbook, Cell cell, String authorText, String commentText) {
+		String str = oldTextStr + "\n " + commentString;
+		int index2Autor = str.lastIndexOf(":");
+		richTextString = creationHelper.createRichTextString(str);
+		int AllOldTextStr = str.length();
+		System.out.println(index1Autor + " " + indexOldTextStr + " " + index2Autor + " " + AllOldTextStr);
 
-		Font boldFont = workbook.getFontAt(0);
-		Font commentFont = workbook.getFontAt(0);
-		commentFont.setFontName("Tahoma");
-		commentFont.setFontHeightInPoints((short) 9);
-
-		boldFont.setFontName("Tahoma");
-		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBold(true);
-
-		Cell originCel = workbook.getSheetAt(3).getRow(0).getCell(0);
-		// create the text content
-		CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
-		authorText = authorText + ":";
-		String commentString = authorText + "\n" + commentText;
-		RichTextString richTextString = creationHelper.createRichTextString(commentString);
 		richTextString.applyFont(commentFont);
-		richTextString.applyFont(0, authorText.length(), boldFont);
-		// try to get the cell comment
-		Comment comment = cell.getCellComment();
-		Comment commentoriginal;
-		if (comment == null) { // create a new comment
-			commentoriginal = originCel.getCellComment();
-			comment = commentoriginal;
-			originCel.setCellComment(commentoriginal);
-			cell.setCellComment(comment);
-		}
-		// apply author and text
+		richTextString.applyFont(0, index1Autor, boldFont);
+		richTextString.applyFont(indexOldTextStr, index2Autor, boldFont);
+
 		comment.setAuthor(authorText);
 		comment.setString(richTextString);
+		return richTextString;
 	}
 
-	
-	private static Row[] saveRowsWithInfoPreson(Workbook workbook, int row) {
-		Row[] infoForPerson = new Row[4];
+	private static void createNewComment(String authorText, HSSFRichTextString richTextString, HSSFCell cell) {
+		HSSFPatriarch hpt = (HSSFPatriarch) cell.getSheet().createDrawingPatriarch();
+		// Setting size and position of the comment in worksheet
+		System.out.println(
+				"comment " + cell.getSheet().getSheetName() + " - " + cell.getColumnIndex() + "/" + cell.getRowIndex());
+		HSSFClientAnchor klA = new HSSFClientAnchor(0, 0, 1, 1, (short) (cell.getColumnIndex() + 1),
+				cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 4), (cell.getRow().getRowNum() + 3));
+		HSSFComment commentH = hpt.createComment(klA);
+		// Setting comment text
+		commentH.setAuthor(authorText);
+		commentH.setString(richTextString);
+		// Associating comment to the cell
+		cell.setCellComment(commentH);
+	}
+
+	private static HSSFRow[] saveRowsWithInfoPreson(HSSFWorkbook workbook, int row) {
+		HSSFRow[] infoForPerson = new HSSFRow[4];
 		for (int i = 0; i < 4; i++) {
 			infoForPerson[i] = workbook.getSheetAt(i).getRow(row);
 
@@ -640,14 +670,14 @@ public class SaveToPersonelORExternalFile {
 		return infoForPerson;
 	}
 
-	private static int[] getAreaOtdel(Workplace workplace, Workbook workbook) {
+	private static int[] getAreaOtdel(Workplace workplace, HSSFWorkbook workbook) {
 
-		Sheet sheetSpPr = workbook.getSheetAt(3);
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
 		int maxRow = sheetSpPr.getLastRowNum();
 		int row = 5;
 		int masiveRowOtdel[] = new int[2];
 		boolean fl = false;
-		Cell cell;
+		HSSFCell cell;
 		String str_cell = "";
 		while (row < maxRow) {
 
@@ -658,8 +688,7 @@ public class SaveToPersonelORExternalFile {
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 					str_cell = ReadExcelFileWBC.getStringfromCell(cell);
 
-					if (str_cell.equals(workplace.getOtdel())
-							|| str_cell.equals(workplace.getSecondOtdelName())) {
+					if (str_cell.equals(workplace.getOtdel()) || str_cell.equals(workplace.getSecondOtdelName())) {
 						masiveRowOtdel[0] = row;
 						fl = true;
 					}
@@ -675,17 +704,17 @@ public class SaveToPersonelORExternalFile {
 		return masiveRowOtdel;
 	}
 
-	private static boolean writeSpisPrilInRow(Spisak_Prilogenia spPril, Sheet sheetSpPr, int row) {
+	private static boolean writeSpisPrilInRow(Spisak_Prilogenia spPril, HSSFSheet sheetSpPr, int row) {
 		boolean fl = false;
 		int k = row;
-		Cell cell = sheetSpPr.getRow(row).getCell(7);
+		HSSFCell cell = sheetSpPr.getRow(row).getCell(7);
 		if (cell == null) {
 			while (cell == null) {
 				cell = sheetSpPr.getRow(k).getCell(7);
 				k--;
 			}
 		}
-		CellStyle newCellStyle = cell.getCellStyle();
+		HSSFCellStyle newCellStyle = cell.getCellStyle();
 		for (int m = 7; m <= 254; m += 3) {
 			cell = sheetSpPr.getRow(row).getCell(m);
 
@@ -707,9 +736,9 @@ public class SaveToPersonelORExternalFile {
 		return fl;
 	}
 
-	private static boolean checkSpisPrilInRow(Spisak_Prilogenia spPril, Sheet sheetSpPr, int row) {
+	private static boolean checkSpisPrilInRow(Spisak_Prilogenia spPril, HSSFSheet sheetSpPr, int row) {
 		boolean fl = false;
-		Cell cell, cell1, cell2;
+		HSSFCell cell, cell1, cell2;
 		String str_cell, str_cell1, str_cell2;
 		for (int m = 7; m <= 254; m += 3) {
 			cell = sheetSpPr.getRow(row).getCell(m);
@@ -721,7 +750,7 @@ public class SaveToPersonelORExternalFile {
 				str_cell1 = reformatDate(ReadExcelFileWBC.getStringfromCell(cell1));
 				str_cell2 = reformatDate(ReadExcelFileWBC.getStringfromCell(cell2));
 				if (str_cell.equals(spPril.getFormulyarName()) && str_cell1.equals(sdfrmt.format(spPril.getStartDate()))
-						&& str_cell2.equals(sdfrmt.format(spPril.getStartDate()))) {
+						&& str_cell2.equals(sdfrmt.format(spPril.getEndDate()))) {
 					fl = true;
 					m = 255;
 				}

@@ -20,25 +20,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
 import Aplication.ActionIcone;
-import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import BasiClassDAO.PersonDAO;
-import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.Spisak_Prilogenia;
-import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
-import PersonReference.TextInAreaTextPanel;
-import net.coderazzi.filters.gui.AutoChoices;
-import net.coderazzi.filters.gui.TableFilterHeader;
+
 
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
@@ -46,7 +38,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import javax.swing.Icon;
+
 
 
 public class PersonelManegementFrame extends JFrame {
@@ -93,7 +85,7 @@ public class PersonelManegementFrame extends JFrame {
 	
 	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 	String labelCheckForSearch = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelCheckForSearch");
-	static List<Spisak_Prilogenia> listSpisak_Prilogenia;
+//	static List<Spisak_Prilogenia> listSpisak_Prilogenia;
 	
 	static String oldOtdelPerson;
 	static Border defoutBorder;
@@ -933,14 +925,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_SaveToExcelFile.setPreferredSize(new Dimension(110, 23));
 		btn_SaveToExcelFile.setMargin(new Insets(2, 5, 2, 5));
 		btn_SaveToExcelFile.setIconTextGap(1);
-
-		btn_SaveToExcelFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String text="";
-			
-			}
-
-		});
+	
 		
 		btn_Export = new JButton("Export");
 		button_Panel.add(btn_Export);
@@ -972,13 +957,13 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementFrame.oldOtdelPerson = oldOtdelPerson;
 	}
 
-	public static List<Spisak_Prilogenia> getListSpisak_Prilogenia() {
-		return listSpisak_Prilogenia;
-	}
-
-	public static void setListSpisak_Prilogenia(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
-		PersonelManegementFrame.listSpisak_Prilogenia = listSpisak_Prilogenia;
-	}
+//	public static List<Spisak_Prilogenia> getListSpisak_Prilogenia() {
+//		return listSpisak_Prilogenia;
+//	}
+//
+//	public static void setListSpisak_Prilogenia(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
+//		PersonelManegementFrame.listSpisak_Prilogenia = listSpisak_Prilogenia;
+//	}
 
 	public static JRadioButton getRdbtn_KodKZ1() {
 		return rdbtn_KodKZ1;

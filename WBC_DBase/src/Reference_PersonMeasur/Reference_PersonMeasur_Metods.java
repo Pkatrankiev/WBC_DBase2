@@ -54,7 +54,7 @@ import PersonReference.PersonReferenceExportToExcell;
 public class Reference_PersonMeasur_Metods {
 	static String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 	static int	minYeare = Integer.parseInt(minYearInDbase);
-	
+	static String curentYear = AplicationMetods.getCurentYear();
 	static List<String> listOtdelKz;
 	static List<String> listOtdelVO;
 	static List<String> listOtdelAll;
@@ -221,6 +221,8 @@ public class Reference_PersonMeasur_Metods {
 				try {
 					if(!year.isEmpty()) {
 					dateStart =  sdf.parse("01.01." + year);
+					}else {
+						dateStart =  sdf.parse("01.01." + curentYear);
 					}
 					if(!startDate.isEmpty()) {
 						dateStart =  sdf.parse(startDate);
@@ -228,6 +230,8 @@ public class Reference_PersonMeasur_Metods {
 					
 					if(!year.isEmpty()) {
 					dateEnd =  sdf.parse("31.12." + year);
+					}else {
+						dateEnd =  sdf.parse("31.12." + curentYear);
 					}
 					if(!endDate.isEmpty()) {
 						dateEnd =  sdf.parse(endDate);
@@ -243,7 +247,7 @@ public class Reference_PersonMeasur_Metods {
 					Workplace workPlace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
 					textArea.setText("");
 				
-					 List<Person>  listPerson = spisakPersonFromWorkplace(workPlace, dateStart, dateEnd);
+					 List<Person>  listPerson = spisakPersonFromWorkplace(workPlace, curentYear);
 
 						String textForArea = TextInAreaTextPanel_Reference_PersonMeasur.createInfoPanelForPerson(listPerson, textField_Year.getText(), dateStart,  dateEnd);
 						if(textForArea.isEmpty()) {
@@ -264,15 +268,27 @@ public class Reference_PersonMeasur_Metods {
 
 	}
 	
-	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, Date dateStart, Date dateEnd){
+	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, String curentYear ){
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		Date dateStart = null;
+		Date dateEnd = null;
+		try {
+			dateStart = sdf.parse("01.01." + curentYear);
+			dateEnd  = sdf.parse("31.12." + curentYear);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		List<Integer> listPersonID = new ArrayList<>();
 		List<Person> listPerson = new ArrayList<>();
-		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplaceAndYear(workPlace, dateStart, dateEnd);
+		List<Person> listPersonNew = new ArrayList<>();
+		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplace_DateStart_DateEnd(workPlace, dateStart, dateEnd);
 		System.out.println(listPerStat.size());
 		
 		for (PersonStatus personStatus : listPerStat) {
-						listPersonID.add(personStatus.getPerson().getId_Person());
+					listPersonID.add(personStatus.getPerson().getId_Person());	
+		
 		}
 		
 		 listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
@@ -281,7 +297,17 @@ public class Reference_PersonMeasur_Metods {
 			listPerson.add(PersonDAO.getValuePersonByID(integer));	
 		}
 
-		return listPerson;
+		for (Person person : listPerson) {
+			PersonStatus perStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
+			String zabel = perStat.getZabelejka();
+			String formuliarName = perStat.getSpisak_prilogenia().getFormulyarName();
+			if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ")) {
+				System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
+				listPersonNew.add(person);		
+		}
+		
+		}
+		return listPersonNew;
 	}
 
 

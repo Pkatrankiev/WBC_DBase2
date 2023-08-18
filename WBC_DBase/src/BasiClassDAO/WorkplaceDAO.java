@@ -245,8 +245,45 @@ public class WorkplaceDAO {
 		return list;
 	}
 	
-	
-	
+	public static List<Workplace> getActualValueWorkplaceByFirm(String firmName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Workplace  where Actual = true and FirmName = ? ";
+		
+		List<Workplace> list = new ArrayList<Workplace>();
+		
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, firmName);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				Workplace resultObject = new Workplace();
+				resultObject.setId_Workplace(result.getInt("Workplace_ID"));
+				resultObject.setFirmName (result.getString("FirmName"));
+				resultObject.setOtdel(result.getString("Otdel"));
+				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
+				resultObject.setActual(result.getBoolean("Actual"));
+				resultObject.setNapOtdelSector(result.getString("NapOtdelSector"));
+				if(result.getInt("Lab_ID")>0) {;
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				}
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
 	
 	
 	
@@ -366,17 +403,17 @@ public class WorkplaceDAO {
 		return list;
 	}
 	
-	public static List<Workplace> getActualValueWorkplaceByFirm(String firmName) {
+	public static Workplace getActualValueWorkplaceByOtdel(String otdel) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM Workplace  where Actual = true and FirmName = ? ";
+		String sql = "SELECT * FROM Workplace  where Actual = true and Otdel = ? ";
 		
 		List<Workplace> list = new ArrayList<Workplace>();
 		
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setObject(1, firmName);
+			preparedStatement.setObject(1, otdel);
 			ResultSet result = preparedStatement.executeQuery();
 
 
@@ -403,7 +440,11 @@ public class WorkplaceDAO {
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
 		}
-		return list;
+		
+		if(list.size()>0) {
+		return list.get(0);
+		}
+		return null;
 	}
 	
 	public static Workplace getValueWorkplaceByID(int id) {

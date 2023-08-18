@@ -1,5 +1,6 @@
 package Test;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import Aplication.ActionIcone;
@@ -32,16 +33,26 @@ public class TestMainClass {
 			
 //			TestClasess.CheckCorrectionAllRowInSheets();
 			
+			try {
+				TestClasess.createCellComment("6910041886", "333333");
+				System.out.println("8888888888888888888888");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
  
-			ActionIcone round = new ActionIcone();
-			 final Thread thread = new Thread(new Runnable() {
-			     @Override
-			     public void run() {
-			    	 
-			    	new PersonelManegementFrame(round);
-			     }
-			    });
-			    thread.start();	
+//			ActionIcone round = new ActionIcone();
+//			 final Thread thread = new Thread(new Runnable() {
+//			     @Override
+//			     public void run() {
+//			    	 
+//			    	new PersonelManegementFrame(round);
+//			    	
+//			    	
+//			     }
+//			    });
+//			    thread.start();	
 			
 			
 			

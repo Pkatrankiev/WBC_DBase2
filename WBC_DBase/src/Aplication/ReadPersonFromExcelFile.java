@@ -26,10 +26,8 @@ public class ReadPersonFromExcelFile {
 				cell1 = sheet.getRow(row).getCell(6);
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
-					if (PersonDAO.getValuePersonByEGN(EGN) == null) {
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+					if (ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell) == null) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
 						String[] names = ReadExcelFileWBC.splitAllName(FirstName);

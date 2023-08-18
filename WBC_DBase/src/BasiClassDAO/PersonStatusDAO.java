@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -53,10 +55,11 @@ public class PersonStatusDAO {
 		} catch (SQLException e) {
 			if (e.toString().contains("unique")) {
 				String str = "Съдържа повтарящи се полета";
-				MessageDialog(str);
-			}
+//				MessageDialog(str);
+			}else {
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
+			}
 		}
 	}
 
@@ -88,9 +91,10 @@ public class PersonStatusDAO {
 						+ personStatus.getUserWBC().getLastName() + " " + personStatus.getZabelejka().toString() + " "
 						+ personStatus.getDateSet().toString());
 //				MessageDialog(str);
-			}
+			}else {
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
+			}
 		}
 	}
 
@@ -127,10 +131,11 @@ public class PersonStatusDAO {
 		} catch (SQLException e) {
 			if (e.toString().indexOf("unique")>0) {
 				deleteValuePersonStatus(personStatus);
-			}
+			}else {
 			
-//			ResourceLoader.appendToFile( e);
-//			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+			}
 		}
 	}
 
@@ -475,7 +480,7 @@ public class PersonStatusDAO {
 		return listPersonStatus;
 	}
 	
-public static List<PersonStatus>  getValuePersonStatusByWorkplaceAndYear( Workplace workplace, Date dateStart, Date dateEnd) {
+	public static List<PersonStatus>  getValuePersonStatusByWorkplace_DateStart_DateEnd( Workplace workplace, Date dateStart, Date dateEnd) {
 	
 	
 		
@@ -519,6 +524,62 @@ public static List<PersonStatus>  getValuePersonStatusByWorkplaceAndYear( Workpl
 		return listPersonStatus;
 	}
 	
+
+
+
+
+
+	public static List<PersonStatus>  getValuePersonStatusByWorkplace_Year( Workplace workplace, String year) {
+	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+	Date dateStart = null;
+	Date dateEnd = null;
+	try {
+		dateStart = sdf.parse("01.01."+year);
+		dateEnd = sdf.parse("31.12."+year);
+	} catch (ParseException e1) {
+		e1.printStackTrace();
+	}
+	
+	
+	Connection connection = conectToAccessDB.conectionBDtoAccess();
+	String sql = "SELECT * FROM PersonStatus where  Workplace_ID = ? AND DateSet >= ? AND DateSet <= ?";
+
+	List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
+
+	try {
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		
+		preparedStatement.setObject(1, workplace.getId_Workplace());
+		preparedStatement.setObject(2, dateStart);
+		preparedStatement.setObject(3, dateEnd);
+
+		ResultSet result = preparedStatement.executeQuery();
+
+		while (result.next()) {
+			PersonStatus PersonStatus = new PersonStatus();
+
+			PersonStatus.setPersonStatus_ID(result.getInt("PersonStatus_ID"));
+			Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+			PersonStatus.setPerson(person);
+			PersonStatus.setWorkplace(workplace);
+			Spisak_Prilogenia spisak_Prilogenia = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(result.getInt("Spisak_Prilogenia_ID"));
+			PersonStatus.setSpisak_prilogenia(spisak_Prilogenia);
+			UsersWBC userWBC = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+			PersonStatus.setUserWBC(userWBC);
+			PersonStatus.setDateSet(result.getDate("DateSet"));
+			PersonStatus.setZabelejka(result.getString("Zabelejka"));
+			listPersonStatus.add(PersonStatus);
+		}
+		
+		preparedStatement.close();
+		connection.close();
+		
+	} catch (SQLException e) {
+		ResourceLoader.appendToFile( e);
+		e.printStackTrace();
+	}
+	return listPersonStatus;
+}
 	
 	
 	public static List<PersonStatus>  getValuePersonStatusByPersonAndDateSet(Person person, Date dateSet) {
@@ -682,7 +743,7 @@ public static List<PersonStatus>  getValuePersonStatusByWorkplaceAndYear( Workpl
 	public static PersonStatus  getLastValuePersonStatusByPerson(Person person) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatus where Person_ID = ?  ORDER BY PersonStatus_ID DESC";
+		String sql = "SELECT * FROM PersonStatus where Person_ID = ?  ORDER BY Spisak_Prilogenia_ID DESC";
 
 		List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
 

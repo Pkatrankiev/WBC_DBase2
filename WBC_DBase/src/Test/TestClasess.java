@@ -1,6 +1,10 @@
 package Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,13 +19,25 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFCreationHelper;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
@@ -256,6 +272,231 @@ public class TestClasess {
 		}
 	}
 
+	static void createCellComment(String egn, String commentText ) throws FileNotFoundException {
+		String filePath[] = {
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2"),
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2") };
+		String pathFile = filePath[1];
+		FileInputStream inputStream;
+		HSSFWorkbook workbook = null;
+		try {
+			inputStream = new FileInputStream("d:\\Test.xls");
+			HSSFWorkbook workbook0 = new HSSFWorkbook(inputStream);
+			HSSFCell cell0 = workbook0.getSheetAt(0).getRow(0).getCell(0);
+			HSSFComment comment0 = cell0.getCellComment();
+			  System.out.println( "******** "+comment0.getShapeId());
+//			if (comment0 != null) {
+//				HSSFRichTextString rTString = comment0.getString();
+//				comment0.setString(rTString);
+//				cell0.setCellComment(comment0);
+//			}
+			
+			inputStream = new FileInputStream(pathFile);
+			 workbook = new HSSFWorkbook(inputStream);
+			 
+		
+		int rowPerson = searchRowPersonInWorkbook( workbook,  egn);
+		System.out.println(rowPerson);
+		if (commentText.length() > 0) {
+			
+
+			String authorText = "katrankjievvv";
+			authorText = authorText + ":";
+			String commentString = authorText + "\n" + commentText;
+
+			HSSFFont boldFont = workbook.createFont();
+			boldFont.setFontName("Tahoma");
+			boldFont.setFontHeightInPoints((short) 9);
+			boldFont.setBold(true);
+
+			HSSFFont commentFont = workbook.createFont();
+			commentFont.setFontName("Tahoma");
+			commentFont.setFontHeightInPoints((short) 9);
+			commentFont.setBold(false);
+			HSSFCreationHelper creationHelper = workbook.getCreationHelper();
+
+			HSSFRichTextString richTextString = creationHelper.createRichTextString(commentString);
+			richTextString.applyFont(commentFont);
+			richTextString.applyFont(0, authorText.length(), boldFont);
+			HSSFCell cell;
+			
+			HSSFCreationHelper factory = workbook.getCreationHelper();
+			HSSFClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5);
+			
+			
+			
+			
+			for (int i = 0; i < 4; i++) {
+
+				cell = workbook.getSheetAt(i).getRow(rowPerson).getCell(6);
+				try {
+					// try to get the cell comment
+					HSSFComment comment = cell.getCellComment();
+					
+					if (comment == null) {
+						// create a new comment
+//						cell.setCellComment(comment0);
+//						cell0.setCellComment(comment0);
+//						createNewComment(authorText, richTextString, cell);
+//						HSSFPatriarch patr = workbook.getSheetAt(i).createDrawingPatriarch();
+//						 HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+					     System.out.println(comment0.getString());
+					     System.out.println(cell.getStringCellValue());
+//						comment0.setString(richTextString);
+//					      cell.setCellComment(comment0);
+						
+					     HSSFPatriarch drawing_master = workbook.getSheetAt(i).createDrawingPatriarch();
+					      anchor.setCol1(cell.getColumnIndex());
+					        anchor.setCol2(cell.getColumnIndex()+1);
+					        anchor.setRow1(cell.getRow().getRowNum());
+					        anchor.setRow2(cell.getRow().getRowNum()+5);
+					        HSSFComment comment1 = (HSSFComment) drawing_master.createCellComment(anchor);
+					        System.out.println( "------ "+comment1.getShapeName());
+					        comment1.setAuthor(authorText);
+					      comment1.setString(richTextString);
+					      cell.setCellComment(comment1);
+						
+
+					} else {
+						richTextString = updateComment(authorText, commentString, boldFont, commentFont, creationHelper,
+								comment);
+					}
+					
+					
+					
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+			
+		FileOutputStream outputStream = new FileOutputStream(pathFile);
+		workbook.write(outputStream);
+
+		workbook.close();
+
+		outputStream.flush();
+		outputStream.close();	
+		
+		
+		} catch (OldExcelFormatException |IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+			
+	
+		
+	}
+	
+	public static void newComments33() throws IOException  {
+
+	      HSSFWorkbook wb = new HSSFWorkbook();
+	      HSSFSheet sheet = wb.createSheet("Cell comments in POI HSSF");
+
+
+	      HSSFPatriarch patr = sheet.createDrawingPatriarch();
+	      HSSFCell cell1 = sheet.createRow(3).createCell((short)1);
+	      cell1.setCellValue(new HSSFRichTextString("Hello, World"));
+
+	      //anchor defines size and position of the comment in worksheet
+	      HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+	      comment1.setString(new HSSFRichTextString("FirstComments"));
+	      cell1.setCellComment(comment1);
+	      System.out.println("Cell comments: "+cell1.getCellComment().getString());
+
+	      patr = sheet.createDrawingPatriarch();
+	      comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+	      //HSSFComment comment2=patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+	      HSSFCell cell2 = sheet.createRow(6).createCell((short)1);
+	      cell2.setCellValue(36.6);
+	      comment1.setString(new HSSFRichTextString("second commetns"));
+	      cell2.setCellComment(comment1);
+	      System.out.println("Cell comments: "+cell2.getCellComment().getString());
+
+	      patr = sheet.createDrawingPatriarch();
+	      comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+	      //HSSFComment comment3=patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
+	      cell2 = sheet.createRow(10).createCell((short)1);
+	      cell2.setCellValue(150);
+	      comment1.setString(new HSSFRichTextString("Third commetns"));
+	      cell2.setCellComment(comment1);
+	      System.out.println("Cell comments: "+cell2.getCellComment().getString());
+
+	      FileOutputStream out = new FileOutputStream("C:/Documents and Settings/saravanan/Desktop/cellcomments.xls");
+	      wb.write(out);
+	      out.close();
+	}
+	
+	
+	
+	private static int searchRowPersonInWorkbook(HSSFWorkbook workbook, String egn) {
+		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
+		int maxRow = sheetSpPr.getLastRowNum();
+		int row = 5;
+		HSSFCell cell;
+		String str_cell = "";
+		
+		while (row < maxRow) {
+			if (sheetSpPr.getRow(row) != null) {
+
+				cell = sheetSpPr.getRow(row).getCell(5);
+
+				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+					str_cell = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+					if (str_cell.equals(egn)) {
+						return row;
+					}
+				}
+			}
+			row++;
+		}
+		return 0;
+	}
+
+	
+	
+	
+	private static HSSFRichTextString updateComment(String authorText, String commentString, HSSFFont boldFont,
+			HSSFFont commentFont, HSSFCreationHelper creationHelper, HSSFComment comment) {
+		HSSFRichTextString richTextString;
+		// apply author and text
+//		  comment.setAuthor(authorText);
+		HSSFRichTextString oldrichTextString = comment.getString();
+		String oldTextStr = oldrichTextString.getString();
+		int indexOldTextStr = oldTextStr.length();
+		int index1Autor = oldTextStr.indexOf(":");
+
+		String str = oldTextStr + "\n " + commentString;
+		int index2Autor = str.lastIndexOf(":");
+		richTextString = creationHelper.createRichTextString(str);
+		int AllOldTextStr = str.length();
+		System.out.println(index1Autor + " " + indexOldTextStr + " " + index2Autor + " " + AllOldTextStr);
+
+		richTextString.applyFont(commentFont);
+		richTextString.applyFont(0, index1Autor, boldFont);
+		richTextString.applyFont(indexOldTextStr, index2Autor, boldFont);
+
+		comment.setAuthor(authorText);
+		comment.setString(richTextString);
+		return richTextString;
+	}
+	
+	private static void createNewComment(String authorText, HSSFRichTextString richTextString, HSSFCell cell) {
+		HSSFPatriarch hpt = (HSSFPatriarch) cell.getSheet().createDrawingPatriarch();
+		// Setting size and position of the comment in worksheet
+		System.out.println(
+				"comment " + cell.getSheet().getSheetName() + " - " + cell.getColumnIndex() + "/" + cell.getRowIndex());
+		HSSFClientAnchor klA = new HSSFClientAnchor(0, 0, 1, 1, (short) (cell.getColumnIndex() + 1),
+				cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 4), (cell.getRow().getRowNum() + 3));
+		HSSFComment commentH = hpt.createComment(klA);
+		// Setting comment text
+		commentH.setAuthor(authorText);
+		commentH.setString(richTextString);
+		// Associating comment to the cell
+		cell.setCellComment(commentH);
+	}
+	
+	
 	
 	@SuppressWarnings("deprecation")
 	public static void CheckForCorrectionMeasuringDataInSheet0AndSeet1() {

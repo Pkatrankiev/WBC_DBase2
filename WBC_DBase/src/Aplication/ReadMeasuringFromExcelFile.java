@@ -60,9 +60,7 @@ public class ReadMeasuringFromExcelFile {
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
-				Person person = PersonDAO.getValuePersonByEGN(EGN);
+				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						int k = 7;
@@ -109,9 +107,7 @@ public class ReadMeasuringFromExcelFile {
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
-				Person person = PersonDAO.getValuePersonByEGN(EGN);
+				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						int k = 7;

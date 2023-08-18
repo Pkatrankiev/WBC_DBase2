@@ -63,10 +63,11 @@ public class PersonDAO {
 
 			preparedStatement.executeUpdate();
 			
-//			preparedStatement.close();
-//			connection.close();
+			preparedStatement.close();
+			connection.close();
 
 		} catch (SQLException e) {
+			System.out.println("Съдържа повтарящи се полета");
 //			if (e.toString().contains("unique")) {
 //				String str = "Съдържа повтарящи се полета";
 //				MessageDialog(str);

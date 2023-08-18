@@ -45,7 +45,7 @@ public class ReadResultsWBCFromExcelFile {
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
 		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
-		String EGN = "", lab;;
+		String  lab;;
 		Date date;
 		double[] nuclideValue = new double[16];
 		double val;
@@ -60,12 +60,9 @@ public class ReadResultsWBCFromExcelFile {
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
-				Person person = PersonDAO.getValuePersonByEGN(EGN);
+					Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 				if (person != null) {
-					System.out.println("++++++++++++++++++++"+EGN);
-					
+										
 					int k = 7;
 					cell1 = sheet.getRow(row).getCell(k);
 					k++;
@@ -126,6 +123,11 @@ public class ReadResultsWBCFromExcelFile {
 		return listResultsWBC;
 	}
 
+
+
+
+
+
 	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook ) {
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
@@ -144,10 +146,7 @@ public class ReadResultsWBCFromExcelFile {
 				cell = sheet.getRow(row).getCell(5);
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
-				Person person = PersonDAO.getValuePersonByEGN(EGN);
+				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						

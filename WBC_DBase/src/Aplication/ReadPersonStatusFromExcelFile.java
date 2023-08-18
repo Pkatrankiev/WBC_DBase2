@@ -43,10 +43,12 @@ public class ReadPersonStatusFromExcelFile {
 	}
 
 	public static List<PersonStatus> getObhodenListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
+		System.out.println(pathFile+"  "+firmName+"  "+year);
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		if (workbook.getNumberOfSheets() > 2) {
-			listPerStat = getObhodenList_PersonStatusFromBigExcelFile(workbook, firmName, year);
+			System.out.println(workbook.getNumberOfSheets());
+			listPerStat = getObhodenList_PersonStatusFromBigExcelFile(pathFile, workbook, firmName, year);
 		} 
 		return listPerStat;
 	}
@@ -74,10 +76,7 @@ public class ReadPersonStatusFromExcelFile {
 			}
 
 			if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-				EGN = ReadExcelFileWBC.getStringfromCell(cell);
-				if (EGN.contains("*")) {
-					EGN = EGN.substring(0, EGN.length() - 1);
-				}
+				EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if(EGN.equals(personEGN)) {
 					return workplace;
 				}
@@ -137,12 +136,8 @@ public class ReadPersonStatusFromExcelFile {
 				}
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if (EGN.contains("*"))
-						EGN = EGN.substring(0, EGN.length() - 1);
+					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
-
-					person = PersonDAO.getValuePersonByEGN(EGN);
 					if (person == null) {
 						MessageDialog(FirstName);
 					}
@@ -223,16 +218,11 @@ public class ReadPersonStatusFromExcelFile {
 				}
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if (EGN.contains("*"))
-						EGN = EGN.substring(0, EGN.length() - 1);
-					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
-					
+					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
 					zab = searchComent(workbook, row);
-					
-					person = PersonDAO.getValuePersonByEGN(EGN);
+					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person == null) {
-						MessageDialog(FirstName);
+						MessageDialog(EGN+" - "+FirstName);
 					}
 
 					int k = 7;
@@ -264,7 +254,7 @@ public class ReadPersonStatusFromExcelFile {
 
 	}
 
-	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(Workbook workbook,	String firmName, String year) {
+	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(String pathFile, Workbook workbook,	String firmName, String year) {
 				
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
@@ -273,41 +263,63 @@ public class ReadPersonStatusFromExcelFile {
 
 		Person person;
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
-		String EGN = "", FirstName = "", zab = "";
+		String EGN = "", FirstName = "", zab = "", dataObhodelistExt = "", dataObhodelist = "";
 		Workplace workplace = new Workplace();
 		Sheet sheet = workbook.getSheetAt(4);
-		Cell cell, cell1;
+		Cell cell, cell0, cell1;
+		System.out.println(sheet.getLastRowNum());
 		for (int row = 0; row <= sheet.getLastRowNum(); row += 1) {
 			zab = "";
 			if (sheet.getRow(row) != null) {
-				cell = sheet.getRow(row).getCell(5);
-				cell1 = sheet.getRow(row).getCell(6);
+				
+				cell = sheet.getRow(row).getCell(3);
+				cell1 = sheet.getRow(row).getCell(4);
+				
+				if (pathFile.contains("EXTERNAL")) {
+					cell0 = sheet.getRow(row).getCell(0);
+					if (ReadExcelFileWBC.CellNOEmpty(cell0) && ReadExcelFileWBC.CellNOEmpty(cell0)) {
+						dataObhodelistExt = ReadExcelFileWBC.getStringfromCell(cell0);
+						
+					}
+					cell = sheet.getRow(row).getCell(4);
+					cell1 = sheet.getRow(row).getCell(5);
+					
+				}
+				
+				
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if (EGN.contains("*"))
-						EGN = EGN.substring(0, EGN.length() - 1);
 					FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
-					person = PersonDAO.getValuePersonByEGN(EGN);
+					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person == null) {
 						MessageDialog(FirstName);
 					}
 					
-					cell = sheet.getRow(row).getCell(7);
-					String dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
-					dataObhodelist = dataObhodelist.replace("Обходен лист от", "").replace("г.", "").trim();
+					
 					
 					try {
+						if (pathFile.contains("EXTERNAL")) {
+							cell = sheet.getRow(row).getCell(7);
+							dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
+							zab = dataObhodelist;
+							dateObhList = sdfrmt.parse(dataObhodelistExt);
+						}else {
+							cell = sheet.getRow(row).getCell(6);
+							dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
+							zab = dataObhodelist;
+						int index = dataObhodelist.indexOf("от")+2;
+							dataObhodelist = dataObhodelist.substring(index,index+11).trim();
 						dateObhList = sdfrmt.parse(dataObhodelist);
+						}
 						dateSet = sdfrmt.parse("31.12." + year);
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
-					System.out.println(person.getEgn()+"  "+ sdfrmt.format(dateObhList));
+					System.out.println("егн "+person.getEgn()+"  "+ sdfrmt.format(dateObhList));
 					
-					if(!PersonStatusDAO.PersonWithObhodenList(person)) {
+//					if(!PersonStatusDAO.PersonWithObhodenList(person)) {
 					
-					workplace = getWorkplaceByEGNFromExcell( workbook,  firmName, person.getEgn());
+					workplace = PersonStatusDAO.getLastValuePersonStatusByPerson( person).getWorkplace();
 					
 					System.out.println(workplace.getOtdel());
 					
@@ -322,7 +334,7 @@ public class ReadPersonStatusFromExcelFile {
 					}else {
 						spPrObhodList.getFormulyarName() ;
 					}
-					}	
+//					}	
 				}
 			}
 
@@ -445,10 +457,7 @@ public class ReadPersonStatusFromExcelFile {
 				}
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if (EGN.contains("*"))
-						EGN = EGN.substring(0, EGN.length() - 1);
-
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if (person.getEgn().equals(EGN)) {
 
 						return new PersonStatus(person, workplace, spPr, userSet, dateSet, zab);

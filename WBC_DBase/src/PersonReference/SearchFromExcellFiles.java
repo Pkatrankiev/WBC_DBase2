@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
+import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
@@ -311,8 +312,7 @@ public class SearchFromExcellFiles {
 				}
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					ExcellEGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(ExcellEGN.contains("*")) ExcellEGN = ExcellEGN.substring(0, ExcellEGN.length()-1);
+					ExcellEGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 						FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
 						String[] names = ReadExcelFileWBC.splitAllName(FirstName);
 						FirstName = names[0];
@@ -397,8 +397,7 @@ public class SearchFromExcellFiles {
 				cell1 = sheet.getRow(row).getCell(6);
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					
 					if(person.getEgn().equals(EGN)) {
 					
@@ -529,8 +528,7 @@ public class SearchFromExcellFiles {
 				}
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN =  ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if(person.getEgn().equals(EGN)) {
 			
 					cell = sheet.getRow(row).getCell(0);
@@ -610,8 +608,7 @@ public class SearchFromExcellFiles {
 				}
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN =  ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if(person.getEgn().equals(EGN)) {
 						zab = ReadPersonStatusFromExcelFile.searchComent(workbook, row);
 
@@ -707,8 +704,7 @@ public class SearchFromExcellFiles {
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN =  ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if(person.getEgn().equals(EGN)) {
 					
 					int k = 7;
@@ -815,8 +811,7 @@ public class SearchFromExcellFiles {
 				
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN =  ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if(person.getEgn().equals(EGN)) {
 						
 						int k = 7;

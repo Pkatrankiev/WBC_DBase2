@@ -27,6 +27,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import BasiClassDAO.KodeStatusDAO;
@@ -544,8 +545,7 @@ public class InsertMeasurToExcel {
 				cell = sheet.getRow(row).getCell(5);
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-					EGN = ReadExcelFileWBC.getStringfromCell(cell);
-					if(EGN.contains("*")) EGN = EGN.substring(0, EGN.length()-1);
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					if (egnMeasur.equals(EGN)) {
 						return row;
 					}

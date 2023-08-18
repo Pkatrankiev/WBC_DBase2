@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
+import Aplication.ReadKodeStatusFromExcelFile;
 
 public class CheckErrorDataInExcellFiles_Methods {
 
@@ -323,13 +324,10 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 					if (ReadExcelFileWBC.CellNOEmpty(cell_EGN)) {
 
-						EGN = ReadExcelFileWBC.getStringfromCell(cell_EGN);
-						if (EGN.contains("*"))
-							EGN = EGN.substring(0, EGN.length() - 1);
-
+						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell_EGN);
 						for (int mont = 0; mont < 12; mont++) {
 							cell_Doze = sheet0.getRow(row).getCell(mont + 77);
-							doze = ReadExcelFileWBC.getStringfromCell(cell_Doze);
+							doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
 //							System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
 							if (!doze.isEmpty()) {
 								masiveStr[mont][maxindexMonth[mont]][0] = EGN;
@@ -368,10 +366,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 					if (ReadExcelFileWBC.CellNOEmpty(cell_EGN)) {
 
-						EGN = ReadExcelFileWBC.getStringfromCell(cell_EGN);
-						if (EGN.contains("*"))
-							EGN = EGN.substring(0, EGN.length() - 1);
-
+						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell_EGN);
 						int k = 7;
 						cell_date = sheet1.getRow(row0).getCell(k);
 						k++;
@@ -382,13 +377,13 @@ public class CheckErrorDataInExcellFiles_Methods {
 							date = ReadExcelFileWBC.readCellToDate(cell_date);
 							strDate = sdfrmt.format(date);
 							
-							lab = ReadExcelFileWBC.getStringfromCell(cell_Lab);
+							lab = ReadExcelFileWBC.getStringEGNfromCell(cell_Lab);
 
 							mont = date.getMonth();
 
 							k = k + 17;
 							cell_Doze = sheet1.getRow(row0).getCell(k);
-							doze = ReadExcelFileWBC.getStringfromCell(cell_Doze);
+							doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
 
 							masiveStr0[mont][maxindexMonth[mont]][0] = EGN;
 							masiveStr0[mont][maxindexMonth[mont]][1] = doze;
@@ -443,7 +438,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 						if (ReadExcelFileWBC.CellNOEmpty(cell_EGN)) {
 							EGN = ReadExcelFileWBC.getStringEGNfromCell(cell_EGN);
 							cell_Doze = sheetMont.getRow(l).getCell(5);
-							doze = ReadExcelFileWBC.getStringfromCell(cell_Doze);
+							doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
 
 							cell_date = sheetMont.getRow(l).getCell(6);
 							date = ReadExcelFileWBC.readCellToDate(cell_date);
@@ -486,18 +481,18 @@ public class CheckErrorDataInExcellFiles_Methods {
 					if (sheetMont.getRow(l) != null) {
 						cell_EGN = sheetMont.getRow(l).getCell(3);
 						if (ReadExcelFileWBC.CellNOEmpty(cell_EGN)) {
-							EGN = ReadExcelFileWBC.getStringfromCell(cell_EGN);
+							EGN = ReadExcelFileWBC.getStringEGNfromCell(cell_EGN);
 
 							cell_Doze = sheetMont.getRow(l).getCell(5);
-							doze = ReadExcelFileWBC.getStringfromCell(cell_Doze);
+							doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
 					
 							cell_Lab = sheetMont.getRow(l).getCell(8);
-							lab = ReadExcelFileWBC.getStringfromCell(cell_Lab);
+							lab = ReadExcelFileWBC.getStringEGNfromCell(cell_Lab);
 							
 							cell_Lab = sheetMont.getRow(l).getCell(9);
 							lab2 ="";
 							if (ReadExcelFileWBC.CellNOEmpty(cell_EGN)) {
-							lab2 = ReadExcelFileWBC.getStringfromCell(cell_Lab);
+							lab2 = ReadExcelFileWBC.getStringEGNfromCell(cell_Lab);
 							}
 
 							masiveStrMonth[m][row][0] = EGN;
@@ -550,10 +545,10 @@ public class CheckErrorDataInExcellFiles_Methods {
 								if (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)
 										&& ReadExcelFileWBC.CellNOEmpty(cell3) && ReadExcelFileWBC.CellNOEmpty(cell4)) {
 
-									str1 = ReadExcelFileWBC.getStringfromCell(cell1);
-									str2 = ReadExcelFileWBC.getStringfromCell(cell2);
-									str3 = ReadExcelFileWBC.getStringfromCell(cell3);
-									str4 = ReadExcelFileWBC.getStringfromCell(cell4);
+									str1 = ReadExcelFileWBC.getStringEGNfromCell(cell1);
+									str2 = ReadExcelFileWBC.getStringEGNfromCell(cell2);
+									str3 = ReadExcelFileWBC.getStringEGNfromCell(cell3);
+									str4 = ReadExcelFileWBC.getStringEGNfromCell(cell4);
 
 									if (str1.equals(str2) && str2.equals(str3) && str3.equals(str4)) {
 //							System.out.println(row+" OK "+str1+" "+str2+" "+str3+" "+str4);

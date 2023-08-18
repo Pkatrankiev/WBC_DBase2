@@ -101,14 +101,16 @@ public class UpdateBDataFromExcellFiles {
 
 
 	private static void extracted(ActionIcone round, List<String> listChengeExcellFilePath) {
-		String[] key = { "Person", "Spisak_Prilogenia", "PersonStatus", "KodeStatus", "Measuring", "ResultsWBC" };
+		String[] key = { 
+				"Person", "Spisak_Prilogenia", "PersonStatus", "KodeStatus", "Measuring", "ResultsWBC", 
+				"ObhodenList" };
 		String year = AplicationMetods.getCurentYear();
 		String textIcon;
 		String errorText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorText");
 		boolean save = true;
 		for (int i = 0; i < key.length; i++) {
 			
-			textIcon ="<html><center>Update " +(i+1)+ "/6 <br>" + key[i]+"</center></html>";
+			textIcon ="<html><center>Update " +(i+1)+ "/7 <br>" + key[i]+"</center></html>";
 			round.setTextToImage(textIcon);
 			for (String pathFile : listChengeExcellFilePath) {
 				String firmName = "АЕЦ Козлодуй";
@@ -234,6 +236,17 @@ public class UpdateBDataFromExcellFiles {
 					}
 				}
 					break;
+				case "ObhodenList": {
+					// read and set ObhodenList in PersonStatus
+					List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
+							year);
+					ReadPersonStatusFromExcelFile.ListPersonStatus(list);
+					System.out.println(year+ " --> "+list.size());
+					if(save) {
+					ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
+					System.out.println("Save "+firmName);
+					}
+				}
 				}
 			}
 
