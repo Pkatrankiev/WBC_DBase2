@@ -373,14 +373,29 @@ public class SearchFreeKodeFrame extends JFrame {
 	public static String convertToUpperCyrChart(String str) {
 		if(!str.isEmpty()) {
 			char c = str.charAt(0);
+			System.out.println(c);
 			int ascii = (int)c;
-			
+			System.out.println(ascii);
 			if(ascii>=1040 && ascii<=1103) {
 				return str.toUpperCase(); 
 				}
 		}
-		return "";
+		return str;
 	}
+	
+	public static boolean checkIsCyrChart(String str) {
+		if(!str.isEmpty()) {
+			char c = str.charAt(0);
+			int ascii = (int)c;
+			if(ascii>=1040 && ascii<=1103) {
+				return true; 
+				}
+		}
+		return false;
+	}
+	
+	
+	
 	
 	private boolean checkEmptyFields() {
 		boolean fl = true;

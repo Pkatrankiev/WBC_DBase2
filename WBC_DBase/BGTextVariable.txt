@@ -89,14 +89,19 @@ errorText = Не мога да прочета данни от фаила.
 errorDialogTextDublicateFields = Съдържа повтарящи се полета
 errorTextDialogNotDBaseFile = Не намирам файла с базата данни:
 
-svePersonManegement_newPerson = Въвеждате нов служител
-svePersonManegement_newKode = Променен код
-svePersonManegement_IsEnteredInZone = Има ли влизания в зоната
-svePersonManegement_newOtdel = Променен Отдел. Записа ще се премести на друга позиция
-svePersonManegement_FirstNameError = Името на съвпада
-svePersonManegement_SekondNameError = Презимето на съвпада
-svePersonManegement_LastNameError = Фамилията на съвпада
-svePersonManegement_KodeIsBusi = Кода е зает
+svePersonManegement_newPerson = Въвеждате нов служител.
+svePersonManegement_newKode = Променен код.
+svePersonManegement_IsEnteredInZone = Маркирайте, има ли влизания в зоната!
+svePersonManegement_newOtdel = Променен Отдел. Записа ще се премести на друга позиция.
+svePersonManegement_FirstNameError = Името не съвпада.
+svePersonManegement_SekondNameError = Презимето не съвпада.
+svePersonManegement_LastNameError = Фамилията не съвпада.
+svePersonManegement_KodeIsBusi = Кода е зает.
+svePersonManegement_ChangeOtdel = преместен от
+svePersonManegement_WithPril = С приложение
+svePersonManegement_kodeNotInOtdelArea = Кодът не е в областта на отдела.
+svePersonManegement_NonKorektFormatKode = Некоректен формат на кода.
+svePersonManegement_NonKorektPrefikceFormuliar = Префикса на формуляра не отговаря на достъпа.
 
 checkCorrectinDataInExcell = Проверка за грешни данни в Excell
 checkCorrectinDataInExcell_labelErrorColumn = Проверка за несъвпадения на първите 5 колони в EXTERNAL.xls и PERSONNEL.xls

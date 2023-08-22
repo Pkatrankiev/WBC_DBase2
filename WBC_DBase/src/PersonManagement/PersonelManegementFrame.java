@@ -206,6 +206,8 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_Terit_1, 4);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePersonKodKZ_Terit_2, 5);
 		
+		PersonelManegementMethods.ActionListener_JTextField_svePerson_Spisak(textField_svePerson_Spisak);
+		
 		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToHOG, 3);
 		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_1, 4);
 		PersonelManegementMethods.ActionListener_Btn_InsertTo(btn_InsertToTerit_2, 5);
@@ -896,7 +898,7 @@ public class PersonelManegementFrame extends JFrame {
 
 		lbl_svePerson_Text_Check_EnterInZone = new JLabel();
 		lbl_svePerson_Text_Check_EnterInZone.setHorizontalAlignment(SwingConstants.RIGHT);
-		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(646, 14));
+		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(646, 30));
 		personSave_Panel_5.add(lbl_svePerson_Text_Check_EnterInZone);
 
 		JCheckBox chckbx_svePerson_EnterInZone = new JCheckBox("no");

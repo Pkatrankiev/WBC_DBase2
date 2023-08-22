@@ -280,17 +280,7 @@ public class TestClasess {
 		FileInputStream inputStream;
 		HSSFWorkbook workbook = null;
 		try {
-			inputStream = new FileInputStream("d:\\Test.xls");
-			HSSFWorkbook workbook0 = new HSSFWorkbook(inputStream);
-			HSSFCell cell0 = workbook0.getSheetAt(0).getRow(0).getCell(0);
-			HSSFComment comment0 = cell0.getCellComment();
-			  System.out.println( "******** "+comment0.getShapeId());
-//			if (comment0 != null) {
-//				HSSFRichTextString rTString = comment0.getString();
-//				comment0.setString(rTString);
-//				cell0.setCellComment(comment0);
-//			}
-			
+						
 			inputStream = new FileInputStream(pathFile);
 			 workbook = new HSSFWorkbook(inputStream);
 			 
@@ -319,8 +309,7 @@ public class TestClasess {
 			richTextString.applyFont(commentFont);
 			richTextString.applyFont(0, authorText.length(), boldFont);
 			HSSFCell cell;
-			
-			HSSFCreationHelper factory = workbook.getCreationHelper();
+	
 			HSSFClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5);
 			
 			
@@ -334,27 +323,9 @@ public class TestClasess {
 					HSSFComment comment = cell.getCellComment();
 					
 					if (comment == null) {
-						// create a new comment
-//						cell.setCellComment(comment0);
-//						cell0.setCellComment(comment0);
-//						createNewComment(authorText, richTextString, cell);
-//						HSSFPatriarch patr = workbook.getSheetAt(i).createDrawingPatriarch();
-//						 HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-					     System.out.println(comment0.getString());
-					     System.out.println(cell.getStringCellValue());
-//						comment0.setString(richTextString);
-//					      cell.setCellComment(comment0);
 						
-					     HSSFPatriarch drawing_master = workbook.getSheetAt(i).createDrawingPatriarch();
-					      anchor.setCol1(cell.getColumnIndex());
-					        anchor.setCol2(cell.getColumnIndex()+1);
-					        anchor.setRow1(cell.getRow().getRowNum());
-					        anchor.setRow2(cell.getRow().getRowNum()+5);
-					        HSSFComment comment1 = (HSSFComment) drawing_master.createCellComment(anchor);
-					        System.out.println( "------ "+comment1.getShapeName());
-					        comment1.setAuthor(authorText);
-					      comment1.setString(richTextString);
-					      cell.setCellComment(comment1);
+						
+					     createdNewComment(richTextString, cell, anchor);
 						
 
 					} else {
@@ -386,6 +357,15 @@ public class TestClasess {
 			
 	
 		
+	}
+
+	private static void createdNewComment(HSSFRichTextString richTextString, HSSFCell cell, HSSFClientAnchor anchor) {
+		// create a new comment
+		System.out.println(cell.getStringCellValue());
+		HSSFPatriarch drawing_master = cell.getSheet().createDrawingPatriarch();
+	    HSSFComment comment1 = (HSSFComment) drawing_master.createCellComment(anchor);
+		   comment1.setString(richTextString);
+		  cell.setCellComment(comment1);
 	}
 	
 	public static void newComments33() throws IOException  {
@@ -455,7 +435,6 @@ public class TestClasess {
 
 	
 	
-	
 	private static HSSFRichTextString updateComment(String authorText, String commentString, HSSFFont boldFont,
 			HSSFFont commentFont, HSSFCreationHelper creationHelper, HSSFComment comment) {
 		HSSFRichTextString richTextString;
@@ -481,20 +460,6 @@ public class TestClasess {
 		return richTextString;
 	}
 	
-	private static void createNewComment(String authorText, HSSFRichTextString richTextString, HSSFCell cell) {
-		HSSFPatriarch hpt = (HSSFPatriarch) cell.getSheet().createDrawingPatriarch();
-		// Setting size and position of the comment in worksheet
-		System.out.println(
-				"comment " + cell.getSheet().getSheetName() + " - " + cell.getColumnIndex() + "/" + cell.getRowIndex());
-		HSSFClientAnchor klA = new HSSFClientAnchor(0, 0, 1, 1, (short) (cell.getColumnIndex() + 1),
-				cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 4), (cell.getRow().getRowNum() + 3));
-		HSSFComment commentH = hpt.createComment(klA);
-		// Setting comment text
-		commentH.setAuthor(authorText);
-		commentH.setString(richTextString);
-		// Associating comment to the cell
-		cell.setCellComment(commentH);
-	}
 	
 	
 	
