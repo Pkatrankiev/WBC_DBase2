@@ -27,7 +27,6 @@ import BasicClassAccessDbase.Workplace;
 
 public class ReadPersonStatusFromExcelFile {
 
-	static Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
 	static Spisak_Prilogenia spPrObhodList = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(11177);
 	
 	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
@@ -185,9 +184,10 @@ public class ReadPersonStatusFromExcelFile {
 
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateSet = null;
+		Date dateSet = null,nulldate= null;
 		try {
 			dateSet = sdfrmt.parse("31.12." + year);
+			nulldate = sdfrmt.parse("01.01." + year);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -203,8 +203,11 @@ public class ReadPersonStatusFromExcelFile {
 		String[] masiveWorkplace = ReadExcelFileWBC.getMasiveString(firmName);
 		Sheet sheet = workbook.getSheetAt(3);
 		Cell cell, cell1;
+		boolean fl ;
 		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
 			zab = "";
+			fl = false;
+			PersonStatus personStatus_NotInList = null;
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
 				cell1 = sheet.getRow(row).getCell(6);
@@ -227,27 +230,46 @@ public class ReadPersonStatusFromExcelFile {
 
 					int k = 7;
 					cell = sheet.getRow(row).getCell(k);
+					List<PersonStatus> ListPrStat = PersonStatusDAO.getValuePersonStatusByPerson_Workplace_DateSetInYear(person, workplace, year);
+					
+					if(ListPrStat.size()==1 && ListPrStat.get(0).getSpisak_prilogenia().getFormulyarName().equals("NotInList")) {
+						personStatus_NotInList = ListPrStat.get(0); 
+					}
+					
+					
+					
 					while (ReadExcelFileWBC.CellNOEmpty(cell)) {
 						Spisak_Prilogenia spPr = ReadSpisak_PrilogeniaFromExcelFile.getOrCreateSisak_Prilogenie(k, row,
 								sheet, startDate, endDate, formulyarName, workplace, year);
-
+							
+						if(personStatus_NotInList != null) {
+								personStatus_NotInList.setSpisak_prilogenia(spPr);
+								personStatus_NotInList.setUserWBC(userSet);
+								personStatus_NotInList.setDateSet(dateSet);
+								PersonStatusDAO.updateValuePersonStatus(personStatus_NotInList);
+								personStatus_NotInList = null;
+							}else {
 						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
 						listPerStat.add(personStat);
+							}
 
 						k = k + 3;
 						cell = sheet.getRow(row).getCell(k);
+						
+						fl = true;
 
 					}
-					if(listPerStat.size()>0) {
+					if(listPerStat.size()>0 && fl) {
 						listPerStat.get(listPerStat.size() - 1).setZabelejka(zab);
 						}else {
-							if(!zab.isEmpty()) {
+							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia("NotInList", year, nulldate, dateSet, workplace, "");
+							Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByFormulyarName_Year_Workplace("NotInList", year, workplace.getId_Workplace());
+						if(spPrNotInfo != null) {
 							listPerStat.add(new PersonStatus(person, workplace, spPrNotInfo, userSet, dateSet, zab));
-							}
 						}
 				}
 			}
-
+			}
 		}
 
 		return listPerStat;

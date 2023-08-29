@@ -38,6 +38,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Checkbox;
 
 
 
@@ -105,9 +108,16 @@ public class PersonelManegementFrame extends JFrame {
 	private static JTextField textField_svePerson_Coment;
 	private static JTextField textField_svePerson_Year;
 	
+	private static JCheckBox chckbx_svePerson__isEnterInZone;
+	private static JCheckBox chckbx_svePerson_EnterInListChengeKode;
+	private static JCheckBox checkbox_SaveToExcel;
+	
+	
 	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
 	private JPanel personSave_Panel;
 	private JTextField textField;
+	private static JLabel lbl_svePerson_isEnterInZone;
+	private static JLabel lbl_svePerson_EnterInListChengeKode;
 	
 
 	
@@ -190,7 +200,9 @@ public class PersonelManegementFrame extends JFrame {
 
 		PersonelManegementMethods.ActionListener_Btn_SearchFreeKode(btn_SearchFreeKode, comboBox_Otdel);
 		
-		PersonelManegementMethods.ActionListener_Btn_Exportn(btn_Export, save_Panel, button_Panel); 
+		PersonelManegementMethods.ActionListener_Btn_Export(btn_Export, save_Panel, button_Panel); 
+		
+		PersonelManegementMethods.ActionListener_chckbx_svePerson__isEnterInZone(chckbx_svePerson__isEnterInZone);
 
 		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
 		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
@@ -543,8 +555,13 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_OtdelSpisakField_Panel_4A(personSave_Panel);
 		
 		personSave_Coment_4B (personSave_Panel);
+				
+		personSave_CheckBox_Panel_6 (personSave_Panel);
 		
-		return personSave_Panel_5(personSave_Panel);
+		personSave_Panel_5(personSave_Panel);
+		
+		return personSave_Panel;
+		
 	}
 
 	private JPanel personSave_Personel_2_LabelPanel(JPanel personSave_Panel) {
@@ -649,7 +666,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_savePerson_Insert.setEnabled(false);
 		
 		JLabel lblNewLabel_1_1 = new JLabel();
-		lblNewLabel_1_1.setPreferredSize(new Dimension(45, 14));
+		lblNewLabel_1_1.setPreferredSize(new Dimension(48, 14));
 		personSave_Personel_2_FildPanel.add(lblNewLabel_1_1);
 		
 		textField_svePerson_Year = new JTextField(curentYear);
@@ -738,7 +755,7 @@ public class PersonelManegementFrame extends JFrame {
 
 		JLabel lbl_svePersonKodKZ_Terit_2 = new JLabel("ID Terit-2");
 		lbl_svePersonKodKZ_Terit_2.setSize(new Dimension(80, 20));
-		lbl_svePersonKodKZ_Terit_2.setPreferredSize(new Dimension(60, 15));
+		lbl_svePersonKodKZ_Terit_2.setPreferredSize(new Dimension(62, 15));
 		lbl_svePersonKodKZ_Terit_2.setMinimumSize(new Dimension(80, 20));
 		lbl_svePersonKodKZ_Terit_2.setHorizontalAlignment(SwingConstants.RIGHT);
 		lbl_svePersonKodKZ_Terit_2.setBorder(null);
@@ -870,7 +887,7 @@ public class PersonelManegementFrame extends JFrame {
 	
 	JLabel lbl_svePerson_Coment = new JLabel("Coment");
 	lbl_svePerson_Coment.setSize(new Dimension(80, 20));
-	lbl_svePerson_Coment.setPreferredSize(new Dimension(53, 15));
+	lbl_svePerson_Coment.setPreferredSize(new Dimension(57, 15));
 	lbl_svePerson_Coment.setMinimumSize(new Dimension(80, 20));
 	lbl_svePerson_Coment.setHorizontalAlignment(SwingConstants.LEFT);
 	lbl_svePerson_Coment.setBorder(null);
@@ -897,26 +914,121 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_Panel.add(personSave_Panel_5);
 
 		lbl_svePerson_Text_Check_EnterInZone = new JLabel();
-		lbl_svePerson_Text_Check_EnterInZone.setHorizontalAlignment(SwingConstants.RIGHT);
-		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(646, 30));
+		lbl_svePerson_Text_Check_EnterInZone.setHorizontalAlignment(SwingConstants.LEFT);
+		lbl_svePerson_Text_Check_EnterInZone.setPreferredSize(new Dimension(690, 30));
 		personSave_Panel_5.add(lbl_svePerson_Text_Check_EnterInZone);
-
-		JCheckBox chckbx_svePerson_EnterInZone = new JCheckBox("no");
-		chckbx_svePerson_EnterInZone.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(chckbx_svePerson_EnterInZone.isSelected()) {
-					chckbx_svePerson_EnterInZone.setText("yes");
-				}else {
-					chckbx_svePerson_EnterInZone.setText("no");	
-				}
-			}
-		});
-		personSave_Panel_5.add(chckbx_svePerson_EnterInZone);
 		return personSave_Panel_5;
 	}
 
+	private JPanel personSave_CheckBox_Panel_6 (JPanel save_Panel) {
+	
+	JPanel personSave_CheckBox_Panel_6 = new JPanel();
+	save_Panel.add(personSave_CheckBox_Panel_6);
+	GridBagLayout gbl_personSave_CheckBox_Panel_6 = new GridBagLayout();
+	gbl_personSave_CheckBox_Panel_6.columnWidths = new int[]{149, 42, 354, 38, 75, 38, 0};
+	gbl_personSave_CheckBox_Panel_6.rowHeights = new int[]{23, 0};
+	gbl_personSave_CheckBox_Panel_6.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+	gbl_personSave_CheckBox_Panel_6.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+	personSave_CheckBox_Panel_6.setLayout(gbl_personSave_CheckBox_Panel_6);
+			
+			lbl_svePerson_isEnterInZone = new JLabel();
+			
+			lbl_svePerson_isEnterInZone.setVerticalAlignment(SwingConstants.BOTTOM);
+			lbl_svePerson_isEnterInZone.setPreferredSize(new Dimension(20, 15));
+			lbl_svePerson_isEnterInZone.setHorizontalAlignment(SwingConstants.RIGHT);
+			lbl_svePerson_isEnterInZone.setBorder(null);
+			lbl_svePerson_isEnterInZone.setAlignmentX(1.0f);
+			GridBagConstraints gbc_lbl_svePerson_isEnterInZone = new GridBagConstraints();
+			gbc_lbl_svePerson_isEnterInZone.fill = GridBagConstraints.HORIZONTAL;
+			gbc_lbl_svePerson_isEnterInZone.insets = new Insets(0, 0, 0, 5);
+			gbc_lbl_svePerson_isEnterInZone.gridx = 0;
+			gbc_lbl_svePerson_isEnterInZone.gridy = 0;
+			personSave_CheckBox_Panel_6.add(lbl_svePerson_isEnterInZone, gbc_lbl_svePerson_isEnterInZone);
+			
+					chckbx_svePerson__isEnterInZone = new JCheckBox("no");
+					GridBagConstraints gbc_chckbx_svePerson__isEnterInZone = new GridBagConstraints();
+					gbc_chckbx_svePerson__isEnterInZone.anchor = GridBagConstraints.NORTHWEST;
+					gbc_chckbx_svePerson__isEnterInZone.insets = new Insets(0, 0, 0, 5);
+					gbc_chckbx_svePerson__isEnterInZone.gridx = 1;
+					gbc_chckbx_svePerson__isEnterInZone.gridy = 0;
+					personSave_CheckBox_Panel_6.add(chckbx_svePerson__isEnterInZone, gbc_chckbx_svePerson__isEnterInZone);
+					chckbx_svePerson__isEnterInZone.setVisible(false);
+			
+			lbl_svePerson_EnterInListChengeKode = new JLabel();
+		
+			lbl_svePerson_EnterInListChengeKode.setVerticalAlignment(SwingConstants.BOTTOM);
+			lbl_svePerson_EnterInListChengeKode.setPreferredSize(new Dimension(20, 15));
+			lbl_svePerson_EnterInListChengeKode.setHorizontalAlignment(SwingConstants.RIGHT);
+			lbl_svePerson_EnterInListChengeKode.setBorder(null);
+			lbl_svePerson_EnterInListChengeKode.setAlignmentX(1.0f);
+			GridBagConstraints gbc_lbl_svePerson_EnterInListChengeKode = new GridBagConstraints();
+			gbc_lbl_svePerson_EnterInListChengeKode.fill = GridBagConstraints.HORIZONTAL;
+			gbc_lbl_svePerson_EnterInListChengeKode.insets = new Insets(0, 0, 0, 5);
+			gbc_lbl_svePerson_EnterInListChengeKode.gridx = 2;
+			gbc_lbl_svePerson_EnterInListChengeKode.gridy = 0;
+			personSave_CheckBox_Panel_6.add(lbl_svePerson_EnterInListChengeKode, gbc_lbl_svePerson_EnterInListChengeKode);
+			
+			chckbx_svePerson_EnterInListChengeKode = new JCheckBox("no");
+			GridBagConstraints gbc_chckbx_svePerson_EnterInListChengeKode = new GridBagConstraints();
+			gbc_chckbx_svePerson_EnterInListChengeKode.insets = new Insets(0, 0, 0, 5);
+			gbc_chckbx_svePerson_EnterInListChengeKode.anchor = GridBagConstraints.NORTHWEST;
+			gbc_chckbx_svePerson_EnterInListChengeKode.gridx = 3;
+			gbc_chckbx_svePerson_EnterInListChengeKode.gridy = 0;
+			personSave_CheckBox_Panel_6.add(chckbx_svePerson_EnterInListChengeKode, gbc_chckbx_svePerson_EnterInListChengeKode);
+			
+			chckbx_svePerson_EnterInListChengeKode.setVisible(false);
+			chckbx_svePerson_EnterInListChengeKode.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(chckbx_svePerson_EnterInListChengeKode.isSelected()) {
+						chckbx_svePerson_EnterInListChengeKode.setText("yes");
+					}else {
+						chckbx_svePerson_EnterInListChengeKode.setText("no");	
+					}
+				}
+			});
+			
+			JLabel lbl_svePerson_isEnterInZone_1 = new JLabel();
+			lbl_svePerson_isEnterInZone_1.setVerticalAlignment(SwingConstants.BOTTOM);
+			lbl_svePerson_isEnterInZone_1.setText("save to Excel");
+			lbl_svePerson_isEnterInZone_1.setPreferredSize(new Dimension(20, 15));
+			lbl_svePerson_isEnterInZone_1.setHorizontalAlignment(SwingConstants.RIGHT);
+			lbl_svePerson_isEnterInZone_1.setBorder(null);
+			lbl_svePerson_isEnterInZone_1.setAlignmentX(1.0f);
+			GridBagConstraints gbc_lbl_svePerson_isEnterInZone_1 = new GridBagConstraints();
+			gbc_lbl_svePerson_isEnterInZone_1.fill = GridBagConstraints.HORIZONTAL;
+			gbc_lbl_svePerson_isEnterInZone_1.insets = new Insets(0, 0, 0, 5);
+			gbc_lbl_svePerson_isEnterInZone_1.gridx = 4;
+			gbc_lbl_svePerson_isEnterInZone_1.gridy = 0;
+			personSave_CheckBox_Panel_6.add(lbl_svePerson_isEnterInZone_1, gbc_lbl_svePerson_isEnterInZone_1);
+			
+			checkbox_SaveToExcel = new JCheckBox("yes");
+			GridBagConstraints gbc_checkbox = new GridBagConstraints();
+			gbc_checkbox.anchor = GridBagConstraints.NORTHWEST;
+			gbc_checkbox.insets = new Insets(0, 0, 0, 5);
+			gbc_checkbox.gridx = 5;
+			gbc_checkbox.gridy = 0;
+			personSave_CheckBox_Panel_6.add(checkbox_SaveToExcel, gbc_checkbox);
+			checkbox_SaveToExcel.setSelected(true);
+			checkbox_SaveToExcel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(checkbox_SaveToExcel.isSelected()) {
+						checkbox_SaveToExcel.setText("yes");
+					}else {
+						checkbox_SaveToExcel.setText("no");	
+					}
+				}
+			});
+			
+			return personSave_CheckBox_Panel_6;
+	}
+	
+	
+	
 	private JPanel button_Panel(JPanel save_Panel) {
+		
+		
 		JPanel button_Panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) button_Panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -1225,7 +1337,14 @@ public class PersonelManegementFrame extends JFrame {
 		return textField_svePerson_Year;
 	}
 
+	public static JCheckBox getChckbx_svePerson_EnterInZone() {
+		return chckbx_svePerson__isEnterInZone;
+	}
 	
+	public static void setChckbx_svePerson__isEnterInZone(JCheckBox chckbx_svePerson__isEnterInZone) {
+		PersonelManegementFrame.chckbx_svePerson__isEnterInZone = chckbx_svePerson__isEnterInZone;
+	}
+
 	static void viewTablePanel() {
 		infoPanel.setPreferredSize(new Dimension(10, 0));
 		infoPanel.setMaximumSize(new Dimension(32767, 0));
@@ -1248,6 +1367,25 @@ public class PersonelManegementFrame extends JFrame {
 		contentPane.repaint();
 		contentPane.revalidate();
 	}
+
+	public static JCheckBox getChckbx_svePerson_EnterInListChengeKode() {
+		return chckbx_svePerson_EnterInListChengeKode;
+	}
+
+		
+
+	public static JLabel getLbl_svePerson_EnterInListChengeKode() {
+		return lbl_svePerson_EnterInListChengeKode;
+	}
+
+	public static JLabel getLbl_svePerson_isEnterInZone() {
+		return lbl_svePerson_isEnterInZone;
+	}
+
+	public static JCheckBox getCheckbox_SaveToExcel() {
+		return checkbox_SaveToExcel;
+	}
+	
 	
 	
 }

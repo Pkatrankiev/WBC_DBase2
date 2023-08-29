@@ -301,7 +301,8 @@ public class Reference_PersonMeasur_Metods {
 			PersonStatus perStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
 			String zabel = perStat.getZabelejka();
 			String formuliarName = perStat.getSpisak_prilogenia().getFormulyarName();
-			if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ")) {
+			if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ") 
+					&& !formuliarName.contains("NotInList")) {
 				System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
 				listPersonNew.add(person);		
 		}

@@ -543,7 +543,7 @@ public class KodeStatusDAO {
 		String sql;
 		try {
 
-			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Zone_ID = ? and Year = ? LIMIT 1";
+			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Zone_ID = ? and Year = ?  ORDER BY KodeStatus_ID DESC";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setInt(1, person.getId_Person());

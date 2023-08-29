@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -46,6 +48,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
 
+import org.apache.commons.collections4.SetUtils.SetView;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -96,6 +99,12 @@ public class PersonelManegementMethods {
 			.get("svePersonManegement_WithPril");
 	static String svePersonManegement_kodeNotInOtdelArea = ReadFileBGTextVariable.getGlobalTextVariableMap()
 			.get("svePersonManegement_kodeNotInOtdelArea");
+	static String svePersonManegement_InsertToListChengeKode = ReadFileBGTextVariable.getGlobalTextVariableMap()
+			.get("svePersonManegement_InsertToListChengeKode");
+	static String svePersonManegement_CheckBoxLbIs_EnteredInZone = ReadFileBGTextVariable.getGlobalTextVariableMap()
+			.get("svePersonManegement_CheckBoxLbIs_EnteredInZone");
+	static String svePersonManegement_textOtdelArea = ReadFileBGTextVariable.getGlobalTextVariableMap()
+			.get("svePersonManegement_textOtdelArea");
 	static boolean multytextInTextArea;
 	static String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
 	static String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
@@ -129,6 +138,8 @@ public class PersonelManegementMethods {
 	static boolean KZ_Terit_2_OK;
 	static boolean Otdel_OK;
 	static boolean obhodenList;
+	static boolean corectFormatKode = true;
+	static boolean fromListPersonManegement = false;
 
 	static void ActionListener_Btn_Clear(JButton btn_savePerson_Insert, JButton btn_Clear_1, JTextArea textArea) {
 		btn_Clear_1.addActionListener(new ActionListener() {
@@ -230,6 +241,7 @@ public class PersonelManegementMethods {
 			JTextField textField_svePerson_Year, JTextField textField) {
 		btn_ReadFileListPerson.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				getListPersonFromFile(textArea, infoPanel, tablePane, panel_AllSaerch, scrollPane,
 						textField_svePerson_Year, textField);
 			}
@@ -245,7 +257,8 @@ public class PersonelManegementMethods {
 
 				generateInfoByOnePerson(selectionPerson, textArea);
 
-				List<Spisak_Prilogenia> list = getListSpisak_Prilogenia_FromExcelFile(oldOtdelPerson);
+				fromListPersonManegement = false;
+//				List<Spisak_Prilogenia> list = getListSpisak_Prilogenia_FromExcelFile(oldOtdelPerson);
 //				PersonelManegementFrame.setListSpisak_Prilogenia(list);
 
 				GeneralMethods.setDefaultCursor(panel_AllSaerch);
@@ -283,7 +296,7 @@ public class PersonelManegementMethods {
 //				PersonelManegementFrame.setListSpisak_Prilogenia(
 //						PersonelManegementMethods.generateListSpisPril(comboBox_savePerson_Otdel));
 				JTextField fild = PersonelManegementFrame.getTextField_svePerson_KodKZ_1();
-				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, 1);
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, 0);
 
 				setComentGetTexTFromOtdelAndStartDate();
 
@@ -408,11 +421,7 @@ public class PersonelManegementMethods {
 		fild.addKeyListener(new KeyAdapter() {
 
 			public void keyReleased(KeyEvent evt) {
-				convertToBigCyr(fild, zoneID);
-				checkKorectFormatKode( fild, zoneID);
 				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
-				
-				
 			}
 
 		});
@@ -424,9 +433,7 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				checkKorectFormatKode( fild, zoneID);
 				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
-				
 			}
 
 			@Override
@@ -436,8 +443,6 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				
-				checkKorectFormatKode( fild, zoneID);
 				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 			}
 
@@ -453,9 +458,8 @@ public class PersonelManegementMethods {
 		textField_svePerson_Spisak.addKeyListener(new KeyAdapter() {
 
 			public void keyReleased(KeyEvent evt) {
-
 				setComentGetTexTFromOtdelAndStartDate();
-				checkKorectionSetInfoToFieldsInSavePersonPanel(textField_svePerson_Spisak, 1);
+				checkKorectionSetInfoToFieldsInSavePersonPanel(textField_svePerson_Spisak, 0);
 			}
 
 		});
@@ -467,9 +471,8 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-
 				setComentGetTexTFromOtdelAndStartDate();
-				checkKorectionSetInfoToFieldsInSavePersonPanel(textField_svePerson_Spisak, 1);
+				checkKorectionSetInfoToFieldsInSavePersonPanel(textField_svePerson_Spisak, 0);
 			}
 
 			@Override
@@ -479,7 +482,8 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-
+				setComentGetTexTFromOtdelAndStartDate();
+				checkKorectionSetInfoToFieldsInSavePersonPanel(textField_svePerson_Spisak, 0);
 			}
 
 			@Override
@@ -490,12 +494,210 @@ public class PersonelManegementMethods {
 
 	}
 
+	
+	static void ActionListener_Btn_SaveToExcelFile(JButton btn_SaveToExcelFile) {
+		btn_SaveToExcelFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
+
+				JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
+				JTextField textField_svePerson_FName = PersonelManegementFrame.getTextField_svePerson_FName();
+				JTextField textField_svePerson_SName = PersonelManegementFrame.getTextField_svePerson_SName();
+				JTextField textField_svePerson_LName = PersonelManegementFrame.getTextField_svePerson_LName();
+				JTextField textField_svePerson_KodKZ_1 = PersonelManegementFrame.getTextField_svePerson_KodKZ_1();
+				JTextField textField_svePerson_KodKZ_2 = PersonelManegementFrame.getTextField_svePersonKodKZ_2();
+				JTextField textField_svePersonKod_KZ_HOG = PersonelManegementFrame.getTextField_svePersonKodKZ_HOG();
+				JTextField textField_svePersonKod_KZ_Terit_1 = PersonelManegementFrame
+						.getTextField_svePersonKodKZ_Terit_1();
+				JTextField textField_svePersonKod_KZ_Terit_2 = PersonelManegementFrame
+						.getTextField_svePersonKodKZ_Terit_2();
+				Choice comboBox_savePerson_Firm = PersonelManegementFrame.getComboBox_savePerson_Firm();
+				Choice comboBox_svePerson_Otdel = PersonelManegementFrame.getComboBox_savePerson_Otdel();
+				JTextField textField_svePerson_Spisak = PersonelManegementFrame.getTextField_svePerson_Spisak();
+				JTextField textField_savePerson_StartDate = PersonelManegementFrame.getTextField_savePerson_StartDate();
+				JTextField textField_savePerson_EndDate = PersonelManegementFrame.getTextField_savePerson_EndDate();
+				JTextField textField_svePerson_Coment = PersonelManegementFrame.getTextField_svePerson_Coment();
+				JTextField textField__svePerson_Year = PersonelManegementFrame.getTextField_svePerson_Year();
+
+				String newYear = PersonelManegementFrame.getTextField_svePerson_Year().getText();
+				
+				JCheckBox checkbx_svePerson_EnterInZone = PersonelManegementFrame.getChckbx_svePerson_EnterInZone();
+				JCheckBox checkbx_svePerson_EnterInListChengeKode = PersonelManegementFrame.getChckbx_svePerson_EnterInListChengeKode();
+				
+				boolean checkbx_EnterInZone = checkbx_svePerson_EnterInZone.isSelected();
+				boolean checkbx_EnterInListChengeKode = checkbx_svePerson_EnterInListChengeKode.isSelected();
+				
+				if (checkInfoOtdel(comboBox_svePerson_Otdel)) {
+
+//			************** set PERSON	
+					int lastrekord = 1;
+					if(fromListPersonManegement) {
+						lastrekord = dataTable.length;
+					}
+					
+					for (int i = 0; i < lastrekord; i++) {
+						Object[] objects = dataTable[i];	
+					if((boolean) objects[8]) {
+					
+					String egn = textField_svePerson_EGN.getText();
+					
+					String comment = textField_svePerson_Coment.getText().trim();
+					
+					
+					
+					String[] infoForPerson = { textField_svePerson_KodKZ_1.getText().trim(),
+							textField_svePerson_KodKZ_2.getText().trim(),
+							textField_svePersonKod_KZ_HOG.getText().trim(),
+							textField_svePersonKod_KZ_Terit_1.getText().trim(),
+							textField_svePersonKod_KZ_Terit_2.getText().trim(),
+							textField_svePerson_FName.getText().trim(), 
+							textField_svePerson_SName.getText().trim(),
+							textField_svePerson_LName.getText().trim() };
+
+					if(fromListPersonManegement) {
+						egn = (String) objects[1];
+					}
+					
+					Person person = PersonDAO.getValuePersonByEGN(egn);
+					
+					
+					if (person == null) {
+						PersonDAO.setValuePerson(egn, textField_svePerson_FName.getText(),
+								textField_svePerson_SName.getText(), textField_svePerson_LName.getText());
+					}
+					System.out.println("egn "+egn);
+					person = PersonDAO.getValuePersonByEGN(egn);	
+					System.out.println("person "+person.getFirstName());
+					
+					
+					if(fromListPersonManegement) {
+						String[] kode = getKodeStatusByPersonFromDBase(person);
+						for (int j = 0; j < kode.length; j++) {
+							infoForPerson[j] = kode[j];
+						}
+						checkbx_EnterInZone = true;	
+						int zona = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
+						System.out.println(zona+" "+objects[7]);
+						
+						infoForPerson[zona-1] = (String) objects[7];
+						infoForPerson[5] = (String) objects[2];
+						infoForPerson[6] = (String) objects[3];
+						infoForPerson[7] = (String) objects[4];
+					}
+					
+					if (checkInfoPersonAndKodeStatus(infoForPerson, person, checkbx_EnterInZone)) {
+
+						Workplace workplace = WorkplaceDAO
+								.getValueWorkplaceByObject("Otdel", comboBox_svePerson_Otdel.getSelectedItem()).get(0);
+						System.out.println("-------------------------------- ");
+						String year = textField__svePerson_Year.getText().trim();
+						try {
+							Integer.parseInt(year);
+						} catch (NumberFormatException e0) {
+							year = curentYear;
+							textField__svePerson_Year.setText(year);
+						}
+
+//		************** set SPISAK_PRILOGENIA
+						Spisak_Prilogenia spisPril = null;
+						String formuliarName = textField_svePerson_Spisak.getText().trim();
+						if (!formuliarName.isEmpty()) {
+
+							Date sDate = null, eDate = null;
+							try {
+								sDate = sdf.parse(textField_savePerson_StartDate.getText().trim());
+								eDate = sdf.parse(textField_savePerson_EndDate.getText().trim());
+							} catch (ParseException e1) {
+
+								e1.printStackTrace();
+							}
+
+							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia(formuliarName, newYear, sDate, eDate, workplace,
+									"");
+							spisPril = Spisak_PrilogeniaDAO
+									.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(newYear, sDate,
+											workplace.getId_Workplace());
+
+							SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy");
+							Date curentDate = Calendar.getInstance().getTime();
+							try {
+								curentDate = sdf2.parse(sdf2.format(curentDate));
+							} catch (ParseException e1) {
+
+							}
+
+							PersonStatusDAO.setValuePersonStatus(person, workplace, spisPril, user, curentDate,
+									comment);
+
+						}
+
+//		****************** set KODESTATUS
+						setKodeStatusInDBase(person, infoForPerson, newYear);
+
+						
+
+						
+						
+						if(PersonelManegementFrame.getCheckbox_SaveToExcel().isSelected())
+						SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
+								comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment, workplace, oldOtdelPerson, checkbx_EnterInZone, checkbx_EnterInListChengeKode, obhodenList);
+					}
+
+				}
+				}
+				}
+			}
+
+	
+
+		});
+	}
+
+	static void ActionListener_Btn_Export(JButton btn_Export, JPanel save_Panel, JPanel button_Panel) {
+		btn_Export.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (dataTable == null) {
+
+					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
+							TextInAreaTextPanel.getMasivePersonStatusName(),
+							TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(),
+							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
+							TextInAreaTextPanel.getMasiveMeasur(), save_Panel);
+				} else {
+					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,
+							PersonelManegementMethods.getTabHeader(), button_Panel);
+
+				}
+			}
+		});
+	}
+
+	static void ActionListener_chckbx_svePerson__isEnterInZone(JCheckBox chckbx_svePerson__isEnterInZone) {
+	chckbx_svePerson__isEnterInZone.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			boolean fl;
+			if(chckbx_svePerson__isEnterInZone.isSelected()) {
+				chckbx_svePerson__isEnterInZone.setText("yes");
+				fl=false;
+			}else {
+				chckbx_svePerson__isEnterInZone.setText("no");
+				fl= true;
+			}
+			
+			setVizible_EnterInListChengeKode_LabelAndCheckBox(fl);
+		}
+	});
+	}
+	
+	
 	protected static String checkFormuliarNameToZoneKode() {
 		JTextField textField_svePerson_Spisak = PersonelManegementFrame.getTextField_svePerson_Spisak();
 		String str_KodKZ_1 = PersonelManegementFrame.getTextField_svePerson_KodKZ_1().getText();
 		String str_KodKZ_2 = PersonelManegementFrame.getTextField_svePersonKodKZ_2().getText();
 		String str_KZ_HOG = PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().getText();
-		String LabelText = PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().getText();
+//		String LabelText = PersonelManegementFrame.getLbl_svePerson_Text_Check_EnterInZone().getText();
 		boolean fl = true;
 		String formuliarName = textField_svePerson_Spisak.getText();
 		String numFormuliarName = "";
@@ -533,163 +735,21 @@ public class PersonelManegementMethods {
 		
 	}
 
-	static void ActionListener_Btn_SaveToExcelFile(JButton btn_SaveToExcelFile) {
-		btn_SaveToExcelFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+	
+	private static void setKodeStatusInDBase(Person person, String[] infoForPerson, String year) {
 
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
+		for (int i = 0; i < 5; i++) {
 
-				JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
-				JTextField textField_svePerson_FName = PersonelManegementFrame.getTextField_svePerson_FName();
-				JTextField textField_svePerson_SName = PersonelManegementFrame.getTextField_svePerson_SName();
-				JTextField textField_svePerson_LName = PersonelManegementFrame.getTextField_svePerson_LName();
-				JTextField textField_svePerson_KodKZ_1 = PersonelManegementFrame.getTextField_svePerson_KodKZ_1();
-				JTextField textField_svePerson_KodKZ_2 = PersonelManegementFrame.getTextField_svePersonKodKZ_2();
-				JTextField textField_svePersonKod_KZ_HOG = PersonelManegementFrame.getTextField_svePersonKodKZ_HOG();
-				JTextField textField_svePersonKod_KZ_Terit_1 = PersonelManegementFrame
-						.getTextField_svePersonKodKZ_Terit_1();
-				JTextField textField_svePersonKod_KZ_Terit_2 = PersonelManegementFrame
-						.getTextField_svePersonKodKZ_Terit_2();
-				Choice comboBox_savePerson_Firm = PersonelManegementFrame.getComboBox_savePerson_Firm();
-				Choice comboBox_svePerson_Otdel = PersonelManegementFrame.getComboBox_savePerson_Otdel();
-				JTextField textField_svePerson_Spisak = PersonelManegementFrame.getTextField_svePerson_Spisak();
-				JTextField textField_savePerson_StartDate = PersonelManegementFrame.getTextField_savePerson_StartDate();
-				JTextField textField_savePerson_EndDate = PersonelManegementFrame.getTextField_savePerson_EndDate();
-				JTextField textField_svePerson_Coment = PersonelManegementFrame.getTextField_svePerson_Coment();
-				JTextField textField__svePerson_Year = PersonelManegementFrame.getTextField_svePerson_Year();
+			String kodeByFrame = infoForPerson[i];
+			KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, year);
+			KodeStatus newKodeStat = new KodeStatus(person, kodeByFrame, ZoneDAO.getValueZoneByID(i+1), true,
+					year, "");
+			setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
+		}
 
-				if (checkInfoOtdel(comboBox_svePerson_Otdel, textField_svePerson_Spisak, textField_savePerson_StartDate,
-						textField_savePerson_EndDate)) {
 
-//			************** set PERSON		
-					String egn = textField_svePerson_EGN.getText();
-					Person person = PersonDAO.getValuePersonByEGN(egn);
-					String comment = textField_svePerson_Coment.getText().trim();
-					if (person == null) {
-						PersonDAO.setValuePerson(egn, textField_svePerson_FName.getText(),
-								textField_svePerson_SName.getText(), textField_svePerson_LName.getText());
-					}
-					person = PersonDAO.getValuePersonByEGN(egn);
-					String[] infoForPerson = { textField_svePerson_KodKZ_1.getText().trim(),
-							textField_svePerson_KodKZ_2.getText().trim(),
-							textField_svePersonKod_KZ_HOG.getText().trim(),
-							textField_svePersonKod_KZ_Terit_1.getText().trim(),
-							textField_svePersonKod_KZ_Terit_2.getText().trim(),
-							textField_svePerson_FName.getText().trim(), textField_svePerson_SName.getText().trim(),
-							textField_svePerson_LName.getText().trim() };
-
-					if (checkInfoPersonAndKodeStatus(infoForPerson, person)) {
-
-						Workplace workplace = WorkplaceDAO
-								.getValueWorkplaceByObject("Otdel", comboBox_svePerson_Otdel.getSelectedItem()).get(0);
-
-						String year = textField__svePerson_Year.getText().trim();
-						try {
-							Integer.parseInt(year);
-						} catch (NumberFormatException e0) {
-							year = curentYear;
-							textField__svePerson_Year.setText(year);
-						}
-
-//		************** set SPISAK_PRILOGENIA
-						Spisak_Prilogenia spisPril = null;
-						String formuliarName = textField_svePerson_Spisak.getText().trim();
-						if (!formuliarName.isEmpty()) {
-
-							Date sDate = null, eDate = null;
-							try {
-								sDate = sdf.parse(textField_savePerson_StartDate.getText().trim());
-								eDate = sdf.parse(textField_savePerson_EndDate.getText().trim());
-							} catch (ParseException e1) {
-
-								e1.printStackTrace();
-							}
-
-							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia(formuliarName, year, sDate, eDate, workplace,
-									"");
-							spisPril = Spisak_PrilogeniaDAO
-									.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, sDate,
-											workplace.getId_Workplace());
-
-							SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy");
-							Date curentDate = Calendar.getInstance().getTime();
-							try {
-								curentDate = sdf2.parse(sdf2.format(curentDate));
-							} catch (ParseException e1) {
-
-							}
-
-							PersonStatusDAO.setValuePersonStatus(person, workplace, spisPril, user, curentDate,
-									comment);
-
-						}
-
-//		****************** set KODESTATUS
-						setKodeStatusInDBase(person, infoForPerson, year);
-
-						System.out.println("Save to excel File");
-
-						SaveToPersonelORExternalFile.saveInfoPersonToExcelFile(person,
-								comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment, workplace);
-					}
-
-				}
-			}
-
-			private void setKodeStatusInDBase(Person person, String[] infoForPerson, String year) {
-
-				for (int i = 0; i < 5; i++) {
-
-					String kodeByFrame = infoForPerson[i];
-					KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, year);
-					KodeStatus newKodeStat = new KodeStatus(person, kodeByFrame, ZoneDAO.getValueZoneByID(1), true,
-							year, "");
-					setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
-				}
-
-//				kodeByFrame = infoForPerson[1];
-//				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear( person, 2,  year);
-//				newKodeStat = new KodeStatus (person, kodeByFrame, ZoneDAO.getValueZoneByID(2), true, year, "");
-//				setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
-//				
-//				kodeByFrame = infoForPerson[2];
-//				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear( person, 3,  year);
-//				newKodeStat = new KodeStatus (person, kodeByFrame, ZoneDAO.getValueZoneByID(3), true, year, "");
-//				setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
-//				
-//				kodeByFrame = infoForPerson[3];
-//				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear( person, 4,  year);
-//				newKodeStat = new KodeStatus (person, kodeByFrame, ZoneDAO.getValueZoneByID(4), true, year, "");
-//				setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
-//				
-//				kodeByFrame = infoForPerson[4];
-//				kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear( person, 5,  year);
-//				newKodeStat = new KodeStatus (person, kodeByFrame, ZoneDAO.getValueZoneByID(5), true, year, "");
-//				setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
-			}
-
-		});
 	}
-
-	static void ActionListener_Btn_Exportn(JButton btn_Export, JPanel save_Panel, JPanel button_Panel) {
-		btn_Export.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (dataTable == null) {
-
-					PersonReferenceExportToExcell.btnExportInfoPersonToExcell(TextInAreaTextPanel.getPerson(),
-							TextInAreaTextPanel.getMasivePersonStatusName(),
-							TextInAreaTextPanel.getMasivePersonStatus(), TextInAreaTextPanel.getZoneNameMasive(),
-							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
-							TextInAreaTextPanel.getMasiveMeasur(), save_Panel);
-				} else {
-					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,
-							PersonelManegementMethods.getTabHeader(), button_Panel);
-
-				}
-			}
-		});
-	}
-
+		
 	public static List<Spisak_Prilogenia> addObhodenListToListSpisak_Prilogenia(
 			List<Spisak_Prilogenia> listSpisak_Prilogenia) {
 		List<Spisak_Prilogenia> newlistSpisak_Prilogenia = new ArrayList<>();
@@ -805,15 +865,20 @@ public class PersonelManegementMethods {
 	}
 
 	private static void checkKorectionSetInfoToFieldsInSavePersonPanel(JTextField fild, int zoneID) {
+		String text = "";
+		convertToBigCyr(fild, zoneID);
+		checkKorectFormatKode(zoneID);
+		if(corectFormatKode) {
 		checkIfSetKodeToEnableInsertBtn(fild, zoneID);
-		String text = checkEGNByNewPerson();
+		text += " " + checkEGNByNewPerson();
 		text += " " + checkDublicateKodeInNewPerson(fild, zoneID);
 		text += " " + checInsertNewPerson();
 		text += " " + checkKorectWritenKode();
 		text += " " +checkFormuliarNameToZoneKode();
 		
-		
+		}
 		setTextToLabel_svePerson_Text_Check_EnterInZone(text);
+		
 	}
 
 	private static void setTextToLabel_svePerson_Text_Check_EnterInZone(String text) {
@@ -842,11 +907,18 @@ public class PersonelManegementMethods {
 		String kode = fild.getText();
 		switch (zoneID) {
 		case 1: {
-			if (!kode.isEmpty() && fild.getToolTipText() == null) {
+			if (!kode.isEmpty() && fild.getToolTipText() == null && !kode.equals("ЕП-2") && !kode.equals("н")) {
+				PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().setEnabled(true);
 				PersonelManegementFrame.getBtn_InsertToHOG().setEnabled(true);
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1().setEnabled(true);
 				PersonelManegementFrame.getBtn_InsertToTerit_1().setEnabled(true);
+				
 			} else {
+				PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().setText("н");
+				PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().setEnabled(false);
 				PersonelManegementFrame.getBtn_InsertToHOG().setEnabled(false);
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1().setText("н");
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1().setEnabled(false);
 				PersonelManegementFrame.getBtn_InsertToTerit_1().setEnabled(false);
 			}
 		}
@@ -855,8 +927,11 @@ public class PersonelManegementMethods {
 		case 2: {
 			if (!kode.isEmpty() && fild.getToolTipText() == null) {
 				PersonelManegementFrame.getBtn_InsertToTerit_2().setEnabled(true);
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2().setEnabled(true);
 			} else {
 				PersonelManegementFrame.getBtn_InsertToTerit_2().setEnabled(false);
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2().setText("н");
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2().setEnabled(false);
 			}
 		}
 			break;
@@ -957,84 +1032,102 @@ public class PersonelManegementMethods {
 		return listStr;
 	}
 
-	private static boolean checkInfoOtdel(Choice comboBox_svePerson_Otdel, JTextField textField_svePerson_Spisak,
-			JTextField textField_savePerson_StartDate, JTextField textField_savePerson_EndDate) {
-
-		String errorStr = "";
+	private static boolean checkInfoOtdel(Choice comboBox_svePerson_Otdel) {
 
 		if (comboBox_svePerson_Otdel.getSelectedItem().isEmpty()) {
-			errorStr += "Otdel, ";
-		}
-
-		if (errorStr.length() > 2) {
-			errorStr = errorStr.substring(0, errorStr.length() - 2);
-			AplicationMetods.MessageDialog(errorStr);
+			String svePersonManegement_CheckOtdelArea = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("svePersonManegement_CheckOtdelArea");
+			AplicationMetods.MessageDialog(svePersonManegement_CheckOtdelArea);
 			return false;
 		}
 		return true;
 	}
 
-	private static boolean checkInfoPersonAndKodeStatus(String[] infoForPerson, Person person) {
+	private static boolean checkInfoPersonAndKodeStatus(String[] infoForPerson, Person person, boolean checkbx_EnterInZone) {
 
+		String svePersonManegement_chengedSomeFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("svePersonManegement_chengedSomeFilds");
+		String svePersonManegement_EnteredInZoneANDChangeKode = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("svePersonManegement_EnteredInZoneANDChangeKode");
+		
+		boolean fl_ChangeKode = false;
 		String[] kode = getKodeStatusByPersonFromDBase(person);
 		for (int i = 0; i < kode.length; i++) {
 			if (kode[i].equals("н") || kode[i].equals("ЕП-2")) {
 				kode[i] = "";
 			}
+			if (infoForPerson[i].equals("н") || infoForPerson[i].equals("ЕП-2")) {
+				infoForPerson[i] = "";
+			}
+			
+			System.out.println(i+" | "+kode[i]	+" | "+infoForPerson[i]);
 		}
 
 		String errorStr = "";
 		System.out.println(infoForPerson[0] + " <-> " + kode[0]);
 		if (!infoForPerson[0].equals(kode[0])) {
-			errorStr += "KZ-1, ";
+			errorStr += "KZ-1("+infoForPerson[0]+"->"+kode[0]+"), ";
+			fl_ChangeKode = true;
 		}
 
 		System.out.println(infoForPerson[1] + " <-> " + kode[1]);
 		if (!infoForPerson[1].equals(kode[1])) {
-			errorStr += "KZ-2, ";
+			errorStr += "KZ-2("+infoForPerson[1]+"->"+kode[1]+"), ";
+			fl_ChangeKode = true;
 		}
 		System.out.println(infoForPerson[2] + " <-> " + kode[2]);
 		if (!infoForPerson[2].equals(kode[2])) {
-			errorStr += "KZ-HOG, ";
+			errorStr += "KZ-HOG("+infoForPerson[2]+"->"+kode[2]+"), ";
+			fl_ChangeKode = true;
 
 		}
 		System.out.println(infoForPerson[3] + " <-> " + kode[3]);
 		if (!infoForPerson[3].equals(kode[3])) {
-			errorStr += "Ter-1, ";
+			errorStr += "Ter-1("+infoForPerson[3]+"->"+kode[3]+"), ";
+			fl_ChangeKode = true;
 		}
 
 		System.out.println(infoForPerson[4] + " <-> " + kode[4]);
 		if (!infoForPerson[4].equals(kode[4])) {
-			errorStr += "Ter-2, ";
+			errorStr += "Ter-2("+infoForPerson[4]+"->"+kode[4]+"), ";
+			fl_ChangeKode = true;
 		}
 
 		if (!infoForPerson[5].equals(person.getFirstName())) {
-			errorStr += "FName, ";
+			errorStr += "FName("+infoForPerson[5]+"->"+person.getFirstName()+"), ";;
 		}
 		if (!infoForPerson[6].equals(person.getSecondName())) {
-			errorStr += "SName, ";
+			errorStr += "SName("+infoForPerson[6]+"->"+person.getSecondName()+"), ";
 		}
 		if (!infoForPerson[7].equals(person.getLastName())) {
-			errorStr += "LName, ";
+			errorStr += "LName("+infoForPerson[7]+"->"+person.getLastName()+"), ";
 		}
 
 		System.out.println("errorStr " + errorStr);
 		if (errorStr.length() > 2) {
 			errorStr = errorStr.substring(0, errorStr.length() - 2);
-			if (OptionDialog(errorStr)) {
+			
+			if (OptionDialog(errorStr, svePersonManegement_chengedSomeFilds)) {
 				if (errorStr.contains("Name")) {
 					person.setFirstName(infoForPerson[5]);
 					person.setSecondName(infoForPerson[6]);
 					person.setLastName(infoForPerson[7]);
 					PersonDAO.updateValuePerson(person);
 				}
+				if ( fl_ChangeKode && checkbx_EnterInZone 
+				&& (fromListPersonManegement || OptionDialog(svePersonManegement_EnteredInZoneANDChangeKode,  "В Н И М А Н И Е"))) {
+		
+				System.out.println("**************************************");
+				
 				return true;
 
-			} else {
+			}else {
+				return false;
+			}
+			}else {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -1050,9 +1143,6 @@ public class PersonelManegementMethods {
 				kode[i] = kodeStat.getKode();
 			}
 
-		}
-		for (String string : kode) {
-			System.out.println(string);
 		}
 
 		return kode;
@@ -1081,24 +1171,13 @@ public class PersonelManegementMethods {
 		}
 	}
 
-	public static String[] getKodeByPerson(Person person) {
-		String[] kode = new String[5];
-		for (int i = 0; i < 5; i++) {
-			kode[i] = "";
-			KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, curentYear + "");
-			if (kodeStat != null) {
-				kode[i] = kodeStat.getKode();
-			}
-
-		}
-		return kode;
-	}
-
 	private static void setComentGetTexTFromOtdelAndStartDate() {
 		String text = "";
 		obhodenList = false;
+		prilText = PersonelManegementFrame.getTextField_svePerson_Spisak().getText();
+		prilStartDateText = PersonelManegementFrame.getTextField_savePerson_StartDate().getText();
 		if (!Otdel_OK) {
-			prilText = PersonelManegementFrame.getTextField_svePerson_Spisak().getText();
+			
 			if (prilText.toLowerCase().contains("пр.9") || prilText.toLowerCase().contains("пр-9")) {
 				text = svePersonManegement_WithPril + " 9 от ";
 			}
@@ -1106,21 +1185,21 @@ public class PersonelManegementMethods {
 				text = svePersonManegement_WithPril + " 1 от ";
 			}
 			if (!text.isEmpty()) {
-				prilStartDateText = PersonelManegementFrame.getTextField_savePerson_StartDate().getText();
 				text = text + prilStartDateText + "г. " + svePersonManegement_ChangeOtdel + " " + oldOtdelPerson;
 			}
 
 		}
-		if (prilText.contains("Обходен лист")) {
+		if (prilText.contains("Обходен")) {
 			text = prilText + " от " + prilStartDateText + "г. ";
 			obhodenList = true;
 		}
 		PersonelManegementFrame.getTextField_svePerson_Coment().setText(text);
 	}
 
-	public static boolean OptionDialog(String mesage) {
-		String[] options = { "Skip", "Update" };
-		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
+	public static boolean OptionDialog(String mesage, String textOptionDialogFrame) {
+		
+		String[] options = { "Back", "Continued" };
+		int x = JOptionPane.showOptionDialog(null, mesage, textOptionDialogFrame, JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 		if (x > 0) {
 			return true;
@@ -1195,43 +1274,20 @@ public class PersonelManegementMethods {
 
 	public static String[] getMasiveFromKodeAndWorkPlaceFromDBase(Person person) {
 
-		String[] masive = { "", "", "", "", "", "", "", };
+		String[] masive = new String[7] ;
+		String[] masiveKodeStatus = getKodeStatusByPersonFromDBase(person);
 
-		List<KodeStatus> listKStat = KodeStatusDAO.getKodeStatusByPersonYear(person, curentYear);
-		if (listKStat != null) {
-			for (KodeStatus kodeStatus : listKStat) {
-				switch (kodeStatus.getZone().getId_Zone()) {
-				case 1:
-					masive[0] = kodeStatus.getKode();
-					break;
-				case 2:
-					masive[1] = kodeStatus.getKode();
-					break;
-				case 3:
-					masive[2] = kodeStatus.getKode();
-					break;
-				case 4:
-					masive[3] = kodeStatus.getKode();
-					break;
-				case 5:
-					masive[4] = kodeStatus.getKode();
-					break;
-				default:
-					break;
-				}
+//		PersonStatus perStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
+		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByPerson(person);
+		sortByStartDate( listPerStat);
+		PersonStatus perStat = listPerStat.get(0);
+			for (int i = 0; i < masiveKodeStatus.length; i++) {
+				masive[i] = masiveKodeStatus[i];
 			}
-		}
-
-		PersonStatus perStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
-
+		
 		masive[5] = perStat.getWorkplace().getFirmName();
 		masive[6] = perStat.getWorkplace().getOtdel();
 
-//		int i = 0;
-//		for (String string : masive) {
-//			System.out.println(i + " -> " + string);
-//			i++;
-//		}
 
 		return masive;
 	}
@@ -1554,7 +1610,7 @@ public class PersonelManegementMethods {
 		String egn = textField_svePerson_EGN.getText();
 		Person person = PersonDAO.getValuePersonByEGN(egn);
 		String textCheck = "";
-		if (person != null && !egn.isEmpty()) {
+		if (person != null && !egn.isEmpty() && corectFormatKode) {
 
 //			First Name
 			FirstNameOK = false;
@@ -1590,50 +1646,53 @@ public class PersonelManegementMethods {
 				textCheck += svePersonManegement_LastNameError;
 			}
 
-			String[] simpleKode = generateMasiveKodeStatus(person);
+			String[] simpleKode = getKodeStatusByPersonFromDBase(person);
 
 //			KodKZ_1
 			KodKZ_1_OK = false;
-			if (simpleKode[0].equals(textField_svePerson_KodKZ_1.getText())) {
+			if (simpleKode[0].equals("ЕП-2") || simpleKode[0].equals(textField_svePerson_KodKZ_1.getText())) {
 				KodKZ_1_OK = true;
 				textField_svePerson_KodKZ_1.setBorder(defoutBorder);
 			} else {
 				textField_svePerson_KodKZ_1.setBorder(redBorder);
 			}
+			
 //			KodKZ_2
 			KodKZ_2_OK = false;
-			if (simpleKode[1].equals(textField_svePerson_KodKZ_2.getText())) {
+			if (simpleKode[1].equals("н") || simpleKode[1].equals(textField_svePerson_KodKZ_2.getText())) {
 				KodKZ_2_OK = true;
 				textField_svePerson_KodKZ_2.setBorder(defoutBorder);
 			} else {
 				textField_svePerson_KodKZ_2.setBorder(redBorder);
 			}
-
+			
 //			KZ_HOG
 			KZ_HOG_OK = false;
-			if (simpleKode[2].equals(textField_svePersonKod_KZ_HOG.getText())) {
+			if (simpleKode[2].equals("н") || simpleKode[2].equals(textField_svePersonKod_KZ_HOG.getText())) {
 				KZ_HOG_OK = true;
 				textField_svePersonKod_KZ_HOG.setBorder(defoutBorder);
 			} else {
 				textField_svePersonKod_KZ_HOG.setBorder(redBorder);
 			}
-//			KodKZ_2
+			
+//			KZ_Terit_1
 			KZ_Terit_1_OK = false;
-			if (simpleKode[3].equals(textField_svePersonKod_KZ_Terit_1.getText())) {
+			if (simpleKode[3].equals("н") || simpleKode[3].equals(textField_svePersonKod_KZ_Terit_1.getText())) {
 				KZ_Terit_1_OK = true;
 				textField_svePersonKod_KZ_Terit_1.setBorder(defoutBorder);
 			} else {
 				textField_svePersonKod_KZ_Terit_1.setBorder(redBorder);
 			}
-//			KodKZ_2
+			
+//			KZ_Terit_2
 			KZ_Terit_2_OK = false;
-			if (simpleKode[4].equals(textField_svePersonKod_KZ_Terit_2.getText())) {
+			if (simpleKode[4].equals("н") || simpleKode[4].equals(textField_svePersonKod_KZ_Terit_2.getText())) {
 				KZ_Terit_2_OK = true;
 				textField_svePersonKod_KZ_Terit_2.setBorder(defoutBorder);
 			} else {
 				textField_svePersonKod_KZ_Terit_2.setBorder(redBorder);
 			}
-
+			
 			Otdel_OK = false;
 			if (oldOtdelPerson != null && oldOtdelPerson.equals(comboBox_svePerson_Otdel.getSelectedItem())) {
 				Otdel_OK = true;
@@ -1645,6 +1704,7 @@ public class PersonelManegementMethods {
 				}
 				textCheck += svePersonManegement_newOtdel;
 			}
+			boolean fl = true;
 			if (!KodKZ_1_OK || !KodKZ_2_OK || !KZ_HOG_OK || !KZ_Terit_1_OK || !KZ_Terit_2_OK) {
 				if (!textCheck.isEmpty()) {
 					textCheck += ", ";
@@ -1653,8 +1713,12 @@ public class PersonelManegementMethods {
 
 				if (!textCheck.isEmpty()) {
 					textCheck += " " + svePersonManegement_IsEnteredInZone;
+					
+					fl= false;
 				}
 			}
+			
+			setVizible_EnterInZone_LabelAndCheckBox(fl);
 			return textCheck;
 		}
 		return "";
@@ -1781,13 +1845,24 @@ public class PersonelManegementMethods {
 		return textCheck;
 	}
 
-	
+	 public static void sortByStartDate(List<PersonStatus> perStat)
+	    {	    		    	
+
+  		Collections.sort(perStat, new Comparator<PersonStatus>() {
+  		 
+		@Override
+		public int compare(PersonStatus o1, PersonStatus o2) {
+			 return o2.getSpisak_prilogenia().getStartDate().compareTo(o1.getSpisak_prilogenia().getStartDate());
+		}
+  		});
+  	
+	    }
 	
 	public static void convertToBigCyr(JTextField textField, int zoneID) {
 		
 		String kode = textField.getText();
 		int sizeKode = kode.length();
-		if (sizeKode > 0 && zoneID > 0) {
+		if (sizeKode > 1 && zoneID > 0) {
 			kode =  AplicationMetods.literate(kode);
 			kode = kode.toUpperCase();;
 			textField.setText(kode);
@@ -1799,8 +1874,10 @@ public class PersonelManegementMethods {
 		String otdelPerson = PersonelManegementFrame.getComboBox_savePerson_Otdel().getSelectedItem();
 		Workplace workPl = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdelPerson);
 		String textCheck = "";
+		String textToolTipText = "";
+		
 		JTextField[] textField =  {PersonelManegementFrame.getTextField_svePerson_KodKZ_1(),
-				PersonelManegementFrame.getTextField_svePerson_KodKZ_1()};
+				PersonelManegementFrame.getTextField_svePersonKodKZ_2()};
 		
 		if (workPl != null ) {
 			
@@ -1817,63 +1894,118 @@ public class PersonelManegementMethods {
 
 			String kode = textField[zoneID-1].getText();
 			int sizeKode = kode.length();
-			int numKode = 0;
-			String leter;
+			String leter = null;
 			boolean fl = true;
-			if (sizeKode > 0) {
+			if (sizeKode > 0 ) {
 				if (zoneID == 1) {
-					if (!kode.isEmpty() || !kode.equals("ЕП-2")) {
+					if (!kode.isEmpty() && !kode.equals("ЕП-2") && !kode.equals("н")) {
 						leter = kode.substring(sizeKode - 1, sizeKode);
-					try {
-						numKode = Integer.parseInt(kode.substring(0, sizeKode - 1));
-							if (!leter.equals(leterR) || (numKode < startCount && numKode > endCount)) {
-								fl = false;
-							}
-
-						} catch (Exception e) {
-							fl = false;
-						}
+						String strNum = kode.substring(0, sizeKode - 1);
+						textToolTipText = svePersonManegement_textOtdelArea+" "+startCount+"÷"+endCount+"|"+leterR;
+						fl = checkLeterAndAreaNumber(leterR, startCount, endCount, leter, strNum);
 					}
 				}
 
 				if (zoneID == 2) {
-					if (!kode.isEmpty() || !kode.equals("н")) {
+					if (!kode.isEmpty() && !kode.equals("н")) {
 						leter = kode.substring(0, 1);
-						try {
-							numKode = Integer.parseInt(kode.substring(1, sizeKode));
-							if (!leter.equals(leterL) || (numKode < startCount && numKode > endCount)) {
-								fl = false;
-							}
-						} catch (Exception e) {
-							fl = false;
-						}
+						String strNum = kode.substring(1, sizeKode);
+						textToolTipText = svePersonManegement_textOtdelArea+" "+leterL+"|"+startCount+"÷"+endCount;
+						fl = checkLeterAndAreaNumber(leterL, startCount, endCount, leter, strNum);
+												
 					}
 				}
-	
 			}
 			if (fl) {
 				textField[zoneID-1].setBorder(defoutBorder);
+				
+				textField[zoneID-1].setToolTipText(null);
 			} else {
 				textCheck = svePersonManegement_kodeNotInOtdelArea;
+				textField[zoneID-1].setToolTipText(textToolTipText);
 				textField[zoneID-1].setBorder(redBorder);
 			}
+			
+			setVizible_EnterInListChengeKode_LabelAndCheckBox(fl);
+			
 		}
 			}
 		}
 		return textCheck;
 	}
 
-	public static void checkKorectFormatKode(JTextField textField, int zoneID) {
+	private static boolean checkLeterAndAreaNumber(String leterR, int startCount, int endCount, String leter,
+			String strNum) {
+		
+		boolean fl;
+		try {
+			int numKode = Integer.parseInt(strNum);
+		
+			if (leter.equals(leterR) && numKode >= startCount && numKode <= endCount) {
+				fl = true;
+			}else {
+				fl = false;
+			}
+
+		} catch (Exception e) {
+			fl = false;
+		}
+		return fl;
+	}
+
+	private static void setVizible_EnterInListChengeKode_LabelAndCheckBox(boolean fl) {
+		
+		if (fl && !PersonelManegementFrame.getChckbx_svePerson_EnterInZone().isSelected()) {
+			PersonelManegementFrame.getLbl_svePerson_EnterInListChengeKode().setText("");
+			PersonelManegementFrame.getChckbx_svePerson_EnterInListChengeKode().setVisible(false);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInListChengeKode().setSelected(false);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInListChengeKode().setText("no");
+		} else {
+			PersonelManegementFrame.getLbl_svePerson_EnterInListChengeKode().setText(svePersonManegement_InsertToListChengeKode);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInListChengeKode().setVisible(true);
+		}
+	}
+
+	
+	private static void setVizible_EnterInZone_LabelAndCheckBox(boolean fl) {
+		if (fl) {
+			System.out.println("true");
+			PersonelManegementFrame.getLbl_svePerson_isEnterInZone().setText("");
+			PersonelManegementFrame.getChckbx_svePerson_EnterInZone().setVisible(false);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInZone().setSelected(false);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInZone().setText("no");
+		} else {
+			System.out.println("false"+svePersonManegement_CheckBoxLbIs_EnteredInZone);
+			PersonelManegementFrame.getLbl_svePerson_isEnterInZone().setText(svePersonManegement_CheckBoxLbIs_EnteredInZone);
+			PersonelManegementFrame.getChckbx_svePerson_EnterInZone().setVisible(true);
+		}
+	}
+
+	
+	public static void checkKorectFormatKode(int zoneID) {
+		boolean fl = true, fl_all = true;
+		if(zoneID > 0) {
+		JTextField[] textField = {
+				PersonelManegementFrame.getTextField_svePerson_KodKZ_1(),
+				PersonelManegementFrame.getTextField_svePersonKodKZ_2(),
+				PersonelManegementFrame.getTextField_svePersonKodKZ_HOG(),
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1(),
+				PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2()};
+		
 		JButton btn_SaveToExcelFile = PersonelManegementFrame.getBtn_SaveToExcelFile();
 		String textCheck = "";
-		String kode = textField.getText();
-		int sizeKode = kode.length();
+		
+		
 		String leter="";
-		boolean fl = true;
-		if (sizeKode > 0) {
+		
+		for (int i = 0; i < textField.length; i++) {
+			String kode = textField[i].getText();
+			int sizeKode = kode.length();
+			fl = true;
+		if (sizeKode > 0 ) {
 
-			if (zoneID == 1) {
-				if (!kode.isEmpty() || !kode.equals("ЕП-2")) {
+			if ((i+1) == 1) {
+				if (!kode.isEmpty() && !kode.equals("ЕП-2") && !kode.equals("н")) {
 					leter = kode.substring(sizeKode - 1, sizeKode);
 				try {
 						if (!SearchFreeKodeFrame.checkIsCyrChart(leter)) {
@@ -1890,8 +2022,8 @@ public class PersonelManegementMethods {
 				}
 			}
 
-			if (zoneID == 2) {
-				if (!kode.isEmpty() || !kode.equals("н")) {
+			if ((i+1) == 2) {
+				if (!kode.isEmpty() && !kode.equals("н")) {
 					leter = kode.substring(0, 1);
 					try {
 						if (!SearchFreeKodeFrame.checkIsCyrChart(leter)) {
@@ -1907,8 +2039,8 @@ public class PersonelManegementMethods {
 				}
 			}
 
-			if (zoneID == 3) {
-				if (!kode.isEmpty() || !kode.equals("н")) {
+			if ((i+1) == 3) {
+				if (!kode.isEmpty() && !kode.equals("н")) {
 					String textKodKZ_1 = PersonelManegementFrame.getTextField_svePerson_KodKZ_1().getText();
 					if (textKodKZ_1.isEmpty() || !("Н" + textKodKZ_1).equals(kode)) {
 						textCheck = svePersonManegement_NonKorektFormatKode + " - H" + textKodKZ_1;
@@ -1918,8 +2050,8 @@ public class PersonelManegementMethods {
 				}
 			}
 
-			if (zoneID == 4) {
-				if (!kode.isEmpty() || !kode.equals("н")) {
+			if ((i+1) == 4) {
+				if (!kode.isEmpty() && !kode.equals("н")) {
 					String textKodKZ_1 = PersonelManegementFrame.getTextField_svePerson_KodKZ_1().getText();
 					if (textKodKZ_1.isEmpty() || !("Т" + textKodKZ_1).equals(kode)) {
 						textCheck = svePersonManegement_NonKorektFormatKode + " - T" + textKodKZ_1;
@@ -1928,8 +2060,8 @@ public class PersonelManegementMethods {
 				}
 			}
 
-			if (zoneID == 5) {
-				if (!kode.isEmpty() || !kode.equals("н")) {
+			if ((i+1) == 5) {
+				if (!kode.isEmpty() && !kode.equals("н")) {
 					String textKodKZ_2 = PersonelManegementFrame.getTextField_svePersonKodKZ_2().getText();
 					if (textKodKZ_2.isEmpty() || !(textKodKZ_2 + "Т").equals(kode)) {
 						textCheck = svePersonManegement_NonKorektFormatKode + " - " + textKodKZ_2 + "T";
@@ -1939,54 +2071,31 @@ public class PersonelManegementMethods {
 			}
 		}
 		if (fl) {
-			textField.setForeground(Color.BLACK);
+			textField[i].setForeground(Color.BLACK);
+			textField[i].setBackground(Color.WHITE);
+			textField[i].setBorder(defoutBorder);
 			btn_SaveToExcelFile.setEnabled(true);
-			textField.setToolTipText(null);
+			textField[i].setToolTipText(null);
+			
 		} else {
-			textField.setForeground(Color.RED);
+			textField[i].setForeground(Color.RED);
+			textField[i].setBackground(Color.WHITE);
+			textField[i].setBorder(defoutBorder);
 			btn_SaveToExcelFile.setEnabled(false);
-			textField.setToolTipText(textCheck);
+			textField[i].setToolTipText(textCheck);
+			
 		}
+		if(!fl) {
+			fl_all=fl;
+		}
+		}
+		corectFormatKode = fl_all;
+		}
+		
 
 		
 	}
-
 	
-	private static String[] generateMasiveKodeStatus(Person person) {
-		String curentYear = AplicationMetods.getCurentYear();
-		List<KodeStatus> listKodeStat = KodeStatusDAO.getKodeStatusByPersonYear(person, curentYear);
-
-		String[] simpleKode = generateEmptyMasive();
-		if (listKodeStat != null) {
-			for (KodeStatus kodeStatus : listKodeStat) {
-
-				if (kodeStatus.getZone().getId_Zone() == 1) {
-					simpleKode[0] = kodeStatus.getKode();
-				}
-				if (kodeStatus.getZone().getId_Zone() == 2) {
-					simpleKode[1] = kodeStatus.getKode();
-				}
-				if (kodeStatus.getZone().getId_Zone() == 3) {
-					simpleKode[2] = kodeStatus.getKode();
-				}
-				if (kodeStatus.getZone().getId_Zone() == 4) {
-					simpleKode[3] = kodeStatus.getKode();
-				}
-				if (kodeStatus.getZone().getId_Zone() == 5) {
-					simpleKode[4] = kodeStatus.getKode();
-				}
-			}
-		}
-		return simpleKode;
-	}
-
-	private static String[] generateEmptyMasive() {
-		String[] sinpleKode = new String[5];
-		for (int i = 0; i < sinpleKode.length; i++) {
-			sinpleKode[i] = "";
-		}
-		return sinpleKode;
-	}
 
 	public static void generateListOtdels() {
 		listOtdelKz = getListKZ();
@@ -2009,6 +2118,8 @@ public class PersonelManegementMethods {
 //		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		List<PersonManegement> listPersonFromFile = readListPersonFromFile(file, textField);
 
+		
+		
 		if (listPersonFromFile.size() == 0) {
 			textArea.setText(notResults);
 			PersonelManegementFrame.viewInfoPanel();
@@ -2022,14 +2133,37 @@ public class PersonelManegementMethods {
 		}
 
 		if (listPersonFromFile.size() > 1) {
+			fromListPersonManegement = true;
 			System.out.println("***** " + listPersonFromFile.size());
+			updateSectionPersonSave_Panel(listPersonFromFile);
 			dataTable = addListStringSelectionPersonToComboBox(listPersonFromFile);
 			panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
 					textField_svePerson_Year);
 			PersonelManegementFrame.viewTablePanel();
+			
 		}
 
 		return listPersonFromFile;
+	}
+
+	private static void updateSectionPersonSave_Panel(List<PersonManegement> listPersonFromFile) {
+		String otdel = PersonReferenceFrame.getLastWorkplaceByPerson(listPersonFromFile.get(0).getPerson());
+		String firm = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdel).getFirmName();
+		
+		PersonelManegementFrame.getTextField_svePerson_EGN().setText("");
+		PersonelManegementFrame.getTextField_svePerson_FName().setText("");
+		PersonelManegementFrame.getTextField_svePerson_SName().setText("");
+		PersonelManegementFrame.getTextField_svePerson_LName().setText("");
+		PersonelManegementFrame.getTextField_svePerson_KodKZ_1().setText("");
+		PersonelManegementFrame.getTextField_svePersonKodKZ_2().setText("");
+		PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().setText("");
+		PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1().setText("");
+		PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2().setText("");
+		
+		PersonelManegementFrame.getComboBox_savePerson_Firm().select(firm);
+		PersonelManegementFrame.getComboBox_savePerson_Otdel().select(otdel);
+		
+		
 	}
 
 	protected static Object[][] addListStringSelectionPersonToComboBox(List<PersonManegement> listSelectionPerson) {
@@ -2174,7 +2308,7 @@ public class PersonelManegementMethods {
 				return dataTable[row][col];
 			}
 
-			@SuppressWarnings("unused")
+			
 			public void setValueAt(Object value, int row, int col) {
 
 				if (!dataTable[row][col].equals(value)) {

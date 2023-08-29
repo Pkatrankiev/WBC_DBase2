@@ -1,5 +1,6 @@
 package SaveToExcellFile;
 
+import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,6 +38,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
@@ -61,8 +63,9 @@ public class SaveToPersonelORExternalFile {
 	static UsersWBC workingUser;
 	static String commentText;
 
-	public static void saveInfoPersonToExcelFile(Person person, String firmName, Spisak_Prilogenia spPril,
-			UsersWBC user, String comment, Workplace workplace) {
+	public static void saveInfoFromPersonManegementToExcelFile(Person person, String firmName, Spisak_Prilogenia spPril,
+			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, boolean checkbx_EnterInListChengeKode, boolean obhodenList) {
+	
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
@@ -83,7 +86,7 @@ public class SaveToPersonelORExternalFile {
 			
 			writePersonToOtdel(person, workbook);
 
-			if (spPril != null) {
+			if (spPril != null && !obhodenList) {
 				writeFormulyarNameToOtdel(firmName, spPril, workbook);
 
 				writeFormulyarNameToPersonRow(workbook, spPril, person);
@@ -91,6 +94,11 @@ public class SaveToPersonelORExternalFile {
 
 			createCellComment(workbook, person);
 
+			saveInfoByObhodenList(obhodenList, spPril, workbook, person, firmName);
+			
+			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName);
+			
+			
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
 			workbook.write(outputStream);
 
@@ -109,6 +117,250 @@ public class SaveToPersonelORExternalFile {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private static void saveInfoByInListChangeKode(boolean checkbx_EnterInListChangeKode, String oldWorkplace, Spisak_Prilogenia spPril,
+			Workbook workbook, Person person, String firmName) {
+		System.out.println("checkbx_EnterInListChangeKode "+checkbx_EnterInListChangeKode);
+		if(checkbx_EnterInListChangeKode) {
+
+			String text = commentText;
+			int intRrowPerson = searchRowPersonInWorkbook(workbook, person);
+			Sheet sheet5 = workbook.getSheetAt(5);
+			Sheet sheet3 = workbook.getSheetAt(3);
+			int lastRow5 = sheet5.getLastRowNum()+1;
+			Row lastRow = sheet5.getRow(lastRow5-1);
+			Row newRow = sheet5.createRow(lastRow5);
+			Row rowPerson = sheet3.getRow(intRrowPerson);
+			String newWorkplace = spPril.getWorkplace().getOtdel();
+			System.out.println("lastRow "+lastRow.getRowNum()+"lastRow4 "+lastRow5+" newRow "+newRow.getRowNum()+" rowPerson "+rowPerson.getRowNum()+" oldWorkplace "+oldWorkplace);
+		
+				if (firmName.equals("АЕЦ Козлодуй")) {
+				
+					setChangeKodeToPERSONELSheet5(lastRow, newWorkplace, oldWorkplace, text, newRow, rowPerson);;
+				}else {
+					setChangeKodeToEXTERNALSheet5(lastRow, newWorkplace, oldWorkplace, text, newRow, rowPerson);
+				}
+			
+			
+			
+			
+		}
+		
+	}
+
+	private static void setChangeKodeToEXTERNALSheet5(Row lastRow, String newWorkplace,String oldWorkplace, String text, Row newRow, Row rowPerson) {
+		
+		
+		
+		Cell newCel = newRow.createCell(1);
+		Cell oldCel = rowPerson.getCell(0);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 1);
+		
+		newCel = newRow.createCell(2);
+		oldCel = rowPerson.getCell(1);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 2);
+		
+		newCel = newRow.createCell(3);
+		newCel.setCellValue(oldWorkplace);
+		setCelSityleFromPreviosCell(lastRow, newCel, 3);
+		
+		newCel = newRow.createCell(4);
+		oldCel = rowPerson.getCell(5);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 4);
+		
+		
+		newCel = newRow.createCell(5);
+		oldCel = rowPerson.getCell(6);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 5);
+		
+		newCel = newRow.createCell(6);
+		newCel.setCellValue(newWorkplace);
+		setCelSityleFromPreviosCell(lastRow, newCel, 6);
+		
+		newCel = newRow.createCell(10);
+		newCel.setCellValue(text);
+		setCelSityleFromPreviosCell(lastRow, newCel, 10);
+	}
+
+	private static void setChangeKodeToPERSONELSheet5(Row lastRow, String newWorkplace,String oldWorkplace, String text, Row newRow, Row rowPerson) {
+		
+		
+		
+		Cell newCel = newRow.createCell(1);
+		Cell oldCel = rowPerson.getCell(0);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 1);
+		
+		newCel = newRow.createCell(2);
+		oldCel = rowPerson.getCell(1);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 2);
+		
+		newCel = newRow.createCell(3);
+		oldCel = rowPerson.getCell(2);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 3);
+		
+		
+		
+		
+		newCel = newRow.createCell(4);
+		newCel.setCellValue(oldWorkplace);
+		setCelSityleFromPreviosCell(lastRow, newCel, 4);
+		
+		newCel = newRow.createCell(5);
+		oldCel = rowPerson.getCell(5);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 5);
+		
+		
+		newCel = newRow.createCell(6);
+		oldCel = rowPerson.getCell(6);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setCelSityleFromPreviosCell(lastRow, newCel, 6);
+		
+		newCel = newRow.createCell(7);
+		newCel.setCellValue(newWorkplace);
+		setCelSityleFromPreviosCell(lastRow, newCel, 7);
+		
+		newCel = newRow.createCell(11);
+		newCel.setCellValue(text);
+		setCelSityleFromPreviosCell(lastRow, newCel, 11);
+	}
+
+	
+	private static void setCelSityleFromPreviosCell(Row lastRow, Cell newCel, int celcolumn) {
+		Cell cel = lastRow.getCell(celcolumn);
+		if(cel != null) {
+			newCel.setCellStyle(cel.getCellStyle());
+		}
+	}
+
+	public static void saveInfoByObhodenList(boolean obhodenList, Spisak_Prilogenia spPril, Workbook workbook, Person person, String firmName) {
+		System.out.println("obhodenList "+obhodenList);
+		if(obhodenList) {
+			Cell cel;
+			
+			String text = commentText;
+			
+			int intRrowPerson = searchRowPersonInWorkbook(workbook, person);
+			Sheet sheet4 = workbook.getSheetAt(4);
+			Sheet sheet3 = workbook.getSheetAt(3);
+			int lastRow4 = sheet4.getLastRowNum()+1;
+			Row newRow = sheet4.createRow(lastRow4);
+			Row rowPerson = sheet3.getRow(intRrowPerson);
+			
+		if (text.isEmpty()) {
+			text = "Обходен лист от "+sdfrmt.format(spPril.getStartDate())+"г.";
+		}
+			
+				for (int j = 0; j < 4; j++) {
+					for (int i = 0; i < 7; i++) {
+				cel = workbook.getSheetAt(j).getRow(intRrowPerson).getCell(i);
+				setYELLOWandREDCellStyle(cel);
+				}
+			}
+			
+				if (firmName.equals("АЕЦ Козлодуй")) {
+				
+				setInfoToPERSONELSheet4(text, newRow, rowPerson);
+				}else {
+					setInfoToEXTERNALSheet4(text, newRow, rowPerson);
+				}
+				
+				
+		}	
+		
+	}
+
+	private static void setYELLOWandREDCellStyle( Cell cel) {
+		CellStyle style;
+		Font font = cel.getSheet().getWorkbook().createFont();
+		font.setColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
+		font.setFontName("Times New Roman");
+		font.setBold(true);
+		font.setCharSet(10);
+		style = cel.getSheet().getWorkbook().createCellStyle();
+		style.cloneStyleFrom(cel.getCellStyle());
+		style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setFont(font);
+		cel.setCellStyle(style);
+	}
+	
+	private static void setWHITEandBLACKCellStyle(Cell cel) {
+		CellStyle style;
+		Font font = cel.getSheet().getWorkbook().createFont();
+		font.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+		font.setFontName("Times New Roman");
+		font.setBold(true);
+		font.setCharSet(10);
+		style = cel.getSheet().getWorkbook().createCellStyle();
+		style.cloneStyleFrom(cel.getCellStyle());
+		style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setFont(font);
+		cel.setCellStyle(style);
+	}
+
+	private static void setInfoToEXTERNALSheet4(String text, Row newRow, Row rowPerson) {
+		
+		Cell newCel = newRow.createCell(1);
+		Cell oldCel = rowPerson.getCell(0);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setWHITEandBLACKCellStyle(newCel);
+		
+		newCel = newRow.createCell(2);
+		oldCel = rowPerson.getCell(1);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setWHITEandBLACKCellStyle(newCel);
+		
+		newCel = newRow.createCell(3);
+		oldCel = rowPerson.getCell(2);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setWHITEandBLACKCellStyle(newCel);
+		
+		newCel = newRow.createCell(4);
+		oldCel = rowPerson.getCell(5);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setWHITEandBLACKCellStyle(newCel);
+		
+		newCel = newRow.createCell(5);
+		oldCel = rowPerson.getCell(6);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		setWHITEandBLACKCellStyle(newCel);
+		
+		newCel = newRow.createCell(7);
+		newCel.setCellValue(text);
+	}
+	
+	private static void setInfoToPERSONELSheet4(String text, Row newRow, Row rowPerson) {
+		
+		Cell oldCel = rowPerson.getCell(0);
+		Cell newCel = newRow.createCell(1);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		
+		
+		oldCel = rowPerson.getCell(1);
+		newCel = newRow.createCell(2);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+				
+		
+		oldCel = rowPerson.getCell(5);
+		newCel = newRow.createCell(3);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		
+		oldCel = rowPerson.getCell(6);
+		newCel = newRow.createCell(4);
+		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+		
+		newCel = newRow.createCell(6);
+		newCel.setCellValue(text);
 	}
 
 	static void writeFormulyarNameToOtdel(String firmName, Spisak_Prilogenia spPril, Workbook workbook) {
@@ -287,7 +539,7 @@ public class SaveToPersonelORExternalFile {
 			} else {
 				withValues = true;
 			}
-			CopyValueFromOldCellToNewcell(worksheet, sourceRow, newRow, withValues);
+			CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
 			newRow.getCell(0).setCellValue(kode[0]);
 			newRow.getCell(1).setCellValue(kode[1]);
 			newRow.getCell(2).setCellValue(kode[2]);
@@ -301,14 +553,9 @@ public class SaveToPersonelORExternalFile {
 	}
 
 	
-	private static void CopyValueFromOldCellToNewcell(Sheet worksheet, Row sourceRow, Row newRow,
+	private static void CopyValueFromSourseRowToNewRow(Sheet worksheet, Row sourceRow, Row newRow,
 			boolean withValues) {
-		int coldiff;
-		int rowdiff;
-		int columnOfNewFormulaCell;
-		int columnOfOldFormulaCell;
-		int rowOfNewFormulaCell;
-		int rowOfOldFormulaCell;
+
 		Cell newCell;
 		for (int m = 0; m < sourceRow.getLastCellNum(); m++) {
 			// Grab a copy of the old/new cell
@@ -318,9 +565,19 @@ public class SaveToPersonelORExternalFile {
 			if (oldCell == null) {
 				continue;
 			} else {
-				newCell = newRow.createCell(m);
+				 newCell = newRow.createCell(m);
 			}
+			
+			CopyValueFromOldCellToNewcell(oldCell,  newCell, withValues);
+			}
+		
 
+	}
+
+	private static void CopyValueFromOldCellToNewcell(Cell oldCell, Cell newCell, boolean withValues) {
+
+				Sheet worksheet = newCell.getSheet();
+			
 			// Copy style from old cell and apply to new cell
 			CellStyle newCellStyle = worksheet.getWorkbook().createCellStyle();
 			newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
@@ -328,11 +585,14 @@ public class SaveToPersonelORExternalFile {
 
 			// If there is a cell comment, copy
 			if (oldCell.getCellComment() != null) {
-				newCell.setCellComment(oldCell.getCellComment());
+				if (withValues)
+				copyCommentFromOldCellToNewcell(oldCell, newCell);
+				
 			}
 
 			// If there is a cell hyperlink, copy
 			if (oldCell.getHyperlink() != null) {
+				if (withValues)
 				newCell.setHyperlink(oldCell.getHyperlink());
 			}
 
@@ -353,13 +613,13 @@ public class SaveToPersonelORExternalFile {
 				break;
 			case "FORMULA":
 
-				columnOfNewFormulaCell = newCell.getColumnIndex();
-				columnOfOldFormulaCell = oldCell.getColumnIndex();
-				rowOfNewFormulaCell = newCell.getRowIndex();
-				rowOfOldFormulaCell = oldCell.getRowIndex();
+				int columnOfNewFormulaCell = newCell.getColumnIndex();
+				int columnOfOldFormulaCell = oldCell.getColumnIndex();
+				int rowOfNewFormulaCell = newCell.getRowIndex();
+				int rowOfOldFormulaCell = oldCell.getRowIndex();
 
-				coldiff = columnOfNewFormulaCell - columnOfOldFormulaCell;
-				rowdiff = rowOfNewFormulaCell - rowOfOldFormulaCell;
+				int coldiff = columnOfNewFormulaCell - columnOfOldFormulaCell;
+				int rowdiff = rowOfNewFormulaCell - rowOfOldFormulaCell;
 
 				newCell.setCellFormula(copyFormula(worksheet, oldCell.getCellFormula(), coldiff, rowdiff));
 
@@ -375,8 +635,21 @@ public class SaveToPersonelORExternalFile {
 			default:
 				break;
 			}
-		}
+		
 
+	}
+
+	
+	private static void copyCommentFromOldCellToNewcell(Cell oldCell, Cell newCell) {
+		
+		if(oldCell.getSheet().equals(newCell.getSheet())) {		
+		newCell.setCellComment(oldCell.getCellComment());
+		}else {
+			Comment comment = oldCell.getCellComment();
+			RichTextString oldrichTextString = comment.getString();
+			createCellComment(oldrichTextString, newCell);
+		}
+		
 	}
 
 	private static String copyFormula(Sheet sheet, String formula, int coldiff, int rowdiff) {
@@ -464,7 +737,8 @@ public class SaveToPersonelORExternalFile {
 					
 					if (comment == null) {
 						// create a new comment
-						createdNewComment(richTextString, cell, anchor);
+//						createdNewComment(richTextString, cell, anchor);
+						createCellComment( richTextString, cell);
 
 					} else {
 						richTextString = updateComment(authorText, commentString, boldFont, commentFont, creationHelper,
@@ -512,17 +786,16 @@ public class SaveToPersonelORExternalFile {
 		return row;
 	}
 
-	static void createCellComment2(HSSFWorkbook workbook, String authorText, HSSFRichTextString richTextString,
-			HSSFCell cell) {
+	static void createCellComment( RichTextString richTextString, Cell cell) {
 //	Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
-		HSSFCreationHelper factory = workbook.getCreationHelper();
+		CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
 
-		HSSFPatriarch drawing = cell.getSheet().createDrawingPatriarch();
+		Drawing<?> drawing = cell.getSheet().createDrawingPatriarch();
 
 		// When the comment box is visible, have it show in a 1x3 space
 
-		HSSFClientAnchor anchor = factory.createClientAnchor();
+		ClientAnchor anchor = factory.createClientAnchor();
 
 		anchor.setCol1(cell.getColumnIndex());
 
@@ -532,17 +805,9 @@ public class SaveToPersonelORExternalFile {
 
 		anchor.setRow2(cell.getRow().getRowNum() + 3);
 
-		// Create the comment and set the text+author
+		Comment comment = drawing.createCellComment(anchor);
 
-		HSSFComment comment = drawing.createCellComment(anchor);
-
-		HSSFRichTextString str = factory.createRichTextString("Hello, World!");
-
-		comment.setString(str);
-
-		comment.setAuthor("Apache POI");
-
-		// Assign the comment to the cell
+		comment.setString(richTextString);
 
 		cell.setCellComment(comment);
 

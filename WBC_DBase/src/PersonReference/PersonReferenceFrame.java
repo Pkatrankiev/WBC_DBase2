@@ -506,7 +506,7 @@ public class PersonReferenceFrame extends JFrame {
 		List<KodeStatus> list = KodeStatusDAO.getKodeStatusByPersonZone(person, zonaID);
 		if (list != null) {
 			List<KodeStatus> sortedReversKodeStatList = list.stream()
-					.sorted(Comparator.comparing(KodeStatus::getYear).reversed()).collect(Collectors.toList());
+					.sorted(Comparator.comparing(KodeStatus::getKodeStatus_ID).reversed()).collect(Collectors.toList());
 			return sortedReversKodeStatList.get(0).getKode();
 		}
 		return "-";
