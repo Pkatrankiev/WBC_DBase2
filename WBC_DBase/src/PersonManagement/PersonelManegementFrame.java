@@ -72,6 +72,7 @@ public class PersonelManegementFrame extends JFrame {
 	private static JButton btn_savePerson_Insert;
 	private static JButton btn_Spisak;
 	private static JButton btn_SearchFreeKode;
+	private static JButton btnBackToTable;
 	private static JButton btn_InsertToHOG;
 	private static JButton btn_InsertToTerit_1;
 	private static JButton btn_InsertToTerit_2;
@@ -110,7 +111,7 @@ public class PersonelManegementFrame extends JFrame {
 	
 	private static JCheckBox chckbx_svePerson__isEnterInZone;
 	private static JCheckBox chckbx_svePerson_EnterInListChengeKode;
-	private static JCheckBox checkbox_SaveToExcel;
+	private static JCheckBox chckbx_svePerson_SaveToExcel;
 	
 	
 	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
@@ -186,7 +187,8 @@ public class PersonelManegementFrame extends JFrame {
 
 		PersonelManegementMethods.ActionListener_ComboBox_savePerson_Otdel(comboBox_savePerson_Otdel);
 	
-		
+		PersonelManegementMethods.ActionListenerBtnBackToTable(btnBackToTable, textArea,  tablePane,
+				 panel_AllSaerch,  scrollPane,  textField_svePerson_Year);
 		
 		PersonelManegementMethods.ActionListener_Btn_Clear(btn_savePerson_Insert, btn_Clear, textArea);
 
@@ -229,7 +231,7 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(btn_SaveToExcelFile);
 		
 		PersonelManegementMethods.ActionListener_Btn_ReadFileListPerson( btn_ReadFileListPerson,  textArea,  
-				 infoPanel, tablePane,  panel_AllSaerch,  scrollPane, textField_svePerson_Year, textField );
+				 infoPanel, tablePane,  panel_AllSaerch,  scrollPane, textField_svePerson_Year, textField, btnBackToTable );
 		
 		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_Year);
 		
@@ -517,8 +519,15 @@ public class PersonelManegementFrame extends JFrame {
 		
 		JLabel lblNewLabel = new JLabel("Select List Person from File ");
 		panel_4.add(lblNewLabel);
+		
+		JLabel lbl_distance = new JLabel("");
+		lbl_distance.setPreferredSize(new Dimension(30, 14));
+		panel_4.add(lbl_distance);
+		
+		btnBackToTable = new JButton("New button");
+		panel_4.add(btnBackToTable);
 
-//		ActionListenerBtnBackToTable();
+		
 
 		return panel_4;
 	}
@@ -1002,21 +1011,21 @@ public class PersonelManegementFrame extends JFrame {
 			gbc_lbl_svePerson_isEnterInZone_1.gridy = 0;
 			personSave_CheckBox_Panel_6.add(lbl_svePerson_isEnterInZone_1, gbc_lbl_svePerson_isEnterInZone_1);
 			
-			checkbox_SaveToExcel = new JCheckBox("yes");
+			chckbx_svePerson_SaveToExcel = new JCheckBox("yes");
 			GridBagConstraints gbc_checkbox = new GridBagConstraints();
 			gbc_checkbox.anchor = GridBagConstraints.NORTHWEST;
 			gbc_checkbox.insets = new Insets(0, 0, 0, 5);
 			gbc_checkbox.gridx = 5;
 			gbc_checkbox.gridy = 0;
-			personSave_CheckBox_Panel_6.add(checkbox_SaveToExcel, gbc_checkbox);
-			checkbox_SaveToExcel.setSelected(true);
-			checkbox_SaveToExcel.addMouseListener(new MouseAdapter() {
+			personSave_CheckBox_Panel_6.add(chckbx_svePerson_SaveToExcel, gbc_checkbox);
+			chckbx_svePerson_SaveToExcel.setSelected(true);
+			chckbx_svePerson_SaveToExcel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if(checkbox_SaveToExcel.isSelected()) {
-						checkbox_SaveToExcel.setText("yes");
+					if(chckbx_svePerson_SaveToExcel.isSelected()) {
+						chckbx_svePerson_SaveToExcel.setText("yes");
 					}else {
-						checkbox_SaveToExcel.setText("no");	
+						chckbx_svePerson_SaveToExcel.setText("no");	
 					}
 				}
 			});
@@ -1382,8 +1391,8 @@ public class PersonelManegementFrame extends JFrame {
 		return lbl_svePerson_isEnterInZone;
 	}
 
-	public static JCheckBox getCheckbox_SaveToExcel() {
-		return checkbox_SaveToExcel;
+	public static JCheckBox getCheckbx_svePerson_SaveToExcel() {
+		return chckbx_svePerson_SaveToExcel;
 	}
 	
 	
