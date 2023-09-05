@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -832,6 +833,63 @@ public class TestClasess {
 	}
 	
 	
+	public static void MountlyreportMeasuring(int mount) {
+		long MILLIS_IN_A_DAY = 1000*60*60*24;
+		String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		String strMount = mount+"";
+		int brNadMDA = 0, brMeasur = 0; 
+		double doza, dozaMAX=0, dozaMIN=0, dozaSUM=0;
+		if(mount<10) {
+			strMount = "0"+mount;	
+		}
+		Date dateStart = null, dateEnd = null, date = null;
+		try {
+			dateStart = sdfrmt.parse("01."+strMount+"."+curentYear);
+			dateEnd = sdfrmt.parse("31."+strMount+"."+curentYear);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		for (int i = 1; i < 4; i++) {
+			date = dateStart;
+			
+			do {
+				brNadMDA = 0; brMeasur = 0; 
+				doza = 0; dozaMAX=0; dozaMIN=0; dozaSUM=0;
+				List<Measuring> listmeasur = MeasuringDAO.getValueMeasuringByLab_Date(i, date);
+				brMeasur = listmeasur.size();
+				if(brMeasur > 0) {
+					for (Measuring measuring : listmeasur) {
+					
+						doza = measuring.getDoze();
+						if(doza>0) {
+							brNadMDA++;
+							dozaSUM += doza;
+							if(doza > dozaMAX) {
+								dozaMAX = doza;
+							}
+							if(doza < dozaMIN) {
+								dozaMIN = doza;
+							}
+						}
+					}
+					}
+				if(brMeasur>0)
+				System.out.println(i+" "+sdfrmt.format(date)+" "+brMeasur+" "+brNadMDA+" "+dozaMAX+" "+dozaMIN+" "+dozaSUM);
+				date = new Date(date.getTime()+MILLIS_IN_A_DAY);
+				
+			} while (date.before(dateEnd));
+		
+		
+		
+		
+		
+		}
+		
+	}
 	
 	
 	
