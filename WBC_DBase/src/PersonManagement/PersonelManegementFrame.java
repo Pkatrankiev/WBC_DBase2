@@ -9,8 +9,12 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -25,22 +29,17 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import BasicClassAccessDbase.Spisak_Prilogenia;
+
 import PersonReference.PersonReferenceFrame;
+import java.util.Calendar;
 
 
-import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Checkbox;
+
 
 
 
@@ -1079,14 +1078,6 @@ public class PersonelManegementFrame extends JFrame {
 	public static void setOldOtdelPerson(String oldOtdelPerson) {
 		PersonelManegementFrame.oldOtdelPerson = oldOtdelPerson;
 	}
-
-//	public static List<Spisak_Prilogenia> getListSpisak_Prilogenia() {
-//		return listSpisak_Prilogenia;
-//	}
-//
-//	public static void setListSpisak_Prilogenia(List<Spisak_Prilogenia> listSpisak_Prilogenia) {
-//		PersonelManegementFrame.listSpisak_Prilogenia = listSpisak_Prilogenia;
-//	}
 
 	public static JRadioButton getRdbtn_KodKZ1() {
 		return rdbtn_KodKZ1;

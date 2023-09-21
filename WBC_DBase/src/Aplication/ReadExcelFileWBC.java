@@ -138,7 +138,7 @@ public class ReadExcelFileWBC {
 	
 	@SuppressWarnings("deprecation")
 	public static String getStringEGNfromCell(Cell cell) {
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
+//		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
 		String str = "";
 		if(cell!= null) {
 		try {

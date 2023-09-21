@@ -1,6 +1,5 @@
 package SaveToExcellFile;
 
-import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -477,6 +476,7 @@ public class SaveToPersonelORExternalFile {
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	private static void colorInYelloFirst7cell(HSSFWorkbook workbook, int row) {
 		HSSFCell cell;
 		HSSFCellStyle style;
@@ -725,7 +725,7 @@ public class SaveToPersonelORExternalFile {
 			richTextString.applyFont(commentFont);
 			richTextString.applyFont(0, authorText.length(), boldFont);
 			Cell cell;
-			ClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5);
+//			ClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5);
 			
 			
 			for (int i = 0; i < 4; i++) {
@@ -751,6 +751,7 @@ public class SaveToPersonelORExternalFile {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static void createdNewComment(RichTextString richTextString, Cell cell, ClientAnchor anchor) {
 		// create a new comment
 		System.out.println(cell.getStringCellValue());
@@ -763,6 +764,7 @@ public class SaveToPersonelORExternalFile {
 
 	
 	
+	@SuppressWarnings("unused")
 	private static int getRowPerson(Workbook workbook, Person peson) {
 		Cell cell;
 		String str_cell;

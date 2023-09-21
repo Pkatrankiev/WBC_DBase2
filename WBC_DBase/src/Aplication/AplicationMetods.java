@@ -5,11 +5,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
@@ -253,17 +254,32 @@ public class AplicationMetods {
 	public static boolean incorrectDate(String date) {
 		
 		boolean corDate = false;
-		DateTimeFormatter sdf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
+		if (checkDate(date)) {
+		DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		sdf.setLenient(false);
 		try {
-			LocalDate.parse(date, sdf);
+			sdf.parse(date);
 
-		} catch (DateTimeParseException e) {
+		} catch (Exception e) {
 			return corDate = true;
 		}
+		 }else {
+			 return true;
+		 }
 		return corDate;
 	}
 
+	static boolean checkDate(String date) {
+	    String pattern = "^\\d{2}.\\d{2}.\\d{4}$";
+	    boolean flag = false;
+	    if (date.matches(pattern)) {
+	      flag = true;
+	    }
+	    return flag;
+	  }
+	
+	
+	
 	public static String getCurentYear() {
 	return Calendar.getInstance().get(Calendar.YEAR) + "";
 	}

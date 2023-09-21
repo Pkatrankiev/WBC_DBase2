@@ -10,6 +10,7 @@ import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementFrame;
 import PersonReference.TextInAreaTextPanel;
+import ReferenceMeasuringLab.ReferenceMeasuringLabFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
 
 public class TestMainClass {
@@ -41,20 +42,21 @@ public class TestMainClass {
 //				e.printStackTrace();
 //			}
 			
-			TestClasess.MountlyreportMeasuring(4);
+//			TestClasess.MountlyreportMeasuring(4);
 			
  
-//			ActionIcone round = new ActionIcone();
-//			 final Thread thread = new Thread(new Runnable() {
-//			     @Override
-//			     public void run() {
-//			    	 
-//			    	new PersonelManegementFrame(round);
-//			    	
-//			    	
-//			     }
-//			    });
-//			    thread.start();	
+			ActionIcone round = new ActionIcone();
+			 final Thread thread = new Thread(new Runnable() {
+			     @Override
+			     public void run() {
+			    	 String referenceMeasuringLab = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab");
+			    		
+			    	new ReferenceMeasuringLabFrame(round, referenceMeasuringLab);
+			    	
+			    	
+			     }
+			    });
+			    thread.start();	
 			
 			
 			

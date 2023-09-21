@@ -273,150 +273,136 @@ public class TestClasess {
 		}
 	}
 
-	static void createCellComment(String egn, String commentText ) throws FileNotFoundException {
-		String filePath[] = {
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2"),
+	static void createCellComment(String egn, String commentText) throws FileNotFoundException {
+		String filePath[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2"),
 				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2") };
 		String pathFile = filePath[1];
 		FileInputStream inputStream;
 		HSSFWorkbook workbook = null;
 		try {
-						
+
 			inputStream = new FileInputStream(pathFile);
-			 workbook = new HSSFWorkbook(inputStream);
-			 
-		
-		int rowPerson = searchRowPersonInWorkbook( workbook,  egn);
-		System.out.println(rowPerson);
-		if (commentText.length() > 0) {
-			
+			workbook = new HSSFWorkbook(inputStream);
 
-			String authorText = "katrankjievvv";
-			authorText = authorText + ":";
-			String commentString = authorText + "\n" + commentText;
+			int rowPerson = searchRowPersonInWorkbook(workbook, egn);
+			System.out.println(rowPerson);
+			if (commentText.length() > 0) {
 
-			HSSFFont boldFont = workbook.createFont();
-			boldFont.setFontName("Tahoma");
-			boldFont.setFontHeightInPoints((short) 9);
-			boldFont.setBold(true);
+				String authorText = "katrankjievvv";
+				authorText = authorText + ":";
+				String commentString = authorText + "\n" + commentText;
 
-			HSSFFont commentFont = workbook.createFont();
-			commentFont.setFontName("Tahoma");
-			commentFont.setFontHeightInPoints((short) 9);
-			commentFont.setBold(false);
-			HSSFCreationHelper creationHelper = workbook.getCreationHelper();
+				HSSFFont boldFont = workbook.createFont();
+				boldFont.setFontName("Tahoma");
+				boldFont.setFontHeightInPoints((short) 9);
+				boldFont.setBold(true);
 
-			HSSFRichTextString richTextString = creationHelper.createRichTextString(commentString);
-			richTextString.applyFont(commentFont);
-			richTextString.applyFont(0, authorText.length(), boldFont);
-			HSSFCell cell;
-	
-			HSSFClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5);
-			
-			
-			
-			
-			for (int i = 0; i < 4; i++) {
+				HSSFFont commentFont = workbook.createFont();
+				commentFont.setFontName("Tahoma");
+				commentFont.setFontHeightInPoints((short) 9);
+				commentFont.setBold(false);
+				HSSFCreationHelper creationHelper = workbook.getCreationHelper();
 
-				cell = workbook.getSheetAt(i).getRow(rowPerson).getCell(6);
-				try {
-					// try to get the cell comment
-					HSSFComment comment = cell.getCellComment();
-					
-					if (comment == null) {
-						
-						
-					     createdNewComment(richTextString, cell, anchor);
-						
+				HSSFRichTextString richTextString = creationHelper.createRichTextString(commentString);
+				richTextString.applyFont(commentFont);
+				richTextString.applyFont(0, authorText.length(), boldFont);
+				HSSFCell cell;
 
-					} else {
-						richTextString = updateComment(authorText, commentString, boldFont, commentFont, creationHelper,
-								comment);
+				HSSFClientAnchor anchor = new HSSFClientAnchor(100, 100, 100, 100, (short) 1, 1, (short) 6, 5);
+
+				for (int i = 0; i < 4; i++) {
+
+					cell = workbook.getSheetAt(i).getRow(rowPerson).getCell(6);
+					try {
+						// try to get the cell comment
+						HSSFComment comment = cell.getCellComment();
+
+						if (comment == null) {
+
+							createdNewComment(richTextString, cell, anchor);
+
+						} else {
+							richTextString = updateComment(authorText, commentString, boldFont, commentFont,
+									creationHelper, comment);
+						}
+
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
 					}
-					
-					
-					
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
 				}
 			}
-		}
-			
-		FileOutputStream outputStream = new FileOutputStream(pathFile);
-		workbook.write(outputStream);
 
-		workbook.close();
+			FileOutputStream outputStream = new FileOutputStream(pathFile);
+			workbook.write(outputStream);
 
-		outputStream.flush();
-		outputStream.close();	
-		
-		
-		} catch (OldExcelFormatException |IOException e1) {
+			workbook.close();
+
+			outputStream.flush();
+			outputStream.close();
+
+		} catch (OldExcelFormatException | IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-			
-	
-		
+
 	}
 
 	private static void createdNewComment(HSSFRichTextString richTextString, HSSFCell cell, HSSFClientAnchor anchor) {
 		// create a new comment
 		System.out.println(cell.getStringCellValue());
 		HSSFPatriarch drawing_master = cell.getSheet().createDrawingPatriarch();
-	    HSSFComment comment1 = (HSSFComment) drawing_master.createCellComment(anchor);
-		   comment1.setString(richTextString);
-		  cell.setCellComment(comment1);
+		HSSFComment comment1 = (HSSFComment) drawing_master.createCellComment(anchor);
+		comment1.setString(richTextString);
+		cell.setCellComment(comment1);
 	}
-	
-	public static void newComments33() throws IOException  {
 
-	      HSSFWorkbook wb = new HSSFWorkbook();
-	      HSSFSheet sheet = wb.createSheet("Cell comments in POI HSSF");
+	public static void newComments33() throws IOException {
 
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Cell comments in POI HSSF");
 
-	      HSSFPatriarch patr = sheet.createDrawingPatriarch();
-	      HSSFCell cell1 = sheet.createRow(3).createCell((short)1);
-	      cell1.setCellValue(new HSSFRichTextString("Hello, World"));
+		HSSFPatriarch patr = sheet.createDrawingPatriarch();
+		HSSFCell cell1 = sheet.createRow(3).createCell((short) 1);
+		cell1.setCellValue(new HSSFRichTextString("Hello, World"));
 
-	      //anchor defines size and position of the comment in worksheet
-	      HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-	      comment1.setString(new HSSFRichTextString("FirstComments"));
-	      cell1.setCellComment(comment1);
-	      System.out.println("Cell comments: "+cell1.getCellComment().getString());
+		// anchor defines size and position of the comment in worksheet
+		HSSFComment comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short) 1, 1, (short) 6, 5));
+		comment1.setString(new HSSFRichTextString("FirstComments"));
+		cell1.setCellComment(comment1);
+		System.out.println("Cell comments: " + cell1.getCellComment().getString());
 
-	      patr = sheet.createDrawingPatriarch();
-	      comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-	      //HSSFComment comment2=patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-	      HSSFCell cell2 = sheet.createRow(6).createCell((short)1);
-	      cell2.setCellValue(36.6);
-	      comment1.setString(new HSSFRichTextString("second commetns"));
-	      cell2.setCellComment(comment1);
-	      System.out.println("Cell comments: "+cell2.getCellComment().getString());
+		patr = sheet.createDrawingPatriarch();
+		comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short) 1, 1, (short) 6, 5));
+		// HSSFComment comment2=patr.createComment(new HSSFClientAnchor(100, 100, 100,
+		// 100, (short)1, 1, (short) 6, 5));
+		HSSFCell cell2 = sheet.createRow(6).createCell((short) 1);
+		cell2.setCellValue(36.6);
+		comment1.setString(new HSSFRichTextString("second commetns"));
+		cell2.setCellComment(comment1);
+		System.out.println("Cell comments: " + cell2.getCellComment().getString());
 
-	      patr = sheet.createDrawingPatriarch();
-	      comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-	      //HSSFComment comment3=patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short)1, 1, (short) 6, 5));
-	      cell2 = sheet.createRow(10).createCell((short)1);
-	      cell2.setCellValue(150);
-	      comment1.setString(new HSSFRichTextString("Third commetns"));
-	      cell2.setCellComment(comment1);
-	      System.out.println("Cell comments: "+cell2.getCellComment().getString());
+		patr = sheet.createDrawingPatriarch();
+		comment1 = patr.createComment(new HSSFClientAnchor(100, 100, 100, 100, (short) 1, 1, (short) 6, 5));
+		// HSSFComment comment3=patr.createComment(new HSSFClientAnchor(100, 100, 100,
+		// 100, (short)1, 1, (short) 6, 5));
+		cell2 = sheet.createRow(10).createCell((short) 1);
+		cell2.setCellValue(150);
+		comment1.setString(new HSSFRichTextString("Third commetns"));
+		cell2.setCellComment(comment1);
+		System.out.println("Cell comments: " + cell2.getCellComment().getString());
 
-	      FileOutputStream out = new FileOutputStream("C:/Documents and Settings/saravanan/Desktop/cellcomments.xls");
-	      wb.write(out);
-	      out.close();
+		FileOutputStream out = new FileOutputStream("C:/Documents and Settings/saravanan/Desktop/cellcomments.xls");
+		wb.write(out);
+		out.close();
 	}
-	
-	
-	
+
 	private static int searchRowPersonInWorkbook(HSSFWorkbook workbook, String egn) {
 		HSSFSheet sheetSpPr = workbook.getSheetAt(3);
 		int maxRow = sheetSpPr.getLastRowNum();
 		int row = 5;
 		HSSFCell cell;
 		String str_cell = "";
-		
+
 		while (row < maxRow) {
 			if (sheetSpPr.getRow(row) != null) {
 
@@ -434,8 +420,6 @@ public class TestClasess {
 		return 0;
 	}
 
-	
-	
 	private static HSSFRichTextString updateComment(String authorText, String commentString, HSSFFont boldFont,
 			HSSFFont commentFont, HSSFCreationHelper creationHelper, HSSFComment comment) {
 		HSSFRichTextString richTextString;
@@ -460,10 +444,7 @@ public class TestClasess {
 		comment.setString(richTextString);
 		return richTextString;
 	}
-	
-	
-	
-	
+
 	@SuppressWarnings("deprecation")
 	public static void CheckForCorrectionMeasuringDataInSheet0AndSeet1() {
 		boolean fl = true;
@@ -598,136 +579,132 @@ public class TestClasess {
 
 	}
 
-	
 	public static void checkWorkspaceFordublicate() {
 
 		List<Workplace> list = WorkplaceDAO.getValueWorkplaceSortByColumnName("Otdel");
 		String firstOtdelName = "";
 		Workplace firstWorkplace = list.get(0);
 		for (Workplace workplace : list) {
-			System.out.println(firstOtdelName+" - "+workplace.getOtdel());
-			if(firstOtdelName.equals(workplace.getOtdel())) {
+			System.out.println(firstOtdelName + " - " + workplace.getOtdel());
+			if (firstOtdelName.equals(workplace.getOtdel())) {
 				ChengeWorkplacefromObgects(firstWorkplace, workplace);
 			}
-			
-				firstWorkplace = workplace;
-				firstOtdelName = firstWorkplace.getOtdel();
-}
-	
-	
+
+			firstWorkplace = workplace;
+			firstOtdelName = firstWorkplace.getOtdel();
+		}
+
 	}
 
 	public static void checkWorkspaceForActual() {
 		List<Workplace> listWorkplace = WorkplaceDAO.getAllValueWorkplace();
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
-	List<String> listStr = new ArrayList<>();
+		List<String> listStr = new ArrayList<>();
 		for (String filePath : excellFiles) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath);
 			Sheet sheet = workbook.getSheetAt(0);
 			Cell cell;
-			
+
 			int i = 0;
 			cell = sheet.getRow(0).getCell(i);
-			while (cell!=null) {
+			while (cell != null) {
 				listStr.add(cell.getStringCellValue().trim());
 				i++;
 				cell = sheet.getRow(0).getCell(i);
+			}
 		}
-		}	
-	
+
 		for (Workplace workplace : listWorkplace) {
 
 			for (Iterator iterator = listStr.iterator(); iterator.hasNext();) {
 				String strOtdelFromExcell = (String) iterator.next();
 
-				if (strOtdelFromExcell.equals(workplace.getOtdel()) || strOtdelFromExcell.equals(workplace.getSecondOtdelName())) {
+				if (strOtdelFromExcell.equals(workplace.getOtdel())
+						|| strOtdelFromExcell.equals(workplace.getSecondOtdelName())) {
 					workplace.setActual(true);
 					WorkplaceDAO.updateValueWorkplace(workplace);
 					iterator.remove();
 				}
 			}
-		}	
-	
+		}
+
 	}
-	
+
 	public static void checkWorkspaceForDelete() {
-		
+
 		List<Workplace> listWorkplace = WorkplaceDAO.getValueWorkplaceByObject("SecondOtdelName", "autAll");
 		System.out.println(listWorkplace.size());
 		for (Workplace workpl : listWorkplace) {
-		List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workpl);
-		System.out.println(list.size());
-		List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workpl);
-		System.out.println(listPer.size());
-		if((list.size()+listPer.size())<1) {
-			WorkplaceDAO.deleteValueWorkplace(workpl);
+			List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workpl);
+			System.out.println(list.size());
+			List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workpl);
+			System.out.println(listPer.size());
+			if ((list.size() + listPer.size()) < 1) {
+				WorkplaceDAO.deleteValueWorkplace(workpl);
+			}
+
 		}
 
+	}
 
-	}
-	
-	}
-	
-	
-	
 	static void ChengeWorkplacefromSpiusakPrilog() {
-	
-	List<Integer> listErrorID = getAllValueSpisak_Prilogenia();
-	List<String> listStrErrorID = new ArrayList<>();
-	List<Workplace> listWorkplace = new ArrayList<>();
-	List<Spisak_Prilogenia> listSpisak_Prilogenia = new ArrayList<>();
 
-		System.out.println("listErrorID = "+listErrorID.size());
+		List<Integer> listErrorID = getAllValueSpisak_Prilogenia();
+		List<String> listStrErrorID = new ArrayList<>();
+		List<Workplace> listWorkplace = new ArrayList<>();
+		List<Spisak_Prilogenia> listSpisak_Prilogenia = new ArrayList<>();
+
+		System.out.println("listErrorID = " + listErrorID.size());
 		for (int id : listErrorID) {
-			listStrErrorID.add(getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel());
+			listStrErrorID.add(getValueSpisak_PrilogeniaByID(id).getWorkplace().getOtdel());
 		}
-		System.out.println("listStrErrorID = "+listStrErrorID.size());
+		System.out.println("listStrErrorID = " + listStrErrorID.size());
 		for (String string : listStrErrorID) {
 			listWorkplace.add(WorkplaceDAO.getValueWorkplaceByObject("Otdel", string).get(0));
 		}
-		System.out.println("listWorkplace = "+listWorkplace.size());
+		System.out.println("listWorkplace = " + listWorkplace.size());
 		int i = 0;
 		for (int id : listErrorID) {
-			
-			Spisak_Prilogenia  spisPril = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id);
-			
+
+			Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(id);
+
 			spisPril.setWorkplace(listWorkplace.get(i));
-			System.out.println(i+"  -> "+listWorkplace.get(i).getOtdel());
+			System.out.println(i + "  -> " + listWorkplace.get(i).getOtdel());
 			Spisak_PrilogeniaDAO.updateValueSpisak_Prilogenia(spisPril);
-			
+
 			i++;
 		}
-		int k =0;
+		int k = 0;
 		for (int id : listErrorID) {
-			System.out.print (Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel()+" <-> "+listStrErrorID.get(k));
-			if(Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID( id).getWorkplace().getOtdel().equals(listStrErrorID.get(k))) {
+			System.out.print(Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(id).getWorkplace().getOtdel() + " <-> "
+					+ listStrErrorID.get(k));
+			if (Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(id).getWorkplace().getOtdel()
+					.equals(listStrErrorID.get(k))) {
 				System.out.println("  -> ok");
-			};
+			}
+			;
 			k++;
 		}
-		
+
 	}
-	
-	
+
 	public static List<Integer> getAllValueSpisak_Prilogenia() {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM Spisak_Prilogenia";
-		List<Integer>  list = new ArrayList<>();
+		List<Integer> list = new ArrayList<>();
 
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery(sql);
 
 			while (result.next()) {
-				
-				Workplace wp = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
-				if(wp==null) {
-					list.add(result.getInt("Spisak_Prilogenia_ID"))	;
-				}
-				
 
-				
+				Workplace wp = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				if (wp == null) {
+					list.add(result.getInt("Spisak_Prilogenia_ID"));
+				}
+
 			}
 
 			statement.close();
@@ -739,7 +716,7 @@ public class TestClasess {
 		}
 		return list;
 	}
-	
+
 	public static Spisak_Prilogenia getValueSpisak_PrilogeniaByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -773,10 +750,10 @@ public class TestClasess {
 			e.printStackTrace();
 			ResourceLoader.appendToFile(e);
 		}
-		if(list.size()>0) {
-		return list.get(0);
-		}else {
-			return null;	
+		if (list.size() > 0) {
+			return list.get(0);
+		} else {
+			return null;
 		}
 	}
 
@@ -785,228 +762,364 @@ public class TestClasess {
 		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 		System.out.println(x);
-		
+
 		if (x > 0) {
 			return true;
 		}
 		return false;
 	}
-	
-	
-	
+
 	public static Workplace getValueWorkplaceByID(int id) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM Workplace_old  where Workplace_ID = ? LIMIT 1";
-		
+
 		List<Workplace> list = new ArrayList<Workplace>();
-		
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setObject(1, id);
 			ResultSet result = preparedStatement.executeQuery();
 
-
 			while (result.next()) {
 				Workplace resultObject = new Workplace();
 				resultObject.setId_Workplace(result.getInt("Workplace_ID"));
-				resultObject.setFirmName (result.getString("FirmName"));
+				resultObject.setFirmName(result.getString("FirmName"));
 				resultObject.setOtdel(result.getString("Otdel"));
 				resultObject.setSecondOtdelName(result.getString("SecondOtdelName"));
-			
-				
+
 				list.add(resultObject);
 			}
-			
+
 			preparedStatement.close();
 			connection.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-			ResourceLoader.appendToFile( e);
-			
+			ResourceLoader.appendToFile(e);
+
 		}
-		
+
 //		if(list.size()<=0) return null;
 		return list.get(0);
 	}
+
+	
+	
+	
+	
+	
 	
 	
 	public static void MountlyreportMeasuring(int mount) {
-		long MILLIS_IN_A_DAY = 1000*60*60*24;
+		List<Laboratory> listLab = LaboratoryDAO.getAllValueLaboratory();
+		int countlab = listLab.size();
+		long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
 		String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		String strMount = mount+"";
-		int brNadMDA = 0, brMeasur = 0; 
-		double doza, dozaMAX=0, dozaMIN=0, dozaSUM=0;
-		if(mount<10) {
-			strMount = "0"+mount;	
+		String strMount = mount + "";
+
+		int brMeasur = 0;
+		int brNadMDA = 0;
+		double doza = 0;
+		double dozaMAX = 0;
+		double dozaMIN = 0;
+		double dozaSUM = 0;
+
+		int allBrMeasur = 0;
+		int allBrNadMDA = 0;
+		double allDozaMAX = 0, allDozaMIN = 0, allDozaSUM = 0;
+
+		int globBrMeasur[] = new int[countlab];
+		int globBrNadMDA[] = new int[countlab];
+		double globDozaMAX[] = new double[countlab];
+		;
+		double globDozaMIN[] = new double[countlab];
+		;
+		double globDozaSUM[] = new double[countlab];
+
+		int index = (countlab * 5) + 6;
+		System.out.println(index);
+
+		List<Object[]> listMasive = new ArrayList<Object[]>();
+
+		if (mount < 10) {
+			strMount = "0" + mount;
 		}
 		Date dateStart = null, dateEnd = null, date = null;
 		try {
-			dateStart = sdfrmt.parse("01."+strMount+"."+curentYear);
-			dateEnd = sdfrmt.parse("31."+strMount+"."+curentYear);
+			dateStart = sdfrmt.parse("01." + strMount + "." + curentYear);
+			dateEnd = sdfrmt.parse("31." + strMount + "." + curentYear);
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
-		for (int i = 1; i < 4; i++) {
-			date = dateStart;
-			
-			do {
-				brNadMDA = 0; brMeasur = 0; 
-				doza = 0; dozaMAX=0; dozaMIN=0; dozaSUM=0;
-				List<Measuring> listmeasur = MeasuringDAO.getValueMeasuringByLab_Date(i, date);
+
+		int indexMasive = 0;
+		date = dateStart;
+		do {
+			Object[] masive = new Object[index];
+			indexMasive = 0;
+			masive[indexMasive] = sdfrmt.format(date);
+
+			allDozaMAX = 0;
+			allDozaMIN = 0;
+			allDozaSUM = 0;
+			allBrMeasur = 0;
+			allBrNadMDA = 0;
+			for (int i = 0; i < countlab; i++) {
+
+				brNadMDA = 0;
+				brMeasur = 0;
+				doza = 0;
+				dozaMAX = 0;
+				dozaMIN = 0;
+				dozaSUM = 0;
+
+				List<Measuring> listmeasur = MeasuringDAO.getValueMeasuringByLab_Date(listLab.get(i).getLab_ID(), date);
 				brMeasur = listmeasur.size();
-				if(brMeasur > 0) {
+				if (brMeasur > 0) {
 					for (Measuring measuring : listmeasur) {
-					
+
 						doza = measuring.getDoze();
-						if(doza>0) {
+						if (doza > 0) {
 							brNadMDA++;
-							dozaSUM += doza;
-							if(doza > dozaMAX) {
+							if (doza > 0.05) {
+								dozaSUM += doza;
+								allDozaSUM += doza;
+								globDozaSUM[i] += doza;
+							}
+
+							if (doza > dozaMAX) {
 								dozaMAX = doza;
 							}
-							if(doza < dozaMIN) {
+							if (doza > allDozaMAX) {
+								allDozaMAX = doza;
+							}
+							if (doza > globDozaMAX[i]) {
+								globDozaMAX[i] = doza;
+							}
+
+							if (doza < dozaMIN) {
 								dozaMIN = doza;
 							}
+							if (doza < allDozaMIN) {
+								allDozaMIN = doza;
+							}
+
+							if (doza < globDozaMIN[i]) {
+								globDozaMIN[i] = doza;
+							}
+
 						}
 					}
-					}
-				if(brMeasur>0)
-				System.out.println(i+" "+sdfrmt.format(date)+" "+brMeasur+" "+brNadMDA+" "+dozaMAX+" "+dozaMIN+" "+dozaSUM);
-				date = new Date(date.getTime()+MILLIS_IN_A_DAY);
-				
-			} while (date.before(dateEnd));
-		
-		
-		
-		
-		
+				}
+				allBrMeasur += brMeasur;
+				globBrMeasur[i] += brMeasur;
+
+				allBrNadMDA += brNadMDA;
+				globBrNadMDA[i] += brNadMDA;
+
+				indexMasive++;
+				masive[indexMasive] = brMeasur;
+				indexMasive++;
+				masive[indexMasive] = brNadMDA;
+				indexMasive++;
+				masive[indexMasive] = dozaMAX;
+				indexMasive++;
+				masive[indexMasive] = dozaMIN;
+				indexMasive++;
+				masive[indexMasive] = dozaSUM;
+			}
+
+			if (allBrMeasur > 0) {
+				indexMasive++;
+				masive[indexMasive] = allBrMeasur;
+				indexMasive++;
+				masive[indexMasive] = allBrNadMDA;
+				indexMasive++;
+				masive[indexMasive] = allDozaMAX;
+				indexMasive++;
+				masive[indexMasive] = allDozaMIN;
+				indexMasive++;
+				masive[indexMasive] = allDozaSUM;
+
+				listMasive.add(masive);
+			}
+			date = new Date(date.getTime() + MILLIS_IN_A_DAY);
+
+		} while (date.before(dateEnd));
+
+		Object[] masive = new Object[index];
+		indexMasive = 0;
+
+		allBrMeasur = 0;
+		allBrNadMDA = 0;
+		allDozaMAX = 0;
+		allDozaMIN = 0;
+		allDozaSUM = 0;
+
+		masive[0] = "Общо: ";
+		for (int i = 0; i < countlab; i++) {
+
+			indexMasive++;
+			masive[indexMasive] = globBrMeasur[i];
+			indexMasive++;
+			masive[indexMasive] = globBrNadMDA[i];
+			indexMasive++;
+			masive[indexMasive] = globDozaMAX[i];
+			indexMasive++;
+			masive[indexMasive] = globDozaMIN[i];
+			indexMasive++;
+			masive[indexMasive] = globDozaSUM[i];
+
+			allBrMeasur += globBrMeasur[i];
+			allBrNadMDA += globBrNadMDA[i];
+			if (globDozaSUM[i] > 0.05) {
+				allDozaSUM += globDozaSUM[i];
+			}
+			if (globDozaMAX[i] > allDozaMAX) {
+				allDozaMAX = globDozaMAX[i];
+			}
+
+			if (globDozaMIN[i] < allDozaMIN) {
+				allDozaMIN = globDozaMIN[i];
+			}
+
 		}
-		
+
+		indexMasive++;
+		masive[indexMasive] = allBrMeasur;
+		indexMasive++;
+		masive[indexMasive] = allBrNadMDA;
+		indexMasive++;
+		masive[indexMasive] = allDozaMAX;
+		indexMasive++;
+		masive[indexMasive] = allDozaMIN;
+		indexMasive++;
+		masive[indexMasive] = allDozaSUM;
+
+		listMasive.add(masive);
+
+		Object[][] allMasive = new Object[listMasive.size()][index];
+		int k = 0;
+		for (Object[] objects : listMasive) {
+
+			for (int i = 0; i < objects.length; i++) {
+				allMasive[k][i] = objects[i];
+				System.out.print(objects[i] + "| ");
+			}
+			k++;
+			System.out.println();
+		}
+
 	}
-	
-	
-	
+
 	private static void ChengeWorkplacefromObgects(Workplace firstWorkplace, Workplace workplace) {
 		List<KodeGenerate> list = KodeGenerateDAO.getValueKodeGenerateByObject("Workplace_ID", workplace);
-		
-			for (KodeGenerate kodeGenerate : list) {
-				kodeGenerate.setWorkplace(firstWorkplace);
-				KodeGenerateDAO.updateValueKodeGenerate(kodeGenerate);
-			}
-			
-			List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workplace);
-			for (PersonStatus perStat : listPer) {
-				perStat.setWorkplace(firstWorkplace);
-				PersonStatusDAO.updateValuePersonStatus(perStat);
-			}
-			workplace.setSecondOtdelName("autAll");
-			 WorkplaceDAO.updateValueWorkplace(workplace);
-			System.out.println(workplace.getSecondOtdelName());
+
+		for (KodeGenerate kodeGenerate : list) {
+			kodeGenerate.setWorkplace(firstWorkplace);
+			KodeGenerateDAO.updateValueKodeGenerate(kodeGenerate);
 		}
-	
+
+		List<PersonStatus> listPer = PersonStatusDAO.getValuePersonStatusByWorkplace(workplace);
+		for (PersonStatus perStat : listPer) {
+			perStat.setWorkplace(firstWorkplace);
+			PersonStatusDAO.updateValuePersonStatus(perStat);
+		}
+		workplace.setSecondOtdelName("autAll");
+		WorkplaceDAO.updateValueWorkplace(workplace);
+		System.out.println(workplace.getSecondOtdelName());
+	}
+
 	static String[][] MasiveFromMonthCheckMeasurLab(Laboratory laborat) {
 		List<Workplace> listWorkplace = new ArrayList<>();
 		int IndexLab = laborat.getLab_ID();
-		listWorkplace = WorkplaceDAO.getAllValueWorkplaceByLab(laborat)	;	
+		listWorkplace = WorkplaceDAO.getAllValueWorkplaceByLab(laborat);
 
-		
-		
 		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),
 				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig") };
 
 		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
 				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };
-		
-		String otdel,name,EGN, kode, doze, data, lab;
+
+		String otdel, name, EGN, kode, doze, data, lab;
 		Cell cell;
 		List<String> listIndex = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
-		String[][][] masiveStrMonth = new String[12][500][7];
+			String[][][] masiveStrMonth = new String[12][500][7];
 
-		for (int m = 0; m < 12; m++) {
+			for (int m = 0; m < 12; m++) {
 
-			Sheet sheetMont = workbookMont[i].getSheetAt(m);
-			int row = 0;
-			for (int l = 6; l <= sheetMont.getLastRowNum(); l++) {
+				Sheet sheetMont = workbookMont[i].getSheetAt(m);
+				int row = 0;
+				for (int l = 6; l <= sheetMont.getLastRowNum(); l++) {
 
-				if (sheetMont.getRow(l) != null) {
-					cell = sheetMont.getRow(l).getCell(3);
-					if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-						EGN = ReadExcelFileWBC.getStringfromCell(cell);
-
-						cell = sheetMont.getRow(l).getCell(1);
-						otdel = ReadExcelFileWBC.getStringfromCell(cell);
-						
-						cell = sheetMont.getRow(l).getCell(2);
-						name = ReadExcelFileWBC.getStringfromCell(cell);
-						
-						cell = sheetMont.getRow(l).getCell(4);
-						kode = ReadExcelFileWBC.getStringfromCell(cell);
-						
-						cell = sheetMont.getRow(l).getCell(5);
-						doze = ReadExcelFileWBC.getStringfromCell(cell);
-				
-						cell = sheetMont.getRow(l).getCell(6);
-						data = ReadExcelFileWBC.getStringfromCell(cell);
-						
-						cell = sheetMont.getRow(l).getCell(9);
-						lab ="";
+					if (sheetMont.getRow(l) != null) {
+						cell = sheetMont.getRow(l).getCell(3);
 						if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-						lab = ReadExcelFileWBC.getStringfromCell(cell);
+							EGN = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(1);
+							otdel = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(2);
+							name = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(4);
+							kode = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(5);
+							doze = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(6);
+							data = ReadExcelFileWBC.getStringfromCell(cell);
+
+							cell = sheetMont.getRow(l).getCell(9);
+							lab = "";
+							if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+								lab = ReadExcelFileWBC.getStringfromCell(cell);
+							}
+
+							masiveStrMonth[m][row][0] = otdel;
+							masiveStrMonth[m][row][1] = name;
+							masiveStrMonth[m][row][2] = EGN;
+							masiveStrMonth[m][row][3] = kode;
+							masiveStrMonth[m][row][4] = doze;
+							masiveStrMonth[m][row][5] = data;
+							masiveStrMonth[m][row][6] = lab;
+
+							row++;
 						}
+					}
+				}
+			}
 
-						masiveStrMonth[m][row][0] = otdel;
-						masiveStrMonth[m][row][1] = name;
-						masiveStrMonth[m][row][2] = EGN;
-						masiveStrMonth[m][row][3] = kode;
-						masiveStrMonth[m][row][4] = doze;
-						masiveStrMonth[m][row][5] = data;
-						masiveStrMonth[m][row][6] = lab;
-
-						row++;
+			for (int m = 0; m < 12; m++) {
+				for (int k = 0; k < masiveStrMonth[m].length; k++) {
+					if (masiveStrMonth[m][k][2] != null && !masiveStrMonth[m][k][6].equals(IndexLab + "")) {
+						for (Workplace workplace : listWorkplace) {
+//						System.out.println(workplace.getOtdel()+" - "+(masiveStrMonth[m][k][0]));
+							if (workplace.getOtdel().equals(masiveStrMonth[m][k][0])) {
+								listIndex.add(masiveStrMonth[m][k][0] + "@" + masiveStrMonth[m][k][1] + "@"
+										+ masiveStrMonth[m][k][2] + "@" + masiveStrMonth[m][k][3] + "@"
+										+ masiveStrMonth[m][k][4] + "@" + masiveStrMonth[m][k][5] + "@"
+										+ masiveStrMonth[m][k][6]);
+							}
+						}
 					}
 				}
 			}
 		}
-		
-	
-		for (int m = 0; m < 12; m++) {
-			for (int k = 0; k < masiveStrMonth[m].length; k++) {
-				if (masiveStrMonth[m][k][2]!=null && !masiveStrMonth[m][k][6].equals(IndexLab+"")) {
-					for (Workplace workplace : listWorkplace) {
-//						System.out.println(workplace.getOtdel()+" - "+(masiveStrMonth[m][k][0]));
-						if(workplace.getOtdel().equals(masiveStrMonth[m][k][0])) {
-							listIndex.add(masiveStrMonth[m][k][0]+"@"+masiveStrMonth[m][k][1]+"@"
-									+masiveStrMonth[m][k][2]+"@"+masiveStrMonth[m][k][3]+"@"
-									+masiveStrMonth[m][k][4]+"@"+masiveStrMonth[m][k][5]+"@"+masiveStrMonth[m][k][6]);
-						}
-					}	
-				}
-			}
-		}
-		}
-		int count=0;
+		int count = 0;
 		String[][] masive = new String[listIndex.size()][7];
 		for (String string : listIndex) {
-			String[] ms = string.split("@",7);
+			String[] ms = string.split("@", 7);
 			masive[count] = ms;
 			count++;
 		}
 		return masive;
-		
-		
-		}
-		
-	
 
-	
-	
-	
 	}
+
+}

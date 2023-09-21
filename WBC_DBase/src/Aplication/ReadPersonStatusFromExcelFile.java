@@ -114,7 +114,7 @@ public class ReadPersonStatusFromExcelFile {
 		Person person;
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
 		List<Workplace> listAllWorkplaceBiFirmName = WorkplaceDAO.getValueWorkplaceByObject("FirmName", firmName);
-		String EGN = "", FirstName = "", zab = "";
+		String FirstName = "", zab = "";
 
 		String otdelName = "";
 		Workplace workplace = new Workplace();
@@ -285,7 +285,7 @@ public class ReadPersonStatusFromExcelFile {
 
 		Person person;
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
-		String EGN = "", FirstName = "", zab = "", dataObhodelistExt = "", dataObhodelist = "";
+		String FirstName = "", zab = "", dataObhodelistExt = "", dataObhodelist = "";
 		Workplace workplace = new Workplace();
 		Sheet sheet = workbook.getSheetAt(4);
 		Cell cell, cell0, cell1;

@@ -74,6 +74,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.add(new Menu_Reference_Kode());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_Reference_PersonMeasur());
+		personReferenceMenu.add(new Menu_ReferenceMeasuringLab());
 		
 		return personReferenceMenu;
 	}

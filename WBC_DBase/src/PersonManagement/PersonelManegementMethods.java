@@ -3,9 +3,7 @@ package PersonManagement;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -16,9 +14,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.io.File;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,7 +30,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -40,17 +40,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
 
-import org.apache.commons.collections4.SetUtils.SetView;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -60,9 +56,7 @@ import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
-import Aplication.RemouveDublikateFromList;
-import Aplication.ReportMeasurClass;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
@@ -71,6 +65,7 @@ import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
+
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
@@ -79,14 +74,16 @@ import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
+
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
+
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import SearchFreeKode.SearchFreeKodeFrame;
-import SearchFreeKode.SearchFreeKodeMethods;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
+import AutoInsertMeasuting.InsertMeasurToExcel;
 
 public class PersonelManegementMethods {
 
@@ -587,7 +584,7 @@ public class PersonelManegementMethods {
 							saveToExcel = (boolean) dataTable[i][8];
 						}
 										
-					if(saveToExcel) {
+					
 					
 					Person person = PersonDAO.getValuePersonByEGN(egn);
 					
@@ -668,7 +665,7 @@ public class PersonelManegementMethods {
 
 						
 						
-						if(PersonelManegementFrame.getCheckbx_svePerson_SaveToExcel().isSelected())
+						if(saveToExcel)
 						SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
 								comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment, workplace, oldOtdelPerson, checkbx_EnterInZone, checkbx_EnterInListChengeKode, obhodenList);
 					}
@@ -676,7 +673,7 @@ public class PersonelManegementMethods {
 				}
 				}
 				}
-			}
+			
 
 	
 

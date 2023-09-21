@@ -54,7 +54,7 @@ public class PersonStatusDAO {
 			
 		} catch (SQLException e) {
 			if (e.toString().contains("unique")) {
-				String str = "Съдържа повтарящи се полета";
+//				String str = "Съдържа повтарящи се полета";
 //				MessageDialog(str);
 			}else {
 			e.printStackTrace();

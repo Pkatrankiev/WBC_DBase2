@@ -4,6 +4,9 @@ minYearInDbase = 2005
 dataBaseFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
 databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
+
+databaseURL_1 = jdbc:ucanaccess://D://WBC_DBase150923.mdb
+
 filePathArhivePersonel =  Arhive\\PERSONNEL_
 filePathArhiveExternal =  Arhive\\EXTERNAL_
 filePathActualExternal = Arhive\\EXTERNAL_actual.xls
@@ -50,11 +53,14 @@ referenceTipText = извличане на справка
 personReference = Справки за служители
 personReferenceTipText = извличане на справка по различни показатели
 
-kodeReference = Справки за свободни кодове
+kodeReference = Справка за свободни кодове
 kodeReferenceTipText = извличане на справка за заети и свободни кодове
 
-referencePersonMeasur = Справки график на служители
+referencePersonMeasur = Справка по отдели за служителите измерени в СИЧ
 referencePersonMeasurTipText = поименна справка на служители с право на достъп
+
+referenceMeasuringLab = Справка по дни за измерванията в СИЧ
+referenceMeasuringLabTipText = подробна справка по дни за измерванията в СИЧ за даден период
 
 destinationDir = DIRECTORY/
 destinationIcons = ICONS/ajaxLoader.gif
