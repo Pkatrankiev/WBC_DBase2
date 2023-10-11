@@ -253,6 +253,31 @@ public class UsersWBCDAO {
 		return list.get(0);
 	}
 	
+	public static List<String> getAllValueUsersWBCLastName_EG() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM UsersWBC";
+		List<String> list = new ArrayList<String>();
+
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+
+			while (result.next()) {
+			
+				list.add(result.getString("LastName_EG"));
+			}
+			
+			statement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
+	
 	
 	public static List<UsersWBC> getValueUsersWBCByObjectSortByColumnName(String columnName, Object object, String sortColumnName) {
 
@@ -300,6 +325,7 @@ public class UsersWBCDAO {
 		}
 		return masive;
 	}
+	
 	
 	
 }

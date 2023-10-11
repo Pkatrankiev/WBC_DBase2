@@ -142,7 +142,7 @@ public class ReferenceMeasuringLabMetods {
 		});
 	}
 
-	protected static String getLastDAte(String text) {
+	public static String getLastDAte(String text) {
 
 		for (int i = 25; i < 33; i++) {
 

@@ -62,7 +62,7 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 	public Reference_PersonMeasur_Frame(ActionIcone round, String referencePersonMeasur) {
 		setTitle(referencePersonMeasur);
 
-		setMinimumSize(new Dimension(730, 900));
+		setMinimumSize(new Dimension(850, 900));
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -186,7 +186,7 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		panel2.add(lbl_L_Firm);
 
 		JLabel lbl_L_Otdel = new JLabel("Otdel");
-		lbl_L_Otdel.setPreferredSize(new Dimension(200, 15));
+		lbl_L_Otdel.setPreferredSize(new Dimension(300, 15));
 		lbl_L_Otdel.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_L_Otdel.setBorder(null);
 		lbl_L_Otdel.setAlignmentX(1.0f);
@@ -230,8 +230,9 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 
 		comboBox_Otdel = new Choice();
 		comboBox_Otdel.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		comboBox_Otdel.setPreferredSize(new Dimension(200, 20));
+		comboBox_Otdel.setPreferredSize(new Dimension(300, 20));
 		panel2A.add(comboBox_Otdel);
+		
 
 		JLabel lblNewLabel_1_1 = new JLabel("");
 		lblNewLabel_1_1.setPreferredSize(new Dimension(20, 14));

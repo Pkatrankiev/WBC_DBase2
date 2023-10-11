@@ -32,6 +32,7 @@ public class Measuring implements Serializable {
 	private String reportFileName;
 	
 	
+	
 	public Measuring(
 			Person person,
 			Date date,
@@ -52,6 +53,7 @@ public class Measuring implements Serializable {
 		this.typeMeasur = typeMeasur;
 		this.measurKoment = measurKoment;
 		this.reportFileName = reportFileName;
+		
 		
 	}
 	
@@ -140,6 +142,8 @@ public class Measuring implements Serializable {
 	public void setTypeMeasur(TypeMeasur typeMeasur) {
 		this.typeMeasur = typeMeasur;
 	}
+
+	
 	
 	
 	

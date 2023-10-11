@@ -28,7 +28,7 @@ public class TestMainClass {
 //			    });
 //			    thread.start();
 		
-//			ExtractSpectriWithDozaFromSICH2.getFile();
+			ExtractSpectriWithDozaFromSICH2.getFile();
 //			    TestClasess.UpDataFromArhiveExcellFile();
 		
 			

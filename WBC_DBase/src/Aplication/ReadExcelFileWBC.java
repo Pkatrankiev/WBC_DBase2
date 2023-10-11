@@ -88,7 +88,6 @@ public class ReadExcelFileWBC {
 	public static boolean CellNOEmpty(Cell cell) {
 		return cell != null && cell.getCellType() != CellType.BLANK;
 	}
-
 	
 	public static String getStringfromCell(Cell cell) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
@@ -177,7 +176,6 @@ public class ReadExcelFileWBC {
 		}
 		return str;
 	}
-	
 
 	public static double getDoublefromCell(Cell cell) {
 		double num = -1;
@@ -200,7 +198,6 @@ public class ReadExcelFileWBC {
 		}
 		return num;
 	}
-		
 	
 	public static Date isLegalDate(String strDate, Cell cell) {
 		SimpleDateFormat sdfrmt = null;
@@ -351,8 +348,6 @@ public class ReadExcelFileWBC {
 		}
 		return workplace;
 	}
-
-	
 	
 	public static String InputDialog(String[] options, String input) {
 		JFrame jf = new JFrame();

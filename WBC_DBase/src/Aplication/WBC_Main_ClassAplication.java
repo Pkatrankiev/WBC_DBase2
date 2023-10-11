@@ -7,7 +7,7 @@ public class WBC_Main_ClassAplication {
 public static void main(String[] args) {
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
-		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
+//		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
 		new WBC_MainWindowFrame();
 		GeneralMethods.cerateDestinationDir();
 	

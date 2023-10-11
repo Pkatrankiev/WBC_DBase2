@@ -201,6 +201,7 @@ public class PersonelManegementMethods {
 						textArea.setText(addListStringSelectionPersonToTextArea(listSelectionPerson));
 					}
 
+					PersonelManegementFrame.viewInfoPanel();
 					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 				}
 			}
@@ -556,7 +557,7 @@ public class PersonelManegementMethods {
 					
 					
 					
-					String[] infoForPerson = { textField_svePerson_KodKZ_1.getText().trim(),
+					String[] infoForPersonFromFrame = { textField_svePerson_KodKZ_1.getText().trim(),
 							textField_svePerson_KodKZ_2.getText().trim(),
 							textField_svePersonKod_KZ_HOG.getText().trim(),
 							textField_svePersonKod_KZ_Terit_1.getText().trim(),
@@ -600,19 +601,19 @@ public class PersonelManegementMethods {
 					if(fromListPersonManegement) {
 						String[] kode = getKodeStatusByPersonFromDBase(person);
 						for (int j = 0; j < kode.length; j++) {
-							infoForPerson[j] = kode[j];
+							infoForPersonFromFrame[j] = kode[j];
 						}
 						checkbx_EnterInZone = true;	
 						int zona = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
 						System.out.println(zona+" "+dataTable[i][7]);
 						
-						infoForPerson[zona-1] = (String) dataTable[i][7];
-						infoForPerson[5] = (String)dataTable[i][2];
-						infoForPerson[6] = (String) dataTable[i][3];
-						infoForPerson[7] = (String) dataTable[i][4];
+						infoForPersonFromFrame[zona-1] = (String) dataTable[i][7];
+						infoForPersonFromFrame[5] = (String)dataTable[i][2];
+						infoForPersonFromFrame[6] = (String) dataTable[i][3];
+						infoForPersonFromFrame[7] = (String) dataTable[i][4];
 					}
 					
-					if (checkInfoPersonAndKodeStatus(infoForPerson, person, checkbx_EnterInZone)) {
+					if (checkInfoPersonAndKodeStatus(infoForPersonFromFrame, person, checkbx_EnterInZone)) {
 
 						Workplace workplace = WorkplaceDAO
 								.getValueWorkplaceByObject("Otdel", comboBox_svePerson_Otdel.getSelectedItem()).get(0);
@@ -627,7 +628,9 @@ public class PersonelManegementMethods {
 
 //		************** set SPISAK_PRILOGENIA
 						Spisak_Prilogenia spisPril = null;
+						
 						String formuliarName = textField_svePerson_Spisak.getText().trim();
+					
 						if (!formuliarName.isEmpty()) {
 
 							Date sDate = null, eDate = null;
@@ -659,15 +662,18 @@ public class PersonelManegementMethods {
 						}
 
 //		****************** set KODESTATUS
-						setKodeStatusInDBase(person, infoForPerson, newYear);
+						setKodeStatusInDBase(person, infoForPersonFromFrame, newYear);
 
 						
 
+						System.out.println(saveToExcel);
 						
-						
-						if(saveToExcel)
+						if(saveToExcel) {
+							System.out.println("**********************************");
 						SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
 								comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment, workplace, oldOtdelPerson, checkbx_EnterInZone, checkbx_EnterInListChengeKode, obhodenList);
+					
+					}
 					}
 
 				}
@@ -1069,86 +1075,86 @@ public class PersonelManegementMethods {
 		return true;
 	}
 
-	private static boolean checkInfoPersonAndKodeStatus(String[] infoForPerson, Person person, boolean checkbx_EnterInZone) {
+	private static boolean checkInfoPersonAndKodeStatus(String[] infoForPersonFromFrame, Person person, boolean checkbx_EnterInZone) {
 
 		String svePersonManegement_chengedSomeFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("svePersonManegement_chengedSomeFilds");
 		String svePersonManegement_EnteredInZoneANDChangeKode = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("svePersonManegement_EnteredInZoneANDChangeKode");
 		
-		boolean fl_ChangeKode = false;
-		String[] kode = getKodeStatusByPersonFromDBase(person);
-		for (int i = 0; i < kode.length; i++) {
-			if (kode[i].equals("н") || kode[i].equals("ЕП-2")) {
-				kode[i] = "";
+		boolean fl_KodeIsChange = false;
+		String[] kodeFromDBase = getKodeStatusByPersonFromDBase(person);
+		for (int i = 0; i < kodeFromDBase.length; i++) {
+			if (kodeFromDBase[i].equals("н") || kodeFromDBase[i].equals("ЕП-2")) {
+				kodeFromDBase[i] = "";
 			}
-			if (infoForPerson[i].equals("н") || infoForPerson[i].equals("ЕП-2")) {
-				infoForPerson[i] = "";
+			if (infoForPersonFromFrame[i].equals("н") || infoForPersonFromFrame[i].equals("ЕП-2")) {
+				infoForPersonFromFrame[i] = "";
 			}
 			
-			System.out.println(i+" | "+kode[i]	+" | "+infoForPerson[i]);
+			System.out.println(i+" | "+kodeFromDBase[i]	+" | "+infoForPersonFromFrame[i]);
 		}
 
 		String errorStr = "";
-		System.out.println(infoForPerson[0] + " <-> " + kode[0]);
-		if (!infoForPerson[0].equals(kode[0])) {
-			errorStr += "KZ-1("+infoForPerson[0]+"->"+kode[0]+"), ";
-			fl_ChangeKode = true;
+		System.out.println(infoForPersonFromFrame[0] + " <-> " + kodeFromDBase[0]);
+		if (!infoForPersonFromFrame[0].equals(kodeFromDBase[0])) {
+			errorStr += "KZ-1("+infoForPersonFromFrame[0]+"->"+kodeFromDBase[0]+"), ";
+			fl_KodeIsChange = true;
 		}
 
-		System.out.println(infoForPerson[1] + " <-> " + kode[1]);
-		if (!infoForPerson[1].equals(kode[1])) {
-			errorStr += "KZ-2("+infoForPerson[1]+"->"+kode[1]+"), ";
-			fl_ChangeKode = true;
+		System.out.println(infoForPersonFromFrame[1] + " <-> " + kodeFromDBase[1]);
+		if (!infoForPersonFromFrame[1].equals(kodeFromDBase[1])) {
+			errorStr += "KZ-2("+infoForPersonFromFrame[1]+"->"+kodeFromDBase[1]+"), ";
+			fl_KodeIsChange = true;
 		}
-		System.out.println(infoForPerson[2] + " <-> " + kode[2]);
-		if (!infoForPerson[2].equals(kode[2])) {
-			errorStr += "KZ-HOG("+infoForPerson[2]+"->"+kode[2]+"), ";
-			fl_ChangeKode = true;
+		System.out.println(infoForPersonFromFrame[2] + " <-> " + kodeFromDBase[2]);
+		if (!infoForPersonFromFrame[2].equals(kodeFromDBase[2])) {
+			errorStr += "KZ-HOG("+infoForPersonFromFrame[2]+"->"+kodeFromDBase[2]+"), ";
+			fl_KodeIsChange = true;
 
 		}
-		System.out.println(infoForPerson[3] + " <-> " + kode[3]);
-		if (!infoForPerson[3].equals(kode[3])) {
-			errorStr += "Ter-1("+infoForPerson[3]+"->"+kode[3]+"), ";
-			fl_ChangeKode = true;
+		System.out.println(infoForPersonFromFrame[3] + " <-> " + kodeFromDBase[3]);
+		if (!infoForPersonFromFrame[3].equals(kodeFromDBase[3])) {
+			errorStr += "Ter-1("+infoForPersonFromFrame[3]+"->"+kodeFromDBase[3]+"), ";
+			fl_KodeIsChange = true;
 		}
 
-		System.out.println(infoForPerson[4] + " <-> " + kode[4]);
-		if (!infoForPerson[4].equals(kode[4])) {
-			errorStr += "Ter-2("+infoForPerson[4]+"->"+kode[4]+"), ";
-			fl_ChangeKode = true;
+		System.out.println(infoForPersonFromFrame[4] + " <-> " + kodeFromDBase[4]);
+		if (!infoForPersonFromFrame[4].equals(kodeFromDBase[4])) {
+			errorStr += "Ter-2("+infoForPersonFromFrame[4]+"->"+kodeFromDBase[4]+"), ";
+			fl_KodeIsChange = true;
 		}
 
-		if (!infoForPerson[5].equals(person.getFirstName())) {
-			errorStr += "FName("+infoForPerson[5]+"->"+person.getFirstName()+"), ";;
+		if (!infoForPersonFromFrame[5].equals(person.getFirstName())) {
+			errorStr += "FName("+infoForPersonFromFrame[5]+"->"+person.getFirstName()+"), ";;
 		}
-		if (!infoForPerson[6].equals(person.getSecondName())) {
-			errorStr += "SName("+infoForPerson[6]+"->"+person.getSecondName()+"), ";
+		if (!infoForPersonFromFrame[6].equals(person.getSecondName())) {
+			errorStr += "SName("+infoForPersonFromFrame[6]+"->"+person.getSecondName()+"), ";
 		}
-		if (!infoForPerson[7].equals(person.getLastName())) {
-			errorStr += "LName("+infoForPerson[7]+"->"+person.getLastName()+"), ";
+		if (!infoForPersonFromFrame[7].equals(person.getLastName())) {
+			errorStr += "LName("+infoForPersonFromFrame[7]+"->"+person.getLastName()+"), ";
 		}
 
 		System.out.println("errorStr " + errorStr);
-		if (errorStr.length() > 2) {
+		if (errorStr.length() > 2 ) {
 			errorStr = errorStr.substring(0, errorStr.length() - 2);
 			
 			if (OptionDialog(errorStr, svePersonManegement_chengedSomeFilds)) {
 				if (errorStr.contains("Name")) {
-					person.setFirstName(infoForPerson[5]);
-					person.setSecondName(infoForPerson[6]);
-					person.setLastName(infoForPerson[7]);
+					person.setFirstName(infoForPersonFromFrame[5]);
+					person.setSecondName(infoForPersonFromFrame[6]);
+					person.setLastName(infoForPersonFromFrame[7]);
 					PersonDAO.updateValuePerson(person);
 				}
-				if ( fl_ChangeKode && checkbx_EnterInZone 
-				&& (fromListPersonManegement || OptionDialog(svePersonManegement_EnteredInZoneANDChangeKode,  "В Н И М А Н И Е"))) {
-		
-				System.out.println("**************************************");
-				
-				return true;
-
+				if(fromListPersonManegement) {
+					return true;
+				}
+				if ( fl_KodeIsChange && checkbx_EnterInZone) {
+					System.out.println("**************************************");
+					return OptionDialog(svePersonManegement_EnteredInZoneANDChangeKode,  "В Н И М А Н И Е");
+			
 			}else {
-				return false;
+				return true;
 			}
 			}else {
 				return false;
@@ -1227,6 +1233,7 @@ public class PersonelManegementMethods {
 		String[] options = { "Back", "Continued" };
 		int x = JOptionPane.showOptionDialog(null, mesage, textOptionDialogFrame, JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		System.out.println(x+" -----------------");
 		if (x > 0) {
 			return true;
 		}
@@ -2136,11 +2143,17 @@ public class PersonelManegementMethods {
 
 	public static List<PersonManegement> getListPersonFromFile(JTextArea textArea, JPanel infoPanel, JPanel tablePane,
 			JPanel panel_AllSaerch, JScrollPane scrollPane, JTextField textField_svePerson_Year, JTextField textField, JButton btnBackToTable) {
-
+		File file;
+		String filePath = textField.getText();
+		if(filePath.isEmpty()) {
 		JFileChooser chooiser = new JFileChooser(ExcelFileBAK_Path);
 		chooiser.setMultiSelectionEnabled(false);
 		chooiser.showOpenDialog(null);
-		File file = chooiser.getSelectedFile();
+		file = chooiser.getSelectedFile();
+		}else {
+			file = new File( filePath);
+		}
+		
 //		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		List<PersonManegement> listPersonFromFile = readListPersonFromFile(file, textField);
 

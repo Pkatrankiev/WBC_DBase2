@@ -664,7 +664,7 @@ int k=0;
 		return list;
 	}
 
-public static List<Measuring> getValueMeasuringByLab_Date(int labID, Date date) {
+	public static List<Measuring> getValueMeasuringByLab_Date(int labID, Date date) {
 		
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM Measuring  where Lab_ID = ? AND Date = ? ORDER BY Date ASC";
@@ -712,6 +712,54 @@ public static List<Measuring> getValueMeasuringByLab_Date(int labID, Date date) 
 		return list;
 	}
 
-	
+public static List<Measuring> getValueMeasuringByStartdate_EndDate(Date dateStart, Date dateEnd) {
+		
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Date >= ? AND Date <= ? ORDER BY Date ASC";
+
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setObject(1, dateStart);
+			preparedStatement.setObject(2, dateEnd);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}
+
 	
 }

@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -242,7 +243,13 @@ public class TestClasess {
 
 		AplicationMetods.testGetListPersonSatatusByPersonAndDateAfterDateSet();
 
-		List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles();
+		JFileChooser chooiser = new JFileChooser();
+		 chooiser.setMultiSelectionEnabled(true);
+		 chooiser.showOpenDialog(null);
+		 File[] files = chooiser.getSelectedFiles();
+		System.out.println(files.length);
+		
+		List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles(files);
 		System.out.println(list.size());
 		ReadResultFromReport.PrintListReportMeasurClass(list);
 

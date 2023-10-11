@@ -156,8 +156,6 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		return spPr;
 	}
 
-		
-	
 	
 	public static void ListSpisak_PrilogeniaToBData(List<Spisak_Prilogenia> Spisak_PrilogeniaList) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");

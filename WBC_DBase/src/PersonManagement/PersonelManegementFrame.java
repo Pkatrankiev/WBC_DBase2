@@ -523,7 +523,7 @@ public class PersonelManegementFrame extends JFrame {
 		lbl_distance.setPreferredSize(new Dimension(30, 14));
 		panel_4.add(lbl_distance);
 		
-		btnBackToTable = new JButton("New button");
+		btnBackToTable = new JButton("BackToTable");
 		panel_4.add(btnBackToTable);
 
 		

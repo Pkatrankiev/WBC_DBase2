@@ -244,6 +244,12 @@ public class ExtractSpectriWithDozaFromSICH2 {
 
 		return null;
 	}
+	
+	
+	
+	
+	
+	
 
 	static String[] CreadMasiveFromReadFile(File file) {
 		BufferedReader br = null;

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import Aplication.ReadFileBGTextVariable;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.ZoneDAO;
@@ -99,7 +100,8 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 	}
 
 	private static String generateTextForInfoPanel(String[] masiveZoneName, String[][] masiveKode) {
-		
+		int countWithoutMeasur = 0;
+		String referencePersonMeasurWithoutMeasur = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasurWithoutMeasur");
 		String kodeString = "";
 		if(masiveKode.length>0) {
 			
@@ -131,11 +133,15 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 				}
 			}
 			kodeString += "\n";
-			
+			if(masiveKode[i][7].equals("-")) {
+				countWithoutMeasur++;
+			}
 		}
 		
 		
 			}
+		kodeString += "\n";
+		kodeString += " "+referencePersonMeasurWithoutMeasur+" "+countWithoutMeasur+" бр.";
 		return kodeString;
 	}
 	

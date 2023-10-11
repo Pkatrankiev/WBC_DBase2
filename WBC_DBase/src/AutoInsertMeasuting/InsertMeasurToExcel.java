@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
-import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
@@ -45,9 +44,13 @@ public class InsertMeasurToExcel {
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-		String[] filepat = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal_test();
-		String filePathExternal = filepat[0]; 
-		String filePathPersonel =  filepat[1];  
+		
+//		String[] filepat = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal_test();
+		
+		
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		 
 		List<ReportMeasurClass> listForSaveMeasurToMont = new ArrayList<>();
 		List<ReportMeasurClass> listForNotSaveMeasur = new ArrayList<>();
 		String pathFile = "";
@@ -111,8 +114,8 @@ public class InsertMeasurToExcel {
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_test"); 
-		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_test"); 
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
 
 		String pathFile = "";
 		if (forPersonalExcellFile) {
@@ -401,9 +404,12 @@ public class InsertMeasurToExcel {
 //				System.out.println(index);
 				cell = getCell(sheet, row, index);
 				Cell cell1 = getCell(sheet, row, index+1);
-				Cell cell2 = getCell(sheet, row, index + 17);
+				Cell cell2 = getCell(sheet, row, index + 18);
 				flNotDublicateData = checkNotDublicate(row, index, reportMeasurClassToSave, sheet);
 //				System.out.println("flNotDublicateData "+flNotDublicateData);
+				System.out.println(""+ReadExcelFileWBC.CellNOEmpty(cell) +" "+  
+						ReadExcelFileWBC.CellNOEmpty(cell1) +" "+ 
+						ReadExcelFileWBC.CellNOEmpty(cell2));
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell1) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell2)) {
@@ -431,7 +437,8 @@ public class InsertMeasurToExcel {
 	
 		System.out.println(dozeMeasurDouble+" - "+dozeMeasurStr);
 		try {
-		Double.parseDouble(dozeMeasurStr.replaceAll(",", "."));
+			dozeMeasurStr = dozeMeasurStr.replaceAll(",", ".");
+			Double.parseDouble(dozeMeasurStr);
 		//dozata ot izmervaneto e chislo
 		System.out.println("dozata ot izmervaneto e chislo");
 		if(cellDoze.getCellType().toString().equals("STRING")) {
@@ -512,8 +519,9 @@ public class InsertMeasurToExcel {
 				
 		String doseString = convertDozeToString(reportMeasurClassToSave);
 		try {
-			Double.parseDouble(doseString);
-			cell.setCellValue(reportMeasurClassToSave.getMeasur().getDoze());
+			System.out.println("doseString = "+doseString);
+			
+			cell.setCellValue(Double.parseDouble(doseString));
 		} catch (Exception e) {
 			cell.setCellValue(doseString);
 		} 
@@ -522,16 +530,24 @@ public class InsertMeasurToExcel {
 	}
 
 	private static String convertDozeToString(ReportMeasurClass reportMeasurClassToSave) {
-		DecimalFormat formatter = new DecimalFormat("0.00");
+		
 		
 		double dozeDouble = reportMeasurClassToSave.getMeasur().getDoze();
+		
+		DecimalFormat formatter = new DecimalFormat("0.00");
 		String doseString = formatter.format(dozeDouble);
+		
 		if (dozeDouble < 0.1 && !doseString.equals("0,00")) {
 			doseString = "<0.10";
 		}
 		if (reportMeasurClassToSave.getMeasur().getTypeMeasur().getKodeType().equals("M")) {
 			doseString = "M";
 		}
+		
+		if(doseString.equals("0,00")) {
+			doseString = "0";
+		}
+		
 		return doseString;
 	}
 

@@ -17,6 +17,7 @@ import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
+import MenuClasses.WBC_MainWindowFrame;
 
 public class UpdateBDataFromExcellFiles {
 
@@ -54,10 +55,15 @@ public class UpdateBDataFromExcellFiles {
 	
 	public static void updataFromGodExcelFile(ActionIcone round) {
 		
+		String MainWindowFrame_Label = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_Label");
+		ActualExcellFiles actualExcellFiles_LastActuals = ActualExcellFilesDAO.getValueActualExcellFilesByName("LastActuals");
+		String date_LastActuals = sdfrmt.format(actualExcellFiles_LastActuals.getActualExcellFiles_Date());
+		WBC_MainWindowFrame.getLblNewLabel().setText(MainWindowFrame_Label+" "+date_LastActuals);
 		
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		List<ActualExcellFiles> listActualExcellFiles = ActualExcellFilesDAO.getAllValueActualExcellFiles();
 		List<String> listChengeExcellFilePath = listChengeExcellFile(round, listActualExcellFiles, excellFiles);
+		
 		String measege = "";
 		String preporachvaSe = ReadFileBGTextVariable.getGlobalTextVariableMap().get("preporachvaSe");
 		String imaPromeniVavFayla = ReadFileBGTextVariable.getGlobalTextVariableMap().get("imaPromeniVavFayla");
@@ -94,6 +100,8 @@ public class UpdateBDataFromExcellFiles {
 				
 				
 			}
+		}else {
+			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile();
 		}
 		
 		
@@ -259,9 +267,11 @@ public class UpdateBDataFromExcellFiles {
 				actualExcellFile.setActualExcellFiles_Date(extractedDateTimeFromFile(filePath));
 				ActualExcellFilesDAO.updateValueActualExcellFiles(actualExcellFile);
 				
+				
 				System.out.println("updateValueActualExcellFiles ");
-			}	
+			}
 			
+			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile();
 		}
 		round.StopWindow();
 	}
@@ -302,7 +312,7 @@ public class UpdateBDataFromExcellFiles {
 		return dateFile;
 	}
 	
-	private static Timestamp extractedDateTimeFromFile(String pathFile) {
+	static Timestamp extractedDateTimeFromFile(String pathFile) {
 		File fis = new File(pathFile);
 		long lastModifiedFile = fis.lastModified();
 		Timestamp dateLastModified = new Timestamp(lastModifiedFile);

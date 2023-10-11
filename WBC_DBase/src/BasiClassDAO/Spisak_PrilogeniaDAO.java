@@ -417,6 +417,9 @@ public class Spisak_PrilogeniaDAO {
 			ResourceLoader.appendToFile(e);
 		}
 		if(list.size()>0) {
+//			if(list.size()>1 && list.get(0).getWorkplace().getId_Workplace()==54 ) {
+//				return list.get(1);
+//			}else
 		return list.get(0);
 		}else {
 			return null;	

@@ -14,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadResultFromReport;
@@ -54,6 +55,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("rawtypes")
@@ -65,6 +67,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	int countMeasur;
 	Frame frame;
 	String clickTxt = ReadFileBGTextVariable.getGlobalTextVariableMap().get("klikToCopy");
+	String labelFileNameToolTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelFileNameToolTipText");
 	JButton btnSave;
 	Color panelColor;
 	static String[] listSimbolNuclide;
@@ -98,7 +101,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	static List<UsersWBC> listUsersWBC;
 	static DimensionWBC dozeDimension;
 
-	public AutoInsertMeasutingFrame(Frame f, List<ReportMeasurClass> listReportMeasur, String[] listSimbolNuclideIN,
+	public AutoInsertMeasutingFrame(ActionIcone round, Frame f, List<ReportMeasurClass> listReportMeasur, String[] listSimbolNuclideIN,
 			String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN, String[] listNameTypeMeasurIN,
 			Point pointFrame) {
 
@@ -184,7 +187,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 				doze = "";
 			}
 			panel_Multy[i] = panelMultyMeasuring(i, reportName, date, PersonName, egn, lab, operatorNmae, typeMeasur,
-					doze, toExcell, koment);
+					doze, toExcell, koment, reportMeasur);
 			panelBasic.add(panel_Multy[i]);
 			int k = 0;
 			for (String string : reportMeasur.getListNuclideData()) {
@@ -202,9 +205,17 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					doz = value[5].trim();
 				} else {
 					String[] value = StringUtils.split(string);
+					if(lab.contains("2")) {
+						nucl = value[0].trim();
+						activ = value[1].trim();
+					}else {
+					
 					nucl = value[0].trim();
 					activ = value[2].trim();
+					}
 				}
+				System.out.println(i+" "+ k+" "+ nucl+" "+ activ+" "+ post+" "+ ggp+" "+ doz);
+				
 				panel_Multy_Nuclide[i][k] = panelMultyNuclideMeasuring(i, k, nucl, activ, post, ggp, doz);
 				panelBasic.add(panel_Multy_Nuclide[i][k]);
 				k++;
@@ -230,6 +241,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			setLocation((int) pointFrame.getX(), (int) pointFrame.getY());
 		}
 
+		round.StopWindow();
 		setVisible(true);
 
 	}
@@ -452,7 +464,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	private JPanel panelMultyMeasuring(int index, String reportName, String date, String PersonName, String egn,
-			String lab, String operatorNmae, String typeMeasur, String doze, boolean toExcell, String koment) {
+			String lab, String operatorNmae, String typeMeasur, String doze, boolean toExcell, String koment, ReportMeasurClass reportMeasur) {
 		JPanel panel_Multy = new JPanel();
 		panel_Multy.setMaximumSize(new Dimension(32767, 30));
 		panel_Multy.setAlignmentY(0.0f);
@@ -465,7 +477,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lblFileName[index].setPreferredSize(new Dimension(80, 20));
 		panel_Multy.add(lblFileName[index]);
 		lblFileName[index].setToolTipText(clickTxt);
-		copyToClipboard(lblFileName[index]);
+		startFileInNotepad(lblFileName[index]);
 
 		lblDate[index] = new JLabel(date);
 		lblDate[index].setBorder(new LineBorder(new Color(192, 192, 192)));
@@ -882,6 +894,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 				reportMeasur.setListNuclideData(listString);
 				reportMeasur.setToExcell(toExcell);
 				reportMeasur.setKoment(koment);
+				reportMeasur.setReportFile(listReportMeasur.get(i).getReportFile());
 				listReportMeasurToData.add(reportMeasur);
 			}
 		}
@@ -935,6 +948,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			reportMeasur.setListNuclideData(listString);
 			reportMeasur.setToExcell(toExcell);
 			reportMeasur.setKoment(koment);
+			reportMeasur.setReportFile(listReportMeasur.get(i).getReportFile());
 			listReportMeasurToData.add(reportMeasur);
 		}
 
@@ -1039,7 +1053,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 				}
 			}
 		}
-
+System.out.println(isnuclide+"  "+emtryDozeNuclide);
 		if (emtryDozeNuclide) {
 			mesage = "<html>" + isEmptyPostaplenieNuclideFilds + "</html>";
 			MessageDialog(mesage);
@@ -1109,6 +1123,44 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		});
 	}
 
+	private void startFileInNotepad(JLabel label) {
+		label.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					String fileName = label.getText();
+					for(ReportMeasurClass repMes : listReportMeasurClass) {
+						System.out.println(repMes.getReportFile().getName());
+						if(repMes.getReportFile().getName().equals(fileName)) {
+							
+							Runtime.getRuntime().exec("notepad.exe "+repMes.getReportFile().getPath());
+						}
+					}
+					
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
+	}
+	
 	protected void ActionListenerPlusBTN(int index) {
 		List<ReportMeasurClass> listReportMeasurClassToSave = generateListReportMeasurClassForRepain(countMeasur,
 				listReportMeasurClass);
@@ -1124,8 +1176,18 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		listReportMeasurClass.get(index).setListNuclideData(listNuclideData);
 		Point pointFrame = getLocation();
 		setVisible(false);
-		new AutoInsertMeasutingFrame(frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry, listUserWBC,
-				listTypeMeasur, listNameTypeMeasur, pointFrame);
+		
+		ActionIcone round = new ActionIcone();
+		 final Thread thread = new Thread(new Runnable() {
+		     @Override
+		     public void run() {
+		    	 
+		    	 new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry, listUserWBC,
+		 				listTypeMeasur, listNameTypeMeasur, pointFrame);
+		     }
+		    });
+		    thread.start();	
+		
 	}
 
 	protected void ActionListenerMinusBTN(int index) {
@@ -1142,8 +1204,16 @@ public class AutoInsertMeasutingFrame extends JFrame {
 				listReportMeasurClass.get(index).setListNuclideData(listNuclideData);
 				Point pointFrame = getLocation();
 				setVisible(false);
-				new AutoInsertMeasutingFrame(frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry,
-						listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame);
+				ActionIcone round = new ActionIcone();
+				 final Thread thread = new Thread(new Runnable() {
+				     @Override
+				     public void run() {
+				    	 
+				    	 new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry, listUserWBC,
+				 				listTypeMeasur, listNameTypeMeasur, pointFrame);
+				     }
+				    });
+				    thread.start();	
 			}
 		}
 
