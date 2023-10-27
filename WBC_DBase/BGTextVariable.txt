@@ -94,6 +94,7 @@ freeKodeComent = Списък на свободните кодове за пос
 nofreeKodeComent = Няма въведена област от кодова за този отдел и зона
 zaDaZatvoriteRamkata = За да затворите рамката кликнете с мишката на този ред
 labelCheckForSearch = маркирайте зона и отдел за търсене на свободни кодове
+inExcelFileExistData = В excel файла съществува  записа:
 
 imaPromeniVavFayla = Файлът   е бил изменен на 
 preporachvaSe = Препоръчва се актуализацията на базата данни, защото:

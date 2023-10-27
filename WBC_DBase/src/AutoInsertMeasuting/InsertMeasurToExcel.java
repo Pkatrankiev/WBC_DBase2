@@ -116,6 +116,9 @@ public class InsertMeasurToExcel {
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
 		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
 		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
+		
+//		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_test"); 
+//		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_test"); 
 
 		String pathFile = "";
 		if (forPersonalExcellFile) {
@@ -406,7 +409,8 @@ public class InsertMeasurToExcel {
 				Cell cell1 = getCell(sheet, row, index+1);
 				Cell cell2 = getCell(sheet, row, index + 18);
 				flNotDublicateData = checkNotDublicate(row, index, reportMeasurClassToSave, sheet);
-//				System.out.println("flNotDublicateData "+flNotDublicateData);
+								
+				System.out.println("flNotDublicateData "+flNotDublicateData);
 				System.out.println(""+ReadExcelFileWBC.CellNOEmpty(cell) +" "+  
 						ReadExcelFileWBC.CellNOEmpty(cell1) +" "+ 
 						ReadExcelFileWBC.CellNOEmpty(cell2));
@@ -466,11 +470,16 @@ public class InsertMeasurToExcel {
 
 	private static boolean checkNotDublicate(int row, int column, ReportMeasurClass reportMeasurClassToSave, Sheet sheet) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
+		String inExcelFileExistData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("inExcelFileExistData");
+		inExcelFileExistData =  "<html>" + inExcelFileExistData + "<br>";
 		
+		String egn = reportMeasurClassToSave.getMeasur().getPerson().getEgn();
 		String date = sdfrmt.format(reportMeasurClassToSave.getMeasur().getDate());
 		String lab = reportMeasurClassToSave.getMeasur().getLab().getLab().toLowerCase();
 		String doseString = convertDozeToString(reportMeasurClassToSave);
 		
+		inExcelFileExistData = inExcelFileExistData+egn+"  " + date+"  "+lab+"  "+doseString+ "</html>";
+				
 		Cell cellDate = getCell(sheet, row, column);
 		Cell cellLab = getCell(sheet, row, column+1);
 		Cell cellDoze = getCell(sheet, row, column + 18);
@@ -484,11 +493,24 @@ public class InsertMeasurToExcel {
 		if(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate)).equals(date)
 			&& getValueFromCellToString(cellLab).equals(lab)
 			&& dozeStr.equals(doseString)) {
-			return false;
+			
+			return OptionDialog(inExcelFileExistData);
 		}
 		return true;
 	}
 
+	public static boolean OptionDialog(String mesage) {
+		String[] options = {"NotSave", "Save"};
+		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		System.out.println(x);
+		
+		if (x > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	private static void saveDataToExcelFile(int row, int column, ReportMeasurClass reportMeasurClassToSave,
 			Sheet sheet) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
@@ -544,9 +566,9 @@ public class InsertMeasurToExcel {
 			doseString = "M";
 		}
 		
-		if(doseString.equals("0,00")) {
-			doseString = "0";
-		}
+//		if(doseString.equals("0,00")) {
+//			doseString = "0";
+//		}
 		
 		return doseString;
 	}

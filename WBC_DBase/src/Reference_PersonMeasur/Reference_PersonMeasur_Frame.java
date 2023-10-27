@@ -119,7 +119,7 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		Reference_PersonMeasur_Metods.ActionListenertextField_Year(textField_Year, btn_Search);
 		Reference_PersonMeasur_Metods.ActionListener_ComboBox_Otdel(comboBox_Otdel, btn_Search);
 
-		Reference_PersonMeasur_Metods.ActionListenerbBtn_Search(panel_Search);
+		Reference_PersonMeasur_Metods.ActionListenerbBtn_Search(panel_Search, btn_Search);
 		Reference_PersonMeasur_Metods.ActionListenerComboBox_Firm();
 		Reference_PersonMeasur_Metods.ActionListenerBtnExportToExcell(panel_Search);
 

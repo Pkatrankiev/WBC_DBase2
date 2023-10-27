@@ -193,7 +193,7 @@ public class ReadMeasuringFromExcelFile {
 	if(doze==0.05) {
 	coment = "Doze < 0.10 mSv";	
 	}
-	String reportFile = "Excel-";
+	String reportFile = "Excel-"+row+"/"+k;
 	return new Measuring(person, date, doze, dim, labor, userSet, tipeM, coment, reportFile);	
 	
 	}

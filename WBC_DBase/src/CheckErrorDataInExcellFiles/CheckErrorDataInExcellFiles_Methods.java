@@ -29,15 +29,15 @@ import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
 
 public class CheckErrorDataInExcellFiles_Methods {
 
-	private static JTextArea textArea = CheckErrorDataInExcellFiles_Frame.getTextArea();
-	private static JButton btn_Search = CheckErrorDataInExcellFiles_Frame.getBtn_Search();
-	private static JButton btn_SearchAllColumn = CheckErrorDataInExcellFiles_Frame.getBtn_Search_1();
-	private static JButton btn_CheckDBase = CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase();
-	private static JButton btn_CheckDBase_Clear = CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear();
-	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
+//	private static JTextArea textArea = CheckErrorDataInExcellFiles_Frame.getTextArea();
+//	private static JButton btn_Search = CheckErrorDataInExcellFiles_Frame.getBtn_Search();
+//	private static JButton btn_SearchAllColumn = CheckErrorDataInExcellFiles_Frame.getBtn_Search_1();
+//	private static JButton btn_CheckDBase = CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase();
+//	private static JButton btn_CheckDBase_Clear = CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear();
+
 	private static List<Measuring> listMeasuringForClear;
 
-	static void ActionListener_Btn_SearchError(JPanel panel_AllSaerch) {
+	static void ActionListener_Btn_SearchError(JPanel panel_AllSaerch, JButton btn_Search, JTextArea textArea) {
 
 		btn_Search.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -61,7 +61,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	}
 
-	static void ActionListener_Btn_SearchAllColumn(JPanel panel_AllSaerch) {
+	static void ActionListener_Btn_SearchAllColumn(JPanel panel_AllSaerch, JButton btn_SearchAllColumn, JTextArea textArea) {
 
 		btn_SearchAllColumn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	}
 
-	static void ActionListener_Btn_CheckDBaseToMounthFile(JPanel panel_AllSaerch) {
+	static void ActionListener_Btn_CheckDBaseToMounthFile(JPanel panel_AllSaerch, JButton btn_CheckDBase, JTextArea textArea ) {
 
 		btn_CheckDBase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -96,10 +96,10 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 				if (textForArea.isEmpty()) {
 					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-					btn_CheckDBase_Clear.setEnabled(false);
+					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(false);
 				} else {
 					textArea.setText(textForArea);
-					btn_CheckDBase_Clear.setEnabled(true);
+					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(true);
 				}
 
 				GeneralMethods.setDefaultCursor(panel_AllSaerch);
@@ -109,7 +109,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	}
 
-	static void ActionListener_Btn_CheckDBase_Clear(JPanel panel_AllSaerch) {
+	static void ActionListener_Btn_CheckDBase_Clear(JPanel panel_AllSaerch, JButton btn_CheckDBase_Clear, JTextArea textArea) {
 
 		btn_CheckDBase_Clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -669,6 +669,7 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	public static String CheckMontToBDate() {
 
+		String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 		String ImaGoV = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ImaGoV");
 		String NoGoNiamaV = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("checkCorrectinDataInExcell_NoGoNiamaV");

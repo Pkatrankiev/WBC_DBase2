@@ -206,7 +206,7 @@ public class Reference_PersonMeasur_Metods {
 		addItem(comboBox_Otdel, listAdd);
 	}
 
-	public static void ActionListenerbBtn_Search(JPanel panel_AllSaerch) {
+	public static void ActionListenerbBtn_Search(JPanel panel_AllSaerch, JButton btn_Search) {
 
 		btn_Search.addActionListener(new ActionListener() {
 			

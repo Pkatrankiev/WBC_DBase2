@@ -35,7 +35,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	private static JTextArea textArea;
 	private static JButton btn_Search;
-	private static JButton btn_Search_1;
+	private static JButton btn_SearchAllColumn;
 	private static JButton btn_CheckDBase;
 	private static JButton btn_CheckDBase_Clear;
 
@@ -92,10 +92,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 		
 
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchError(panel_Search);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchAllColumn(panel_Search);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBaseToMounthFile(panel_Search);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBase_Clear(panel_Search);
+		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchError(panel_Search, btn_Search, textArea);
+		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchAllColumn(panel_Search, btn_SearchAllColumn, textArea);
+		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBaseToMounthFile(panel_Search, btn_CheckDBase, textArea);
+		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBase_Clear(panel_Search, btn_CheckDBase_Clear, textArea);
 
 		setVisible(true);
 		
@@ -120,10 +120,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year_1.setAlignmentX(0.5f);
 		panel1.add(lbl_Year_1);
 		
-		btn_Search_1 = new JButton("Search");
-		panel1.add(btn_Search_1);
-		btn_Search_1.setMargin(new Insets(2, 5, 2, 5));
-		btn_Search_1.setPreferredSize(new Dimension(110, 23));
+		btn_SearchAllColumn = new JButton("Search");
+		panel1.add(btn_SearchAllColumn);
+		btn_SearchAllColumn.setMargin(new Insets(2, 5, 2, 5));
+		btn_SearchAllColumn.setPreferredSize(new Dimension(110, 23));
 		
 		
 		return panel1;
@@ -233,7 +233,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	}
 	
 	public static JButton getBtn_Search_1() {
-		return btn_Search_1;
+		return btn_SearchAllColumn;
 	}
 
 	public static JButton getBtn_Export() {
