@@ -26,11 +26,26 @@ import BasicClassAccessDbase.Zone;
 public class TextInAreaTextPanel {
 
 	private static Person person;
-	private static String[] masivePersonStatusName = {"Year","Otdel","Spisak","start Date","end Date","Koment"};
+	private static String[] masivePersonStatusName = {
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_otdel"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Sp_Pr"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_startDate"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_endDate"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Koment")};
 	private static String[][] masivePersonStatus;
 	private static String[] masiveZoneName;
 	private static String[][] masiveKode;
-	private static String[] masiveMeasurName = {"Year","Date","Doze[mSv]","Lab","Nuc.","Act.[Bq]","Inc.[%]","GGP[%]","Doze[%]"};
+	private static String[] masiveMeasurName = {
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Date"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Doza"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Lab"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Nuclid"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Activ"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Inc"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_GGP"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Doza")};
 	private static String[][] masiveMeasur;
 	
 	public static String createInfoPanelForPerson(String year, Person personInport, boolean fromExcell) {
@@ -388,8 +403,8 @@ public class TextInAreaTextPanel {
 
 	private static String[] getMasiveZoneName() {
 		String[] masiveZoneName = new String[7]; 
-		masiveZoneName[0] = "Year";
-		masiveZoneName[1] = "Otdel";
+		masiveZoneName[0] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year");
+		masiveZoneName[1] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_otdel");
 		int i=2;
 		for (Zone zone : ZoneDAO.getAllValueZone()) {
 			masiveZoneName[i] = zone.getNameTerritory();

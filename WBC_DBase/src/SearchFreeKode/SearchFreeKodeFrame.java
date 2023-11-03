@@ -124,6 +124,9 @@ public class SearchFreeKodeFrame extends JFrame {
 	}
 
 	private void setButtonPanel() {
+		
+		String autoInsertMeasuting_cancel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_cancel");
+		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -133,7 +136,7 @@ public class SearchFreeKodeFrame extends JFrame {
 //			buttonPane.add(okButton);
 //			getRootPane().setDefaultButton(okButton);
 		
-			JButton cancelButton = new JButton("EXIT");
+			JButton cancelButton = new JButton(autoInsertMeasuting_cancel);
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
@@ -145,11 +148,16 @@ public class SearchFreeKodeFrame extends JFrame {
 
 	private JPanel setPanel2() {
 		
+		String kodeReference_Leter = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference_Leter");
+		String kodeReference_Start = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference_Start");
+		String kodeReference_End = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference_End");
+		String referencePersonMeasur_search = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_search");
+		
 		JPanel panel2 = new JPanel();
 		panel2.setMaximumSize(new Dimension(32767, 30));
 		panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
-			JLabel lblLeter = new JLabel("Leter");
+			JLabel lblLeter = new JLabel(kodeReference_Leter);
 			lblLeter.setPreferredSize(new Dimension(40, 14));
 			panel2.add(lblLeter);
 		
@@ -158,7 +166,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			textField_Leter.setColumns(10);
 			ActionListenerLeterTextField(textField_Leter);
 		
-			JLabel lblStart = new JLabel("Start");
+			JLabel lblStart = new JLabel(kodeReference_Start);
 			lblStart.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblStart.setPreferredSize(new Dimension(50, 14));
 			panel2.add(lblStart);
@@ -169,7 +177,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			PersonReferenceFrame.TextFieldJustNumbers(textField_Start);
 			ActionListenerTextField(textField_Start);
 		
-			JLabel lblEnd = new JLabel("End");
+			JLabel lblEnd = new JLabel(kodeReference_End);
 			lblEnd.setPreferredSize(new Dimension(50, 14));
 			lblEnd.setHorizontalAlignment(SwingConstants.RIGHT);
 			panel2.add(lblEnd);
@@ -185,7 +193,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			lbl_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			panel2.add(lbl_1);
 		
-			btnSearch = new Button("Search");
+			btnSearch = new Button(referencePersonMeasur_search);
 			btnSearch.setPreferredSize(new Dimension(70, 20));
 			panel2.add(btnSearch);
 			
@@ -196,11 +204,14 @@ public class SearchFreeKodeFrame extends JFrame {
 
 	private JPanel SetPanel1(List<String> masiveWorkplace, List<Zone> masiveZone) {
 		
+		String referencePersonMeasur_otdel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_otdel");
+		String kodeReference_Zone = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference_Zone");
+		
 		JPanel panel1 = new JPanel();
 		panel1.setMaximumSize(new Dimension(32767, 30));
 		panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
-			JLabel lblZveno = new JLabel("Zveno");
+			JLabel lblZveno = new JLabel(referencePersonMeasur_otdel);
 			lblZveno.setHorizontalAlignment(SwingConstants.CENTER);
 			lblZveno.setPreferredSize(new Dimension(50, 14));
 			panel1.add(lblZveno);
@@ -216,7 +227,7 @@ public class SearchFreeKodeFrame extends JFrame {
 			}
 			
 		
-			JLabel lblZona = new JLabel("Zona");
+			JLabel lblZona = new JLabel(kodeReference_Zone);
 			lblZona.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblZona.setPreferredSize(new Dimension(60, 14));
 			panel1.add(lblZona);

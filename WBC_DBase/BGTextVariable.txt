@@ -48,6 +48,21 @@ insertMeasuringTipText = Въвеждане на резултати от изм�
 
 autoInsertMeasuting = Авоматично нанасяне на измерванията
 autoInsertMeasutingTipText = въвеждане на измерванията от репорт фаилове
+autoInsertMeasuting_File = Файл
+autoInsertMeasuting_Operator = Оператор
+autoInsertMeasuting_Type = Тип
+autoInsertMeasuting_Doza = Доза
+autoInsertMeasuting_NuclidePLMU = ± Нуклид 
+autoInsertMeasuting_ToExcel = В Excel
+autoInsertMeasuting_CheckAll = Всички
+autoInsertMeasuting_cancel = Изход
+autoInsertMeasuting_save = Запис
+autoInsertMeasuting_Activity = Актив.
+autoInsertMeasuting_Postaplenie = Постъп.
+autoInsertMeasuting_GGP = ГГП
+autoInsertMeasuting_calc = Изчисление
+autoInsertMeasuting_Back = Назад
+
 
 personManagement = Обработка на служители
 personManagementTipText  = въвеждане и промяна на информация за служители
@@ -61,10 +76,48 @@ personReferenceTipText = извличане на справка по разли�
 
 kodeReference = Справка за свободни кодове
 kodeReferenceTipText = извличане на справка за заети и свободни кодове
+kodeReference_Leter = Буква
+kodeReference_Start = Начало
+kodeReference_End = Край
+kodeReference_Zone = Зона
+kodeReference_UsedKode = Заети кодове
+
+
+referencePerson_EGN = ЕГН
+referencePerson_FirstName = Име
+referencePerson_SecondName = Презиме
+referencePerson_LastName = Фамилия
+referencePerson_Export = Експорт към Excel
+referencePerson_SearchFromExcel = Търсене в Excel
+referencePerson_SearchFromDBase = Търсене в Базата
+referencePerson_BackToTable = Назад в Таблицата
+referencePerson_ID_KZ_1 = ИД КЗ-1
+referencePerson_ID_KZ_2 = ИД КЗ-2
+referencePerson_ID_KZ_HOG = ИД КЗ-ХОГ
+referencePerson_Date = Дата
+referencePerson_Doza = Доза[mSv]
+referencePerson_Lab = Лабор.
+referencePerson_Nuclid = Нуклид
+referencePerson_Activ = Актив.[Bq]
+referencePerson_Inc = Постъп.[Bq]
+referencePerson_GGP = ГГП[%]
+referencePerson_Koment = Коментар
+referencePerson_Sp_Pr = Сп/Пр
+
 
 referencePersonMeasur = Справка по отдели за служителите измерени в СИЧ
 referencePersonMeasurTipText = поименна справка на служители с право на достъп
 referencePersonMeasurWithoutMeasur = Без измерване
+referencePersonMeasur_startDate = Начал. дата
+referencePersonMeasur_endDate = Крайна дата
+referencePersonMeasur_firm = Фирма
+referencePersonMeasur_otdel = Отдел
+referencePersonMeasur_year = Година
+referencePersonMeasur_search = Търсене
+referencePersonMeasur_btn_ZeroMeasur_Export_PersonMeasur = Експорт без измерване
+referencePersonMeasur_btn_Export_PersonMeasur = Експорт на всички
+referencePersonMeasur_Ful_Name = Име презиме фамилия
+referencePersonMeasur_IzmervaneSICh = Измерване в СИЧ
 
 referenceMeasuringLab = Справка по дни за измерванията в СИЧ
 referenceMeasuringLabTipText = подробна справка по дни за измерванията в СИЧ за даден период
@@ -138,3 +191,4 @@ checkCorrectinDataInExcell_ErrorLab = Грешни маркирания на и�
 checkCorrectinDataInExcell_IzmerVSICH = Изм в СИЧ
 checkCorrectinDataInExcell_MarkKato = маркирано като
 
+fileError = файлова грешка

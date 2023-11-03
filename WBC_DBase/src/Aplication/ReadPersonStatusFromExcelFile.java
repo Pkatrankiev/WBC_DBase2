@@ -220,7 +220,8 @@ public class ReadPersonStatusFromExcelFile {
 					}
 				}
 
-				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null) {
+//				workplace(54) - Транспортиране на СЯГ и ОЯГ;  workplace(101) - Транспортиране СОЯГ 
+				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null && workplace.getId_Workplace()!= 54 && workplace.getId_Workplace()!= 101) {
 					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
 					zab = searchComent(workbook, row);
 					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);

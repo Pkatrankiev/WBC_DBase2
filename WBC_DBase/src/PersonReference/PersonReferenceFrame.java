@@ -106,10 +106,21 @@ public class PersonReferenceFrame extends JFrame {
 	List<String> listFirm;
 	String[][] dataTable;
 	
+	
+	private static String referencePerson_EGN = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_EGN");
+	private static String referencePerson_FirstName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_FirstName");
+	private static String referencePerson_SecondName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_SecondName");
+	private static String referencePerson_LastName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_LastName");
+	private static String referencePerson_ID_KZ_1 = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_1");
+	private static String referencePerson_ID_KZ_2 = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_2");
+	private static String referencePerson_ID_KZ_HOG = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_HOG");
+	private static String referencePersonMeasur_firm = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_firm");
+	private static String referencePersonMeasur_otdel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_otdel");
+	
 	static String curentYear = AplicationMetods.getCurentYear();
 	public PersonReferenceFrame(ActionIcone round, String title) {
 		setTitle(title);
-		setMinimumSize(new Dimension(730, 900));
+		setMinimumSize(new Dimension(740, 900));
 
 		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 		notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
@@ -184,7 +195,7 @@ public class PersonReferenceFrame extends JFrame {
 
 		panel_Button();
 
-		setSize(737, 900);
+		setSize(740, 900);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);
@@ -192,13 +203,15 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private JPanel panel_1() {
+		
+		
 		JPanel panel1 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel1.getLayout();
 		flowLayout_1.setVgap(2);
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		panel_Search.add(panel1);
 
-		JLabel lbl_EGN = new JLabel("EGN");
+		JLabel lbl_EGN = new JLabel(referencePerson_EGN);
 		lbl_EGN.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_EGN.setSize(new Dimension(80, 20));
 		lbl_EGN.setPreferredSize(new Dimension(85, 15));
@@ -211,7 +224,7 @@ public class PersonReferenceFrame extends JFrame {
 		distantion.setPreferredSize(new Dimension(30, 14));
 		panel1.add(distantion);
 
-		JLabel lbl_FirstName = new JLabel("First Name");
+		JLabel lbl_FirstName = new JLabel(referencePerson_FirstName);
 		lbl_FirstName.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_FirstName.setSize(new Dimension(220, 20));
 		lbl_FirstName.setPreferredSize(new Dimension(126, 15));
@@ -220,7 +233,7 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_FirstName.setBorder(null);
 		panel1.add(lbl_FirstName);
 
-		JLabel lbl_L_SecondName = new JLabel("Second Name");
+		JLabel lbl_L_SecondName = new JLabel(referencePerson_SecondName);
 		lbl_L_SecondName.setSize(new Dimension(70, 20));
 		lbl_L_SecondName.setPreferredSize(new Dimension(126, 15));
 		lbl_L_SecondName.setMinimumSize(new Dimension(70, 20));
@@ -229,7 +242,7 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_L_SecondName.setAlignmentX(1.0f);
 		panel1.add(lbl_L_SecondName);
 
-		JLabel lbl_L_LastName = new JLabel("Last Name");
+		JLabel lbl_L_LastName = new JLabel(referencePerson_LastName);
 		lbl_L_LastName.setSize(new Dimension(70, 20));
 		lbl_L_LastName.setPreferredSize(new Dimension(126, 15));
 		lbl_L_LastName.setMinimumSize(new Dimension(70, 20));
@@ -241,6 +254,9 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private JPanel panel_1A() {
+		
+		String referencePerson_SearchFromDBase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_SearchFromDBase");
+		
 		JPanel panel1A = new JPanel();
 		panel1A.setPreferredSize(new Dimension(10, 30));
 		FlowLayout fl_panel1A = (FlowLayout) panel1A.getLayout();
@@ -282,10 +298,10 @@ public class PersonReferenceFrame extends JFrame {
 		lblNewLabel_1_1.setPreferredSize(new Dimension(50, 14));
 		panel1A.add(lblNewLabel_1_1);
 
-		btn_SearchDBase = new JButton("Search from DBase");
+		btn_SearchDBase = new JButton(referencePerson_SearchFromDBase);
 		btn_SearchDBase.setMargin(new Insets(2, 5, 2, 5));
 		btn_SearchDBase.setIconTextGap(1);
-		btn_SearchDBase.setPreferredSize(new Dimension(110, 23));
+		btn_SearchDBase.setPreferredSize(new Dimension(125, 23));
 		panel1A.add(btn_SearchDBase);
 
 		ActionListenerbBtn_SearchDBase();
@@ -294,13 +310,17 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private JPanel panel_2() {
+		
+		String referencePersonMeasur_year = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year");
+		
+		
 		JPanel panel2 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		flowLayout.setVgap(2);
 		panel_Search.add(panel2);
 
-		JLabel lbl_Year = new JLabel("Year");
+		JLabel lbl_Year = new JLabel(referencePersonMeasur_year);
 		lbl_Year.setToolTipText("");
 		lbl_Year.setSize(new Dimension(80, 20));
 		lbl_Year.setPreferredSize(new Dimension(38, 15));
@@ -310,16 +330,16 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_Year.setAlignmentX(0.5f);
 		panel2.add(lbl_Year);
 
-		JLabel lbl_KodKZ1 = new JLabel("ID KZ-1");
+		JLabel lbl_KodKZ1 = new JLabel(referencePerson_ID_KZ_1);
 		lbl_KodKZ1.setSize(new Dimension(80, 20));
-		lbl_KodKZ1.setPreferredSize(new Dimension(53, 15));
+		lbl_KodKZ1.setPreferredSize(new Dimension(55, 15));
 		lbl_KodKZ1.setMinimumSize(new Dimension(80, 20));
 		lbl_KodKZ1.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_KodKZ1.setBorder(null);
 		lbl_KodKZ1.setAlignmentX(0.5f);
 		panel2.add(lbl_KodKZ1);
 
-		JLabel lbl_KodKZ2 = new JLabel("ID KZ-2");
+		JLabel lbl_KodKZ2 = new JLabel(referencePerson_ID_KZ_2);
 		lbl_KodKZ2.setSize(new Dimension(80, 20));
 		lbl_KodKZ2.setPreferredSize(new Dimension(55, 15));
 		lbl_KodKZ2.setMinimumSize(new Dimension(80, 20));
@@ -328,16 +348,16 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_KodKZ2.setAlignmentX(0.5f);
 		panel2.add(lbl_KodKZ2);
 
-		JLabel lbl_KodKZHOG = new JLabel("ID KZ-HOG");
+		JLabel lbl_KodKZHOG = new JLabel(referencePerson_ID_KZ_HOG);
 		lbl_KodKZHOG.setSize(new Dimension(80, 20));
-		lbl_KodKZHOG.setPreferredSize(new Dimension(53, 15));
+		lbl_KodKZHOG.setPreferredSize(new Dimension(55, 15));
 		lbl_KodKZHOG.setMinimumSize(new Dimension(80, 20));
 		lbl_KodKZHOG.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_KodKZHOG.setBorder(null);
 		lbl_KodKZHOG.setAlignmentX(0.5f);
 		panel2.add(lbl_KodKZHOG);
 
-		JLabel lbl_L_Firm = new JLabel("Firm");
+		JLabel lbl_L_Firm = new JLabel(referencePersonMeasur_firm);
 		lbl_L_Firm.setSize(new Dimension(70, 20));
 		lbl_L_Firm.setPreferredSize(new Dimension(120, 15));
 		lbl_L_Firm.setMinimumSize(new Dimension(70, 20));
@@ -346,7 +366,7 @@ public class PersonReferenceFrame extends JFrame {
 		lbl_L_Firm.setAlignmentX(1.0f);
 		panel2.add(lbl_L_Firm);
 
-		JLabel lbl_L_Otdel = new JLabel("Otdel");
+		JLabel lbl_L_Otdel = new JLabel(referencePersonMeasur_otdel);
 		lbl_L_Otdel.setSize(new Dimension(70, 20));
 		lbl_L_Otdel.setPreferredSize(new Dimension(200, 15));
 		lbl_L_Otdel.setMinimumSize(new Dimension(70, 20));
@@ -359,6 +379,9 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private JPanel panel_2A() {
+		
+		String referencePerson_SearchFromExcel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_SearchFromExcel");
+		
 		JPanel panel2A = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel2A.getLayout();
 		flowLayout_2.setVgap(2);
@@ -414,9 +437,9 @@ public class PersonReferenceFrame extends JFrame {
 		lblNewLabel_1_1.setPreferredSize(new Dimension(20, 14));
 		panel2A.add(lblNewLabel_1_1);
 
-		btn_SearchFromExcel = new JButton("Search from Excell");
+		btn_SearchFromExcel = new JButton(referencePerson_SearchFromExcel);
 		btn_SearchFromExcel.setMargin(new Insets(2, 5, 2, 5));
-		btn_SearchFromExcel.setPreferredSize(new Dimension(110, 23));
+		btn_SearchFromExcel.setPreferredSize(new Dimension(125, 23));
 		panel2A.add(btn_SearchFromExcel);
 
 		ActionListenerbBtn_SearchFromExcel();
@@ -426,6 +449,8 @@ public class PersonReferenceFrame extends JFrame {
 
 	private JPanel panel_3() {
 
+		String referencePerson_BackToTable = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_BackToTable");
+		
 		JPanel panel3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel3.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -439,10 +464,10 @@ public class PersonReferenceFrame extends JFrame {
 
 		ActionListenerComboBox_Results();
 
-		btnBackToTable = new JButton("BackToTable");
+		btnBackToTable = new JButton(referencePerson_BackToTable);
 		btnBackToTable.setEnabled(false);
 		btnBackToTable.setMargin(new Insets(2, 2, 2, 2));
-		btnBackToTable.setPreferredSize(new Dimension(90, 20));
+		btnBackToTable.setPreferredSize(new Dimension(105, 20));
 		panel3.add(btnBackToTable);
 
 		ActionListenerBtnBackToTable();
@@ -920,12 +945,14 @@ public class PersonReferenceFrame extends JFrame {
 
 	private JPanel panel_Button() {
 
+		String referencePerson_Export = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Export");
+		
 		JPanel buttonPanel = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.RIGHT);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		JButton btn_Export = new JButton("Export");
+		JButton btn_Export = new JButton(referencePerson_Export);
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBackToTable.isEnabled() || dataTable == null) {
@@ -1064,8 +1091,8 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	private String[] getTabHeader() {
-		String[] tableHeader = { "EGN", "FirstName", "SecondName", "LastName", "Otdel", "Kod KZ-1", "Kod KZ-2",
-				"Kod Hog" };
+		String[] tableHeader = { referencePerson_EGN, referencePerson_FirstName, referencePerson_SecondName, referencePerson_LastName,
+				referencePersonMeasur_otdel, referencePerson_ID_KZ_1, referencePerson_ID_KZ_2, referencePerson_ID_KZ_HOG };
 		return tableHeader;
 	}
 

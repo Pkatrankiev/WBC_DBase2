@@ -35,10 +35,13 @@ import BasicClassAccessDbase.Person;
 
 public class PersonReferenceExportToExcell {
 
+	public static String fileError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileError");
+	
 	public static void btnExportTableToExcell(Object[][] dataTable, String[] columnNames, JPanel panel_Btn) {
 
 		GeneralMethods.setWaitCursor(panel_Btn);
 	
+		
 		String excelFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir")
 				+ "exportTable.xls";
 		try {
@@ -100,12 +103,12 @@ public class PersonReferenceExportToExcell {
 				openWordDoc(excelFilePath);
 			} else {
 				MessageDialog(ReadFileBGTextVariable.getGlobalTextVariableMap().get("cell_maximum_number_exceeded"),
-						"файлова грешка");
+						fileError);
 			}
 
 		} catch (FileNotFoundException e) {
 			ResourceLoader.appendToFile(e);
-			MessageDialog(e.toString(), "файлова грешка");
+			MessageDialog(e.toString(), fileError);
 		} catch (IOException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
@@ -131,6 +134,7 @@ public class PersonReferenceExportToExcell {
 			size = size +masiveMeasur.length * masiveMeasur[0].length;
 			if ( size < 4000) {
 
+				boolean allMeasur = true;	
 				Workbook workbook = new HSSFWorkbook();
 				Sheet sheet = workbook.createSheet("PersonReference");
 
@@ -156,7 +160,7 @@ public class PersonReferenceExportToExcell {
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("code"));
 				endRow++;
 								
-				endRow = writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow, false);
+				endRow = writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow, false, allMeasur);
 				endRow++;
 								
 				row = sheet.createRow(endRow);
@@ -166,7 +170,7 @@ public class PersonReferenceExportToExcell {
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("orders"));
 				endRow++;
 								
-				endRow = writeCells(sheet, cellStyleBold,masivePersonStatusName, masivePersonStatus, endRow, false);
+				endRow = writeCells(sheet, cellStyleBold,masivePersonStatusName, masivePersonStatus, endRow, false, allMeasur);
 				endRow++;
 								
 				row = sheet.createRow(endRow);
@@ -175,8 +179,8 @@ public class PersonReferenceExportToExcell {
 				cell.setCellStyle(cellStyleBold);
 				cell.setCellValue(ReadFileBGTextVariable.getGlobalTextVariableMap().get("measurSICH"));
 				endRow++;
-								
-				endRow = writeCells(sheet, cellStyleBold, masiveMeasurName, masiveMeasur, endRow, false);
+						
+				endRow = writeCells(sheet, cellStyleBold, masiveMeasurName, masiveMeasur, endRow, false, allMeasur);
 
 				
 				FileOutputStream outFile = new FileOutputStream(new File(excelFilePath));
@@ -186,12 +190,12 @@ public class PersonReferenceExportToExcell {
 				openWordDoc(excelFilePath);
 			} else {
 				MessageDialog(ReadFileBGTextVariable.getGlobalTextVariableMap().get("cell_maximum_number_exceeded"),
-						"файлова грешка");
+						fileError);
 			}
 
 		} catch (FileNotFoundException e) {
 			ResourceLoader.appendToFile(e);
-			MessageDialog(e.toString(), "файлова грешка");
+			MessageDialog(e.toString(), fileError);
 		} catch (IOException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
@@ -228,7 +232,7 @@ public class PersonReferenceExportToExcell {
 		return cellStyleHeader;
 	}
 	
-	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow, boolean fromMeasuringReference) {
+	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow, boolean fromMeasuringReference, boolean allMeasur) {
 		Cell cell;
 		//				Create header column
 						Row row = sheet.createRow(startRow);
@@ -252,9 +256,11 @@ public class PersonReferenceExportToExcell {
 						int cc = dataTable[0].length;
 						for (int tableRow = 0; tableRow < dataTable.length; tableRow++) {
 							row = sheet.createRow(startRow);
+							if(allMeasur || (dataTable[tableRow][cc-1].trim().equals("-") || dataTable[tableRow][cc-1].trim().isEmpty())) {
 							for (int tableColumCount = 0; tableColumCount < cc; tableColumCount++) {
 		
 								if(fromMeasuringReference && tableColumCount == cc-1) {
+									
 									String[] str = dataTable[tableRow][tableColumCount].split(" ");
 									int k = tableColumCount;
 									for (String string : str) {
@@ -263,12 +269,15 @@ public class PersonReferenceExportToExcell {
 										k++;
 									}
 								}else {
+									
 								cell = row.createCell(tableColumCount, CellType.STRING);
 								cell.setCellValue(dataTable[tableRow][tableColumCount]);
 								}
 		
 							}
+							
 							startRow++;	
+							}
 						}
 						
 		return startRow;

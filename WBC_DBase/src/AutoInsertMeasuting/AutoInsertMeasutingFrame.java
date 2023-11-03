@@ -260,6 +260,9 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	private JPanel panelButtons() {
 
+		String autoInsertMeasuting_cancel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_cancel");
+		String autoInsertMeasuting_save = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_save");
+		
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -270,7 +273,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		panel.add(panelButtons);
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
-		JButton btnCancel = new JButton("Cancel");
+		JButton btnCancel = new JButton(autoInsertMeasuting_cancel);
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose(); //Destroy the JFrame object
@@ -278,7 +281,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		});
 		panelButtons.add(btnCancel);
 
-		btnSave = new JButton("Save");
+		btnSave = new JButton(autoInsertMeasuting_save);
 		btnSave.setEnabled(true);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -339,6 +342,9 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	}
 
 	private JPanel panelcheckAll() {
+		
+		String autoInsertMeasuting_CheckAll = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_CheckAll");
+		
 		JPanel panelcheckAll = new JPanel();
 		panelcheckAll.setMaximumSize(new Dimension(32767, 30));
 		panelcheckAll.setAlignmentY(0.0f);
@@ -348,7 +354,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 		JCheckBox chckbxCheckAll = new JCheckBox();
 		chckbxCheckAll.setAlignmentX(Component.CENTER_ALIGNMENT);
-		chckbxCheckAll.setText("checkAll");
+		chckbxCheckAll.setText(autoInsertMeasuting_CheckAll);
 		chckbxCheckAll.setHorizontalTextPosition(SwingConstants.LEFT);
 		chckbxCheckAll.setSelected(true);
 		panelcheckAll.add(chckbxCheckAll);
@@ -378,6 +384,18 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	private JPanel panelHeader() {
 
+		String autoInsertMeasuting_File = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_File");
+		String referencePerson_Date = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Date");
+		String referencePerson_FirstName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_FirstName");
+		String referencePerson_EGN = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_EGN");
+		String referencePerson_Lab = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Lab");
+		String autoInsertMeasuting_Operator = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Operator");
+		String autoInsertMeasuting_Type = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Type");
+		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Doza");
+		String referencePerson_Koment = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Koment");
+		String autoInsertMeasuting_NuclidePLMU = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_NuclidePLMU");
+		String autoInsertMeasuting_ToExcel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_ToExcel");
+		
 		JPanel panel_Header = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_Header.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
@@ -394,7 +412,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Number.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Number);
 
-		JLabel lbl_L_File = new JLabel("File");
+		JLabel lbl_L_File = new JLabel(autoInsertMeasuting_File);
 		lbl_L_File.setSize(new Dimension(80, 20));
 		lbl_L_File.setPreferredSize(new Dimension(80, 20));
 		lbl_L_File.setMinimumSize(new Dimension(80, 20));
@@ -403,7 +421,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_File.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_File);
 
-		JLabel lbl_L_Date = new JLabel("Date");
+		JLabel lbl_L_Date = new JLabel(referencePerson_Date);
 		lbl_L_Date.setSize(new Dimension(60, 20));
 		lbl_L_Date.setPreferredSize(new Dimension(60, 20));
 		lbl_L_Date.setMinimumSize(new Dimension(60, 20));
@@ -412,7 +430,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Date.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Date);
 
-		JLabel lbl_L_PersonName = new JLabel("Person Name");
+		JLabel lbl_L_PersonName = new JLabel(referencePerson_FirstName);
 		lbl_L_PersonName.setSize(new Dimension(220, 20));
 		lbl_L_PersonName.setPreferredSize(new Dimension(220, 20));
 		lbl_L_PersonName.setMinimumSize(new Dimension(220, 20));
@@ -421,7 +439,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_PersonName.setAlignmentX(0.5f);
 		panel_Header.add(lbl_L_PersonName);
 
-		JLabel lbl_L_EGN = new JLabel("EGN");
+		JLabel lbl_L_EGN = new JLabel(referencePerson_EGN);
 		lbl_L_EGN.setSize(new Dimension(70, 20));
 		lbl_L_EGN.setPreferredSize(new Dimension(70, 20));
 		lbl_L_EGN.setMinimumSize(new Dimension(70, 20));
@@ -430,7 +448,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_EGN.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_EGN);
 
-		JLabel lbl_L_Lab = new JLabel("Lab");
+		JLabel lbl_L_Lab = new JLabel(referencePerson_Lab);
 		lbl_L_Lab.setSize(new Dimension(70, 20));
 		lbl_L_Lab.setPreferredSize(new Dimension(70, 20));
 		lbl_L_Lab.setMinimumSize(new Dimension(70, 20));
@@ -439,7 +457,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Lab.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Lab);
 
-		JLabel lbl_L_OperatorName = new JLabel("Operator");
+		JLabel lbl_L_OperatorName = new JLabel(autoInsertMeasuting_Operator);
 		lbl_L_OperatorName.setSize(new Dimension(130, 20));
 		lbl_L_OperatorName.setPreferredSize(new Dimension(130, 20));
 		lbl_L_OperatorName.setMinimumSize(new Dimension(130, 20));
@@ -448,7 +466,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_OperatorName.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_OperatorName);
 
-		JLabel lbl_L_TypeMeasur = new JLabel("Type");
+		JLabel lbl_L_TypeMeasur = new JLabel(autoInsertMeasuting_Type);
 		lbl_L_TypeMeasur.setSize(new Dimension(40, 20));
 		lbl_L_TypeMeasur.setPreferredSize(new Dimension(40, 20));
 		lbl_L_TypeMeasur.setMinimumSize(new Dimension(40, 20));
@@ -457,7 +475,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_TypeMeasur.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_TypeMeasur);
 
-		JLabel lbl_L_Doze = new JLabel("Doza");
+		JLabel lbl_L_Doze = new JLabel(autoInsertMeasuting_Doza);
 		lbl_L_Doze.setSize(new Dimension(75, 20));
 		lbl_L_Doze.setPreferredSize(new Dimension(75, 20));
 		lbl_L_Doze.setMinimumSize(new Dimension(75, 20));
@@ -466,7 +484,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Doze.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Doze);
 
-		JLabel lbl_L_Koment = new JLabel("Koment");
+		JLabel lbl_L_Koment = new JLabel(referencePerson_Koment);
 		lbl_L_Koment.setSize(new Dimension(245, 20));
 		lbl_L_Koment.setPreferredSize(new Dimension(245, 20));
 		lbl_L_Koment.setMinimumSize(new Dimension(245, 20));
@@ -475,7 +493,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_Koment.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_Koment);
 
-		JLabel lbl_L_AddNuclide = new JLabel("± Nuclide");
+		JLabel lbl_L_AddNuclide = new JLabel(autoInsertMeasuting_NuclidePLMU);
 		lbl_L_AddNuclide.setSize(new Dimension(60, 20));
 		lbl_L_AddNuclide.setPreferredSize(new Dimension(55, 20));
 		lbl_L_AddNuclide.setMinimumSize(new Dimension(60, 20));
@@ -484,7 +502,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lbl_L_AddNuclide.setAlignmentX(1.0f);
 		panel_Header.add(lbl_L_AddNuclide);
 
-		JLabel lbl_L_SetToExcel = new JLabel("ToExcel");
+		JLabel lbl_L_SetToExcel = new JLabel(autoInsertMeasuting_ToExcel);
 		lbl_L_SetToExcel.setSize(new Dimension(40, 20));
 		lbl_L_SetToExcel.setPreferredSize(new Dimension(40, 20));
 		lbl_L_SetToExcel.setMinimumSize(new Dimension(40, 20));
@@ -643,13 +661,21 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	private JPanel panelMultyNuclideMeasuring(int index, int subIndex, String nucl, String activ, String post,
 			String ggp, String doz) {
 
+		String referencePerson_Nuclid = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Nuclid");
+		String autoInsertMeasuting_Activity = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Activity");
+		String autoInsertMeasuting_Postaplenie = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Postaplenie");
+		String autoInsertMeasuting_GGP = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_GGP");
+		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Doza");
+		String autoInsertMeasuting_calc = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_calc");
+		
+		
 		JPanel panel_Multy_Nuclide = new JPanel();
 		panel_Multy_Nuclide.setMaximumSize(new Dimension(32767, 30));
 		panel_Multy_Nuclide.setAlignmentY(0.0f);
 		panel_Multy_Nuclide.setAlignmentX(0.0f);
 		panel_Multy_Nuclide.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		JLabel lblNuclide = new JLabel("Nuclide");
+		JLabel lblNuclide = new JLabel(referencePerson_Nuclid);
 		lblNuclide.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNuclide.setPreferredSize(new Dimension(40, 20));
 		panel_Multy_Nuclide.add(lblNuclide);
@@ -666,7 +692,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 		});
 
-		JLabel lblActyvity = new JLabel("Actyvity");
+		JLabel lblActyvity = new JLabel(autoInsertMeasuting_Activity);
 		lblActyvity.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblActyvity.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		lblActyvity.setPreferredSize(new Dimension(50, 20));
@@ -699,7 +725,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lblActyvityDimen.setPreferredSize(new Dimension(30, 20));
 		panel_Multy_Nuclide.add(lblActyvityDimen);
 
-		JLabel lblPostaplenie = new JLabel("Postaplenie");
+		JLabel lblPostaplenie = new JLabel(autoInsertMeasuting_Postaplenie);
 		lblPostaplenie.setPreferredSize(new Dimension(60, 20));
 		panel_Multy_Nuclide.add(lblPostaplenie);
 
@@ -730,7 +756,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lblPostaplenieDim.setPreferredSize(new Dimension(30, 20));
 		panel_Multy_Nuclide.add(lblPostaplenieDim);
 
-		JLabel lblGGP = new JLabel("GGP");
+		JLabel lblGGP = new JLabel(autoInsertMeasuting_GGP);
 		lblGGP.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblGGP.setPreferredSize(new Dimension(25, 20));
 		panel_Multy_Nuclide.add(lblGGP);
@@ -761,7 +787,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		lblGGPDim.setPreferredSize(new Dimension(30, 20));
 		panel_Multy_Nuclide.add(lblGGPDim);
 
-		JLabel lblDoza = new JLabel("Doza");
+		JLabel lblDoza = new JLabel(autoInsertMeasuting_Doza);
 		lblDoza.setPreferredSize(new Dimension(40, 20));
 		lblDoza.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDoza.setAlignmentX(1.0f);
@@ -811,7 +837,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		panel_Multy_Nuclide.add(lblDozaNuclideDim);
 
 		if (subIndex == 0) {
-			btnCalc[index] = new JButton("Calculate");
+			btnCalc[index] = new JButton(autoInsertMeasuting_calc);
 			panel_Multy_Nuclide.add(btnCalc[index]);
 			btnCalc[index].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1116,7 +1142,9 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 	}
 
 	public static boolean OptionDialog(String mesage) {
-		String[] options = { "Back", "Save" };
+		String autoInsertMeasuting_Back = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Back");
+		String autoInsertMeasuting_save = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_save");
+		String[] options = { autoInsertMeasuting_Back, autoInsertMeasuting_save };
 		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 		System.out.println(x);

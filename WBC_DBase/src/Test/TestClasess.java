@@ -14,9 +14,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -813,8 +815,58 @@ public class TestClasess {
 
 	
 	
-	
-	
+	static void RemoveWorkplace_54_101_FromPersonStatus(int idWorkplace, String egn) {
+		
+		Workplace workplace54 = WorkplaceDAO.getValueWorkplaceByID(idWorkplace);
+		List<PersonStatus> listPersonStatus54 = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workplace54, "2023");
+		PersonStatus lastPersonStat = new PersonStatus();
+		PersonStatus drPersonStat = new PersonStatus();
+		System.out.println("listPersonStatus54_1 = " + listPersonStatus54.size());
+		
+		int k=0;
+		for (PersonStatus perStat : listPersonStatus54) {
+			System.out.println(k+"-"+perStat.getPerson().getEgn());
+//			k++;
+//			List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", perStat.getPerson(),
+//					"DateSet");
+//			List<PersonStatus> sortedReversPeStatList = list.stream()
+//					.sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed()).collect(Collectors.toList());
+//			if (sortedReversPeStatList.size() > 2) {
+//				lastPersonStat = sortedReversPeStatList.get(0);
+//				drPersonStat = sortedReversPeStatList.get(1);
+//			if(lastPersonStat.getWorkplace().getId_Workplace() == idWorkplace) {
+//				if(!lastPersonStat.getZabelejka().isEmpty()) {
+//					if(drPersonStat.getZabelejka().isEmpty()) {
+//						drPersonStat.setZabelejka(lastPersonStat.getZabelejka());
+//					}
+//				}
+//				PersonStatusDAO.deleteValuePersonStatus(lastPersonStat);	
+//			}
+//			}
+			
+			if(perStat.getPerson().getEgn().equals(egn)) {
+				PersonStatusDAO.deleteValuePersonStatus(perStat);
+			}
+			
+			
+		}
+		listPersonStatus54 = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workplace54, "2023");
+		
+		System.out.println("listPersonStatus54_2 = " + listPersonStatus54.size());
+
+	}
+
+	public static PersonStatus getLastPersonStatusByPerson(Person person) {
+		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
+				"DateSet");
+		List<PersonStatus> sortedReversPeStatList = list.stream()
+				.sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed()).collect(Collectors.toList());
+		if (sortedReversPeStatList.size() > 0) {
+			return sortedReversPeStatList.get(0);
+		} else {
+			return null;
+		}
+	}
 	
 	
 	

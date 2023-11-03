@@ -93,10 +93,19 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 				}
 			
 			}
-			index++;
+			if(!masiveKode[index][1].trim().equals("-")) {
+			System.out.println("index "+index+" "+masiveKode[index][1]);
+				index++;
+			}
+		}
+		String[][] masiveKodeNew = new String[index][column];
+		
+		for (int i = 0; i < index; i++) {
+		masiveKodeNew[i] = masiveKode[i];
 		}
 		
-		return masiveKode;
+		
+		return masiveKodeNew;
 	}
 
 	private static String generateTextForInfoPanel(String[] masiveZoneName, String[][] masiveKode) {
@@ -148,8 +157,8 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 	private static String[] createMasiveZoneName() {
 		String[] masiveZoneName = new String[8]; 
 		masiveZoneName[0] = " №   ";
-		masiveZoneName[1] = "Име презиме фамилия";
-		masiveZoneName[7] = "Izmervane SICh";
+		masiveZoneName[1] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_Ful_Name");
+		masiveZoneName[7] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_IzmervaneSICh");
 		int i=2;
 		for (Zone zone : ZoneDAO.getAllValueZone()) {
 			masiveZoneName[i] = zone.getNameTerritory();

@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
+import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.RemouveDublikateFromList;
 import BasiClassDAO.KodeGenerateDAO;
@@ -229,7 +230,7 @@ System.out.println(masiveUsedKode.size()+"  -  "+k+ " + " +newMasive.length);
 			k++;
 		}
 
-		columnNames[k] = "used kode";
+		columnNames[k] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference_UsedKode");
 
 		DefaultTableModel dtm = new DefaultTableModel();
 		final JTable table = new JTable(dtm);

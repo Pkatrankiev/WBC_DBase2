@@ -38,6 +38,8 @@ import BasicClassAccessDbase.PersonStatus;
 
 public class InsertMeasurToExcel {
 
+	static boolean flNotDublicateData;
+	
 	public static void SaveListReportMeasurClassToExcellFile(List<ReportMeasurClass> list,
 			boolean forPersonalExcellFile) {
 
@@ -48,8 +50,8 @@ public class InsertMeasurToExcel {
 //		String[] filepat = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal_test();
 		
 		
-		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
-		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2");
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2");
 		 
 		List<ReportMeasurClass> listForSaveMeasurToMont = new ArrayList<>();
 		List<ReportMeasurClass> listForNotSaveMeasur = new ArrayList<>();
@@ -114,11 +116,12 @@ public class InsertMeasurToExcel {
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
-		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
 		
-//		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_test"); 
-//		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_test"); 
+//		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
+//		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
+		
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_test"); 
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_test"); 
 
 		String pathFile = "";
 		if (forPersonalExcellFile) {
@@ -187,7 +190,7 @@ public class InsertMeasurToExcel {
 			cellEGN = getCell(sheet, row, 3);
 			cellDoze = getCell(sheet, row, 5);
 			cellDate = getCell(sheet, row, 6);
-			String dozeStr = convertDozeCellToString(cellDoze); 
+			String dozeStr = convertDozeCellToString(cellDoze);
 			
 			System.out.println("************************");
 			System.out.println(getValueFromCellToString(cellEGN)+" -> "+(masiveDataForSaveMonthRow[2]));
@@ -208,7 +211,7 @@ public class InsertMeasurToExcel {
 
 		System.out.println("flDublicate " + flDublicate);
 		Row roww;
-		if (!flDublicate) {
+		if (!flDublicate || flNotDublicateData) {
 			
 			Cell lastCell = getFirstCellFromLastRow(sheet);
 			
@@ -232,7 +235,10 @@ public class InsertMeasurToExcel {
 					}
 				}
 				if (i == 4) {
-					roww.createCell(i + 1).setCellValue(Double.parseDouble(masiveDataForSaveMonthRow[i].replaceAll(",", ".")));
+//					double dozeMeasurDouble = Double.parseDouble(masiveDataForSaveMonthRow[i].replaceAll(",", "."));
+//					String type = masiveDataForSaveMonthRow[9];
+//					String doseString = convertDozeToString(dozeMeasurDouble, type);
+					roww.createCell(i + 1).setCellValue(masiveDataForSaveMonthRow[i]);
 				}
 			}
 
@@ -244,7 +250,7 @@ public class InsertMeasurToExcel {
 		DecimalFormat formatter = new DecimalFormat("0.00");
 		try {
 			double dob = Double.parseDouble(getValueFromCellToString(cellDoze));
-			dozeStr = formatter.format(dob);
+			dozeStr = formatter.format(dob).replace(",",".");
 		} catch (NumberFormatException e) {
 		
 		}
@@ -286,11 +292,11 @@ public class InsertMeasurToExcel {
 		return cell;
 	}
 
+
 	private static String[] generateMasiveDataForSaveMonthRow(ReportMeasurClass reportMeasur) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yy");
-		DecimalFormat formatter = new DecimalFormat("0.00");
-		String[] masiveDataForSaveMonthRow = new String[9];
+		String[] masiveDataForSaveMonthRow = new String[10];
 		String year = sdf.format(reportMeasur.getMeasur().getDate()).substring(6);
 //		System.out.println("year " + year);
 		Person person = reportMeasur.getMeasur().getPerson();
@@ -298,11 +304,12 @@ public class InsertMeasurToExcel {
 		masiveDataForSaveMonthRow[1] = getNamePerson(person);
 		masiveDataForSaveMonthRow[2] = person.getEgn();
 		masiveDataForSaveMonthRow[3] = getKodeStatus(person, 1, year);
-		masiveDataForSaveMonthRow[4] = formatter.format(reportMeasur.getMeasur().getDoze());
+		masiveDataForSaveMonthRow[4] = convertDozeToString(reportMeasur.getMeasur().getDoze(), reportMeasur.getMeasur().getTypeMeasur().getKodeType());
 		masiveDataForSaveMonthRow[5] = sdf1.format(reportMeasur.getMeasur().getDate());
 		masiveDataForSaveMonthRow[6] = getKodeStatus(person, 2, year);
 		masiveDataForSaveMonthRow[7] = reportMeasur.getMeasur().getLab().getLab().toLowerCase();
 		masiveDataForSaveMonthRow[8] = reportMeasur.getMeasur().getLab().getLab_ID() + "";
+		masiveDataForSaveMonthRow[9] = reportMeasur.getMeasur().getTypeMeasur().getKodeType();
 		for (int i = 0; i < masiveDataForSaveMonthRow.length; i++) {
 //			System.out.println(i + " - " + masiveDataForSaveMonthRow[i]);
 
@@ -389,13 +396,14 @@ public class InsertMeasurToExcel {
 
 	}
 
+	
 	private static void saveNuclideDataToExcelFile(Workbook workbook, int row,
 			ReportMeasurClass reportMeasurClassToSave) {
 		int index = 0;
 		Cell cell;
 		Sheet sheet = workbook.getSheetAt(1);
 		int increment = 1, corek = 1;
-		boolean flNotDublicateData = true;
+		flNotDublicateData = true;
 		while (increment <= 26 && flNotDublicateData) {
 			System.out.println("increment " + increment);
 			if (increment > 13) {
@@ -436,36 +444,67 @@ public class InsertMeasurToExcel {
 		int column = getMonthFromDate(DateOfCurrentMeasurement)+77;
 		
 		double dozeMeasurDouble = reportMeasur.getMeasur().getDoze();
-		String dozeMeasurStr = convertDozeToString(reportMeasur);
+		String type = reportMeasur.getMeasur().getTypeMeasur().getKodeType();
+		String dozeMeasurStr = convertDozeToString(dozeMeasurDouble, type);
 		Cell cellDoze = getCell(sheet, row, column);
 	
-		System.out.println(dozeMeasurDouble+" - "+dozeMeasurStr);
+		String strCellDoze = getValueFromCellToString(cellDoze);
+		System.out.println("*********************************strCellDoze "+strCellDoze);
+		if(strCellDoze.isEmpty()||(!strCellDoze.equals("<0.10") && strCellDoze.equals("0"))){
+			saveDozeToCell(cellDoze, dozeMeasurStr);
+		}
+		if(strCellDoze.equals("<0.10") && dozeMeasurDouble >= 0.1){
+			saveDozeToCell(cellDoze, dozeMeasurStr);
+		}
 		try {
-			dozeMeasurStr = dozeMeasurStr.replaceAll(",", ".");
-			Double.parseDouble(dozeMeasurStr);
-		//dozata ot izmervaneto e chislo
-		System.out.println("dozata ot izmervaneto e chislo");
-		if(cellDoze.getCellType().toString().equals("STRING")) {
-			//dozata ot excelFile e string
-			System.out.println("dozata ot excelFile e string");
-			cellDoze.setCellValue(dozeMeasurDouble);	
-		}else {
-			//dozata ot excelFile e chislo
-			System.out.println("dozata ot excelFile e chislo");
-			dozeMeasurDouble = dozeMeasurDouble + cellDoze.getNumericCellValue();
-			cellDoze.setCellValue(dozeMeasurDouble);	
+			double cellDozeDouble = Double.parseDouble(strCellDoze);
+			if(cellDozeDouble >= 0.10 && dozeMeasurDouble >= 0.1){
+				saveDozeToCell(cellDoze,convertDozeToString((cellDozeDouble + dozeMeasurDouble), type));
+		}
+		} catch (Exception e) {
+			
 		}
 		
-	} catch (Exception e) {
-		//dozata ot izmervaneto e string
-		System.out.println("dozata ot izmervaneto e string");
-		if(getValueFromCellToString(cellDoze).isEmpty() || cellDoze.getCellType().toString().equals("STRING")) {
-			//dozata ot excelFile e prazna ili string
-			System.out.println("dozata ot excelFile e string");
-			cellDoze.setCellValue(dozeMeasurStr);	
-		}
+		
+		
+//		System.out.println(dozeMeasurDouble+" - "+dozeMeasurStr);
+//		try {
+////			dozeMeasurStr = dozeMeasurStr.replaceAll(",", ".");
+//			Double.parseDouble(dozeMeasurStr);
+//		//dozata ot izmervaneto e chislo
+//		System.out.println("dozata ot izmervaneto e chislo");
+//		if(cellDoze.getCellType().toString().equals("STRING")) {
+//			//dozata ot excelFile e string
+//			System.out.println("dozata ot excelFile e string");
+//			cellDoze.setCellValue(dozeMeasurDouble);	
+//		}else {
+//			//dozata ot excelFile e chislo
+//			System.out.println("dozata ot excelFile e chislo");
+//			dozeMeasurDouble = dozeMeasurDouble + cellDoze.getNumericCellValue();
+//			cellDoze.setCellValue(dozeMeasurDouble);	
+//		}
+//		
+//	} catch (Exception e) {
+//		//dozata ot izmervaneto e string
+//		System.out.println("Exception dozata ot izmervaneto e string");
+//		if(getValueFromCellToString(cellDoze).isEmpty() || cellDoze.getCellType().toString().equals("STRING")) {
+//			//dozata ot excelFile e prazna ili string
+//			System.out.println("dozata ot excelFile e string");
+//			cellDoze.setCellValue(dozeMeasurStr);	
+//		}
+//	}
+
 	}
 
+	private static void saveDozeToCell(Cell cellDoze, String dozeMeasurStr) {
+		
+		try {
+			double doubleDozeMeasur = Double.parseDouble(dozeMeasurStr);
+			cellDoze.setCellValue(doubleDozeMeasur);
+		} catch (Exception e) {
+			cellDoze.setCellValue(dozeMeasurStr);
+		}
+		
 	}
 
 	private static boolean checkNotDublicate(int row, int column, ReportMeasurClass reportMeasurClassToSave, Sheet sheet) {
@@ -476,9 +515,12 @@ public class InsertMeasurToExcel {
 		String egn = reportMeasurClassToSave.getMeasur().getPerson().getEgn();
 		String date = sdfrmt.format(reportMeasurClassToSave.getMeasur().getDate());
 		String lab = reportMeasurClassToSave.getMeasur().getLab().getLab().toLowerCase();
-		String doseString = convertDozeToString(reportMeasurClassToSave);
 		
-		inExcelFileExistData = inExcelFileExistData+egn+"  " + date+"  "+lab+"  "+doseString+ "</html>";
+		double dozeMeasurDouble = reportMeasurClassToSave.getMeasur().getDoze();
+		String type = reportMeasurClassToSave.getMeasur().getTypeMeasur().getKodeType();
+		String doseString = convertDozeToString(dozeMeasurDouble, type);
+		
+		inExcelFileExistData = inExcelFileExistData+"  " +egn+"  " + date+"  "+lab+"  "+doseString+ "</html>";
 				
 		Cell cellDate = getCell(sheet, row, column);
 		Cell cellLab = getCell(sheet, row, column+1);
@@ -486,9 +528,9 @@ public class InsertMeasurToExcel {
 		
 		String dozeStr = convertDozeCellToString(cellDoze); 
 		
-		System.out.println(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate))+" <-> "+(date));
-		System.out.println(getValueFromCellToString(cellLab)+" <-> "+(lab));
-		System.out.println(dozeStr+" <-> "+(doseString));
+		System.out.println(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate))+" <-ND> "+(date));
+		System.out.println(getValueFromCellToString(cellLab)+" <-ND> "+(lab));
+		System.out.println(dozeStr+" <-ND> "+(doseString));
 		
 		if(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate)).equals(date)
 			&& getValueFromCellToString(cellLab).equals(lab)
@@ -538,8 +580,10 @@ public class InsertMeasurToExcel {
 		}
 		
 		cell = getCell(sheet, row, column + 17);
-				
-		String doseString = convertDozeToString(reportMeasurClassToSave);
+		double dozeDouble = reportMeasurClassToSave.getMeasur().getDoze();
+		String type = reportMeasurClassToSave.getMeasur().getTypeMeasur().getKodeType();
+		String doseString = convertDozeToString(dozeDouble, type);
+		
 		try {
 			System.out.println("doseString = "+doseString);
 			
@@ -551,18 +595,15 @@ public class InsertMeasurToExcel {
 
 	}
 
-	private static String convertDozeToString(ReportMeasurClass reportMeasurClassToSave) {
-		
-		
-		double dozeDouble = reportMeasurClassToSave.getMeasur().getDoze();
-		
+	private static String convertDozeToString(double dozeDouble, String type) {
+			
 		DecimalFormat formatter = new DecimalFormat("0.00");
-		String doseString = formatter.format(dozeDouble);
+		String doseString = formatter.format(dozeDouble).replace(",", ".");
 		
-		if (dozeDouble < 0.1 && !doseString.equals("0,00")) {
+		if (dozeDouble < 0.1 && !doseString.equals("0.00")) {
 			doseString = "<0.10";
 		}
-		if (reportMeasurClassToSave.getMeasur().getTypeMeasur().getKodeType().equals("M")) {
+		if (type.equals("M")) {
 			doseString = "M";
 		}
 		
