@@ -83,7 +83,7 @@ import SaveToExcellFile.SaveToPersonelORExternalFile;
 import SearchFreeKode.SearchFreeKodeFrame;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class PersonelManegementMethods {
 
@@ -1298,7 +1298,7 @@ public class PersonelManegementMethods {
 	static String addListStringSelectionPersonToTextArea(List<Person> listSelectionPerson) {
 		String text = "";
 		for (Person person : listSelectionPerson) {
-			text = text + person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
+			text = text + person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person) + "\n";
 		}
 
 		return text;

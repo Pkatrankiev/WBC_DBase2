@@ -25,7 +25,7 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
 import PersonReference.PersonReferenceFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
@@ -148,34 +148,39 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 
 	private JPanel panel_2() {
 
+		String year = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year");
+		String mount = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_Mount");
+		String startDate = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_startDate");
+		String endDate = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_endDate");
+		
 		JPanel panel2 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		flowLayout.setVgap(2);
 		panel_Search.add(panel2);
 
-		JLabel lbl_Year = new JLabel("Year");
+		JLabel lbl_Year = new JLabel(year);
 		lbl_Year.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Year.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_Year.setToolTipText("");
 		lbl_Year.setPreferredSize(new Dimension(38, 15));
 		panel2.add(lbl_Year);
 		
-		JLabel lbl_L_Firm = new JLabel("Mount");
+		JLabel lbl_L_Firm = new JLabel(mount);
 		lbl_L_Firm.setPreferredSize(new Dimension(50, 15));
 		lbl_L_Firm.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_L_Firm.setBorder(null);
 		lbl_L_Firm.setAlignmentX(1.0f);
 		panel2.add(lbl_L_Firm);
 
-		JLabel lbl_KodKZ1 = new JLabel("Start Date");
+		JLabel lbl_KodKZ1 = new JLabel(startDate);
 		lbl_KodKZ1.setPreferredSize(new Dimension(69, 15));
 		lbl_KodKZ1.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_KodKZ1.setBorder(null);
 		lbl_KodKZ1.setAlignmentX(0.5f);
 		panel2.add(lbl_KodKZ1);
 
-		JLabel lbl_KodKZ2 = new JLabel("End Date");
+		JLabel lbl_KodKZ2 = new JLabel(endDate);
 		lbl_KodKZ2.setPreferredSize(new Dimension(69, 15));
 		lbl_KodKZ2.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_KodKZ2.setBorder(null);
@@ -186,6 +191,9 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 	}
 
 	private JPanel panel_2A() {
+		
+		String search = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_search");
+		
 		JPanel panel2A = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel2A.getLayout();
 		flowLayout_2.setVgap(0);
@@ -223,7 +231,7 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 		lblNewLabel_1_1.setPreferredSize(new Dimension(20, 14));
 		panel2A.add(lblNewLabel_1_1);
 
-		btn_Search = new JButton("Search");
+		btn_Search = new JButton(search);
 		btn_Search.setMargin(new Insets(2, 5, 2, 5));
 		btn_Search.setPreferredSize(new Dimension(110, 23));
 		panel2A.add(btn_Search);
@@ -234,11 +242,12 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 
 	private JPanel panel_Button() {
 
+		String export = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Export");
 		JPanel buttonPanel = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.RIGHT);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-		btn_Export = new JButton("Export");
+		btn_Export = new JButton(export);
 		buttonPanel.add(btn_Export);
 
 		btn_Export.setEnabled(false);
@@ -251,7 +260,7 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (Person person : listSelectionPerson) {
-			list.add(person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person));
+			list.add(person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person));
 		}
 		Collections.sort(list);
 		for (String str : list) {
@@ -263,7 +272,7 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 	protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
 		String str = "";
 		for (Person person : listSelectionPerson) {
-			str = str + person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
+			str = str + person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person) + "\n";
 		}
 		return str;
 	}

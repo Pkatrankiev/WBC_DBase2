@@ -52,8 +52,8 @@ import PersonManagement.PersonelManegementMethods;
 public class SaveToPersonelORExternalFile {
 
 	private static String filePath[] = {
-			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2"),
-			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2") };
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
 
 	private static SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
 

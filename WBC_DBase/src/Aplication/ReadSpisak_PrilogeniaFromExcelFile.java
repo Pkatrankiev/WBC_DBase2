@@ -20,7 +20,7 @@ import BasicClassAccessDbase.Workplace;
 public class ReadSpisak_PrilogeniaFromExcelFile {
 
 	public static List<Spisak_Prilogenia> getSpisak_Prilogenia_ListFromExcelFile(String FILE_PATH, String firmName,
-			String year) {
+			String year, ActionIcone round,  String textIcon) {
 		
 
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(FILE_PATH);
@@ -61,6 +61,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 
 					}
 				}
+				ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 			}
 		}
 		return spisak_Prilogenia_List;
@@ -167,9 +168,12 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		}
 	}
 
-	public static void setListSpisak_PrilogeniaToBData(List<Spisak_Prilogenia> Spisak_PrilogeniaList) {
+	public static void setListSpisak_PrilogeniaToBData(List<Spisak_Prilogenia> Spisak_PrilogeniaList, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=Spisak_PrilogeniaList.size();
 		for (Spisak_Prilogenia spPr : Spisak_PrilogeniaList) {
 			Spisak_PrilogeniaDAO.setObjectSpisak_PrilogeniaToTable(spPr);
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 		}
 	}
 

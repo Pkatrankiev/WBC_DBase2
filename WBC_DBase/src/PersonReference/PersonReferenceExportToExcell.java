@@ -30,7 +30,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
 
 public class PersonReferenceExportToExcell {
@@ -149,7 +149,7 @@ public class PersonReferenceExportToExcell {
 				sheet.addMergedRegion(new CellRangeAddress(endRow, endRow, 2, 5));
 				cell = row.createCell(2, CellType.STRING);
 				cell.setCellStyle(cellStyleBold);
-				cell.setCellValue(InsertMeasurToExcel.getNamePerson(person));
+				cell.setCellValue(SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person));
 				endRow++;
 				endRow++;
 				

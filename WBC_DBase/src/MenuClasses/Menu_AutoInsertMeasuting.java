@@ -1,22 +1,9 @@
 package MenuClasses;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-
-import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import Aplication.ReadResultFromReport;
-import Aplication.ReportMeasurClass;
-import AutoInsertMeasuting.AutoInsertMeasutingFrame;
 import AutoInsertMeasuting.AutoInsertMeasutingMethods;
-import BasiClassDAO.LaboratoryDAO;
-import BasiClassDAO.NuclideWBCDAO;
-import BasiClassDAO.TypeMeasurDAO;
-import BasiClassDAO.UsersWBCDAO;
+
 
 
 

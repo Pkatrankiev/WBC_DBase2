@@ -23,7 +23,7 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 import BasicClassAccessDbase.Person;
 
@@ -286,7 +286,7 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (Person person : listSelectionPerson) {
-			list.add(person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person));
+			list.add(person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person));
 		}
 		Collections.sort(list);
 		for (String str : list) {
@@ -298,7 +298,7 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 	protected String createStringToInfoPanel(List<Person> listSelectionPerson) {
 		String str = "";
 		for (Person person : listSelectionPerson) {
-			str = str + person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
+			str = str + person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person) + "\n";
 		}
 		return str;
 	}

@@ -57,6 +57,11 @@ public class ActionIcone {
 
 			}
 	
+	public static void roundWithText(ActionIcone round, String textIcon, String newText, int count, int ofCounts) {
+		String textIcon2 =textIcon + newText + " " + count + "/" + ofCounts + "</center></html>";
+		round.setTextToImage(textIcon2);
+	}
+	
 	
 	public JLabel getLab() {
 		return lab;

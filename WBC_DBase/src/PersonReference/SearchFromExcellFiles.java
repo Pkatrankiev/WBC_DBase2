@@ -20,7 +20,7 @@ import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
 import Aplication.RemouveDublikateFromList;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
@@ -60,7 +60,7 @@ public class SearchFromExcellFiles {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (PersonExcellClass person : listSelectionPerson) {
-			list.add(person.getPerson().getEgn() + " " + InsertMeasurToExcel.getNamePerson(person.getPerson()));
+			list.add(person.getPerson().getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person.getPerson()));
 		}
 		Collections.sort(list);
 		for (String str : list) {
@@ -98,7 +98,7 @@ public class SearchFromExcellFiles {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
 		String year = PersonReferenceFrame.getTextField_Year().getText(); 
-		String str = excellPerson.getPerson().getEgn() + " " + InsertMeasurToExcel.getNamePerson(excellPerson.getPerson()) + "\n";
+		String str = excellPerson.getPerson().getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(excellPerson.getPerson()) + "\n";
 		str = str + year + "\n";
 		str = str + "Кодове: \n";
 		List<KodeStatus> listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", excellPerson.getPerson(), "Year");
@@ -643,7 +643,7 @@ public class SearchFromExcellFiles {
 	
 	public static  String[][] generateMasiveMeasurFromExcelFile( String year, Person person) {
 		
-		String[][] masiveMeasur = new String[500][9];
+		String[][] masiveMeasur = new String[500][10];
 		int k=0;
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
@@ -673,7 +673,7 @@ public class SearchFromExcellFiles {
 			}	
 		}
 		}
-		String[][] newMasiveMeasur = new String[k][9];
+		String[][] newMasiveMeasur = new String[k][10];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			
@@ -790,7 +790,7 @@ public class SearchFromExcellFiles {
 	}
 
 	public static String[][]  generateListFromResultsWBCFromBigExcelFile(Workbook workbook, Person person , String year) {
-		String[][] masiveMeasur = new String[500][9];
+		String[][] masiveMeasur = new String[500][10];
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
@@ -800,6 +800,7 @@ public class SearchFromExcellFiles {
 		int index = 0;
 		boolean fl;
 		double[] nuclideValue = new double[16];
+		String[] simbolNuclide = new String[16];
 		double val;
 		Sheet sheet = workbook.getSheetAt(1);
 		Cell cell, cell1, cell2;
@@ -831,6 +832,8 @@ public class SearchFromExcellFiles {
 							cell = sheet.getRow(row).getCell(k);
 							val = ReadExcelFileWBC.getDoublefromCell(cell);
 							nuclideValue[i] = val;
+							simbolNuclide[i] = sheet.getRow(3).getCell(k).getStringCellValue();
+							
 							if(val>-1) {
 								countNuclide++;
 							}
@@ -839,22 +842,20 @@ public class SearchFromExcellFiles {
 						Measuring measur = ReadMeasuringFromExcelFile.createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
 						masiveMeasur[index][0] =   yearData;
 						masiveMeasur[index][1] = sdf.format(date);
-						masiveMeasur[index][2] = measur.getDoze()+""; 
-						masiveMeasur[index][3] =  measur.getLab().getLab();		
+						masiveMeasur[index][2] = measur.getDoze()+"";
+						if(masiveMeasur[index][2].equals("0.05")) masiveMeasur[index][2] = "<0.10";
+						masiveMeasur[index][3] =  measur.getLab().getLab();	
+						masiveMeasur[index][4] =  measur.getTypeMeasur().getKodeType();	
 						
 						if(countNuclide>0) {
 							for (int i = 0; i < 16; i++) {
 								if(nuclideValue[i]>0) {
-									NuclideWBC nuclideWBC = NuclideWBCDAO.getValueNuclideWBCByID(i+1);
-										
-									masiveMeasur[index][4] = nuclideWBC.getSymbol_nuclide();
-									masiveMeasur[index][5] = "0.0" ;
-									masiveMeasur[index][6] = "0.0" ;
-									masiveMeasur[index][7] = nuclideValue[i]+"" ;
-									masiveMeasur[index][8] = "0.0" ;
-									if(countNuclide==1) {
-										masiveMeasur[index][8] =  measur.getDoze()+"";
-									}
+									masiveMeasur[index][5] = simbolNuclide[i];
+									masiveMeasur[index][6] = "-" ;
+									masiveMeasur[index][7] = "-" ;
+									masiveMeasur[index][8] = nuclideValue[i]+"" ;
+									masiveMeasur[index][9] = "-" ;
+									
 									index++;
 									fl = true;
 								}

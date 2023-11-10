@@ -192,7 +192,7 @@ public class ReadResultFromReport {
 							
 		
 		
-		 Measuring measur = new Measuring(per, dateM, 0.0, dozeDim, lab, usersWBC, type, "", file.getName());
+		 Measuring measur = new Measuring(per, dateM, 0.0, dozeDim, lab, usersWBC, type, "", file.getName(), egn);
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
 		 reportMeasurClass.setToExcell(true);
@@ -287,7 +287,7 @@ public class ReadResultFromReport {
 							
 		System.out.println(per!=null?per.getEgn():"null"+" "+ dateM+" "+ dozeDim.getDimensionName()+" "+ lab.getLab()+" "+ usersWBC.getLastName_EG()+" "+ type.getNameType()+" "+file.getName());
 		
-		 Measuring measur = new Measuring(per, dateM, 0.0, dozeDim, lab, usersWBC, type, "", file.getName());
+		 Measuring measur = new Measuring(per, dateM, 0.0, dozeDim, lab, usersWBC, type, "", file.getName(), egn);
 		 reportMeasurClass.setMeasur(measur);
 		 reportMeasurClass.setListNuclideData(listNuclideData);
 		 reportMeasurClass.setToExcell(true);

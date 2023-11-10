@@ -24,7 +24,7 @@ public class ReadKodeStatusFromExcelFile {
 
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year) {
+	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon)  {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<KodeStatus> listKodeStatus = new ArrayList<>();
 		Person person;
@@ -100,7 +100,7 @@ public class ReadKodeStatusFromExcelFile {
 
 				}
 			}
-
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
 		return listKodeStatus;
 	}
@@ -495,13 +495,16 @@ Person person = PersonDAO.getValuePersonByEGN(EGN);
 		}
 	}
 
-	public static void setToDBaseListKodeStatus(List<KodeStatus> list) {
+	public static void setToDBaseListKodeStatus(List<KodeStatus> list, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=list.size();
 		List<KodeStatus> listDublicateKodeStatus = new ArrayList<KodeStatus>();
 		for (KodeStatus kodeStatus : list) {
 			if (KodeStatusDAO.setObjectKodeStatusToTable(kodeStatus) == null) {
 				listDublicateKodeStatus.add(kodeStatus);
 			}
-			;
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
+			k++;
 		}
 		if (listDublicateKodeStatus.size() > 0) {
 			ListKodeStatus(listDublicateKodeStatus);

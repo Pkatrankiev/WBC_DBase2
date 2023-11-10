@@ -97,6 +97,7 @@ referencePerson_ID_KZ_HOG = ИД КЗ-ХОГ
 referencePerson_Date = Дата
 referencePerson_Doza = Доза[mSv]
 referencePerson_Lab = Лабор.
+referencePerson_Type = Тип
 referencePerson_Nuclid = Нуклид
 referencePerson_Activ = Актив.[Bq]
 referencePerson_Inc = Постъп.[Bq]
@@ -121,6 +122,15 @@ referencePersonMeasur_IzmervaneSICh = Измерване в СИЧ
 
 referenceMeasuringLab = Справка по дни за измерванията в СИЧ
 referenceMeasuringLabTipText = подробна справка по дни за измерванията в СИЧ за даден период
+referenceMeasuringLab_BrIzmer = Бр.измер.
+referenceMeasuringLab_BrNadMDA = Бр.над МДА
+referenceMeasuringLab_MAX_Doza = Макс.Доза
+referenceMeasuringLab_MIN_Doza = Мин.Доза
+referenceMeasuringLab_SUM_Doza = Сум.Доза
+referenceMeasuringLab_All = Общо
+referenceMeasuringLab_Mount = Месец
+
+
 
 destinationDir = DIRECTORY/
 destinationIcons = ICONS/ajaxLoader.gif

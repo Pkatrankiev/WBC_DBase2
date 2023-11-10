@@ -26,11 +26,11 @@ import BasicClassAccessDbase.conectToAccessDB;
 public class MeasuringDAO {
 
 	public static void setValueMeasuring(Person person, Date date, double doze, DimensionWBC dozeDimension,
-			Laboratory lab, UsersWBC user, TypeMeasur typeMeasur, String measurKoment, String reportFileName) {
+			Laboratory lab, UsersWBC user, TypeMeasur typeMeasur, String measurKoment, String reportFileName, String excelPosition) {
 //		String mesage = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dublicateRepFileInDBase");
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName, ExcelPosition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -44,6 +44,7 @@ public class MeasuringDAO {
 			preparedStatement.setObject(7, typeMeasur.getId_TypeMeasur());
 			preparedStatement.setObject(8, measurKoment);
 			preparedStatement.setObject(9, reportFileName);
+			preparedStatement.setObject(10, excelPosition);
 
 			preparedStatement.executeUpdate();
 
@@ -64,7 +65,7 @@ public class MeasuringDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Measuring (Person_ID, Date, Doze, DozeDimension_ID, Lab_ID, UsersWBC_ID, TypeMeasur_ID, MeasurKoment, ReportFileName, ExcelPosition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(sql);
@@ -82,13 +83,14 @@ public class MeasuringDAO {
 			}
 			preparedStatement.setObject(8, koment);
 			preparedStatement.setObject(9, measuring.getReportFileName());
+			preparedStatement.setObject(10, measuring.getExcelPosition());
 
 			preparedStatement.executeUpdate();
 
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 //			if (e.toString().indexOf("unique constraint or index violation") > 0) {
 //				System.out.println(measuring.getPerson().getEgn()+" "+measuring.getLab().getLab_ID()+" "+measuring.getDoze()+" "+measuring.getDate());
 				
@@ -104,7 +106,7 @@ public class MeasuringDAO {
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sqlUpdate = "Update Measuring SET Person_ID = ?, Date = ?, Doze = ?, DozeDimension_ID = ?, Lab_ID = ?, UsersWBC_ID = ?,"
-				+ " TypeMeasur_ID = ?, MeasurKoment = ?, ReportFileName = ?  where Measuring_ID = ? ";
+				+ " TypeMeasur_ID = ?, MeasurKoment = ?, ReportFileName = ?, ExcelPosition = ?  where Measuring_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
@@ -118,8 +120,9 @@ public class MeasuringDAO {
 			preparedStatement.setObject(7, measuring.getTypeMeasur().getId_TypeMeasur());
 			preparedStatement.setObject(8, measuring.getMeasurKoment());
 			preparedStatement.setObject(9, measuring.getReportFileName());
+			preparedStatement.setObject(10, measuring.getExcelPosition());
 
-			preparedStatement.setInt(10, measuring.getMeasuring_ID());
+			preparedStatement.setInt(11, measuring.getMeasuring_ID());
 			
 			preparedStatement.executeUpdate();
 
@@ -182,6 +185,7 @@ public class MeasuringDAO {
 				object.setTypeMeasur(type);
 				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
+				object.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(object);
 			}
@@ -223,6 +227,7 @@ public class MeasuringDAO {
 				object.setTypeMeasur(type);
 				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
+				object.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(object);
 			}
@@ -264,6 +269,7 @@ public class MeasuringDAO {
 				object.setTypeMeasur(type);
 				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
+				object.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(object);
 			}
@@ -332,6 +338,7 @@ public class MeasuringDAO {
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -401,6 +408,7 @@ public class MeasuringDAO {
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -444,6 +452,7 @@ public class MeasuringDAO {
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -495,6 +504,7 @@ public class MeasuringDAO {
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -512,6 +522,59 @@ public class MeasuringDAO {
 		return null;
 	}
 
+	public static Measuring getValueMeasuringFromExcelByPerson_Date_ExcelPozition_Lab(Person person, Date date, Laboratory lab, String excelPosition) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Person_ID = ? and Date = ? and ExcelPosition = ? and Lab_ID = ?";
+
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, date);
+			preparedStatement.setObject(3, excelPosition);
+			preparedStatement.setObject(4, lab.getLab_ID());
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	
+	
 	public static void MessageDialog(String mesage) {
 		Icon otherIcon = null;
 		JFrame jf = new JFrame();
@@ -551,6 +614,7 @@ int k=0;
 				object.setTypeMeasur(type);
 				object.setMeasurKoment(result.getString("MeasurKoment"));
 				object.setReportFileName(result.getString("ReportFileName"));
+				object.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(object);
 				k++;
@@ -600,6 +664,7 @@ int k=0;
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -649,6 +714,7 @@ int k=0;
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -697,6 +763,7 @@ int k=0;
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -712,7 +779,7 @@ int k=0;
 		return list;
 	}
 
-public static List<Measuring> getValueMeasuringByStartdate_EndDate(Date dateStart, Date dateEnd) {
+	public static List<Measuring> getValueMeasuringByStartdate_EndDate(Date dateStart, Date dateEnd) {
 		
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM Measuring  where Date >= ? AND Date <= ? ORDER BY Date ASC";
@@ -746,6 +813,7 @@ public static List<Measuring> getValueMeasuringByStartdate_EndDate(Date dateStar
 				resultObject.setTypeMeasur(type);
 				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
 				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
 
 				list.add(resultObject);
 			}
@@ -761,5 +829,75 @@ public static List<Measuring> getValueMeasuringByStartdate_EndDate(Date dateStar
 		return list;
 	}
 
-	
+	public static List<Measuring> getValueMeasuringByDateLab(Date date, int labID) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Date = ? and Lab_ID = ?";
+
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setObject(1, date);
+			
+			preparedStatement.setObject(2, labID);
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}
+
+
+	public static void deleteValueMeasuring(int measuringID) {
+
+	Connection connection = conectToAccessDB.conectionBDtoAccess();
+
+	String sqlUpdate = "delete from Measuring where Measuring_ID = ? ";
+
+	try {
+		PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
+
+		preparedStatement.setInt(1, measuringID);
+
+		preparedStatement.executeUpdate();
+
+		preparedStatement.close();
+		connection.close();
+
+	} catch (SQLException e) {
+		ResourceLoader.appendToFile(e);
+		e.printStackTrace();
+	}
+}
 }

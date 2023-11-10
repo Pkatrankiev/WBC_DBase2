@@ -21,24 +21,19 @@ import Aplication.ReadResultFromReport;
 import Aplication.ReportMeasurClass;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.LaboratoryDAO;
-import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.NuclideWBCDAO;
-import BasiClassDAO.ResultsWBCDAO;
+
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Measuring;
-import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.UsersWBC;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
@@ -64,12 +59,12 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panelBasic;
-	int countMeasur;
+
 	Frame frame;
 	String clickTxt = ReadFileBGTextVariable.getGlobalTextVariableMap().get("klikToCopy");
 	String labelFileNameToolTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelFileNameToolTipText");
 	String autoInsertMeasuting = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting");
-	JButton btnSave;
+	static JButton btnSave;
 	Color panelColor;
 	static String[] listSimbolNuclide;
 	static String[] listLaboratiry;
@@ -99,13 +94,14 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	static JTextField[][] textField_Postaplenie;
 	static JTextField[][] textField_DozeNuclide;
 
-	List<ReportMeasurClass> listReportMeasurClass;
+	static List<ReportMeasurClass> listReportMeasurClass;
 	static List<UsersWBC> listUsersWBC;
 	static DimensionWBC dozeDimension;
+	static int countMeasur;
 
-	public AutoInsertMeasutingFrame(ActionIcone round, Frame f, List<ReportMeasurClass> listReportMeasur, String[] listSimbolNuclideIN,
-			String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN, String[] listNameTypeMeasurIN,
-			Point pointFrame) {
+	public AutoInsertMeasutingFrame(ActionIcone round, Frame f, List<ReportMeasurClass> listReportMeasur,
+			String[] listSimbolNuclideIN, String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN,
+			String[] listNameTypeMeasurIN, Point pointFrame) {
 		setTitle(autoInsertMeasuting);
 
 		setResizable(false);
@@ -192,13 +188,13 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			if (doze.equals("999999")) {
 				doze = "";
 			}
-			
-			if(!lastDate.equals(date)) {
+
+			if (!lastDate.equals(date)) {
 				lastDate = date;
-				 numberMeasuring = 1;
+				numberMeasuring = 1;
 			}
 			panel_Multy[i] = panelMultyMeasuring(i, reportName, date, PersonName, egn, lab, operatorNmae, typeMeasur,
-					doze, toExcell, koment, reportMeasur,  numberMeasuring);
+					doze, toExcell, koment, reportMeasur, numberMeasuring);
 			panelBasic.add(panel_Multy[i]);
 			int k = 0;
 			for (String string : reportMeasur.getListNuclideData()) {
@@ -216,24 +212,24 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					doz = value[5].trim();
 				} else {
 					String[] value = StringUtils.split(string);
-					if(lab.contains("2")) {
+					if (lab.contains("2")) {
 						nucl = value[0].trim();
 						activ = value[1].trim();
-					}else {
-					
-					nucl = value[0].trim();
-					activ = value[2].trim();
+					} else {
+
+						nucl = value[0].trim();
+						activ = value[2].trim();
 					}
 				}
-				System.out.println(i+" "+ k+" "+ nucl+" "+ activ+" "+ post+" "+ ggp+" "+ doz);
-				
+				System.out.println(i + " " + k + " " + nucl + " " + activ + " " + post + " " + ggp + " " + doz);
+
 				panel_Multy_Nuclide[i][k] = panelMultyNuclideMeasuring(i, k, nucl, activ, post, ggp, doz);
 				panelBasic.add(panel_Multy_Nuclide[i][k]);
 				k++;
 				numberLine++;
 			}
 			numberLine++;
-			 numberMeasuring ++;
+			numberMeasuring++;
 		}
 
 		panelcheckAll();
@@ -260,9 +256,11 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	private JPanel panelButtons() {
 
-		String autoInsertMeasuting_cancel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_cancel");
-		String autoInsertMeasuting_save = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_save");
-		
+		String autoInsertMeasuting_cancel = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_cancel");
+		String autoInsertMeasuting_save = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_save");
+
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -276,75 +274,24 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		JButton btnCancel = new JButton(autoInsertMeasuting_cancel);
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose(); //Destroy the JFrame object
+				dispose(); // Destroy the JFrame object
 			}
 		});
 		panelButtons.add(btnCancel);
 
 		btnSave = new JButton(autoInsertMeasuting_save);
 		btnSave.setEnabled(true);
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				ActionIcone round = new ActionIcone();
-				 final Thread thread = new Thread(new Runnable() {
-				     @Override
-				     public void run() {
-				    		if (checkEmptryPostaplenieField(countMeasur)) {
-								if (checkEmptryDozeField(countMeasur)) {
-									List<ReportMeasurClass> listReportMeasurClassToSave = generateListReportMeasurClassForSaveData(
-											countMeasur, listReportMeasurClass);
-									InsertMeasurToExcel.SaveListReportMeasurClassToExcellFile(listReportMeasurClassToSave, false);
-									SaveListReportMeasurClassToDBase(round, listReportMeasurClassToSave);
-								}
-							}	 
-				    	 
-				     }
-				    });
-				    thread.start();
-				
-				
-				
-			
-			}
-		});
+		AutoInsertMeasutingMethods.btnSave_AutoInsertMeasuting_ActionListener(this);
 		btnSave.setAlignmentX(1.0f);
 		panelButtons.add(btnSave);
 		return panelButtons;
 	}
 
-	protected void SaveListReportMeasurClassToDBase(ActionIcone round, List<ReportMeasurClass> listReportMeasurClassToSave) {
-		Measuring lastMeasur = null;
-		for (ReportMeasurClass reportMeasur : listReportMeasurClassToSave) {
-			
-				MeasuringDAO.setObjectMeasuringToTable(reportMeasur.getMeasur());
-				lastMeasur = MeasuringDAO.getLastMeasuring();
-				if(!reportMeasur.getListNuclideData().isEmpty()) {
-					for (String stringNuclideData : reportMeasur.getListNuclideData()) {
-					
-						stringNuclideData = stringNuclideData.replaceAll("##", "");
-							String[] masiveStrNuclide = stringNuclideData.split(":");
-
-							NuclideWBC nuclide = NuclideWBCDAO.getValueNuclideWBCByObject("Symbol", masiveStrNuclide[1].trim()).get(0);
-							double actyviti = Double.parseDouble(masiveStrNuclide[2].replaceAll(",", "."));
-							double postaplenie = Double.parseDouble(masiveStrNuclide[3].replaceAll(",", "."));
-							double ggp = Double.parseDouble(masiveStrNuclide[4].replaceAll(",", "."));
-							double nuclideDoze = Double.parseDouble(masiveStrNuclide[5].replaceAll(",", "."));
-							
-							ResultsWBCDAO.setValueResultsWBC(lastMeasur, nuclide, actyviti, postaplenie, ggp, nuclideDoze);
-				
-					}
-				
-				}
-			
-			}
-		round.StopWindow();
-	}
-
 	private JPanel panelcheckAll() {
-		
-		String autoInsertMeasuting_CheckAll = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_CheckAll");
-		
+
+		String autoInsertMeasuting_CheckAll = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_CheckAll");
+
 		JPanel panelcheckAll = new JPanel();
 		panelcheckAll.setMaximumSize(new Dimension(32767, 30));
 		panelcheckAll.setAlignmentY(0.0f);
@@ -384,25 +331,32 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	private JPanel panelHeader() {
 
-		String autoInsertMeasuting_File = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_File");
+		String autoInsertMeasuting_File = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_File");
 		String referencePerson_Date = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Date");
-		String referencePerson_FirstName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_FirstName");
+		String referencePerson_FirstName = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("referencePerson_FirstName");
 		String referencePerson_EGN = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_EGN");
 		String referencePerson_Lab = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Lab");
-		String autoInsertMeasuting_Operator = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Operator");
-		String autoInsertMeasuting_Type = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Type");
-		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Doza");
+		String autoInsertMeasuting_Operator = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Operator");
+		String autoInsertMeasuting_Type = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Type");
+		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Doza");
 		String referencePerson_Koment = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Koment");
-		String autoInsertMeasuting_NuclidePLMU = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_NuclidePLMU");
-		String autoInsertMeasuting_ToExcel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_ToExcel");
-		
+		String autoInsertMeasuting_NuclidePLMU = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_NuclidePLMU");
+		String autoInsertMeasuting_ToExcel = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_ToExcel");
+
 		JPanel panel_Header = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_Header.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		panel_Header.setMaximumSize(new Dimension(32767, 30));
 		panel_Header.setAlignmentY(0.0f);
 		contentPane.add(panel_Header, BorderLayout.NORTH);
-		
+
 		JLabel lbl_L_Number = new JLabel("№");
 		lbl_L_Number.setSize(new Dimension(20, 20));
 		lbl_L_Number.setPreferredSize(new Dimension(20, 20));
@@ -516,7 +470,8 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	private JPanel panelMultyMeasuring(int index, String reportName, String date, String PersonName, String egn,
-			String lab, String operatorNmae, String typeMeasur, String doze, boolean toExcell, String koment, ReportMeasurClass reportMeasur, int  numberMeasuring) {
+			String lab, String operatorNmae, String typeMeasur, String doze, boolean toExcell, String koment,
+			ReportMeasurClass reportMeasur, int numberMeasuring) {
 		JPanel panel_Multy = new JPanel();
 		panel_Multy.setMaximumSize(new Dimension(32767, 30));
 		panel_Multy.setAlignmentY(0.0f);
@@ -524,12 +479,11 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 		panel_Multy.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		lblNumber[index] = new JLabel(numberMeasuring+"");
+		lblNumber[index] = new JLabel(numberMeasuring + "");
 		lblNumber[index].setBorder(new LineBorder(new Color(192, 192, 192)));
 		lblNumber[index].setPreferredSize(new Dimension(20, 20));
 		panel_Multy.add(lblNumber[index]);
-		
-		
+
 		lblFileName[index] = new JLabel(reportName);
 		lblFileName[index].setBorder(new LineBorder(new Color(192, 192, 192)));
 		lblFileName[index].setPreferredSize(new Dimension(80, 20));
@@ -662,13 +616,17 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			String ggp, String doz) {
 
 		String referencePerson_Nuclid = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Nuclid");
-		String autoInsertMeasuting_Activity = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Activity");
-		String autoInsertMeasuting_Postaplenie = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Postaplenie");
-		String autoInsertMeasuting_GGP = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_GGP");
-		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Doza");
-		String autoInsertMeasuting_calc = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_calc");
-		
-		
+		String autoInsertMeasuting_Activity = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Activity");
+		String autoInsertMeasuting_Postaplenie = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Postaplenie");
+		String autoInsertMeasuting_GGP = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_GGP");
+		String autoInsertMeasuting_Doza = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_Doza");
+		String autoInsertMeasuting_calc = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_calc");
+
 		JPanel panel_Multy_Nuclide = new JPanel();
 		panel_Multy_Nuclide.setMaximumSize(new Dimension(32767, 30));
 		panel_Multy_Nuclide.setAlignmentY(0.0f);
@@ -713,6 +671,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			public void keyReleased(KeyEvent event) {
 				textField_Actyvity[index][subIndex]
 						.setText(checkFormatString(textField_Actyvity[index][subIndex].getText()));
+				textField_Actyvity[index][subIndex].setBackground(Color.WHITE);
 			}
 
 			@Override
@@ -744,6 +703,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			public void keyReleased(KeyEvent event) {
 				textField_Postaplenie[index][subIndex]
 						.setText(checkFormatString(textField_Postaplenie[index][subIndex].getText()));
+				textField_Postaplenie[index][subIndex].setBackground(Color.WHITE);
 			}
 
 			@Override
@@ -775,6 +735,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent event) {
 				textField_GGP[index][subIndex].setText(checkFormatString(textField_GGP[index][subIndex].getText()));
+				textField_GGP[index][subIndex].setBackground(Color.WHITE);
 			}
 
 			@Override
@@ -808,7 +769,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent event) {
 				textField_DozeNuclide[index][subIndex].setBackground(Color.WHITE);
-			textField_DozeNuclide[index][subIndex]
+				textField_DozeNuclide[index][subIndex]
 						.setText(checkFormatString(textField_DozeNuclide[index][subIndex].getText()));
 
 				double dd = 0.0;
@@ -821,7 +782,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					}
 				}
 				textFieldDoza[index].setText(DoubleToString(dd));
-				
+
 				cneckNuclideChoise(index, subIndex);
 				repaint();
 			}
@@ -867,7 +828,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					}
 				}
 				System.out.println(fl);
-				if (fl ) {
+				if (fl) {
 					comboBox_Nuclide[index][subIndex].setForeground(Color.BLACK);
 					btnSave.setEnabled(true);
 
@@ -1023,140 +984,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		return listReportMeasurToData;
 	}
 
-	public static boolean checkEmptryDozeField(int countData) {
-		String isEmptyDozeFilds = ReadFileBGTextVariable.getGlobalTextVariableMap().get("isEmptyDozeFilds");
-		String isEmptyDozeNuclideFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
-				.get("isEmptyDozeNuclideFilds");
-		String noSaveRowToBase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("noSaveRowToBase");
-		String rowWithoutSaveToExcellFile = ReadFileBGTextVariable.getGlobalTextVariableMap()
-				.get("rowWithoutSaveToExcellFile");
-
-		boolean emtryDoze = false;
-		boolean emtryDozeNuclide = false;
-		boolean noCheckedInExcell = false;
-		String mesage = "";
-		for (int i = 0; i < countData; i++) {
-			if (textFieldDoza[i].getText().isEmpty()) {
-				textFieldDoza[i].setBackground(Color.RED);
-				emtryDoze = true;
-			}
-			if (!chckbxSetToExcel[i].isSelected()) {
-				chckbxSetToExcel[i].setBackground(Color.RED);
-				noCheckedInExcell = true;
-			}
-			for (int k = 0; k < 20; k++) {
-				if (comboBox_Nuclide[i][k] != null && !comboBoxTypeMeasur[i].getSelectedItem().toString().equals("M")) {
-					if (textField_DozeNuclide[i][k].getText().isEmpty()) {
-						textField_DozeNuclide[i][k].setBackground(Color.RED);
-						emtryDozeNuclide = true;
-					}
-				}
-			}
-		}
-
-		if (emtryDoze) {
-			mesage = mesage + "<html>" + isEmptyDozeFilds;
-		}
-		if (emtryDozeNuclide) {
-			if (mesage.isEmpty()) {
-				mesage = "<html>";
-			} else {
-				mesage = mesage + "<br>";
-			}
-			mesage = mesage + isEmptyDozeNuclideFilds + "<br>";
-		}
-		if (!mesage.isEmpty()) {
-			mesage = mesage + noSaveRowToBase;
-		}
-		if (noCheckedInExcell) {
-			if (mesage.isEmpty()) {
-				mesage = "<html>";
-			} else {
-				mesage = mesage + "<br>";
-			}
-			mesage = mesage + rowWithoutSaveToExcellFile;
-		}
-		if (!mesage.isEmpty()) {
-			mesage = mesage + "</html>";
-		}
-
-		if (mesage.isEmpty()) {
-			return true;
-		} else {
-			return OptionDialog(mesage);
-		}
-	}
-
-	public static boolean checkEmptryPostaplenieField(int countData) {
-
-		String isEmptyPostaplenieNuclideFilds = ReadFileBGTextVariable.getGlobalTextVariableMap()
-				.get("isEmptyPostaplenieNuclideFilds");
-		String dozeStr = "";
-		boolean emtryDozeNuclide = false, isnuclide = false;
-
-		String mesage = "";
-		for (int i = 0; i < countData; i++) {
-			dozeStr = textFieldDoza[i].getText();
-			if (!dozeStr.isEmpty() && Double.parseDouble(dozeStr.replaceAll(",", ".")) > 0) {
-				isnuclide = false;
-				for (int k = 0; k < 20; k++) {
-					if (comboBox_Nuclide[i][k] != null) {
-						isnuclide = true;
-						if (textField_DozeNuclide[i][k].getText().isEmpty()
-								|| !(Double.parseDouble(textField_DozeNuclide[i][k].getText().replaceAll(",", ".")) > 0)
-								|| textField_Actyvity[i][k].getText().isEmpty()
-								|| !(Double.parseDouble(textField_Actyvity[i][k].getText().replaceAll(",", ".")) > 0)
-								|| textField_Postaplenie[i][k].getText().isEmpty()
-								|| !(Double.parseDouble(textField_Postaplenie[i][k].getText().replaceAll(",", ".")) > 0)
-								|| textField_GGP[i][k].getText().isEmpty()
-								|| !(Double.parseDouble(textField_GGP[i][k].getText().replaceAll(",", ".")) > 0)) {
-
-							emtryDozeNuclide = true;
-
-						}
-					}
-				}
-				if(!isnuclide) {
-					emtryDozeNuclide = true;
-				}
-			}
-		}
-System.out.println(isnuclide+"  "+emtryDozeNuclide);
-		if (emtryDozeNuclide) {
-			mesage = "<html>" + isEmptyPostaplenieNuclideFilds + "</html>";
-			MessageDialog(mesage);
-			return false;
-		}
-
-		return true;
-
-	}
-
-	public static void MessageDialog(String mesage) {
-		Icon otherIcon = null;
-		JFrame jf = new JFrame();
-		jf.setAlwaysOnTop(true);
-
-		JOptionPane.showMessageDialog(jf, mesage, "Info", JOptionPane.PLAIN_MESSAGE, otherIcon);
-
-	}
-
-	public static boolean OptionDialog(String mesage) {
-		String autoInsertMeasuting_Back = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_Back");
-		String autoInsertMeasuting_save = ReadFileBGTextVariable.getGlobalTextVariableMap().get("autoInsertMeasuting_save");
-		String[] options = { autoInsertMeasuting_Back, autoInsertMeasuting_save };
-		int x = JOptionPane.showOptionDialog(null, mesage, "Info", JOptionPane.DEFAULT_OPTION,
-				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-		System.out.println(x);
-		/**
-		 * select "Back" -> 0; select "Ok" -> 1;
-		 */
-		if (x > 0) {
-			return true;
-		}
-		return false;
-	}
-
+	
 	private static UsersWBC getUserWBCFromName(String comboNmame) {
 		for (UsersWBC object : listUsersWBC) {
 			String name = object.getName() + " " + object.getLastName();
@@ -1204,14 +1032,14 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 			public void mouseClicked(MouseEvent e) {
 				try {
 					String fileName = label.getText();
-					for(ReportMeasurClass repMes : listReportMeasurClass) {
+					for (ReportMeasurClass repMes : listReportMeasurClass) {
 						System.out.println(repMes.getReportFile().getName());
-						if(repMes.getReportFile().getName().equals(fileName)) {
-							
-							Runtime.getRuntime().exec("notepad.exe "+repMes.getReportFile().getPath());
+						if (repMes.getReportFile().getName().equals(fileName)) {
+
+							Runtime.getRuntime().exec("notepad.exe " + repMes.getReportFile().getPath());
 						}
 					}
-					
+
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -1230,7 +1058,7 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 			}
 		});
 	}
-	
+
 	protected void ActionListenerPlusBTN(int index) {
 		List<ReportMeasurClass> listReportMeasurClassToSave = generateListReportMeasurClassForRepain(countMeasur,
 				listReportMeasurClass);
@@ -1241,28 +1069,28 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 		List<String> listNuclideData = listReportMeasurClass.get(index).getListNuclideData();
 		if (listNuclideData == null) {
 			listNuclideData = new ArrayList<>();
-		}else {
-			if(listNuclideData.size()>0) {
-			String lastRecord = listNuclideData.get(listNuclideData.size()-1);
-			System.out.println("lastRecord " + lastRecord);
-			String nucl = "";
-			if (lastRecord.startsWith("##")) {
-				String[] value = StringUtils.split(lastRecord, ":");
-				nucl = value[1].trim();
-				
-			} else {
-				String[] value = StringUtils.split(lastRecord);
-			nucl = value[0].trim();
-			}
-			for (int i = 0; i < listSimbolNuclide.length; i++) {
-				if(listSimbolNuclide[i].equals(nucl)) {
-					if(i == listSimbolNuclide.length-1) {
-						i=-1;
-					}
-					strRecord = listSimbolNuclide[i+1]+"       0.00      0.00      0.00";
-					i = listSimbolNuclide.length;
+		} else {
+			if (listNuclideData.size() > 0) {
+				String lastRecord = listNuclideData.get(listNuclideData.size() - 1);
+				System.out.println("lastRecord " + lastRecord);
+				String nucl = "";
+				if (lastRecord.startsWith("##")) {
+					String[] value = StringUtils.split(lastRecord, ":");
+					nucl = value[1].trim();
+
+				} else {
+					String[] value = StringUtils.split(lastRecord);
+					nucl = value[0].trim();
 				}
-			}
+				for (int i = 0; i < listSimbolNuclide.length; i++) {
+					if (listSimbolNuclide[i].equals(nucl)) {
+						if (i == listSimbolNuclide.length - 1) {
+							i = -1;
+						}
+						strRecord = listSimbolNuclide[i + 1] + "       0.00      0.00      0.00";
+						i = listSimbolNuclide.length;
+					}
+				}
 			}
 		}
 
@@ -1270,18 +1098,18 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 		listReportMeasurClass.get(index).setListNuclideData(listNuclideData);
 		Point pointFrame = getLocation();
 		setVisible(false);
-		
+
 		ActionIcone round = new ActionIcone();
-		 final Thread thread = new Thread(new Runnable() {
-		     @Override
-		     public void run() {
-		    	 
-		    	 new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry, listUserWBC,
-		 				listTypeMeasur, listNameTypeMeasur, pointFrame);
-		     }
-		    });
-		    thread.start();	
-		
+		final Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry,
+						listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame);
+			}
+		});
+		thread.start();
+
 	}
 
 	protected void ActionListenerMinusBTN(int index) {
@@ -1299,15 +1127,15 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 				Point pointFrame = getLocation();
 				setVisible(false);
 				ActionIcone round = new ActionIcone();
-				 final Thread thread = new Thread(new Runnable() {
-				     @Override
-				     public void run() {
-				    	 
-				    	 new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry, listUserWBC,
-				 				listTypeMeasur, listNameTypeMeasur, pointFrame);
-				     }
-				    });
-				    thread.start();	
+				final Thread thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+
+						new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide,
+								listLaboratiry, listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame);
+					}
+				});
+				thread.start();
 			}
 		}
 
@@ -1329,6 +1157,94 @@ System.out.println(isnuclide+"  "+emtryDozeNuclide);
 
 		return stt;
 
+	}
+
+	public static JButton getBtnSave() {
+		return btnSave;
+	}
+
+	public static void setBtnSave(JButton btnSave) {
+		AutoInsertMeasutingFrame.btnSave = btnSave;
+	}
+
+	public static List<ReportMeasurClass> getListReportMeasurClass() {
+		return listReportMeasurClass;
+	}
+
+//	public void setListReportMeasurClass(List<ReportMeasurClass> listReportMeasurClass) {
+//		this.listReportMeasurClass = listReportMeasurClass;
+//	}
+
+	public static int getCountMeasur() {
+		return countMeasur;
+	}
+
+	public static void setCountMeasur(int countMeasur) {
+		AutoInsertMeasutingFrame.countMeasur = countMeasur;
+	}
+
+	public static JTextField[] getTextFieldDoza() {
+		return textFieldDoza;
+	}
+
+	public static void setTextFieldDoza(JTextField[] textFieldDoza) {
+		AutoInsertMeasutingFrame.textFieldDoza = textFieldDoza;
+	}
+
+	public static JComboBox[][] getComboBox_Nuclide() {
+		return comboBox_Nuclide;
+	}
+
+	public static void setComboBox_Nuclide(JComboBox[][] comboBox_Nuclide) {
+		AutoInsertMeasutingFrame.comboBox_Nuclide = comboBox_Nuclide;
+	}
+
+	public static JTextField[][] getTextField_GGP() {
+		return textField_GGP;
+	}
+
+	public static void setTextField_GGP(JTextField[][] textField_GGP) {
+		AutoInsertMeasutingFrame.textField_GGP = textField_GGP;
+	}
+
+	public static JTextField[][] getTextField_Actyvity() {
+		return textField_Actyvity;
+	}
+
+	public static void setTextField_Actyvity(JTextField[][] textField_Actyvity) {
+		AutoInsertMeasutingFrame.textField_Actyvity = textField_Actyvity;
+	}
+
+	public static JTextField[][] getTextField_Postaplenie() {
+		return textField_Postaplenie;
+	}
+
+	public static void setTextField_Postaplenie(JTextField[][] textField_Postaplenie) {
+		AutoInsertMeasutingFrame.textField_Postaplenie = textField_Postaplenie;
+	}
+
+	public static JTextField[][] getTextField_DozeNuclide() {
+		return textField_DozeNuclide;
+	}
+
+	public static void setTextField_DozeNuclide(JTextField[][] textField_DozeNuclide) {
+		AutoInsertMeasutingFrame.textField_DozeNuclide = textField_DozeNuclide;
+	}
+
+	public static JComboBox[] getComboBoxTypeMeasur() {
+		return comboBoxTypeMeasur;
+	}
+
+	public static void setComboBoxTypeMeasur(JComboBox[] comboBoxTypeMeasur) {
+		AutoInsertMeasutingFrame.comboBoxTypeMeasur = comboBoxTypeMeasur;
+	}
+
+	public static JCheckBox[] getChckbxSetToExcel() {
+		return chckbxSetToExcel;
+	}
+
+	public static void setChckbxSetToExcel(JCheckBox[] chckbxSetToExcel) {
+		AutoInsertMeasutingFrame.chckbxSetToExcel = chckbxSetToExcel;
 	}
 
 }

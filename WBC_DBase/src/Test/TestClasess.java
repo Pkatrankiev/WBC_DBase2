@@ -44,6 +44,7 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
+import Aplication.ReadResultsWBCFromExcelFile;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import Aplication.UpdateBDataFromExcellFiles;
@@ -239,7 +240,7 @@ public class TestClasess {
 				.getListPersonStatusWithoutSpisak_Prilogenia("7906113205");
 		ReadPersonStatusFromExcelFile.ListPersonStatus(list1);
 
-		ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list1);
+		ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list1,null, "");
 
 		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
 
@@ -813,6 +814,39 @@ public class TestClasess {
 		return list.get(0);
 	}
 
+	
+	
+	public static void updateFromExcel() {
+		
+		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
+		for (String pathFile : excellFiles) {
+			String firmName = "АЕЦ Козлодуй";
+			if (pathFile.contains("EXTERNAL")) {
+				firmName = "Външни организации";
+			}
+		
+		boolean save = true;
+		// read and set ResultsWBC
+		List<ResultsWBC> listResultsWBC = null;
+		
+		
+		
+		try {
+			listResultsWBC = ReadResultsWBCFromExcelFile
+					.generateListFromResultsWBCFromExcelFile(pathFile,null, "");
+//			ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
+			System.out.println("--> " + listResultsWBC.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			OptionDialog("errorr");
+			save = false;
+		}
+		if (save) {
+			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC,null, "");
+			System.out.println("Save set ResultsWBC " + firmName);
+		}
+	}
+	}
 	
 	
 	static void RemoveWorkplace_54_101_FromPersonStatus(int idWorkplace, String egn) {

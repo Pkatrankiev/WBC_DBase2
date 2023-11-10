@@ -13,7 +13,8 @@ import BasicClassAccessDbase.Person;
 public class ReadPersonFromExcelFile {
 
 	
-	public static List<Person> updatePersonFromExcelFile(String pathFile) {
+	public static List<Person> updatePersonFromExcelFile(String pathFile, ActionIcone round,  String textIcon) {
+		
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		String EGN = "", FirstName = "", SecondName = "", LastName = "";
 		Sheet sheet = workbook.getSheetAt(0);
@@ -39,14 +40,21 @@ public class ReadPersonFromExcelFile {
 					}
 				}
 			}
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 
 		}
 		return listPerson;
 	}
 
-	public static void setToDBaseListPerson(List<Person> listPerson) {
+	
+
+	public static void setToDBaseListPerson(List<Person> listPerson, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=listPerson.size();
 		for (Person person : listPerson) {
 			PersonDAO.setObjectPersonToTable(person);
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
+			k++;
 			}
 		}
 	

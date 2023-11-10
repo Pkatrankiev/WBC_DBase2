@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import BasiClassDAO.DimensionWBCDAO;
+import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.NuclideWBCDAO;
 import BasiClassDAO.ResultsWBCDAO;
@@ -16,6 +17,7 @@ import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 
 import BasicClassAccessDbase.DimensionWBC;
+import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.Person;
@@ -25,12 +27,12 @@ import BasicClassAccessDbase.UsersWBC;
 
 public class ReadResultsWBCFromExcelFile {
 
-	public static List<ResultsWBC> generateListFromResultsWBCFromExcelFile(String pathFile ) {
+	public static List<ResultsWBC> generateListFromResultsWBCFromExcelFile(String pathFile , ActionIcone round,  String textIcon) {
 		
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<ResultsWBC> listResultsWBC = new ArrayList<>();
 		if(workbook.getNumberOfSheets()>2) {
-			listResultsWBC = generateListFromResultsWBCFromBigExcelFile(workbook);
+			listResultsWBC = generateListFromResultsWBCFromBigExcelFile(workbook, round, textIcon);
 				
 		}else {
 			listResultsWBC = generateListFromResultsWBCFromSmalExcelFile(workbook);	
@@ -128,11 +130,11 @@ public class ReadResultsWBCFromExcelFile {
 
 
 
-	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook ) {
+	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook , ActionIcone round,  String textIcon) {
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
 		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
-		String EGN = "", lab;;
+		String lab;;
 		Date date;
 		double[] nuclideValue = new double[16];
 		double val;
@@ -148,7 +150,7 @@ public class ReadResultsWBCFromExcelFile {
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
-						System.out.println("++++++++++++++++++++"+EGN);
+						
 						
 						int k = 7;
 						cell1 = sheet.getRow(row).getCell(k);
@@ -170,12 +172,18 @@ public class ReadResultsWBCFromExcelFile {
 							}
 							k++;
 						}
-						Measuring measur = ReadMeasuringFromExcelFile.createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
-						
-						Measuring meas = MeasuringDAO.getValueMeasuringByPersonDozeDate(measur.getPerson(), measur.getDate(), measur.getDoze(), measur.getLab());
-						
 						
 						if(countNuclide>0) {
+							System.out.println("+++++++++++++++++countNuclide "+countNuclide);
+							Measuring measur = ReadMeasuringFromExcelFile.createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
+							System.out.println("+++++++++++++++++meas "+measur.getDoze());
+							
+							String excelPosition = "Excel-"+person.getEgn()+"/"+k;
+							int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
+							Laboratory labor = LaboratoryDAO.getValueLaboratoryByID(indexLab);
+							Measuring meas = MeasuringDAO.getValueMeasuringFromExcelByPerson_Date_ExcelPozition_Lab( person,  date,  labor, excelPosition);
+//							 MeasuringDAO.getValueMeasuringByPersonDozeDate(measur.getPerson(), measur.getDate(), measur.getDoze(), measur.getLab());
+							System.out.println("+++++++++++++++++meas "+meas.getMeasuring_ID());
 							for (int i = 0; i < 16; i++) {
 								if(nuclideValue[i]>0) {
 									NuclideWBC nuclideWBC = NuclideWBCDAO.getValueNuclideWBCByID(i+1);
@@ -205,16 +213,19 @@ public class ReadResultsWBCFromExcelFile {
 					}
 				}
 			}
-
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
 		return listResultsWBC;
 	}
 	
-	public static void setListResultsWBCToBData(List<ResultsWBC> listResultsWBC) {
-		
+	public static void setListResultsWBCToBData(List<ResultsWBC> listResultsWBC, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=listResultsWBC.size();
 		for (ResultsWBC res : listResultsWBC) {
 					
 			ResultsWBCDAO.setObjectResultsWBCToTable(res);
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
+			k++;
 		}
 	}
 	

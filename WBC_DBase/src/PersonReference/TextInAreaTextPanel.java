@@ -10,7 +10,7 @@ import java.util.List;
 
 
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.InsertMeasurToExcel;
+import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonStatusDAO;
@@ -41,6 +41,7 @@ public class TextInAreaTextPanel {
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Date"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Doza"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Lab"),
+			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Type"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Nuclid"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Activ"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Inc"),
@@ -96,7 +97,7 @@ public class TextInAreaTextPanel {
 		}
 		
 		
-		String str = person.getEgn() + " " + InsertMeasurToExcel.getNamePerson(person) + "\n";
+		String str = person.getEgn() + " " + SaveReportMeasurTo_PersonelORExternalExcelFile.getNamePerson(person) + "\n";
 		
 		str = str + year + "\n";
 		str = str + ReadFileBGTextVariable.getGlobalTextVariableMap().get("code") + "\n";
@@ -148,16 +149,16 @@ public class TextInAreaTextPanel {
 	}
 
 	private static String setTextInfoMeasur(String[][] masiveMeasur, String[] masiveMeasurName) {
-		int[] max = {5,12,11,7,12,8,8,8,8};
+		int[] max = {5,12,9,7,3,9,10,10,6,8};
 		boolean fl=false;
 		for (int i = 0; i < masiveMeasur.length; i++) {
-			if(masiveMeasur[i][4]!=null && !masiveMeasur[i][4].isEmpty()) {
+			if(masiveMeasur[i][5]!=null && !masiveMeasur[i][5].isEmpty()) {
 				fl = true;
 			}
 		}
 		
 		
-		int countColumn = 4;
+		int countColumn = 5;
 		String measurString = "";
 		if(fl) {
 			countColumn = masiveMeasurName.length;
@@ -183,11 +184,11 @@ public class TextInAreaTextPanel {
 	}
 
 	private static String[][] generateMasiveMeasur(String year, List<Measuring> listM) {
-		String[][] masiveMeasur = new String[listM.size()*3][9];
+		String[][] masiveMeasur = new String[listM.size()*3][10];
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		boolean fl;
 		String data;
-		int i = 0;
+		int i = 0, index =0;
 		for (Measuring measur : listM) {
 			fl = false;
 			List<ResultsWBC> listR = ResultsWBCDAO.getValueResultsWBCByObject("Measuring_ID", measur);
@@ -196,14 +197,19 @@ public class TextInAreaTextPanel {
 				masiveMeasur[i][0] =  data;
 				masiveMeasur[i][1] = sdf.format(measur.getDate());
 				masiveMeasur[i][2] = measur.getDoze()+""; 
+				if(masiveMeasur[i][2].equals("0.05")) masiveMeasur[i][2] = "<0.10";
 				masiveMeasur[i][3] =  measur.getLab().getLab();
-				
+				masiveMeasur[i][4] =  measur.getTypeMeasur().getKodeType();
+				index = i;
 				for (ResultsWBC result : listR) {
-					masiveMeasur[i][4] = result.getNuclideWBC().getSymbol_nuclide();
-					masiveMeasur[i][5] = result.getActivity()+"" ;
-					masiveMeasur[i][6] = result.getPostaplenie()+"" ;
-					masiveMeasur[i][7] = result.getGgp()+"" ;
-					masiveMeasur[i][8] = result.getNuclideDoze()+"" ;
+					masiveMeasur[i][5] = result.getNuclideWBC().getSymbol_nuclide();
+					masiveMeasur[i][6] = result.getActivity()+"" ;
+					masiveMeasur[i][7] = result.getPostaplenie()+"" ;
+					masiveMeasur[i][8] = result.getGgp()+"" ;
+					masiveMeasur[i][9] = result.getNuclideDoze()+"" ;
+					
+					if(result.getActivity() > 0) masiveMeasur[index][2] = measur.getDoze()+"";
+					
 					i++;
 					fl = true;
 				}
@@ -214,7 +220,7 @@ public class TextInAreaTextPanel {
 			
 		}
 	}
-		String[][] newMasiveMeasur = new String[i][9];
+		String[][] newMasiveMeasur = new String[i][10];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			
@@ -250,7 +256,7 @@ public class TextInAreaTextPanel {
 		return personStatusString;
 	}
 
-	private static int[] getMaxSizecolumn(String[][] masivePersonStatus, int[] max) {
+	public static int[] getMaxSizecolumn(String[][] masivePersonStatus, int[] max) {
 		
 		for (int i = 0; i < masivePersonStatus.length; i++) {
 			for (int j = 0; j < max.length; j++) {
@@ -419,7 +425,7 @@ public class TextInAreaTextPanel {
 		 String addString = "";
 		
 		for (int m = 0; m < space+2-kodeString.length(); m++) {
-			addString = addString+" ";	
+			addString +=" ";	
 		}
 		return addString;
 	}

@@ -26,12 +26,12 @@ import BasicClassAccessDbase.UsersWBC;
 
 public class ReadMeasuringFromExcelFile {
 
-	public static List<Measuring> generateListFromMeasuringFromExcelFile(String pathFile ) {
+	public static List<Measuring> generateListFromMeasuringFromExcelFile(String pathFile, ActionIcone round,  String textIcon) {
 				
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<Measuring> listMeasuring = new ArrayList<>();
 		if(workbook.getNumberOfSheets()>2) {
-			listMeasuring = generateListFromMeasuringFromBigExcelFile(workbook);
+			listMeasuring = generateListFromMeasuringFromBigExcelFile(workbook, round, textIcon);
 				
 		}else {
 			listMeasuring = getListMeasuringFromSmalExcelFile(workbook);	
@@ -89,13 +89,14 @@ public class ReadMeasuringFromExcelFile {
 
 
 
-	public static List<Measuring> generateListFromMeasuringFromBigExcelFile(Workbook workbook) {	
-		String EGN = "", lab;
+	public static List<Measuring> generateListFromMeasuringFromBigExcelFile(Workbook workbook, ActionIcone round,  String textIcon) {	
+		String lab;
 		Date date;
 		
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
 		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
+		
 		
 		Sheet sheet = workbook.getSheetAt(1);
 		Cell cell, cell1, cell2;
@@ -109,7 +110,7 @@ public class ReadMeasuringFromExcelFile {
 
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
-						System.out.println("++++++++++++++++++++"+EGN);
+						
 						int k = 7;
 						cell1 = sheet.getRow(row).getCell(k);
 						k++;
@@ -117,9 +118,12 @@ public class ReadMeasuringFromExcelFile {
 						while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
 						date = ReadExcelFileWBC.readCellToDate(cell1);
 						lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
-						
+						if(true) {
+							
+						}
 						k = k+17;
 						Measuring meas = createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
+						
 						listMeasuring.add(meas);
 								
 						if(k>253) {
@@ -137,7 +141,7 @@ public class ReadMeasuringFromExcelFile {
 					}
 				}
 			}
-
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
 		return listMeasuring;
 	}
@@ -159,7 +163,7 @@ public class ReadMeasuringFromExcelFile {
 	case "STRING": {
 		
 		String str = cell.getStringCellValue();
-		System.out.println(str+" -> "+row);
+		System.out.println(str+" -> row "+row+" col "+k);
 		if(str.contains("<")) {
 			doze = 0.05;
 		}else {
@@ -193,8 +197,9 @@ public class ReadMeasuringFromExcelFile {
 	if(doze==0.05) {
 	coment = "Doze < 0.10 mSv";	
 	}
-	String reportFile = "Excel-"+row+"/"+k;
-	return new Measuring(person, date, doze, dim, labor, userSet, tipeM, coment, reportFile);	
+	String reportFile = "Excel-"+person.getEgn()+"/"+k;
+	System.out.println(reportFile);
+	return new Measuring(person, date, doze, dim, labor, userSet, tipeM, coment, reportFile, reportFile);	
 	
 	}
 	
@@ -216,9 +221,14 @@ public class ReadMeasuringFromExcelFile {
 		}
 	}
 	
-	public static void setListMeasuringToBData(List<Measuring> MeasuringList) {
+	public static void setListMeasuringToBData(List<Measuring> MeasuringList, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=MeasuringList.size();
 		for (Measuring spPr : MeasuringList) {
+			System.out.println(spPr.getDoze());
 			MeasuringDAO.setObjectMeasuringToTable(spPr);
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
+			k++;
 		}
 	}
 

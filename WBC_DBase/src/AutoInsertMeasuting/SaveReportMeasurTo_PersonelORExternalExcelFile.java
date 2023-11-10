@@ -5,10 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -18,8 +16,6 @@ import javax.swing.JOptionPane;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -29,16 +25,14 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
-import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.NuclideWBCDAO;
-import BasiClassDAO.PersonStatusDAO;
-import BasicClassAccessDbase.KodeStatus;
+import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 
-public class InsertMeasurToExcel {
+public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 
 	static boolean flNotDublicateData;
+	static List<ReportMeasurClass> listReportMeasurClass = new ArrayList<>();
 	
 	public static void SaveListReportMeasurClassToExcellFile(List<ReportMeasurClass> list,
 			boolean forPersonalExcellFile) {
@@ -69,10 +63,17 @@ public class InsertMeasurToExcel {
 
 			
 				if (reportMeasur.getToExcell()) {
-					if (!SaveMeasurToExcel(reportMeasur, workbook)) {
-						listForNotSaveMeasur.add(reportMeasur);
-					} else {
+					String excelPosition = SaveMeasurToExcel(reportMeasur, workbook);
+					if (!excelPosition.isEmpty()) {
+						Measuring measur = reportMeasur.getMeasur();
+						String reportFile = "Excel-"+measur.getPerson().getEgn()+"/"+excelPosition;
+						measur.setExcelPosition(reportFile);
+						reportMeasur.setMeasur(measur);
 						listForSaveMeasurToMont.add(reportMeasur);
+						listReportMeasurClass.add(reportMeasur);
+					} else {
+						if(flNotDublicateData)	listForNotSaveMeasur.add(reportMeasur);
+						
 					}
 				}
 			
@@ -91,7 +92,7 @@ public class InsertMeasurToExcel {
 			JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
 		}
 
-		SaveListReportMeasurClassToMonthExcellFile(listForSaveMeasurToMont, forPersonalExcellFile);
+		SaveReportMeasurTo_MonthExcellFile.SaveListReportMeasurClassToMonthExcellFile(listForSaveMeasurToMont, forPersonalExcellFile);
 
 		if (forPersonalExcellFile) {
 			if (listForNotSaveMeasur.size() > 0) {
@@ -110,142 +111,8 @@ public class InsertMeasurToExcel {
 
 	}
 
-	public static void SaveListReportMeasurClassToMonthExcellFile(List<ReportMeasurClass> list,
-			boolean forPersonalExcellFile) {
-
-		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
-		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
-		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-		
-//		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
-//		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
-		
-		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_test"); 
-		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_test"); 
-
-		String pathFile = "";
-		if (forPersonalExcellFile) {
-			pathFile = filePathMonthExternal;
-		} else {
-			pathFile = filePathMonthPersonel;
-
-		}
-
-		try {
-//			System.out.println("pathFile " + pathFile);
-			for (ReportMeasurClass reportMeasur : list) {
-			FileInputStream inputStream = new FileInputStream(pathFile);
-			Workbook workbook = new HSSFWorkbook(inputStream);
-
-			
-				if (reportMeasur.getToExcell()) {
-//					System.out.println("EGN " + reportMeasur.getMeasur().getPerson().getEgn());
-					SaveMeasurToMonthExcel(reportMeasur, workbook);
-				}
-			
-
-			FileOutputStream fileOut = new FileOutputStream(pathFile);
-			workbook.write(fileOut);
-			fileOut.close();
-			}
-		} catch (FileNotFoundException | OldExcelFormatException e) {
-			ResourceLoader.appendToFile(e);
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);
-
-		} catch (IOException e) {
-			ResourceLoader.appendToFile(e);
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
-		}
-
 	
-	}
-
-	private static void SaveMeasurToMonthExcel(ReportMeasurClass reportMeasur, Workbook workbook) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
-
-		String DateOfCurrentMeasurement = sdf.format(reportMeasur.getMeasur().getDate());
-
-//		System.out.println("DateOfCurrentMeasurement " + DateOfCurrentMeasurement);
-
-		int monthPage = getMonthFromDate(DateOfCurrentMeasurement);
-
-//		System.out.println("monthPage " + monthPage);
-
-		Sheet sheet = workbook.getSheetAt(monthPage);
-		saveDataToMonthExcelFile(sheet, reportMeasur);
-
-	}
-
-	private static void saveDataToMonthExcelFile(Sheet sheet, ReportMeasurClass reportMeasur) {
-		Cell cellEGN, cellDoze, cellDate;
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yy");
-		boolean flDublicate = false;
-		String[] masiveDataForSaveMonthRow = generateMasiveDataForSaveMonthRow(reportMeasur);
-		int row = 6;
-		while (row < sheet.getLastRowNum() && !flDublicate) {
-			
-
-			cellEGN = getCell(sheet, row, 3);
-			cellDoze = getCell(sheet, row, 5);
-			cellDate = getCell(sheet, row, 6);
-			String dozeStr = convertDozeCellToString(cellDoze);
-			
-			System.out.println("************************");
-			System.out.println(getValueFromCellToString(cellEGN)+" -> "+(masiveDataForSaveMonthRow[2]));
-			System.out.println(dozeStr+" -> "+(masiveDataForSaveMonthRow[4]));
-			System.out.println(sdf1.format(ReadExcelFileWBC.readCellToDate(cellDate))+" -> "+(masiveDataForSaveMonthRow[5]));
-			
-				if (getValueFromCellToString(cellEGN).equals(masiveDataForSaveMonthRow[2])
-						&& dozeStr.equals(masiveDataForSaveMonthRow[4])
-						&& sdf1.format(ReadExcelFileWBC.readCellToDate(cellDate)).equals(masiveDataForSaveMonthRow[5])) {
-					flDublicate = true;
-				}
-				
-				if(getValueFromCellToString(cellEGN).trim().isEmpty()) {
-					row = sheet.getLastRowNum();
-				}
-				row++;
-		}
-
-		System.out.println("flDublicate " + flDublicate);
-		Row roww;
-		if (!flDublicate || flNotDublicateData) {
-			
-			Cell lastCell = getFirstCellFromLastRow(sheet);
-			
-			if (lastCell != null && lastCell.getRowIndex()>5) {
-				
-				roww = sheet.createRow(lastCell.getRowIndex() + 1);
-				System.out.println("roww " + roww);
-				Cell cell = roww.createCell(0,  CellType.NUMERIC);
-				cell.setCellValue(lastCell.getNumericCellValue() + 1);
-			} else {
-				roww = sheet.createRow(6);
-				roww.createCell(0).setCellValue(1);
-			}
-			for (int i = 0; i < 9; i++) {
-				roww.createCell(i + 1).setCellValue(masiveDataForSaveMonthRow[i]);
-				if (i == 2 || i == 8) {
-					if (masiveDataForSaveMonthRow[i].substring(0, 1).equals("0")) {
-						roww.createCell(i + 1).setCellValue(masiveDataForSaveMonthRow[i]);
-					} else {
-						roww.createCell(i + 1).setCellValue(Long.parseLong(masiveDataForSaveMonthRow[i]));
-					}
-				}
-				if (i == 4) {
-//					double dozeMeasurDouble = Double.parseDouble(masiveDataForSaveMonthRow[i].replaceAll(",", "."));
-//					String type = masiveDataForSaveMonthRow[9];
-//					String doseString = convertDozeToString(dozeMeasurDouble, type);
-					roww.createCell(i + 1).setCellValue(masiveDataForSaveMonthRow[i]);
-				}
-			}
-
-		}
-	}
-
-	private static String convertDozeCellToString(Cell cellDoze) {
+	public static String convertDozeCellToString(Cell cellDoze) {
 		String dozeStr = getValueFromCellToString(cellDoze);
 		DecimalFormat formatter = new DecimalFormat("0.00");
 		try {
@@ -280,89 +147,8 @@ public class InsertMeasurToExcel {
 		}
 		return str;
 	}
-
-	private static Cell getFirstCellFromLastRow(Sheet sheet) {
-		Cell cell = null;
-		for (int row = 6; row < sheet.getLastRowNum() + 1; row++) {
-			cell = getCell(sheet, row, 0);
-			if (getValueFromCellToString(cell).isEmpty()) {
-				return getCell(sheet, row - 1, 0);
-			}
-		}
-		return cell;
-	}
-
-
-	private static String[] generateMasiveDataForSaveMonthRow(ReportMeasurClass reportMeasur) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yy");
-		String[] masiveDataForSaveMonthRow = new String[10];
-		String year = sdf.format(reportMeasur.getMeasur().getDate()).substring(6);
-//		System.out.println("year " + year);
-		Person person = reportMeasur.getMeasur().getPerson();
-		masiveDataForSaveMonthRow[0] = getLastWorkplace(person);
-		masiveDataForSaveMonthRow[1] = getNamePerson(person);
-		masiveDataForSaveMonthRow[2] = person.getEgn();
-		masiveDataForSaveMonthRow[3] = getKodeStatus(person, 1, year);
-		masiveDataForSaveMonthRow[4] = convertDozeToString(reportMeasur.getMeasur().getDoze(), reportMeasur.getMeasur().getTypeMeasur().getKodeType());
-		masiveDataForSaveMonthRow[5] = sdf1.format(reportMeasur.getMeasur().getDate());
-		masiveDataForSaveMonthRow[6] = getKodeStatus(person, 2, year);
-		masiveDataForSaveMonthRow[7] = reportMeasur.getMeasur().getLab().getLab().toLowerCase();
-		masiveDataForSaveMonthRow[8] = reportMeasur.getMeasur().getLab().getLab_ID() + "";
-		masiveDataForSaveMonthRow[9] = reportMeasur.getMeasur().getTypeMeasur().getKodeType();
-		for (int i = 0; i < masiveDataForSaveMonthRow.length; i++) {
-//			System.out.println(i + " - " + masiveDataForSaveMonthRow[i]);
-
-		}
-
-		return masiveDataForSaveMonthRow;
-	}
-
-	private static PersonStatus getLastPersonStatus(Person person) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
-		Date lastDate = null;
-		PersonStatus lastPersonStatus = null;
-		try {
-			lastDate = sdf.parse("01.01.2000");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObject("Person_ID", person);
-//		System.out.println("List<PersonStatus> listSize " + list.size());
-		for (PersonStatus personStatus : list) {
-
-			Date endDate = personStatus.getSpisak_prilogenia().getEndDate();
-//			System.out.println("endDate " + endDate);
-			if (lastDate.before(endDate)) {
-				lastDate = endDate;
-				lastPersonStatus = personStatus;
-//				System.out.println("lastDate " + lastDate);
-			}
-		}
-
-		return lastPersonStatus;
-	}
-
-	private static String getKodeStatus(Person person, int zoneID, String year) {
-		String kode = "";
-		KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, zoneID, year);
-		if (kodeStat != null) {
-			kode = kodeStat.getKode();
-		} else {
-			if (zoneID == 1) {
-				kode = "ЕП-2";
-			} else {
-				kode = "н";
-			}
-		}
-		return kode;
-	}
-
-	private static String getLastWorkplace(Person person) {
-//		System.out.println("otdel " + getLastPersonStatus(person).getWorkplace().getOtdel());
-		return getLastPersonStatus(person).getWorkplace().getOtdel();
-	}
-
+	
+	
 	public static String getNamePerson(Person person) {
 		return person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName();
 	}
@@ -372,18 +158,19 @@ public class InsertMeasurToExcel {
 				+ reportMeasur.getMeasur().getPerson().getEgn();
 	}
 
-	public static boolean SaveMeasurToExcel(ReportMeasurClass reportMeasurClassToSave, Workbook workbook) {
+	public static String SaveMeasurToExcel(ReportMeasurClass reportMeasurClassToSave, Workbook workbook) {
 
+		String excelPosition;
 		String egnMeasur = reportMeasurClassToSave.getMeasur().getPerson().getEgn();
 		Sheet sheet = workbook.getSheetAt(1);
 		int row = getRowByEgnInSheet(sheet, egnMeasur);
 		System.out.println("egn " + egnMeasur+" row "+row);
 		if (row < 0) {
-			return false;
+			return "";
 		} else {
-			saveNuclideDataToExcelFile(workbook, row, reportMeasurClassToSave);
+			excelPosition = saveNuclideDataToExcelFile(workbook, row, reportMeasurClassToSave);
 		}
-		return true;
+		return excelPosition;
 
 	}
 
@@ -397,8 +184,9 @@ public class InsertMeasurToExcel {
 	}
 
 	
-	private static void saveNuclideDataToExcelFile(Workbook workbook, int row,
+	private static String saveNuclideDataToExcelFile(Workbook workbook, int row,
 			ReportMeasurClass reportMeasurClassToSave) {
+		String reportFile = "";
 		int index = 0;
 		Cell cell;
 		Sheet sheet = workbook.getSheetAt(1);
@@ -426,7 +214,8 @@ public class InsertMeasurToExcel {
 						!ReadExcelFileWBC.CellNOEmpty(cell1) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell2)) {
 //					System.out.println(cell.getStringCellValue());
-					saveDataToExcelFile(row, index, reportMeasurClassToSave, sheet);
+					int excelPosition = saveDataToExcelFile(row, index, reportMeasurClassToSave, sheet);
+					reportFile = "Excel-"+reportMeasurClassToSave.getMeasur().getPerson().getEgn()+"/"+excelPosition;
 					saveSumDozeToExcelFile(row, reportMeasurClassToSave, workbook.getSheetAt(0));
 					increment = 30;
 				}
@@ -435,6 +224,7 @@ public class InsertMeasurToExcel {
 			increment++;
 
 		}
+		return reportFile;
 
 	}
 
@@ -464,36 +254,7 @@ public class InsertMeasurToExcel {
 		} catch (Exception e) {
 			
 		}
-		
-		
-		
-//		System.out.println(dozeMeasurDouble+" - "+dozeMeasurStr);
-//		try {
-////			dozeMeasurStr = dozeMeasurStr.replaceAll(",", ".");
-//			Double.parseDouble(dozeMeasurStr);
-//		//dozata ot izmervaneto e chislo
-//		System.out.println("dozata ot izmervaneto e chislo");
-//		if(cellDoze.getCellType().toString().equals("STRING")) {
-//			//dozata ot excelFile e string
-//			System.out.println("dozata ot excelFile e string");
-//			cellDoze.setCellValue(dozeMeasurDouble);	
-//		}else {
-//			//dozata ot excelFile e chislo
-//			System.out.println("dozata ot excelFile e chislo");
-//			dozeMeasurDouble = dozeMeasurDouble + cellDoze.getNumericCellValue();
-//			cellDoze.setCellValue(dozeMeasurDouble);	
-//		}
-//		
-//	} catch (Exception e) {
-//		//dozata ot izmervaneto e string
-//		System.out.println("Exception dozata ot izmervaneto e string");
-//		if(getValueFromCellToString(cellDoze).isEmpty() || cellDoze.getCellType().toString().equals("STRING")) {
-//			//dozata ot excelFile e prazna ili string
-//			System.out.println("dozata ot excelFile e string");
-//			cellDoze.setCellValue(dozeMeasurStr);	
-//		}
-//	}
-
+	
 	}
 
 	private static void saveDozeToCell(Cell cellDoze, String dozeMeasurStr) {
@@ -553,7 +314,7 @@ public class InsertMeasurToExcel {
 		return false;
 	}
 	
-	private static void saveDataToExcelFile(int row, int column, ReportMeasurClass reportMeasurClassToSave,
+	private static int saveDataToExcelFile(int row, int column, ReportMeasurClass reportMeasurClassToSave,
 			Sheet sheet) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
 		
@@ -590,12 +351,13 @@ public class InsertMeasurToExcel {
 			cell.setCellValue(Double.parseDouble(doseString));
 		} catch (Exception e) {
 			cell.setCellValue(doseString);
-		} 
+		}
+		return cell.getColumnIndex(); 
 		
 
 	}
 
-	private static String convertDozeToString(double dozeDouble, String type) {
+	public static String convertDozeToString(double dozeDouble, String type) {
 			
 		DecimalFormat formatter = new DecimalFormat("0.00");
 		String doseString = formatter.format(dozeDouble).replace(",", ".");
@@ -660,6 +422,25 @@ public class InsertMeasurToExcel {
 
 		return cell;
 
+	}
+
+	public static List<ReportMeasurClass> getListReportMeasurClass() {
+		return listReportMeasurClass;
+	}
+
+	public static void setListReportMeasurClass(List<ReportMeasurClass> listReportMeasurClass) {
+		SaveReportMeasurTo_PersonelORExternalExcelFile.listReportMeasurClass = listReportMeasurClass;
+	}
+
+
+	
+	public static boolean getFlNotDublicateData() {
+		return flNotDublicateData;
+	}
+
+
+	public static void setFlNotDublicateData(boolean flNotDublicateData) {
+		SaveReportMeasurTo_PersonelORExternalExcelFile.flNotDublicateData = flNotDublicateData;
 	}
 
 }

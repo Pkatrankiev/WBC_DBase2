@@ -30,6 +30,7 @@ public class Measuring implements Serializable {
 	private TypeMeasur typeMeasur;
 	private String measurKoment;
 	private String reportFileName;
+	private String excelPosition;
 	
 	
 	
@@ -42,7 +43,8 @@ public class Measuring implements Serializable {
 			UsersWBC user,
 			TypeMeasur typeMeasur,
 			 String measurKoment, 
-			String reportFileName) {
+			String reportFileName,
+			String excelPosition) {
 		
 		this.person = person;
 		this.date = date;
@@ -53,7 +55,7 @@ public class Measuring implements Serializable {
 		this.typeMeasur = typeMeasur;
 		this.measurKoment = measurKoment;
 		this.reportFileName = reportFileName;
-		
+		this.excelPosition = excelPosition;
 		
 	}
 	
@@ -141,6 +143,14 @@ public class Measuring implements Serializable {
 
 	public void setTypeMeasur(TypeMeasur typeMeasur) {
 		this.typeMeasur = typeMeasur;
+	}
+
+	public String getExcelPosition() {
+		return excelPosition;
+	}
+
+	public void setExcelPosition(String excelPosition) {
+		this.excelPosition = excelPosition;
 	}
 
 	

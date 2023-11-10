@@ -58,7 +58,6 @@ public class ReadExcelFileWBC {
 		Date date = new Date();
 		if (cell != null) {
 			String type = cell.getCellType().toString();
-			System.out.println(type);
 			switch (type) {
 			case "STRING": {
 				date = isLegalDate(cell.getStringCellValue(), cell);

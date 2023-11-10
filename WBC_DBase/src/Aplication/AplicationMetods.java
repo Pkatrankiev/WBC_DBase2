@@ -46,10 +46,10 @@ public class AplicationMetods {
 		switch (key) {
 		case "Person": {
 			// read and set Person
-			List<Person> listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile);
+			List<Person> listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile, null, "");
 			System.out.println("--> "+listPerson.size());
 			if(save) {
-			ReadPersonFromExcelFile.setToDBaseListPerson(listPerson);
+			ReadPersonFromExcelFile.setToDBaseListPerson(listPerson, null, "");
 			System.out.println("Save "+firmName);
 			}
 		}
@@ -58,12 +58,12 @@ public class AplicationMetods {
 		case "Spisak_Prilogenia": {
 			// read and set Spisak_Prilogenia
 			List<Spisak_Prilogenia> Spisak_PrilogeniaList = ReadSpisak_PrilogeniaFromExcelFile
-					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year);
+					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, null, "");
 			
 			ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 			System.out.println("--> "+Spisak_PrilogeniaList.size());
 			if(save) {
-			ReadSpisak_PrilogeniaFromExcelFile.setListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
+			ReadSpisak_PrilogeniaFromExcelFile.setListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList, null, "");
 			System.out.println("Save "+firmName);
 			}
 		}
@@ -73,11 +73,11 @@ public class AplicationMetods {
 			// read and set PersonStatus
 			
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
-					year);
+					year, null, "");
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 			System.out.println("--> "+list.size());
 			if(save) {
-			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
+			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
 			System.out.println("Save "+firmName);
 			}
 		}
@@ -86,11 +86,11 @@ public class AplicationMetods {
 		case "KodeStatus": {
 			// read and set KodeStatus
 			List<KodeStatus> listKodeStatus = ReadKodeStatusFromExcelFile.getListKodeStatusFromExcelFile(pathFile,
-					firmName, year);
+					firmName, year, null, "");
 			ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 			System.out.println("--> "+listKodeStatus.size());
 			if(save) {
-			ReadKodeStatusFromExcelFile.setToDBaseListKodeStatus(listKodeStatus);
+			ReadKodeStatusFromExcelFile.setToDBaseListKodeStatus(listKodeStatus, null, "");
 			System.out.println("Save "+firmName);
 			}
 
@@ -98,11 +98,11 @@ public class AplicationMetods {
 		break;
 		case "Measuring": {
 			// read and set Measuring
-			List<Measuring>  listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile);
+			List<Measuring>  listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile, null, "");
 			ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
 			System.out.println("--> "+listMeasuring.size());
 			if(save) {
-			ReadMeasuringFromExcelFile.setListMeasuringToBData(listMeasuring);
+			ReadMeasuringFromExcelFile.setListMeasuringToBData(listMeasuring, null, "");
 			System.out.println("Save "+firmName);
 			}
 
@@ -110,11 +110,11 @@ public class AplicationMetods {
 		break;
 		case "ResultsWBC": {
 			// read and set ResultsWBC
-			List<ResultsWBC>  listResultsWBC = ReadResultsWBCFromExcelFile.generateListFromResultsWBCFromExcelFile(pathFile);
+			List<ResultsWBC>  listResultsWBC = ReadResultsWBCFromExcelFile.generateListFromResultsWBCFromExcelFile(pathFile, null, "");
 			ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
 			System.out.println("--> "+listResultsWBC.size());
 			if(save) {
-			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC);
+			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC, null, "");
 			System.out.println("Save "+firmName);
 			}
 		}
@@ -122,11 +122,11 @@ public class AplicationMetods {
 		case "ObhodenList": {
 			// read and set ObhodenList in PersonStatus
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
-					year);
+					year, null, "");
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 			System.out.println(year+ " --> "+list.size());
 			if(save) {
-			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list);
+			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
 			System.out.println("Save "+firmName);
 			}
 		}

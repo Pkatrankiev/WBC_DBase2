@@ -12,6 +12,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,17 +52,13 @@ import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
 
 import PersonReference.PersonReferenceExportToExcell;
+import PersonReference.TextInAreaTextPanel;
+import SearchFreeKode.infoFrame;
 
 
 public class ReferenceMeasuringLabMetods {
 
-	private static JTextArea textArea = ReferenceMeasuringLabFrame.getTextArea();
-	private static JTextField textField_StartDate = ReferenceMeasuringLabFrame.getTextField_StartDate();
-	private static JTextField textField_EndDate = ReferenceMeasuringLabFrame.getTextField_EndDate();
-	private static JTextField textField_Year = ReferenceMeasuringLabFrame.getTextField_Year();
-	private static JButton btn_Search = ReferenceMeasuringLabFrame.getBtn_Search();
-	private static JButton btn_Export = ReferenceMeasuringLabFrame.getBtn_Export();
-	private static JPanel tablePane = ReferenceMeasuringLabFrame.getTablePane();
+
 	private static Object[][] dataTable;
 	private static List<Laboratory> listLab = LaboratoryDAO.getAllValueLaboratory();
 	private static Font fontBold;
@@ -78,6 +77,11 @@ public class ReferenceMeasuringLabMetods {
 
 	public static void ActionListenerbBtn_Search(JPanel panel_AllSaerch, JScrollPane scrollPane, ReferenceMeasuringLabFrame referenceMeasuringLabFrame) {
 
+		JTextArea textArea = ReferenceMeasuringLabFrame.getTextArea();
+		JButton btn_Search = ReferenceMeasuringLabFrame.getBtn_Search();
+		JTextField textField_StartDate = ReferenceMeasuringLabFrame.getTextField_StartDate();
+		JTextField textField_EndDate = ReferenceMeasuringLabFrame.getTextField_EndDate();
+		JButton btn_Export = ReferenceMeasuringLabFrame.getBtn_Export();
 		btn_Search.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -116,6 +120,9 @@ public class ReferenceMeasuringLabMetods {
 
 	public static void ActionListenerComboBox_Mounth(Choice comboBox_Mount) {
 
+		JTextField textField_Year = ReferenceMeasuringLabFrame.getTextField_Year();
+		JTextField textField_StartDate = ReferenceMeasuringLabFrame.getTextField_StartDate();
+		JTextField textField_EndDate = ReferenceMeasuringLabFrame.getTextField_EndDate();
 		comboBox_Mount.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -132,6 +139,7 @@ public class ReferenceMeasuringLabMetods {
 	}
 
 	public static void ActionListenerBtnExportToExcell(JPanel panel_Search) {
+		JButton btn_Export = ReferenceMeasuringLabFrame.getBtn_Export();
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,
@@ -156,6 +164,7 @@ public class ReferenceMeasuringLabMetods {
 
 	private static void panel_infoPanelTablePanel(Object[][] dataTable, JPanel panel_AllSaerch) {
 
+		JPanel tablePane = ReferenceMeasuringLabFrame.getTablePane();
 		String[] columnNames = getTabHeader();
 
 		DefaultTableModel model = new DefaultTableModel(dataTable, columnNames);
@@ -211,6 +220,50 @@ public class ReferenceMeasuringLabMetods {
 			}
 		};
 
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e) {
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+				int col = table.columnAtPoint(e.getPoint());
+				int row = getSelectedModelRow(table);
+				System.out.println(row+" ******* "+table.getRowCount());
+				if (col >= 0 && row < table.getRowCount()-1 && row >= 0)  {
+					String dateStr = model.getValueAt(row, col).toString();
+
+					if (col == 1 && !dateStr.equals("0")) {
+						dateStr = model.getValueAt(row, 0).toString();
+					
+						generateInfoPanel(1, dateStr);
+						
+					}
+
+					if (col == 6 && !dateStr.equals("0")) {
+						dateStr = model.getValueAt(row, 0).toString();
+						
+						generateInfoPanel(2, dateStr);
+					}
+
+					if (col == 11 && !dateStr.equals("0")) {
+						dateStr = model.getValueAt(row, 0).toString();
+						
+						generateInfoPanel(3, dateStr);
+					}
+
+					if (col == 16 && !dateStr.equals("0")) {
+						dateStr = model.getValueAt(row, 0).toString();
+						
+						generateInfoPanel(0, dateStr);
+					}
+				}
+			}
+
+			
+
+		});
 
 		JTableHeader header = table.getTableHeader();
 		
@@ -316,17 +369,19 @@ public class ReferenceMeasuringLabMetods {
 	}
 	
 	static String[] getTabHeader() {
-
-		String brMeasur = "Br.Izmer";
-		String brMeasurNadMDA = "Br.Nad MDA";
-		String MAXDoza = "MAX Doza";
-		String MINDoza = "MIN Doza";
-		String SUMDoza = "SUM Doza";
+		
+		String brMeasur = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_BrIzmer");
+		String brMeasurNadMDA = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_BrNadMDA");
+		String MAXDoza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_MAX_Doza");
+		String MINDoza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_MIN_Doza");
+		String SUMDoza = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_SUM_Doza");
+		String all = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referenceMeasuringLab_All");
+		
 		List<Laboratory> listLab = LaboratoryDAO.getAllValueLaboratory();
 		int countlab = listLab.size();
 		int index = (countlab * 5) + 6;
 		String[] masive = new String[index];
-		masive[0] =  "Date";
+		masive[0] = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Date");
 		int k = 1;
 		for (int i = 0; i < listLab.size(); i++) {
 
@@ -341,15 +396,15 @@ public class ReferenceMeasuringLabMetods {
 			masive[k] = "<html>" + listLab.get(i).getLab() + "<br>" + SUMDoza + "</html>";
 			k++;
 		}
-		masive[k] = "<html>" + "All" + "<br>" + brMeasur + "</html>";
+		masive[k] = "<html>" + all + "<br>" + brMeasur + "</html>";
 		k++;
-		masive[k] = "<html>" + "All" + "<br>" + brMeasurNadMDA + "</html>";
+		masive[k] = "<html>" + all + "<br>" + brMeasurNadMDA + "</html>";
 		k++;
-		masive[k] = "<html>" + "All" + "<br>" + MAXDoza + "</html>";
+		masive[k] = "<html>" + all + "<br>" + MAXDoza + "</html>";
 		k++;
-		masive[k] = "<html>" + "All" + "<br>" + MINDoza + "</html>";
+		masive[k] = "<html>" + all + "<br>" + MINDoza + "</html>";
 		k++;
-		masive[k] = "<html>" + "All" + "<br>" + SUMDoza + "</html>";
+		masive[k] = "<html>" + all + "<br>" + SUMDoza + "</html>";
 
 		return masive;
 	}
@@ -375,6 +430,7 @@ public class ReferenceMeasuringLabMetods {
 		double dozaMIN = 0;
 		double dozaSUM = 0;
 
+		String type = "";
 		int allBrMeasur = 0;
 		int allBrNadMDA = 0;
 		double allDozaMAX = 0, allDozaMIN = 0, allDozaSUM = 0;
@@ -426,13 +482,18 @@ public class ReferenceMeasuringLabMetods {
 					for (Measuring measuring : listmeasur) {
 
 						doza = measuring.getDoze();
-						if (doza > 0) {
+						type = measuring.getTypeMeasur().getKodeType();
+						System.out.println(doza +" - "+ type);
+						if (doza > 0 || type.equals("M") ) {
 							brNadMDA++;
-							if (doza > 0.05) {
-								dozaSUM += doza;
+						}
+						
+						
+						if (doza > 0) {
+							dozaSUM += doza;
 								allDozaSUM += doza;
 								globDozaSUM[i] += doza;
-							}
+							
 
 							if (doza > dozaMAX) {
 								dozaMAX = doza;
@@ -547,14 +608,14 @@ public class ReferenceMeasuringLabMetods {
 
 		Object[][] allMasive = new Object[listMasive.size()][index];
 		int k = 0;
-		String str;
+		
 		for (Object[] objects : listMasive) {
 
 			for (int i = 0; i < objects.length; i++) {
 				allMasive[k][i] = objects[i];
 				if (objects[i].getClass().getName().equals("java.lang.Double")) {
-					str = Double.toString((double) objects[i]);
-					if (str.equals("0.05")) {
+
+					if ((double) objects[i] > 0.0 && (double) objects[i] < 0.1) {
 						allMasive[k][i] = "<0.10";
 					}
 				}
@@ -586,6 +647,8 @@ public class ReferenceMeasuringLabMetods {
 	}
 
 	public static void checkorektDate(JTextField textFieldDate) {
+		
+		JButton btn_Search = ReferenceMeasuringLabFrame.getBtn_Search();
 		textFieldDate.addKeyListener(new KeyListener() {
 
 			@Override
@@ -614,4 +677,79 @@ public class ReferenceMeasuringLabMetods {
 		});
 	}
 
+	private static void generateInfoPanel(int i, String dateStr) {
+		JFrame parent = new JFrame();
+		int[] sizeInfoFrame = { 550, 300 };
+		int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+		String textForInfoFrame ="";
+		if(i==0) {
+			textForInfoFrame = generateTextForInfoFrame( 1, dateStr)+"\n";	
+			textForInfoFrame += generateTextForInfoFrame( 2, dateStr)+"\n";
+			textForInfoFrame += generateTextForInfoFrame( 3, dateStr);
+		}else {
+				textForInfoFrame = generateTextForInfoFrame( i, dateStr);
+		}
+				System.out.println(textForInfoFrame);
+				new infoFrame(parent, Coord, textForInfoFrame, sizeInfoFrame, null);
+
+		
+	}
+	
+	private static String generateTextForInfoFrame(int i, String dateString) {
+		
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		 Date date;
+		 List<Measuring> list = new ArrayList<>();
+		try {
+			date = sdf.parse(dateString);
+			list = MeasuringDAO.getValueMeasuringByDateLab(date,  i);
+				System.out.println(list.size());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(list.size()==0) return ""; 
+		String[][] masiveData = new String[list.size()][6];
+		int k=0;
+		for (Measuring measuring : list) {
+			masiveData[k][0]= " "+(k+1); 
+			masiveData[k][1]= measuring.getPerson().getEgn();
+			masiveData[k][2]= measuring.getPerson().getFirstName()+" "+measuring.getPerson().getSecondName()+" "+measuring.getPerson().getLastName();
+			masiveData[k][3]= measuring.getDoze()+"";
+			masiveData[k][4]= measuring.getTypeMeasur().getKodeType();
+			masiveData[k][5]= measuring.getLab().getLab();
+			k++;
+		}
+		
+		
+		return generateTextWithSpases(masiveData);
+	}
+	
+	private static String generateTextWithSpases(String[][] masiveData) {
+		String kodeString = "";
+		String[] masiveZoneName = {" N","ЕГН", "Име", "Доза[mSv]", "Тип", "Лаб."};		
+		int[] max = {4, 10, 20, 11, 5, 5};
+		
+		int[] columnSize = TextInAreaTextPanel.getMaxSizecolumn(masiveData, max);
+		
+		for (int i = 0; i < masiveZoneName.length; i++) {
+			kodeString += masiveZoneName[i] + TextInAreaTextPanel.getAddSpace(columnSize[i], masiveZoneName[i]);
+		}
+		kodeString += "\n";	
+		
+		for (int i = 0; i < masiveData.length; i++) {
+
+			for (int j = 0; j < masiveZoneName.length; j++) {
+			kodeString += masiveData[i][j] + TextInAreaTextPanel.getAddSpace(columnSize[j], masiveData[i][j]) ;
+		}
+			kodeString += "\n";
+
+		}
+		return kodeString;
+	}
+	
+	private static int getSelectedModelRow(JTable table) {
+		return table.convertRowIndexToModel(table.getSelectedRow());
+	}
+	
 }

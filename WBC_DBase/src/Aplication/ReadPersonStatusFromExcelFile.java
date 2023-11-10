@@ -29,11 +29,11 @@ public class ReadPersonStatusFromExcelFile {
 
 	static Spisak_Prilogenia spPrObhodList = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(11177);
 	
-	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
+	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		if (workbook.getNumberOfSheets() > 2) {
-			listPerStat = getListPersonStatusFromBigExcelFile(workbook, firmName, year);
+			listPerStat = getListPersonStatusFromBigExcelFile(workbook, firmName, year, round, textIcon);
 
 		} else {
 			listPerStat = getListPersonStatusFromSmalExcelFile(workbook, firmName, year);
@@ -41,13 +41,13 @@ public class ReadPersonStatusFromExcelFile {
 		return listPerStat;
 	}
 
-	public static List<PersonStatus> getObhodenListPersonStatusFromExcelFile(String pathFile, String firmName, String year) {
+	public static List<PersonStatus> getObhodenListPersonStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon) {
 		System.out.println(pathFile+"  "+firmName+"  "+year);
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		if (workbook.getNumberOfSheets() > 2) {
 			System.out.println(workbook.getNumberOfSheets());
-			listPerStat = getObhodenList_PersonStatusFromBigExcelFile(pathFile, workbook, firmName, year);
+			listPerStat = getObhodenList_PersonStatusFromBigExcelFile(pathFile, workbook, firmName, year, round, textIcon);
 		} 
 		return listPerStat;
 	}
@@ -180,7 +180,7 @@ public class ReadPersonStatusFromExcelFile {
 	}
 
 	public static List<PersonStatus> getListPersonStatusFromBigExcelFile(Workbook workbook, String firmName,
-			String year) {
+			String year, ActionIcone round,  String textIcon) {
 
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
@@ -271,13 +271,14 @@ public class ReadPersonStatusFromExcelFile {
 				}
 			}
 			}
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
 
 		return listPerStat;
 
 	}
 
-	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(String pathFile, Workbook workbook,	String firmName, String year) {
+	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(String pathFile, Workbook workbook,	String firmName, String year, ActionIcone round,  String textIcon) {
 				
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
@@ -360,7 +361,7 @@ public class ReadPersonStatusFromExcelFile {
 //					}	
 				}
 			}
-
+			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
 
 		return listPerStat;
@@ -380,11 +381,13 @@ public class ReadPersonStatusFromExcelFile {
 
 	}
 
-	public static void setToBDateListPersonStatus(List<PersonStatus> list) {
-
+	public static void setToBDateListPersonStatus(List<PersonStatus> list, ActionIcone round,  String textIcon) {
+		int k=0;
+		int l=list.size();
 		for (PersonStatus personStatus : list) {
-			
 			PersonStatusDAO.setObjectPersonStatusToTable(personStatus);
+			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
+			k++;
 
 		}
 
