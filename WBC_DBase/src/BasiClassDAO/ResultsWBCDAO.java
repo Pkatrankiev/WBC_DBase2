@@ -42,8 +42,10 @@ public class ResultsWBCDAO {
 			connection.close();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
-			ResourceLoader.appendToFile( e);
+			if (!e.toString().contains("unique")) {
+				e.printStackTrace();
+				ResourceLoader.appendToFile( e);
+				}
 		}
 	}
 
@@ -70,8 +72,10 @@ public class ResultsWBCDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			ResourceLoader.appendToFile( e);
+			if (!e.toString().contains("unique")) {
+				e.printStackTrace();
+				ResourceLoader.appendToFile( e);
+				}
 		}
 	}
 
@@ -99,8 +103,10 @@ public class ResultsWBCDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-			ResourceLoader.appendToFile( e);
-			e.printStackTrace();
+			if (!e.toString().contains("unique")) {
+				e.printStackTrace();
+				ResourceLoader.appendToFile( e);
+				}
 		}
 	}
 

@@ -3,7 +3,9 @@ package PersonManagement;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -40,10 +42,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.BadLocationException;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -59,6 +65,7 @@ import Aplication.ReadKodeStatusFromExcelFile;
 
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
+import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
@@ -68,6 +75,8 @@ import BasiClassDAO.ZoneDAO;
 
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
+import BasicClassAccessDbase.Laboratory;
+import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.Spisak_Prilogenia;
@@ -108,6 +117,7 @@ public class PersonelManegementMethods {
 	static String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
 	static List<String> listFirm = Arrays.asList("", AEC, VO);
 	static Person selectionPerson;
+	static String choisePerson;
 	static boolean flOtdel;
 	static Border defoutBorder = PersonelManegementFrame.getDefoutBorder();
 	static Border redBorder = new SoftBevelBorder(BevelBorder.LOWERED, Color.RED, null, Color.RED, null);
@@ -253,6 +263,7 @@ public class PersonelManegementMethods {
 		btnBackToTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(dataTable!=null) {
+					PersonelManegementFrame.viewInfoPanel();
 					panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
 							textField_svePerson_Year, btnBackToTable);
 					PersonelManegementFrame.viewTablePanel();
@@ -582,7 +593,7 @@ public class PersonelManegementMethods {
 						if(fromListPersonManegement) {
 							lastrekord = dataTable.length;
 							egn =  (String) dataTable[i][1];
-							saveToExcel = (boolean) dataTable[i][8];
+							saveToExcel = (boolean) dataTable[i][9];
 						}
 										
 					
@@ -605,9 +616,9 @@ public class PersonelManegementMethods {
 						}
 						checkbx_EnterInZone = true;	
 						int zona = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
-						System.out.println(zona+" "+dataTable[i][7]);
+						System.out.println(zona+" "+dataTable[i][8]);
 						
-						infoForPersonFromFrame[zona-1] = (String) dataTable[i][7];
+						infoForPersonFromFrame[zona-1] = (String) dataTable[i][8];
 						infoForPersonFromFrame[5] = (String)dataTable[i][2];
 						infoForPersonFromFrame[6] = (String) dataTable[i][3];
 						infoForPersonFromFrame[7] = (String) dataTable[i][4];
@@ -1096,43 +1107,41 @@ public class PersonelManegementMethods {
 		}
 
 		String errorStr = "";
-		System.out.println(infoForPersonFromFrame[0] + " <-> " + kodeFromDBase[0]);
 		if (!infoForPersonFromFrame[0].equals(kodeFromDBase[0])) {
-			errorStr += "KZ-1("+infoForPersonFromFrame[0]+"->"+kodeFromDBase[0]+"), ";
+			errorStr += "KZ-1("+kodeFromDBase[0]+"->"+infoForPersonFromFrame[0]+"), ";
 			fl_KodeIsChange = true;
 		}
 
-		System.out.println(infoForPersonFromFrame[1] + " <-> " + kodeFromDBase[1]);
 		if (!infoForPersonFromFrame[1].equals(kodeFromDBase[1])) {
-			errorStr += "KZ-2("+infoForPersonFromFrame[1]+"->"+kodeFromDBase[1]+"), ";
+			errorStr += "KZ-2("+kodeFromDBase[1]+"->"+infoForPersonFromFrame[1]+"), ";
 			fl_KodeIsChange = true;
 		}
-		System.out.println(infoForPersonFromFrame[2] + " <-> " + kodeFromDBase[2]);
+	
 		if (!infoForPersonFromFrame[2].equals(kodeFromDBase[2])) {
-			errorStr += "KZ-HOG("+infoForPersonFromFrame[2]+"->"+kodeFromDBase[2]+"), ";
+			errorStr += "KZ-HOG("+kodeFromDBase[2]+"->"+infoForPersonFromFrame[2]+"), ";
 			fl_KodeIsChange = true;
 
 		}
-		System.out.println(infoForPersonFromFrame[3] + " <-> " + kodeFromDBase[3]);
+		
 		if (!infoForPersonFromFrame[3].equals(kodeFromDBase[3])) {
-			errorStr += "Ter-1("+infoForPersonFromFrame[3]+"->"+kodeFromDBase[3]+"), ";
+			errorStr += "Ter-1("+kodeFromDBase[3]+"->"+infoForPersonFromFrame[3]+"->"+"), ";
 			fl_KodeIsChange = true;
 		}
 
-		System.out.println(infoForPersonFromFrame[4] + " <-> " + kodeFromDBase[4]);
+		
 		if (!infoForPersonFromFrame[4].equals(kodeFromDBase[4])) {
-			errorStr += "Ter-2("+infoForPersonFromFrame[4]+"->"+kodeFromDBase[4]+"), ";
+			errorStr += "Ter-2("+kodeFromDBase[4]+"->"+infoForPersonFromFrame[4]+"), ";
 			fl_KodeIsChange = true;
 		}
 
 		if (!infoForPersonFromFrame[5].equals(person.getFirstName())) {
-			errorStr += "FName("+infoForPersonFromFrame[5]+"->"+person.getFirstName()+"), ";;
+			errorStr += "FName("+person.getFirstName()+"->"+infoForPersonFromFrame[5]+"), ";;
 		}
 		if (!infoForPersonFromFrame[6].equals(person.getSecondName())) {
-			errorStr += "SName("+infoForPersonFromFrame[6]+"->"+person.getSecondName()+"), ";
+			errorStr += "SName("+person.getSecondName()+"->"+infoForPersonFromFrame[6]+"), ";
 		}
 		if (!infoForPersonFromFrame[7].equals(person.getLastName())) {
-			errorStr += "LName("+infoForPersonFromFrame[7]+"->"+person.getLastName()+"), ";
+			errorStr += "LName("+person.getLastName()+"->"+infoForPersonFromFrame[7]+"), ";
 		}
 
 		System.out.println("errorStr " + errorStr);
@@ -2181,7 +2190,7 @@ public class PersonelManegementMethods {
 			fromListPersonManegement = true;
 			System.out.println("***** " + listPersonFromFile.size());
 			updateSectionPersonSave_Panel(listPersonFromFile);
-			dataTable = addListStringSelectionPersonToComboBox(listPersonFromFile);
+			dataTable = TableManagement.addListStringSelectionPersonToComboBox(listPersonFromFile);
 			panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
 					textField_svePerson_Year, btnBackToTable);
 			PersonelManegementFrame.viewTablePanel();
@@ -2211,35 +2220,7 @@ public class PersonelManegementMethods {
 		
 		
 	}
-
-	protected static Object[][] addListStringSelectionPersonToComboBox(List<PersonManegement> listSelectionPerson) {
-
-		Object[][] dataTable = new Object[listSelectionPerson.size()][9];
-
-//				"№", "EGN", 	"FirstName","SecondName","LastName","Otdel",
-//				"Kod ",	"Kod",	"selekt"
-
-		int zona = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
-		int k = 0;
-		for (PersonManegement personManegement : listSelectionPerson) {
-			System.out.println("egn " + personManegement.getPerson().getEgn());
-			dataTable[k][0] = (k + 1);
-			dataTable[k][1] = personManegement.getPerson().getEgn();
-			dataTable[k][2] = personManegement.getPerson().getFirstName();
-			dataTable[k][3] = personManegement.getPerson().getSecondName();
-			dataTable[k][4] = personManegement.getPerson().getLastName();
-			dataTable[k][5] = PersonReferenceFrame.getLastWorkplaceByPerson(personManegement.getPerson());
-			dataTable[k][6] = PersonReferenceFrame.getLastKodeByPersonAndZone(personManegement.getPerson(), zona);
-			dataTable[k][7] = personManegement.getKodeFromList();
-			dataTable[k][8] = true;
-
-			k++;
-		}
-
-		return dataTable;
-
-	}
-
+	
 	private static List<PersonManegement> readListPersonFromFile(File file, JTextField textField) {
 		ExcelFileBAK_Path = file.getPath();
 		textField.setText(ExcelFileBAK_Path);
@@ -2274,6 +2255,18 @@ public class PersonelManegementMethods {
 					if (listPerson.size() > 1) {
 						person = choisePerson(listPerson, name);
 					}
+					if (person == null) {
+						listPerson = PersonDAO.getValuePersonByObject("SecondName", SecondName);
+						if (listPerson.size() > 0) {
+						person = choisePerson(listPerson, name);
+						}
+					}
+					if (person == null) {
+						listPerson = PersonDAO.getValuePersonByObject("LastName", LastName);
+						if (listPerson.size() > 0) {
+						person = choisePerson(listPerson, name);
+						}
+					}
 					if (person != null) {
 						listPersonManegement.add(new PersonManegement(person, kod));
 					}
@@ -2288,8 +2281,11 @@ public class PersonelManegementMethods {
 	private static Person choisePerson(List<Person> listPerson, String choicePerson) {
 
 		String[] listChoisePerson = generateListChoisePerson(listPerson);
-		String str = (String) JOptionPane.showInputDialog(null, choicePerson, "Select Person",
-				JOptionPane.QUESTION_MESSAGE, null, listChoisePerson, listChoisePerson[2]);
+		 
+		
+		new choiseDialogFrame(new JFrame(), listChoisePerson, choicePerson);
+		 
+		String str = choisePerson;
 
 		if (str != null && str.length() > 0) {
 			String[] masiveStr = str.split(" ");
@@ -2298,83 +2294,91 @@ public class PersonelManegementMethods {
 		return null;
 	}
 
+//	private static Person choisePersonFrame(List<Person> listPerson, String choicePerson) {
+//
+//		String[] listChoisePerson = generateListChoisePerson(listPerson);
+//		String str = (String) JOptionPane.showInputDialog(null, choicePerson, "Select Person",
+//				JOptionPane.QUESTION_MESSAGE, null, listChoisePerson, listChoisePerson[2]);
+//
+//		if (str != null && str.length() > 0) {
+//			String[] masiveStr = str.split(" ");
+//			return PersonDAO.getValuePersonByEGN(masiveStr[0]);
+//		}
+//		return null;
+//	}
+//	
+	
+	
 	private static String[] generateListChoisePerson(List<Person> listPerson) {
 
-		String[] listString = new String[listPerson.size() + 1];
-		listString[0] = "";
-		int i = 1;
-		String str;
+		
+			int maxEGN = 10;
+			int maxPerson = 10;
+					
+		String[] listStringPerson = new String[listPerson.size() ];
+		String[] listStringWorkplace = new String[listPerson.size()];
+		String[] listStringEGN = new String[listPerson.size() ];
+		int i = 0;
 		for (Person person : listPerson) {
+			listStringEGN[i] ="";
+			listStringPerson[i] ="";
 			PersonStatus personStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
-			str = "";
 			if (personStat != null) {
-				str = personStat.getWorkplace().getOtdel();
+				listStringWorkplace[i] = personStat.getWorkplace().getOtdel();
+				
 			}
-
-			listString[i] = person.getEgn() + " " + person.getFirstName() + " " + person.getSecondName() + " "
-					+ person.getLastName() + " " + str;
+			
+			listStringEGN[i] = person.getEgn();
+			listStringPerson[i] = person.getFirstName() + " " + person.getSecondName() + " "+ person.getLastName();
+			
+			if(maxPerson < listStringPerson[i].length()) {
+				maxPerson = listStringPerson[i].length();
+			}
+			
 			i++;
 		}
-
-		return listString;
+		
+		for (int j = 0; j < listStringEGN.length; j++) {
+			System.out.println(j+" - "+listStringEGN[j]);
+			listStringPerson[j] = listStringEGN[j]+ TextInAreaTextPanel.getAddSpace(maxEGN, listStringEGN[j]) +
+					listStringPerson[j]  + TextInAreaTextPanel.getAddSpace(maxPerson+2, listStringPerson[j]) + listStringWorkplace[j];
+			
+		}
+	
+		return listStringPerson;
 	}
 
 	private static void panel_infoPanelTablePanel(Object[][] dataTable, JTextArea textArea, JPanel panel_AllSaerch,
 			JPanel tablePane, JScrollPane scrollPane, JTextField textField_svePerson_Year, JButton btnBackToTable) {
+		
+		final JScrollPane llPane = scrollPane;
+		
 		String[] columnNames = getTabHeader();
 		int egn_code_Colum = 1;
-		int newKode_code_Colum = 7;
-		int choice_code_Colum = 8;
+		int zoneKode_Colum = 7;
+		int newZoneKode_Colum = 8;
+		int choice_Slekt_Colum = 9;
 
-		DefaultTableModel dtm = new DefaultTableModel();
-		final JTable table = new JTable(dtm);
-
-		dtm = new DefaultTableModel(dataTable, columnNames) {
+		DefaultTableModel model = new DefaultTableModel(dataTable, columnNames);
+		JTable table = new JTable(model) {
 
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings("rawtypes")
-			private Class[] types2 = getCulumnClass();
+			public Component prepareRenderer(TableCellRenderer renderer, int Index_row, int Index_col) {
 
-			@SuppressWarnings({})
-			@Override
-			public Class<?> getColumnClass(int columnIndex) {
-				return this.types2[columnIndex];
-			}
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				if (column == choice_code_Colum || column == newKode_code_Colum) {
-					return true;
+				Component comp = super.prepareRenderer(renderer, Index_row, Index_col);
+				comp.setForeground(Color.black);
+				if(Index_col == newZoneKode_Colum || Index_col == zoneKode_Colum) {
+				checkAndChangeColorCels(zoneKode_Colum, newZoneKode_Colum, model, Index_row, comp);
 				}
-				return false;
-			}
-
-			@Override
-			public Object getValueAt(int row, int col) {
-				return dataTable[row][col];
+				
+								
+				return comp;
 			}
 
 			
-			public void setValueAt(Object value, int row, int col) {
-
-				if (!dataTable[row][col].equals(value)) {
-					dataTable[row][col] = value;
-					fireTableCellUpdated(row, col);
-
-				}
-			}
-
-			public int getColumnCount() {
-				return columnNames.length;
-			}
-
-			public int getRowCount() {
-				return dataTable.length;
-			}
-
 		};
-
+		
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -2382,27 +2386,27 @@ public class PersonelManegementMethods {
 
 			public void mousePressed(MouseEvent e) {
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-//				if (table.getSelectedColumn() == egn_code_Colum) {
-//					table.rowAtPoint(e.getPoint());
-//					table.columnAtPoint(e.getPoint());
-//					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum).toString();
-//
-//					System.out.println(reqCodeStr);
-//
-//				}
-
-				if (table.getSelectedColumn() == choice_code_Colum) {
+							
+				if (table.getSelectedColumn() == egn_code_Colum) {
 					table.rowAtPoint(e.getPoint());
 					table.columnAtPoint(e.getPoint());
-					if ((boolean) model.getValueAt(getSelectedModelRow(table), choice_code_Colum)) {
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum).toString();
+
+					System.out.println(reqCodeStr);
+
+				}
+
+				if (table.getSelectedColumn() == choice_Slekt_Colum) {
+					table.rowAtPoint(e.getPoint());
+					table.columnAtPoint(e.getPoint());
+					if ((boolean) model.getValueAt(getSelectedModelRow(table), choice_Slekt_Colum)) {
 						System.out.println("1");
-						model.setValueAt(false, getSelectedModelRow(table), choice_code_Colum);
+						model.setValueAt(false, getSelectedModelRow(table), choice_Slekt_Colum);
 					} else {
 						System.out.println("2");
-						model.setValueAt(true, getSelectedModelRow(table), choice_code_Colum);
+						model.setValueAt(true, getSelectedModelRow(table), choice_Slekt_Colum);
 					}
-					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), choice_code_Colum).toString();
+					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), choice_Slekt_Colum).toString();
 
 					System.out.println(reqCodeStr);
 
@@ -2424,8 +2428,66 @@ public class PersonelManegementMethods {
 				}
 			}
 		});
+//
+//		JTableHeader header = table.getTableHeader();
+//		
+//		final TableCellRenderer hr = table.getTableHeader().getDefaultRenderer();
+//		
+			SwingUtilities.invokeLater(new Runnable() {
 
-		new TableFilterHeader(table, AutoChoices.ENABLED);
+//			@SuppressWarnings("serial")
+			public void run() {
+				DefaultTableModel dtm = new DefaultTableModel(dataTable, columnNames) {
+
+			private static final long serialVersionUID = 1L;
+
+			@SuppressWarnings("rawtypes")
+			private Class[] types2 = getCulumnClass();
+
+			@SuppressWarnings({})
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return this.types2[columnIndex];
+			}
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				if (column == choice_Slekt_Colum || column == newZoneKode_Colum) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public Object getValueAt(int row, int col) {
+				return dataTable[row][col];
+			}
+
+			
+			public void setValueAt(Object value, int row, int col) {
+
+				if (!dataTable[row][col].equals(value)) {
+					dataTable[row][col] = value;
+					fireTableCellUpdated(row, col);
+					panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, llPane,
+							textField_svePerson_Year, btnBackToTable);
+					PersonelManegementFrame.viewTablePanel();
+					btnBackToTable.setEnabled(false);
+				}
+			}
+
+			public int getColumnCount() {
+				return columnNames.length;
+			}
+
+			public int getRowCount() {
+				return dataTable.length;
+			}
+
+		};
+
+	
+//		new TableFilterHeader(table, AutoChoices.ENABLED);
 
 		dtm.fireTableDataChanged();
 		table.setModel(dtm);
@@ -2433,6 +2495,11 @@ public class PersonelManegementMethods {
 		table.repaint();
 		System.out.println("+++++++++++++ " + dataTable.length);
 
+			}
+			});
+
+			table.getTableHeader().setReorderingAllowed(false);
+			
 		tablePane.removeAll();
 		tablePane.setPreferredSize(new Dimension(10, 10));
 		tablePane.setMaximumSize(new Dimension(32767, 32767));
@@ -2444,26 +2511,45 @@ public class PersonelManegementMethods {
 
 	}
 
+	private static void checkAndChangeColorCels(int zoneKode_Colum, int newZoneKode_Colum, DefaultTableModel model,
+			int Index_row, Component comp) {
+		if (!model.getValueAt(Index_row, zoneKode_Colum).toString().
+				equals(model.getValueAt(Index_row, newZoneKode_Colum).toString())){
+			comp.setForeground(Color.RED);
+		}else {
+			comp.setForeground(Color.black);
+		}
+	}
+	
 	private static int getSelectedModelRow(JTable table) {
 		return table.convertRowIndexToModel(table.getSelectedRow());
 	}
 
 	static String[] getTabHeader() {
-		String[] tableHeader = { " № ", "EGN", "FirstName", "SecondName", "LastName", "Otdel", "Kod KZ", "new Kod KZ",
-				"selekt" };
+		String[] tableHeader = { " № ", "ЕГН", "Име", "Презиме", "Фамилия", "Отдел",
+				"Дата на изм.", "ИД Код", "нов ИД Код", "selekt" };
 		return tableHeader;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static Class[] getCulumnClass() {
 		Class[] types = { Integer.class, String.class, String.class, String.class, String.class, String.class,
-				String.class, String.class, Boolean.class };
+				String.class, String.class, String.class, Boolean.class };
 		return types;
 	}
 
 	public static int[] getCulumnSize() {
-		int[] col = { 50, 100, 200, 200, 200, 500, 200, 200, 50 };
+		int[] col = { 50, 100, 200, 200, 200, 500, 200, 200, 200, 50 };
 		return col;
 	}
 
+	public static String getChoisePerson() {
+		return choisePerson;
+	}
+
+	public static void setChoisePerson(String NewChoisePerson) {
+		choisePerson = NewChoisePerson;
+	}
+
 }
+

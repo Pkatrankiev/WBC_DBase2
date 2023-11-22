@@ -83,7 +83,8 @@ public class UpdateBDataFromExcellFiles {
 		if (!measege.isEmpty()) {
 
 			if (OptionDialog(measege)) {
-				ActionIcone round2 = new ActionIcone("                                                        ");
+				ActionIcone round2 = new ActionIcone("                                "
+						+ "                                              ");
 				 final Thread thread = new Thread(new Runnable() {
 					
 				     @Override
@@ -110,8 +111,14 @@ public class UpdateBDataFromExcellFiles {
 
 	private static void extracted(ActionIcone round, List<String> listChengeExcellFilePath) {
 		String[] key = { 
-				"Person", "Spisak_Prilogenia", "PersonStatus", "KodeStatus", "Measuring", "ResultsWBC", 
-				"ObhodenList" };
+				"Person", 
+				"Spisak_Prilogenia", 
+				"PersonStatus", 
+				"KodeStatus", 
+				"Measuring", 
+				"ResultsWBC", 
+				"ObhodenList"
+				};
 		String year = AplicationMetods.getCurentYear();
 		String textIcon;
 		String errorText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorText");
@@ -136,8 +143,8 @@ public class UpdateBDataFromExcellFiles {
 						listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile, round, textIcon);
 						System.out.println("--> " + listPerson.size());
 					} catch (Exception e) {
-						OptionDialog(errorText);
-						save = false;
+						save =OptionDialog(errorText);
+						
 					}
 					if (save) {
 						ReadPersonFromExcelFile.setToDBaseListPerson(listPerson, round, textIcon);
@@ -158,8 +165,8 @@ public class UpdateBDataFromExcellFiles {
 						System.out.println("--> " + Spisak_PrilogeniaList.size());
 					} catch (Exception e) {
 						e.printStackTrace();
-						OptionDialog(errorText);
-						save = false;
+						save = OptionDialog(errorText);
+						
 					}
 					if (save) {
 						ReadSpisak_PrilogeniaFromExcelFile
@@ -179,8 +186,8 @@ public class UpdateBDataFromExcellFiles {
 //						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 						System.out.println("--> " + list.size());
 					} catch (Exception e) {
-						OptionDialog(errorText);
-						save = false;
+						save = OptionDialog(errorText);
+						
 					}
 					if (save) {
 						ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, round, textIcon);
@@ -198,8 +205,8 @@ public class UpdateBDataFromExcellFiles {
 //						ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 						System.out.println("--> " + listKodeStatus.size());
 					} catch (Exception e) {
-						OptionDialog(errorText);
-						save = false;
+						save = OptionDialog(errorText);
+						
 					}
 					if (save) {
 						ReadKodeStatusFromExcelFile.setToDBaseListKodeStatus(listKodeStatus, round, textIcon);
@@ -217,8 +224,8 @@ public class UpdateBDataFromExcellFiles {
 //						ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
 						System.out.println("--> " + listMeasuring.size());
 					} catch (Exception e) {
-						OptionDialog(errorText);
-						save = false;
+						save = OptionDialog(errorText);
+					
 					}
 					if (save) {
 						ReadMeasuringFromExcelFile.setListMeasuringToBData(listMeasuring, round, textIcon);
@@ -236,8 +243,8 @@ public class UpdateBDataFromExcellFiles {
 //						ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
 						System.out.println("--> " + listResultsWBC.size());
 					} catch (Exception e) {
-						OptionDialog(errorText);
-						save = false;
+						save = OptionDialog(errorText);
+						
 					}
 					if (save) {
 						ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC, round, textIcon);
@@ -336,7 +343,7 @@ public class UpdateBDataFromExcellFiles {
 		/**
 		 * select "Back" -> 0; select "Ok" -> 1;
 		 */
-		if (x > 0) {
+		if (x ==1) {
 			return true;
 		}
 		return false;

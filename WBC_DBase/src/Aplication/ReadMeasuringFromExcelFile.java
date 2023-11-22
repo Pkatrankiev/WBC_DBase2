@@ -42,7 +42,7 @@ public class ReadMeasuringFromExcelFile {
 		
 		
 	private static List<Measuring> getListMeasuringFromSmalExcelFile(Workbook workbook) {
-		String EGN = "", lab;
+		String lab;
 		Date date;
 	
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
@@ -62,7 +62,7 @@ public class ReadMeasuringFromExcelFile {
 
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 					if (person != null) {
-						System.out.println("++++++++++++++++++++"+EGN);
+//						System.out.println("++++++++++++++++++++"+EGN);
 						int k = 7;
 						cell1 = sheet.getRow(row).getCell(k);
 						k++;
@@ -153,7 +153,7 @@ public class ReadMeasuringFromExcelFile {
 	int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
 	Laboratory labor = LaboratoryDAO.getValueLaboratoryByID(indexLab);
 	
-	System.out.println(k);
+//	System.out.println(k);
 	tipeM = tipeM_R;
 	Cell cell = sheet.getRow(row).getCell(k);
 	doze = 0.0;
@@ -163,7 +163,7 @@ public class ReadMeasuringFromExcelFile {
 	case "STRING": {
 		
 		String str = cell.getStringCellValue();
-		System.out.println(str+" -> row "+row+" col "+k);
+//		System.out.println(str+" -> row "+row+" col "+k);
 		if(str.contains("<")) {
 			doze = 0.05;
 		}else {
@@ -198,7 +198,7 @@ public class ReadMeasuringFromExcelFile {
 	coment = "Doze < 0.10 mSv";	
 	}
 	String reportFile = "Excel-"+person.getEgn()+"/"+k;
-	System.out.println(reportFile);
+//	System.out.println(reportFile);
 	return new Measuring(person, date, doze, dim, labor, userSet, tipeM, coment, reportFile, reportFile);	
 	
 	}
@@ -224,12 +224,20 @@ public class ReadMeasuringFromExcelFile {
 	public static void setListMeasuringToBData(List<Measuring> MeasuringList, ActionIcone round,  String textIcon) {
 		int k=0;
 		int l=MeasuringList.size();
-		for (Measuring spPr : MeasuringList) {
-			System.out.println(spPr.getDoze());
-			MeasuringDAO.setObjectMeasuringToTable(spPr);
+		for (Measuring measur : MeasuringList) {
+			if(checkForMeasurInDBase(measur)==null) {
+				MeasuringDAO.setObjectMeasuringToTable(measur);	
+			}
 			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 			k++;
 		}
+	}
+
+
+
+	private static Measuring checkForMeasurInDBase(Measuring measur) {
+		return MeasuringDAO.getValueMeasuringFromExcelByPerson_Date_ExcelPozition_Lab(measur.getPerson(), measur.getDate(),measur.getLab(), measur.getExcelPosition());
+		 
 	}
 
 

@@ -44,8 +44,8 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 //		String[] filepat = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal_test();
 		
 		
-		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2");
-		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
 		 
 		List<ReportMeasurClass> listForSaveMeasurToMont = new ArrayList<>();
 		List<ReportMeasurClass> listForNotSaveMeasur = new ArrayList<>();
@@ -66,8 +66,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 					String excelPosition = SaveMeasurToExcel(reportMeasur, workbook);
 					if (!excelPosition.isEmpty()) {
 						Measuring measur = reportMeasur.getMeasur();
-						String reportFile = "Excel-"+measur.getPerson().getEgn()+"/"+excelPosition;
-						measur.setExcelPosition(reportFile);
+						measur.setExcelPosition(excelPosition);
 						reportMeasur.setMeasur(measur);
 						listForSaveMeasurToMont.add(reportMeasur);
 						listReportMeasurClass.add(reportMeasur);
@@ -160,7 +159,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 
 	public static String SaveMeasurToExcel(ReportMeasurClass reportMeasurClassToSave, Workbook workbook) {
 
-		String excelPosition;
+		String excelPosition = "";
 		String egnMeasur = reportMeasurClassToSave.getMeasur().getPerson().getEgn();
 		Sheet sheet = workbook.getSheetAt(1);
 		int row = getRowByEgnInSheet(sheet, egnMeasur);
@@ -214,8 +213,8 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 						!ReadExcelFileWBC.CellNOEmpty(cell1) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell2)) {
 //					System.out.println(cell.getStringCellValue());
-					int excelPosition = saveDataToExcelFile(row, index, reportMeasurClassToSave, sheet);
-					reportFile = "Excel-"+reportMeasurClassToSave.getMeasur().getPerson().getEgn()+"/"+excelPosition;
+					int excelColumn = saveDataToExcelFile(row, index, reportMeasurClassToSave, sheet);
+					reportFile = "Excel-"+reportMeasurClassToSave.getMeasur().getPerson().getEgn()+"/"+excelColumn;
 					saveSumDozeToExcelFile(row, reportMeasurClassToSave, workbook.getSheetAt(0));
 					increment = 30;
 				}

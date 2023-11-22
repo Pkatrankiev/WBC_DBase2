@@ -38,10 +38,12 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
+import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
 import Aplication.ReadResultsWBCFromExcelFile;
@@ -74,6 +76,7 @@ import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import PersonReference.PersonExcellClass;
+import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
 
 public class TestClasess {
 
@@ -259,7 +262,7 @@ public class TestClasess {
 	}
 
 	@SuppressWarnings("unused")
-	private static void testMeasuringToResultWCB() {
+	public static void testMeasuringToResultWCB() {
 		Measuring measur;
 		List<ResultsWBC> listresulterror = new ArrayList<>();
 		List<ResultsWBC> listresult = ResultsWBCDAO.getAllValueResultsWBC();
@@ -271,10 +274,10 @@ public class TestClasess {
 				System.out.println("->>> " + resultsWBC.getResultsWBC_ID());
 				listresulterror.add(resultsWBC);
 			} else {
-				if (measur.getDoze() == 0.0) {
-					System.out.println("--->>> 000 " + measur.getMeasuring_ID());
-					listresulterror.add(resultsWBC);
-				}
+//				if (measur.getDoze() == 0.0) {
+//					System.out.println("--->>> 000 " + measur.getMeasuring_ID());
+//					listresulterror.add(resultsWBC);
+//				}
 			}
 		}
 
@@ -814,10 +817,8 @@ public class TestClasess {
 		return list.get(0);
 	}
 
-	
-	
 	public static void updateFromExcel() {
-		
+		String textIcon ="<html><center>Update " +" ("+55+ "/7)" +"<br>"+"rrrrrrrr ";
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		for (String pathFile : excellFiles) {
 			String firmName = "АЕЦ Козлодуй";
@@ -825,27 +826,66 @@ public class TestClasess {
 				firmName = "Външни организации";
 			}
 		
-		boolean save = true;
-		// read and set ResultsWBC
-		List<ResultsWBC> listResultsWBC = null;
-		
-		
-		
-		try {
-			listResultsWBC = ReadResultsWBCFromExcelFile
-					.generateListFromResultsWBCFromExcelFile(pathFile,null, "");
-//			ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
-			System.out.println("--> " + listResultsWBC.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-			OptionDialog("errorr");
-			save = false;
-		}
-		if (save) {
-			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC,null, "");
-			System.out.println("Save set ResultsWBC " + firmName);
-		}
+			
+			List<Measuring> listMeasuring = null;
+//			try {
+				listMeasuring = ReadMeasuringFromExcelFile
+						.generateListFromMeasuringFromExcelFile(pathFile, new ActionIcone("            "), textIcon);
+				for (Measuring string : listMeasuring) {
+					System.out.println(string.getPerson().getEgn()+" "+string.getDoze());
+				}
+//				ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
+				System.out.println("--> " + listMeasuring.size());
+//			} catch (Exception e) {
+//				save = OptionDialog(errorText);
+//			
+//			}	
+			
+			
+			
+			
+			
+			
+//		boolean save = true;
+//		// read and set ResultsWBC
+//		List<ResultsWBC> listResultsWBC = null;
+//		
+//		
+//		
+////		try {
+//			listResultsWBC = ReadResultsWBCFromExcelFile
+//					.generateListFromResultsWBCFromExcelFile(pathFile, new ActionIcone("            "), textIcon);
+////			ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
+//			System.out.println("--> " + listResultsWBC.size());
+////		} catch (Exception e) {
+////			e.printStackTrace();
+////			OptionDialog("errorr");
+////			save = false;
+////		}
+////		if (save) {
+////			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC,null, "");
+////			System.out.println("Save set ResultsWBC " + firmName);
+////		}
 	}
+	}
+	
+	
+	
+	public static void CheckMontToBDate() throws ParseException  {
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		Date dateStart = sdfrmt.parse("01.11.2023");
+		Date dateEnd = sdfrmt.parse("30.11.2023");
+		List<Measuring> listMeasyrByMounth = MeasuringDAO.getValueMeasuringByStartdate_EndDate(dateStart,
+				dateEnd);
+		for (Measuring measuring : listMeasyrByMounth) {
+			System.out.println(measuring.getPerson().getEgn()+" "+sdfrmt.format(measuring.getDate())+" "+measuring.getReportFileName()+" "+measuring.getExcelPosition());
+		
+		if(measuring.getExcelPosition().length()>25) {
+			
+		}
+		
+		
+		}
 	}
 	
 	

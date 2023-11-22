@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -40,8 +42,7 @@ public class PersonReferenceExportToExcell {
 	public static void btnExportTableToExcell(Object[][] dataTable, String[] columnNames, JPanel panel_Btn) {
 
 		GeneralMethods.setWaitCursor(panel_Btn);
-	
-		
+				
 		String excelFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir")
 				+ "exportTable.xls";
 		try {
@@ -85,7 +86,7 @@ public class PersonReferenceExportToExcell {
 					for (int excellColumn = 0; excellColumn < dataTable[0].length; excellColumn++) {
 
 						cell = row.createCell(excellColumn, CellType.STRING);
-						cell.setCellValue(dataTable[excellrow][excellColumn].toString());
+						cell.setCellValue(dataTable[excellrow][excellColumn].toString().replace(",", "."));
 
 						setBordrCell(cell, workbook);
 
@@ -233,10 +234,10 @@ public class PersonReferenceExportToExcell {
 	}
 	
 	public static int writeCells(Sheet sheet, CellStyle cellStyleHeader, String[] columnNames, String[][] dataTable,  int startRow, boolean fromMeasuringReference, boolean allMeasur) {
-		Cell cell;
+						Cell cell;
 		//				Create header column
 						Row row = sheet.createRow(startRow);
-		
+						
 						int excelColumnCount = 0;
 						for (int tableColumCount = 0; tableColumCount < columnNames.length; tableColumCount++) {
 		
@@ -265,13 +266,13 @@ public class PersonReferenceExportToExcell {
 									int k = tableColumCount;
 									for (String string : str) {
 										cell = row.createCell(k, CellType.STRING);
-										cell.setCellValue(string);
+										cell.setCellValue(string.replace(",", "."));
 										k++;
 									}
 								}else {
 									
 								cell = row.createCell(tableColumCount, CellType.STRING);
-								cell.setCellValue(dataTable[tableRow][tableColumCount]);
+								cell.setCellValue(dataTable[tableRow][tableColumCount].replace(",", "."));
 								}
 		
 							}

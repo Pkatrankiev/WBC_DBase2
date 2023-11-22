@@ -137,6 +137,7 @@ public class ReadResultsWBCFromExcelFile {
 		String lab;;
 		Date date;
 		double[] nuclideValue = new double[16];
+		String[] simbolNuclide = new String[16];
 		double val;
 		Sheet sheet = workbook.getSheetAt(1);
 		Cell cell, cell1, cell2;
@@ -167,6 +168,7 @@ public class ReadResultsWBCFromExcelFile {
 							cell = sheet.getRow(row).getCell(k);
 							val = ReadExcelFileWBC.getDoublefromCell(cell);
 							nuclideValue[i] = val;
+							simbolNuclide[i] = sheet.getRow(3).getCell(k).getStringCellValue();
 							if(val>-1) {
 								countNuclide++;
 							}
@@ -174,19 +176,19 @@ public class ReadResultsWBCFromExcelFile {
 						}
 						
 						if(countNuclide>0) {
-							System.out.println("+++++++++++++++++countNuclide "+countNuclide);
-							Measuring measur = ReadMeasuringFromExcelFile.createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
-							System.out.println("+++++++++++++++++meas "+measur.getDoze());
+//							System.out.println("+++++++++++++++++countNuclide "+countNuclide);
+//							Measuring measur = ReadMeasuringFromExcelFile.createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
+//							System.out.println("+++++++++++++++++meas "+measur.getDoze());
 							
 							String excelPosition = "Excel-"+person.getEgn()+"/"+k;
 							int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
 							Laboratory labor = LaboratoryDAO.getValueLaboratoryByID(indexLab);
 							Measuring meas = MeasuringDAO.getValueMeasuringFromExcelByPerson_Date_ExcelPozition_Lab( person,  date,  labor, excelPosition);
 //							 MeasuringDAO.getValueMeasuringByPersonDozeDate(measur.getPerson(), measur.getDate(), measur.getDoze(), measur.getLab());
-							System.out.println("+++++++++++++++++meas "+meas.getMeasuring_ID());
+//							System.out.println("+++++++++++++++++meas "+meas.getMeasuring_ID());
 							for (int i = 0; i < 16; i++) {
 								if(nuclideValue[i]>0) {
-									NuclideWBC nuclideWBC = NuclideWBCDAO.getValueNuclideWBCByID(i+1);
+									NuclideWBC nuclideWBC = NuclideWBCDAO.getValueNuclideWBCBySymbol(simbolNuclide[i]);
 									ResultsWBC result = new ResultsWBC (meas, nuclideWBC, 0.0,  0.0,   nuclideValue[i], 0.0);
 									if(countNuclide==1) {
 										result.setNuclideDoze(meas.getDoze());

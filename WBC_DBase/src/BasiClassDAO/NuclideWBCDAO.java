@@ -265,6 +265,41 @@ public class NuclideWBCDAO {
 		return listNuclideWBC.get(0);
 	}
 
+	public static NuclideWBC getValueNuclideWBCBySymbol(String symbol) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM NuclideWBC where Symbol = ? LIMIT 1";
+
+		List<NuclideWBC> listNuclideWBC = new ArrayList<NuclideWBC>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, symbol);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				NuclideWBC nuclideWBC = new NuclideWBC();
+
+				nuclideWBC.setNuclideWBC_ID(result.getInt("NuclideWBC_ID"));
+				nuclideWBC.setName_bg_nuclide(result.getString("Name_bg"));
+				nuclideWBC.setName_en_nuclide(result.getString("Name_en"));
+				nuclideWBC.setSymbol_nuclide(result.getString("Symbol"));
+				nuclideWBC.setHalf_life_nuclide(result.getDouble("Half_life"));
+				
+				listNuclideWBC.add(nuclideWBC);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listNuclideWBC.get(0);
+	}
+
+	
 	public static String[] getMasiveSimbolNuclide() {
 		List<NuclideWBC> list =getAllValueNuclideWBC();
 		String[] masive = new String[list.size()];

@@ -15,6 +15,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -270,6 +272,7 @@ public class ReferenceMeasuringLabMetods {
 		Border defaultBorder = UIManager.getBorder("TableHeader.cellBorder");
 		
 		final TableCellRenderer hr = table.getTableHeader().getDefaultRenderer();
+		
 		header.setDefaultRenderer(new TableCellRenderer() {
 			private JLabel lbl;
 			
@@ -580,7 +583,7 @@ public class ReferenceMeasuringLabMetods {
 
 			allBrMeasur += globBrMeasur[i];
 			allBrNadMDA += globBrNadMDA[i];
-			if (globDozaSUM[i] > 0.05) {
+			if (globDozaSUM[i] > 0.0) {
 				allDozaSUM += globDozaSUM[i];
 			}
 			if (globDozaMAX[i] > allDozaMAX) {
@@ -608,16 +611,19 @@ public class ReferenceMeasuringLabMetods {
 
 		Object[][] allMasive = new Object[listMasive.size()][index];
 		int k = 0;
-		
+		NumberFormat format = new DecimalFormat("#0.00");
 		for (Object[] objects : listMasive) {
 
 			for (int i = 0; i < objects.length; i++) {
 				allMasive[k][i] = objects[i];
 				if (objects[i].getClass().getName().equals("java.lang.Double")) {
-
+					
 					if ((double) objects[i] > 0.0 && (double) objects[i] < 0.1) {
 						allMasive[k][i] = "<0.10";
 					}
+					if ((double) objects[i] > 0.1) {
+						allMasive[k][i] =  format.format(objects[i]);
+						}
 				}
 
 			}

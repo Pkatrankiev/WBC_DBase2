@@ -1041,10 +1041,22 @@ public class PersonelManegementFrame extends JFrame {
 		FlowLayout flowLayout = (FlowLayout) button_Panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		save_Panel.add(button_Panel);
+		
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setPreferredSize(new Dimension(65, 23));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PersonelManegementMethods.setChoisePerson("");
+				dispose(); // Destroy the JFrame object
+			}
+		});
+		button_Panel.add(cancelButton);
+		
+		
 
 		btn_SaveToExcelFile = new JButton("Save");
 		button_Panel.add(btn_SaveToExcelFile);
-		btn_SaveToExcelFile.setPreferredSize(new Dimension(110, 23));
+		btn_SaveToExcelFile.setPreferredSize(new Dimension(65, 23));
 		btn_SaveToExcelFile.setMargin(new Insets(2, 5, 2, 5));
 		btn_SaveToExcelFile.setIconTextGap(1);
 	

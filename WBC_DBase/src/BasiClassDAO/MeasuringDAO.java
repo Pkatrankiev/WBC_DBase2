@@ -90,14 +90,10 @@ public class MeasuringDAO {
 			preparedStatement.close();
 			connection.close();
 		} catch (SQLException e) {
+			if (!e.toString().contains("unique")) {
 			e.printStackTrace();
-//			if (e.toString().indexOf("unique constraint or index violation") > 0) {
-//				System.out.println(measuring.getPerson().getEgn()+" "+measuring.getLab().getLab_ID()+" "+measuring.getDoze()+" "+measuring.getDate());
-				
-//				MessageDialog(mesage + " " + measuring.getReportFileName());
-				
-//				ResourceLoader.appendToFile(e);
-//			}
+			ResourceLoader.appendToFile( e);
+			}
 		}
 	}
 

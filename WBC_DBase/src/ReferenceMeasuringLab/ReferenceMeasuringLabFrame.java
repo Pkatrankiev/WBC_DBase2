@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,7 @@ import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
+import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
 import java.awt.Component;
@@ -247,9 +250,21 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 		FlowLayout flowLayout_3 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.RIGHT);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setPreferredSize(new Dimension(150, 23));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PersonelManegementMethods.setChoisePerson("");
+				dispose(); // Destroy the JFrame object
+			}
+		});
+		buttonPanel.add(cancelButton);
+		
+		
 		btn_Export = new JButton(export);
 		buttonPanel.add(btn_Export);
-
+		btn_Export.setPreferredSize(new Dimension(150, 23));
 		btn_Export.setEnabled(false);
 
 		return buttonPanel;

@@ -85,13 +85,7 @@ public class PersonStatusDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-			if (e.toString().indexOf("unique")>0) {
-				System.out.println(personStatus.getPerson().getEgn() + " " + personStatus.getWorkplace().getOtdel() + " "
-						+ personStatus.getSpisak_prilogenia().getFormulyarName() + " "
-						+ personStatus.getUserWBC().getLastName() + " " + personStatus.getZabelejka().toString() + " "
-						+ personStatus.getDateSet().toString());
-//				MessageDialog(str);
-			}else {
+			if (e.toString().indexOf("unique")<0) {
 			e.printStackTrace();
 			ResourceLoader.appendToFile( e);
 			}
