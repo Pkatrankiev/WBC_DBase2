@@ -1,13 +1,16 @@
 package SaveToExcellFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +65,7 @@ public class SaveToPersonelORExternalFile {
 	static UsersWBC workingUser;
 	static String commentText;
 
-	public static void saveInfoFromPersonManegementToExcelFile(Person person, String firmName, Spisak_Prilogenia spPril,
+	public static void saveInfoFromPersonManegementToExcelFile(JFrame frame, Person person, String firmName, Spisak_Prilogenia spPril,
 			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, boolean checkbx_EnterInListChengeKode, boolean obhodenList) {
 	
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
@@ -78,6 +81,7 @@ public class SaveToPersonelORExternalFile {
 		}
 
 		try {
+			PersonelManegementMethods.copyExcelFileToDestDir(pathFile);
 			FileInputStream inputStream = new FileInputStream(pathFile);
 			Workbook workbook = new HSSFWorkbook(inputStream);
 
@@ -86,7 +90,7 @@ public class SaveToPersonelORExternalFile {
 			writePersonToOtdel(person, workbook);
 
 			if (spPril != null && !obhodenList) {
-				writeFormulyarNameToOtdel(firmName, spPril, workbook);
+				writeFormulyarNameToOtdel(firmName, spPril, workbook, workplace);
 
 				writeFormulyarNameToPersonRow(workbook, spPril, person);
 			}
@@ -95,7 +99,7 @@ public class SaveToPersonelORExternalFile {
 
 			saveInfoByObhodenList(obhodenList, spPril, workbook, person, firmName);
 			
-			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName);
+			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName, workplace);
 			
 			
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
@@ -105,7 +109,7 @@ public class SaveToPersonelORExternalFile {
 
 			outputStream.flush();
 			outputStream.close();
-
+			
 		} catch (FileNotFoundException | OldExcelFormatException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
@@ -118,8 +122,13 @@ public class SaveToPersonelORExternalFile {
 		}
 	}
 
+
+	
+	
+	
+	
 	private static void saveInfoByInListChangeKode(boolean checkbx_EnterInListChangeKode, String oldWorkplace, Spisak_Prilogenia spPril,
-			Workbook workbook, Person person, String firmName) {
+			Workbook workbook, Person person, String firmName, Workplace workplace) {
 		System.out.println("checkbx_EnterInListChangeKode "+checkbx_EnterInListChangeKode);
 		if(checkbx_EnterInListChangeKode) {
 
@@ -131,7 +140,7 @@ public class SaveToPersonelORExternalFile {
 			Row lastRow = sheet5.getRow(lastRow5-1);
 			Row newRow = sheet5.createRow(lastRow5);
 			Row rowPerson = sheet3.getRow(intRrowPerson);
-			String newWorkplace = spPril.getWorkplace().getOtdel();
+			String newWorkplace = workplace.getOtdel();
 			System.out.println("lastRow "+lastRow.getRowNum()+"lastRow4 "+lastRow5+" newRow "+newRow.getRowNum()+" rowPerson "+rowPerson.getRowNum()+" oldWorkplace "+oldWorkplace);
 		
 				if (firmName.equals("АЕЦ Козлодуй")) {
@@ -362,11 +371,11 @@ public class SaveToPersonelORExternalFile {
 		newCel.setCellValue(text);
 	}
 
-	static void writeFormulyarNameToOtdel(String firmName, Spisak_Prilogenia spPril, Workbook workbook) {
+	static void writeFormulyarNameToOtdel(String firmName, Spisak_Prilogenia spPril, Workbook workbook, Workplace workplace) {
 
 		Sheet sheetSpPr = workbook.getSheetAt(3);
 
-		firstAndLastRowForOtdel = getAreaOtdel(spPril.getWorkplace(), workbook);
+		firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
 		int firstRowOtdel = firstAndLastRowForOtdel[0], endRowOtdel = firstAndLastRowForOtdel[1];
 		System.out.println(firstRowOtdel + "  " + endRowOtdel);
 //		 ПРОВЕРКА ДАЛИ ЗАПОВЕДТА Е ВЪВЕДЕНА ПРИ ЗАГЛАВИЕТО ИЛИ ПРИ КРАЯ НА ФИРМАТА
@@ -553,7 +562,7 @@ public class SaveToPersonelORExternalFile {
 	}
 
 	
-	private static void CopyValueFromSourseRowToNewRow(Sheet worksheet, Row sourceRow, Row newRow,
+	public static void CopyValueFromSourseRowToNewRow(Sheet worksheet, Row sourceRow, Row newRow,
 			boolean withValues) {
 
 		Cell newCell;

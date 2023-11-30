@@ -117,7 +117,8 @@ public class PersonReferenceExportToExcell {
 		
 		GeneralMethods.setDefaultCursor(panel_Btn);
 	}
-
+	
+	
 	public static void btnExportInfoPersonToExcell(Person person, String[] masivePersonStatusName, String[][] masivePersonStatus,
 			String[] zoneNameMasive, String[][] masiveKode,  String[] masiveMeasurName, String[][] masiveMeasur, JPanel panel_Btn) {
 
@@ -301,6 +302,9 @@ public class PersonReferenceExportToExcell {
 		System.out.println(destinationDir);
 	}
 
+		
+	
+	
 	public static void MessageDialog(String textInFrame, String textFrame) {
 		Icon otherIcon = null;
 		JFrame jf = new JFrame();

@@ -1,10 +1,12 @@
 package Aplication;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -182,6 +184,9 @@ public class ReadPersonStatusFromExcelFile {
 	public static List<PersonStatus> getListPersonStatusFromBigExcelFile(Workbook workbook, String firmName,
 			String year, ActionIcone round,  String textIcon) {
 
+		Set<String> mySet = new HashSet<String>();
+		int countMySet;
+		
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date dateSet = null,nulldate= null;
@@ -224,8 +229,12 @@ public class ReadPersonStatusFromExcelFile {
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null && workplace.getId_Workplace()!= 54 && workplace.getId_Workplace()!= 101) {
 					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
 					zab = searchComent(workbook, row);
+					
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+					countMySet = mySet.size();
+					mySet.add(EGN);
 					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
-					if (person == null) {
+					if (person == null && (countMySet+1) == mySet.size()) {
 						MessageDialog(EGN+" - "+FirstName);
 					}
 
@@ -250,8 +259,10 @@ public class ReadPersonStatusFromExcelFile {
 								PersonStatusDAO.updateValuePersonStatus(personStatus_NotInList);
 								personStatus_NotInList = null;
 							}else {
+								if(workplace.getOtdel().equals(spPr.getWorkplace().getOtdel())) {
 						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
 						listPerStat.add(personStat);
+								}
 							}
 
 						k = k + 3;
@@ -265,8 +276,11 @@ public class ReadPersonStatusFromExcelFile {
 						}else {
 							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia("NotInList", year, nulldate, dateSet, workplace, "");
 							Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByFormulyarName_Year_Workplace("NotInList", year, workplace.getId_Workplace());
-						if(spPrNotInfo != null) {
+						
+							if(spPrNotInfo != null) {
+							if(workplace.getOtdel().equals(spPrNotInfo.getWorkplace().getOtdel())) {
 							listPerStat.add(new PersonStatus(person, workplace, spPrNotInfo, userSet, dateSet, zab));
+							}
 						}
 				}
 			}

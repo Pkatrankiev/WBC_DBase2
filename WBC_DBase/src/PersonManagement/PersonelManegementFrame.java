@@ -37,6 +37,7 @@ import Aplication.ReadFileBGTextVariable;
 
 import PersonReference.PersonReferenceFrame;
 import java.util.Calendar;
+import java.util.List;
 
 
 
@@ -227,7 +228,7 @@ public class PersonelManegementFrame extends JFrame {
 		
 		PersonelManegementMethods.ActionListener_textField_svePerson_Year(textField_svePerson_Year, btn_SaveToExcelFile);
 		
-		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(btn_SaveToExcelFile);
+		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(this, btn_SaveToExcelFile);
 		
 		PersonelManegementMethods.ActionListener_Btn_ReadFileListPerson( btn_ReadFileListPerson,  textArea,  
 				 infoPanel, tablePane,  panel_AllSaerch,  scrollPane, textField_svePerson_Year, textField, btnBackToTable );

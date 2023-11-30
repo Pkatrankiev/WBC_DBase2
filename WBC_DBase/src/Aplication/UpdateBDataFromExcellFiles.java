@@ -102,7 +102,8 @@ public class UpdateBDataFromExcellFiles {
 				
 			}
 		}else {
-			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile();
+			boolean afterExcelUpdate = true;
+			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
 		}
 		
 		
@@ -279,7 +280,8 @@ public class UpdateBDataFromExcellFiles {
 				System.out.println("updateValueActualExcellFiles ");
 			}
 			
-			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile();
+			boolean afterExcelUpdate = true;
+			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
 		}
 		round.StopWindow();
 	}

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,6 +93,12 @@ public class ReadExcelFileWBC {
 	public static String getStringfromCell(Cell cell) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
 		String str = "";
+		Date beforDat = null;
+		try {
+			beforDat = sdfrmt.parse("01.01.1950");
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
 		if(cell!= null) {
 		try {
 		String type = cell.getCellType().toString();
@@ -99,6 +106,7 @@ public class ReadExcelFileWBC {
 		
 		case "STRING": {
 			str = cell.getStringCellValue();
+			
 		}
 			break;
 		case "BLANG": {
@@ -118,7 +126,14 @@ public class ReadExcelFileWBC {
 			break;
 		case "DATA":
 		{
-			str = sdfrmt.format(cell.getDateCellValue());
+			
+		Date dat = cell.getDateCellValue();
+		System.out.println(dat+"--------------------");
+			if(dat.after(beforDat)) {
+				System.out.println("*****************************");
+			str = sdfrmt.format(dat);
+			}
+			
 		}
 			break;
 		}
@@ -131,6 +146,10 @@ public class ReadExcelFileWBC {
 		JOptionPane.showInputDialog(null, cellSring, cel);
 		
 	}
+		if(str.equals("31.12.1899")) {
+			str = "";
+		}
+		
 		}
 		return str;
 	}

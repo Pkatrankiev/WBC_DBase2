@@ -81,7 +81,7 @@ public class KodeStatusDAO {
 		return kodeStatus;
 	}
 
-	public static void updateValueKodeStatus(KodeStatus kodeStatus, int id_KodeStatus) {
+	public static void updateValueKodeStatus(KodeStatus kodeStatus) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -98,7 +98,7 @@ public class KodeStatusDAO {
 			preparedStatement.setString(6, kodeStatus.getZabelejkaKodeStatus());
 			
 
-			preparedStatement.setInt(7, id_KodeStatus);
+			preparedStatement.setInt(7, kodeStatus.getKodeStatus_ID());
 
 			preparedStatement.executeUpdate();
 

@@ -1,10 +1,12 @@
 package Test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -35,8 +38,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.hsqldb.lib.FileUtil;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
@@ -75,8 +80,11 @@ import BasicClassAccessDbase.TypeMeasur;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
+import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonExcellClass;
+import PersonReference.PersonReferenceExportToExcell;
 import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
+import SaveToExcellFile.SaveToPersonelORExternalFile;
 
 public class TestClasess {
 
@@ -134,6 +142,157 @@ public class TestClasess {
 					k++;
 				}
 			}
+		}
+
+	}
+
+	static List<List<String>> checkTwoExcelFiles(String PathTo1File, String PathTo2File) {
+
+		List<List<String>> listAllRowString = new ArrayList<>();
+		List<List<Integer>> listAllRowInteger = new ArrayList<>();
+		FileInputStream inputStream1;
+		FileInputStream inputStream2;
+		try {
+			inputStream1 = new FileInputStream(PathTo1File);
+			try (Workbook workbook1 = new HSSFWorkbook(inputStream1)) {
+				inputStream2 = new FileInputStream(PathTo2File);
+				try (Workbook workbook2 = new HSSFWorkbook(inputStream2)) {
+					int lastRow1 = workbook1.getSheetAt(0).getLastRowNum();
+					int lastRow2 = workbook2.getSheetAt(0).getLastRowNum();
+					Sheet worksheet1;
+					Sheet worksheet2;
+
+					Row sourceRow1;
+					Row sourceRow2;
+					String str1 = "";
+					String str2 = "";
+					String str = "";
+					if (lastRow1 == lastRow2) {
+
+						for (int i = 0; i < 4; i++) {
+							List<String> listRow = new ArrayList<>();
+							worksheet1 = workbook1.getSheetAt(i);
+							worksheet2 = workbook2.getSheetAt(i);
+
+							for (int j = 0; j < lastRow1; j++) {
+
+								sourceRow1 = worksheet1.getRow(j);
+								sourceRow2 = worksheet2.getRow(j);
+
+								if (sourceRow1 != null && sourceRow2 != null) {
+
+									for (int k = 0; k < 256; k++) {
+
+										str = ReadExcelFileWBC.getStringfromCell(sourceRow1.getCell(k));
+										if (!str.isEmpty()) {
+											str1 += str + " | ";
+										}
+
+										str = ReadExcelFileWBC.getStringfromCell(sourceRow2.getCell(k));
+										if (!str.isEmpty()) {
+											str2 += str + " | ";
+										}
+									}
+									if (!str1.equals(str2)) {
+										listRow.add(j + ": 1 - " + str1 + ": 2 - " + str2);
+									}
+									str1 = "";
+									str2 = "";
+								}
+							}
+							listAllRowString.add(listRow);
+							
+						}
+						
+						
+						int l = 1;
+						for (List<String> listInt : listAllRowString) {
+							if (listInt.size() > 0) {
+								System.out.println("Razliki w Sheet " + l);
+								for (String integer : listInt) {
+									String[] rowStr = integer.split(":");
+									System.out.println("row " + rowStr[0]);
+									System.out.println("fail " + rowStr[1]);
+									System.out.println("fail " + rowStr[2]);
+
+								}
+							}
+							l++;
+						}
+						
+						
+					} else {
+
+						System.out.println("Ima nowi redowe file1 = " + lastRow1 + "  file2 = " + lastRow2);
+						return null;
+					}
+				}
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listAllRowString;
+
+	}
+
+	static void movePersonInWorkplaceArea(int endRowOtdel, String egn) {
+
+		String pathFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		boolean isNewData = true;
+		FileInputStream inputStream;
+		try {
+			inputStream = new FileInputStream(pathFile);
+			Workbook workbook = new HSSFWorkbook(inputStream);
+
+			Person person = PersonDAO.getValuePersonByEGN(egn);
+			int row = 0;
+			int lastRow;
+
+			System.out.println(person.getEgn());
+			String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
+
+			for (int i = 0; i < 4; i++) {
+				Sheet worksheet = workbook.getSheetAt(i);
+
+				lastRow = worksheet.getLastRowNum();
+				worksheet.shiftRows(endRowOtdel, lastRow, 1);
+				worksheet.createRow(endRowOtdel);
+
+				Row sourceRow = worksheet.getRow(row);
+
+				Row newRow = worksheet.getRow(endRowOtdel);
+
+				boolean withValues = false;
+				if (isNewData) {
+					sourceRow = worksheet.getRow(endRowOtdel - 1);
+
+				} else {
+					withValues = true;
+				}
+				SaveToPersonelORExternalFile.CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
+				newRow.getCell(0).setCellValue(kode[0]);
+				newRow.getCell(1).setCellValue(kode[1]);
+				newRow.getCell(2).setCellValue(kode[2]);
+				newRow.getCell(3).setCellValue(kode[3]);
+				newRow.getCell(4).setCellValue(kode[4]);
+				newRow.getCell(5).setCellValue(person.getEgn());
+				newRow.getCell(6).setCellValue(
+						person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
+			}
+
+			FileOutputStream outputStream = new FileOutputStream(pathFile);
+			workbook.write(outputStream);
+
+			workbook.close();
+
+			outputStream.flush();
+			outputStream.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -243,18 +402,18 @@ public class TestClasess {
 				.getListPersonStatusWithoutSpisak_Prilogenia("7906113205");
 		ReadPersonStatusFromExcelFile.ListPersonStatus(list1);
 
-		ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list1,null, "");
+		ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list1, null, "");
 
 		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
 
 		AplicationMetods.testGetListPersonSatatusByPersonAndDateAfterDateSet();
 
 		JFileChooser chooiser = new JFileChooser();
-		 chooiser.setMultiSelectionEnabled(true);
-		 chooiser.showOpenDialog(null);
-		 File[] files = chooiser.getSelectedFiles();
+		chooiser.setMultiSelectionEnabled(true);
+		chooiser.showOpenDialog(null);
+		File[] files = chooiser.getSelectedFiles();
 		System.out.println(files.length);
-		
+
 		List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles(files);
 		System.out.println(list.size());
 		ReadResultFromReport.PrintListReportMeasurClass(list);
@@ -818,34 +977,28 @@ public class TestClasess {
 	}
 
 	public static void updateFromExcel() {
-		String textIcon ="<html><center>Update " +" ("+55+ "/7)" +"<br>"+"rrrrrrrr ";
+		String textIcon = "<html><center>Update " + " (" + 55 + "/7)" + "<br>" + "rrrrrrrr ";
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		for (String pathFile : excellFiles) {
 			String firmName = "АЕЦ Козлодуй";
 			if (pathFile.contains("EXTERNAL")) {
 				firmName = "Външни организации";
 			}
-		
-			
+
 			List<Measuring> listMeasuring = null;
 //			try {
-				listMeasuring = ReadMeasuringFromExcelFile
-						.generateListFromMeasuringFromExcelFile(pathFile, new ActionIcone("            "), textIcon);
-				for (Measuring string : listMeasuring) {
-					System.out.println(string.getPerson().getEgn()+" "+string.getDoze());
-				}
+			listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile,
+					new ActionIcone("            "), textIcon);
+			for (Measuring string : listMeasuring) {
+				System.out.println(string.getPerson().getEgn() + " " + string.getDoze());
+			}
 //				ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
-				System.out.println("--> " + listMeasuring.size());
+			System.out.println("--> " + listMeasuring.size());
 //			} catch (Exception e) {
 //				save = OptionDialog(errorText);
 //			
 //			}	
-			
-			
-			
-			
-			
-			
+
 //		boolean save = true;
 //		// read and set ResultsWBC
 //		List<ResultsWBC> listResultsWBC = null;
@@ -866,40 +1019,65 @@ public class TestClasess {
 ////			ReadResultsWBCFromExcelFile.setListResultsWBCToBData(listResultsWBC,null, "");
 ////			System.out.println("Save set ResultsWBC " + firmName);
 ////		}
+		}
 	}
+
+	public static boolean isFileClosed() {
+
+		String fileName = "d:\\PERSONNEL.xls";
+		File file = new File(fileName);
+		BufferedReader reader;
+		Process plsof;
+		try {
+			plsof = new ProcessBuilder(new String[] { "lsof", "|", "grep", file.getAbsolutePath() }).start();
+			reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
+			reader.close();
+			plsof.destroy();
+			String line;
+			System.out.println("try");
+			while ((line = reader.readLine()) != null) {
+				System.out.println("l");
+				if (line.contains(file.getAbsolutePath())) {
+					reader.close();
+					plsof.destroy();
+					return false;
+				}
+			}
+		} catch (Exception ex) {
+			System.out.println("exseptrion");
+		}
+
+		return true;
 	}
-	
-	
-	
-	public static void CheckMontToBDate() throws ParseException  {
+
+	public static void CheckMontToBDate() throws ParseException {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date dateStart = sdfrmt.parse("01.11.2023");
 		Date dateEnd = sdfrmt.parse("30.11.2023");
-		List<Measuring> listMeasyrByMounth = MeasuringDAO.getValueMeasuringByStartdate_EndDate(dateStart,
-				dateEnd);
+		List<Measuring> listMeasyrByMounth = MeasuringDAO.getValueMeasuringByStartdate_EndDate(dateStart, dateEnd);
 		for (Measuring measuring : listMeasyrByMounth) {
-			System.out.println(measuring.getPerson().getEgn()+" "+sdfrmt.format(measuring.getDate())+" "+measuring.getReportFileName()+" "+measuring.getExcelPosition());
-		
-		if(measuring.getExcelPosition().length()>25) {
-			
-		}
-		
-		
+			System.out.println(measuring.getPerson().getEgn() + " " + sdfrmt.format(measuring.getDate()) + " "
+					+ measuring.getReportFileName() + " " + measuring.getExcelPosition());
+
+			if (measuring.getExcelPosition().length() > 25) {
+
+			}
+
 		}
 	}
-	
-	
+
 	static void RemoveWorkplace_54_101_FromPersonStatus(int idWorkplace, String egn) {
-		
+
 		Workplace workplace54 = WorkplaceDAO.getValueWorkplaceByID(idWorkplace);
-		List<PersonStatus> listPersonStatus54 = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workplace54, "2023");
+		List<PersonStatus> listPersonStatus54 = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workplace54,
+				"2023");
 		PersonStatus lastPersonStat = new PersonStatus();
 		PersonStatus drPersonStat = new PersonStatus();
 		System.out.println("listPersonStatus54_1 = " + listPersonStatus54.size());
-		
-		int k=0;
+
+		int k = 0;
 		for (PersonStatus perStat : listPersonStatus54) {
-			System.out.println(k+"-"+perStat.getPerson().getEgn());
+			System.out.println(k + "-" + perStat.getPerson().getEgn());
 //			k++;
 //			List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", perStat.getPerson(),
 //					"DateSet");
@@ -917,15 +1095,14 @@ public class TestClasess {
 //				PersonStatusDAO.deleteValuePersonStatus(lastPersonStat);	
 //			}
 //			}
-			
-			if(perStat.getPerson().getEgn().equals(egn)) {
+
+			if (perStat.getPerson().getEgn().equals(egn)) {
 				PersonStatusDAO.deleteValuePersonStatus(perStat);
 			}
-			
-			
+
 		}
 		listPersonStatus54 = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workplace54, "2023");
-		
+
 		System.out.println("listPersonStatus54_2 = " + listPersonStatus54.size());
 
 	}
@@ -941,9 +1118,7 @@ public class TestClasess {
 			return null;
 		}
 	}
-	
-	
-	
+
 	public static void MountlyreportMeasuring(int mount) {
 		List<Laboratory> listLab = LaboratoryDAO.getAllValueLaboratory();
 		int countlab = listLab.size();

@@ -1,7 +1,9 @@
 package Aplication;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -10,11 +12,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import BasiClassDAO.PersonDAO;
 import BasicClassAccessDbase.Person;
 
+
 public class ReadPersonFromExcelFile {
 
 	
 	public static List<Person> updatePersonFromExcelFile(String pathFile, ActionIcone round,  String textIcon) {
-		
+		Set<String> mySet = new HashSet<String>();
+		int countMySet;
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		String EGN = "", FirstName = "", SecondName = "", LastName = "";
 		Sheet sheet = workbook.getSheetAt(0);
@@ -28,7 +32,9 @@ public class ReadPersonFromExcelFile {
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
-					if (ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell) == null) {
+					countMySet = mySet.size();
+					mySet.add(EGN);
+					if (ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell) == null && (countMySet+1) == mySet.size()) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
 						String[] names = ReadExcelFileWBC.splitAllName(FirstName);

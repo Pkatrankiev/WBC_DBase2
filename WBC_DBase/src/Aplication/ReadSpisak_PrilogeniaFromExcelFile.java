@@ -134,9 +134,10 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 			if (sdfrmt.format(startDate).equals(sdfrmt.format(spisak_Prilogenia.getStartDate()))
 					&& sdfrmt.format(endDate).equals(sdfrmt.format(spisak_Prilogenia.getEndDate()))) {
 				if (workplace.getOtdel().equals(spisak_Prilogenia.getWorkplace().getOtdel()) 
-						||(spisak_Prilogenia.getWorkplace().getSecondOtdelName()!= null && workplace.getSecondOtdelName()!=null 
-						&& workplace.getSecondOtdelName().equals(spisak_Prilogenia.getWorkplace().getSecondOtdelName()))) {
-//					System.out.println("------------------------" + spisak_Prilogenia.getFormulyarName());
+//						||(spisak_Prilogenia.getWorkplace().getSecondOtdelName()!= null && workplace.getSecondOtdelName()!=null 
+//						&& workplace.getSecondOtdelName().equals(spisak_Prilogenia.getWorkplace().getSecondOtdelName()))
+						) {
+
 					fl_Data = false;
 					spPr = spisak_Prilogenia;
 					return spisak_Prilogenia;

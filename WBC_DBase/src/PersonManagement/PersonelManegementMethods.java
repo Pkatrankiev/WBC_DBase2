@@ -18,7 +18,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import java.io.File;
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -52,6 +56,9 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.BadLocationException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -62,7 +69,7 @@ import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
-
+import Aplication.ResourceLoader;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
@@ -521,12 +528,11 @@ public class PersonelManegementMethods {
 		});
 
 	}
-
 	
-	static void ActionListener_Btn_SaveToExcelFile(JButton btn_SaveToExcelFile) {
+	static void ActionListener_Btn_SaveToExcelFile(JFrame frame, JButton btn_SaveToExcelFile) {
 		btn_SaveToExcelFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+					
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
 
 				JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
@@ -557,7 +563,10 @@ public class PersonelManegementMethods {
 				boolean checkbx_EnterInZone = checkbx_svePerson_EnterInZone.isSelected();
 				boolean checkbx_EnterInListChengeKode = checkbx_svePerson_EnterInListChengeKode.isSelected();
 				boolean checkbx_SaveToExcel = checkbx_svePerson__SaveToExcel.isSelected();
-				
+			
+				if(PersonelManegementMethods.checkIsClosedPersonAndExternalFile()) {
+					
+					
 				if (checkInfoOtdel(comboBox_svePerson_Otdel)) {
 
 	
@@ -653,8 +662,7 @@ public class PersonelManegementMethods {
 								e1.printStackTrace();
 							}
 
-							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia(formuliarName, newYear, sDate, eDate, workplace,
-									"");
+							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia(formuliarName, newYear, sDate, eDate, workplace,"");
 							spisPril = Spisak_PrilogeniaDAO
 									.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(newYear, sDate,
 											workplace.getId_Workplace());
@@ -681,7 +689,7 @@ public class PersonelManegementMethods {
 						
 						if(saveToExcel) {
 							System.out.println("**********************************");
-						SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
+						SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(frame, person,
 								comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment, workplace, oldOtdelPerson, checkbx_EnterInZone, checkbx_EnterInListChengeKode, obhodenList);
 					
 					}
@@ -691,9 +699,8 @@ public class PersonelManegementMethods {
 				}
 				}
 			
-
-	
-
+		}
+		
 		});
 	}
 
@@ -733,7 +740,6 @@ public class PersonelManegementMethods {
 		}
 	});
 	}
-	
 	
 	protected static String checkFormuliarNameToZoneKode() {
 		JTextField textField_svePerson_Spisak = PersonelManegementFrame.getTextField_svePerson_Spisak();
@@ -777,7 +783,6 @@ public class PersonelManegementMethods {
 		
 		
 	}
-
 	
 	private static void setKodeStatusInDBase(Person person, String[] infoForPerson, String year) {
 
@@ -1179,13 +1184,16 @@ public class PersonelManegementMethods {
 			if (i == 0) {
 				kode[i] = "ЕП-2";
 			}
-			KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, curentYear + "");
+			KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, curentYear);
 			if (kodeStat != null) {
 				kode[i] = kodeStat.getKode();
 			}
 
 		}
 
+		for (int i = 0; i < 5; i++) {
+			System.out.println(i+" "+kode[i]);
+		}
 		return kode;
 	}
 
@@ -1204,7 +1212,7 @@ public class PersonelManegementMethods {
 			} else {
 				if (kodeStst != null) {
 					kodeStst.setKode(kodeByFrame);
-					KodeStatusDAO.updateValueKodeStatus(kodeStst, kodeStst.getKodeStatus_ID());
+					KodeStatusDAO.updateValueKodeStatus(kodeStst);
 				} else {
 					KodeStatusDAO.setObjectKodeStatusToTable(newKodeStst);
 				}
@@ -2293,21 +2301,6 @@ public class PersonelManegementMethods {
 		}
 		return null;
 	}
-
-//	private static Person choisePersonFrame(List<Person> listPerson, String choicePerson) {
-//
-//		String[] listChoisePerson = generateListChoisePerson(listPerson);
-//		String str = (String) JOptionPane.showInputDialog(null, choicePerson, "Select Person",
-//				JOptionPane.QUESTION_MESSAGE, null, listChoisePerson, listChoisePerson[2]);
-//
-//		if (str != null && str.length() > 0) {
-//			String[] masiveStr = str.split(" ");
-//			return PersonDAO.getValuePersonByEGN(masiveStr[0]);
-//		}
-//		return null;
-//	}
-//	
-	
 	
 	private static String[] generateListChoisePerson(List<Person> listPerson) {
 
@@ -2551,5 +2544,155 @@ public class PersonelManegementMethods {
 		choisePerson = NewChoisePerson;
 	}
 
-}
+	public static boolean fileIsOpened(String excelFilePath) {
+		 File file = new File(excelFilePath);
+	    File sameFileName = new File(excelFilePath);
+	    if(file.renameTo(sameFileName)){
+	       System.out.println("file is closed"); 
+	       return false;
+	    }else{
+	       System.out.println("file is opened");
+	        return true;
+	    }
+	}
+	
+	public static boolean checkIsClosedPersonAndExternalFile() {
+		String filePath[] = {
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen"); 
+	String dialogString = "<html>";
+		for (int i = 0; i < filePath.length; i++) {
+		File file = new File(filePath[i]);
+	    File sameFileName = new File(filePath[i]);
+	    if(!file.renameTo(sameFileName)){
+	    	 System.out.println("file is opened");
+	    	dialogString += sameFileName.getName()+" "+fileIsOpen+"<br>";
+	        
+	    }
+		}
+		System.out.println(dialogString+"  "+dialogString.length());
+		if(dialogString.length() > 7) {
+			return OptionDialog(dialogString+"</html>",  "В Н И М А Н И Е");
+		}
+		return true;
+	}
+	
+	public static List<OpenedExcelClass> openClosedPersonAndExternalFile() {
+		List<OpenedExcelClass> list = new ArrayList<>();
+		String filePath[] = {
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		for (int i = 0; i < filePath.length; i++) {
+		 File file = new File(filePath[i]);
+		    File sameFileName = new File(filePath[i]);
+		    if(file.renameTo(sameFileName)){
+		       System.out.println("file is closed"); 
+		       if(openJavaExcelFile(filePath[i]) != null) {
+		      list.add( openJavaExcelFile(filePath[i]));
+		       }
+		    }
+		}
+		return list;
+	}
+	
+	
+	public static void ClosedPersonAndExternalFile(Workbook[] workbook) {
+		String filePath[] = {
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
+				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		for (int i = 0; i < filePath.length; i++) {
+			FileOutputStream outputStream;
+			try {
+				outputStream = new FileOutputStream(
+				        "C://Users//AnubhavPatel//Desktop/Testing_Code_Macro.xlsm");
+				try {
+					workbook[i].write(outputStream);
+					outputStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
+	
+	
+	
+	
+	public static void copyExcelFileToDestDir(String sourceFilePath) {
+		String destFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir");
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("ddMMyy");
+		Date date = new Date();
+		String strDate = sdfrmt.format(date);
 
+		int slashIndex = sourceFilePath.indexOf("\\")+1;
+		int dotIndex = sourceFilePath.indexOf(".");
+		String destFileName = sourceFilePath.substring(slashIndex, dotIndex)+"-"+strDate+sourceFilePath.substring(dotIndex);
+		
+		File fileSorce = new File(sourceFilePath);
+		File fileDest = new File(destFilePath+destFileName);
+		
+		try {
+			FileUtils.copyFile(fileSorce, fileDest);
+		} catch (IOException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		  
+	}
+	
+	public static void openMinimizedExcelFile(String excelFilePath) {
+		try {
+		 Runtime.getRuntime().exec(new String[]{"cmd","/c", "start", "/min","EXCEL.EXE", excelFilePath});
+		} catch (IOException ioe) {
+			ResourceLoader.appendToFile(ioe);
+			ioe.printStackTrace();
+		}
+
+	}
+	public static OpenedExcelClass openJavaExcelFile(String excelFilePath) {
+		
+		FileInputStream inputStream;
+	try {
+		inputStream = new FileInputStream(excelFilePath);
+		Workbook workbook = new HSSFWorkbook(inputStream);
+		return new OpenedExcelClass(excelFilePath, workbook);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	}
+	return null;
+	
+	}
+	public static void clozedJavaExcelFile(List<OpenedExcelClass> listOpenedExcelFile) {
+		for (OpenedExcelClass openedExcelClass : listOpenedExcelFile) {
+		try {
+			FileInputStream inputStream = new FileInputStream(openedExcelClass.getFilePath());
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		}
+	}
+	
+	public static void clozedExcelFile() {
+		try {
+		 Runtime.getRuntime().exec(new String[]{"cmd","/c", "taskkill", "/f","/im", "EXCEL.EXE"});
+		} catch (IOException ioe) {
+			ResourceLoader.appendToFile(ioe);
+			ioe.printStackTrace();
+		}
+
+	}
+
+	
+
+
+}

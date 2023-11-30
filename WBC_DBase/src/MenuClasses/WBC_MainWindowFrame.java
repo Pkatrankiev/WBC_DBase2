@@ -45,9 +45,10 @@ public class WBC_MainWindowFrame extends JFrame {
 	public WBC_MainWindowFrame() {
 	
 		String MainWindowFrame_BtnActual = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_BtnActual");
+		String Version = ReadFileBGTextVariable.getGlobalTextVariableMap().get("Version");
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
-		setTitle("Data Base WBC"); 
+		setTitle("Data Base WBC "+Version); 
 		setMinimumSize(new Dimension(600, 300));
 		GetVisibleLAF(this);	
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -72,8 +73,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(lblNewLabel);
-		
-		
+				
 		JButton btnNewButton = new JButton(MainWindowFrame_BtnActual);
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -94,7 +94,7 @@ public class WBC_MainWindowFrame extends JFrame {
 			});
 		  
 			setVisible(true);
-
+			
 	}
 	
 	
@@ -185,12 +185,14 @@ public class WBC_MainWindowFrame extends JFrame {
 		}
 	}
 	
-	public static void updateLastActualsDBaseFromExcelFile() {
+	public static void updateLastActualsDBaseFromExcelFile(boolean afterExcelUpdate) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
 		String MainWindowFrame_Label = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_Label");
 		ActualExcellFiles actualExcellFiles_LastActuals = ActualExcellFilesDAO.getValueActualExcellFilesByName("LastActuals");
+		if(afterExcelUpdate) {
 		actualExcellFiles_LastActuals.setActualExcellFiles_Date(new Timestamp(System.currentTimeMillis()));
 		ActualExcellFilesDAO.updateValueActualExcellFiles(actualExcellFiles_LastActuals);
+		}
 		String date_LastActuals = sdfrmt.format(actualExcellFiles_LastActuals.getActualExcellFiles_Date());
 		WBC_MainWindowFrame.getLblNewLabel().setText(MainWindowFrame_Label+" "+date_LastActuals);
 	}

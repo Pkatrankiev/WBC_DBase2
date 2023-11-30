@@ -1,11 +1,11 @@
 
 minYearInDbase = 2005
-
+Version = v.231123
 dataBaseFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
 databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
 
-databaseURL_1 = jdbc:ucanaccess://D://WBC_DBase150923.mdb
+
 
 filePathArhivePersonel =  Arhive\\PERSONNEL_
 filePathArhiveExternal =  Arhive\\EXTERNAL_
@@ -17,18 +17,32 @@ filePathPersonel_test =  Arhive\\PERSONNEL_test.xls
 databaseEncriptOID = qwer1234
 databaseEncript = password
 
-filePathExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
-filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
 
-filePathMonthExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
-filePathMonthPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
+###############   originale File  #####################################
+databaseURL_1 = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
+
+filePathExternal_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+
+filePathMonthExternal_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
+filePathMonthPersonel_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
 
 
-filePathExternal_orig2 = d:\\EXTERNAL.xls
-filePathPersonel_orig2 = d:\\PERSONNEL.xls
 
-filePathMonthExternal_test = d:\\month\\wbc_month.xls
-filePathMonthPersonel_test = d:\\month\\wbc_month_P.xls
+###############   test File  #####################################
+databaseURL = jdbc:ucanaccess://D://WBC_DBase231123+.mdb
+
+filePathExternal_orig = d:\\EXTERNAL.xls
+filePathPersonel_orig = d:\\PERSONNEL.xls
+
+filePathMonthExternal_orig = d:\\month\\wbc_month.xls
+filePathMonthExternal_orig = d:\\month\\wbc_month_P.xls
+
+
+destinationDir = DIRECTORY/
+
+destinationIcons = ICONS/ajaxLoader.gif
+
 
 
 filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
@@ -132,8 +146,7 @@ referenceMeasuringLab_Mount = Месец
 
 
 
-destinationDir = DIRECTORY/
-destinationIcons = ICONS/ajaxLoader.gif
+
 klikToCopy = Клилнете за да копирате
 MenuOder_TitleName = Гама Кал. Екстракт
 isEmptyDozeFilds = Има празни полета за дози.

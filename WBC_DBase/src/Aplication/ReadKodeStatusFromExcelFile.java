@@ -3,7 +3,9 @@ package Aplication;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -25,6 +27,9 @@ public class ReadKodeStatusFromExcelFile {
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 
 	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon)  {
+		
+		Set<String> mySet = new HashSet<String>();
+		int countMySet;
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<KodeStatus> listKodeStatus = new ArrayList<>();
 		Person person;
@@ -44,7 +49,12 @@ public class ReadKodeStatusFromExcelFile {
 				cell1 = sheet.getRow(row).getCell(6);
 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					
 					person = getPersonFromEGNCell(cell);
+					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+					countMySet = mySet.size();
+					mySet.add(EGN);
+					if( (countMySet+1) == mySet.size()) {
 					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
 					if (person == null) {
 						System.out.println(EGN+" - "+FirstName);
@@ -97,7 +107,8 @@ public class ReadKodeStatusFromExcelFile {
 						listKodeStatus
 								.add(new KodeStatus(person, kodeT2, ZoneDAO.getValueZoneByID(5), true, year, zab));
 					}
-
+				
+					}
 				}
 			}
 			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
