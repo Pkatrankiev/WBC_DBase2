@@ -128,9 +128,7 @@ public class ReadExcelFileWBC {
 		{
 			
 		Date dat = cell.getDateCellValue();
-		System.out.println(dat+"--------------------");
 			if(dat.after(beforDat)) {
-				System.out.println("*****************************");
 			str = sdfrmt.format(dat);
 			}
 			

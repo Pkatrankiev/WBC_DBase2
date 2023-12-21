@@ -1,10 +1,9 @@
 package SaveToExcellFile;
 
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,9 +53,7 @@ import PersonManagement.PersonelManegementMethods;
 
 public class SaveToPersonelORExternalFile {
 
-	private static String filePath[] = {
-			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-			ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+	private static String filePath[] = getmasive();
 
 	private static SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
 
@@ -81,7 +78,7 @@ public class SaveToPersonelORExternalFile {
 		}
 
 		try {
-			PersonelManegementMethods.copyExcelFileToDestDir(pathFile);
+			PersonelManegementMethods.copyExcelFileToDestDir(pathFile, null);
 			FileInputStream inputStream = new FileInputStream(pathFile);
 			Workbook workbook = new HSSFWorkbook(inputStream);
 
@@ -982,6 +979,20 @@ public class SaveToPersonelORExternalFile {
 			e.printStackTrace();
 		}
 		return dateStr;
+	}
+	
+	static  String[] getmasive(){
+		 String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+				
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		 String filePath[] = {filePathPersonel, filePathExternal};
+		return filePath;
 	}
 
 }

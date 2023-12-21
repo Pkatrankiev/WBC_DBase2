@@ -27,6 +27,7 @@ import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
+import PersonManagement.PersonelManegementMethods;
 
 public class AutoInsertMeasutingMethods {
 
@@ -100,7 +101,9 @@ public class AutoInsertMeasutingMethods {
 		int countMeasur = AutoInsertMeasutingFrame.getCountMeasur();
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				if(PersonelManegementMethods.checkIsClosedPersonAndExternalFile() 
+						&& PersonelManegementMethods.checkIsClosedMonthPersonAndExternalFile()) {
+				
 				ActionIcone round = new ActionIcone();
 				final Thread thread = new Thread(new Runnable() {
 					@Override
@@ -118,7 +121,7 @@ public class AutoInsertMeasutingMethods {
 					}
 				});
 				thread.start();
-
+				}
 			}
 		});
 

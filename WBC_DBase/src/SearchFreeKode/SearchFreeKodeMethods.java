@@ -54,7 +54,7 @@ public class SearchFreeKodeMethods {
 	public static List<List<String>> getMasiveZvenaFromExcellFiles() {
 		
 		List<List<String>> listOfLists = new ArrayList<>();
-		String[] filePath_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		String[] filePath_ActualPersonalAndExternal = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		for (String pathFile : filePath_ActualPersonalAndExternal) {
 			List<String> list = new ArrayList<>();
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);

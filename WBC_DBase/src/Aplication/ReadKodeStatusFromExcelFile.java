@@ -22,11 +22,11 @@ public class ReadKodeStatusFromExcelFile {
 	static String[] pathToArhiveExcellFiles = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();
 
 	static String[] pathToFiles_ActualPersonalAndExternal = AplicationMetods
-			.getDataBaseFilePat_ActualPersonalAndExternal();
+			.getDataBaseFilePat_OriginalPersonalAndExternal();
 
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon)  {
+	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		
 		Set<String> mySet = new HashSet<String>();
 		int countMySet;
@@ -38,7 +38,26 @@ public class ReadKodeStatusFromExcelFile {
 		String EGN = "", FirstName = "";
 		Sheet sheet = workbook.getSheetAt(0);
 		Cell cell, cell1;
-		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		
+		int StartRow = 0;
+		int endRow = 0;
+		
+		if(listDiferentRow != null) {
+			StartRow = 0;
+			endRow = listDiferentRow.size();
+		}else {
+			StartRow = 5;
+			endRow = sheet.getLastRowNum();
+		}
+		int row = 0;
+		for (int index = StartRow; index < endRow ; index += 1) {
+
+			if(listDiferentRow != null) {
+				row = listDiferentRow.get(index);
+			}else {
+				row  = index;
+			}
+			
 			kodeKZ1 = "";
 			kodeKZ2 = "";
 			kodeHOG = "";
@@ -111,7 +130,7 @@ public class ReadKodeStatusFromExcelFile {
 					}
 				}
 			}
-			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
+			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
 		return listKodeStatus;
 	}
@@ -235,7 +254,7 @@ public class ReadKodeStatusFromExcelFile {
 	public static List<String[]> generateListFromMasiveEGNandKode(String zveno) {
 		boolean flOtdel = false;
 		String[] excellFiles_ActualPersonalAndExternal = AplicationMetods
-				.getDataBaseFilePat_ActualPersonalAndExternal();
+				.getDataBaseFilePat_OriginalPersonalAndExternal();
 		List<String[]> listKodeStatus = new ArrayList<>();
 		String otdelName = "";
 		for (String pathFile : excellFiles_ActualPersonalAndExternal) {

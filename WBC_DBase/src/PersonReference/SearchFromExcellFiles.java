@@ -48,9 +48,7 @@ import BasicClassAccessDbase.Workplace;
 public class SearchFromExcellFiles {
 	
 	static String[] pathToArhiveExcellFiles = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();	
-	
-	
-	static String[] pathToFiles_ActualPersonalAndExternal2 = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		
 	static String[] pathToFiles_OriginalPersonalAndExternal = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 	
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);

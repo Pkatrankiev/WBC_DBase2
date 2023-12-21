@@ -46,6 +46,12 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		
 		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
 		 
 		List<ReportMeasurClass> listForSaveMeasurToMont = new ArrayList<>();
 		List<ReportMeasurClass> listForNotSaveMeasur = new ArrayList<>();

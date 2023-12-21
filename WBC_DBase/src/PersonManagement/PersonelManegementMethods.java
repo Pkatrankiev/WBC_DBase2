@@ -99,6 +99,7 @@ import SaveToExcellFile.SaveToPersonelORExternalFile;
 import SearchFreeKode.SearchFreeKodeFrame;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
+import AutoInsertMeasuting.AutoInsertMeasutingMethods;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class PersonelManegementMethods {
@@ -1497,7 +1498,7 @@ public class PersonelManegementMethods {
 
 	public static List<Spisak_Prilogenia> getListSpisak_Prilogenia_FromExcelFile(String otdel) {
 
-		String[] path = AplicationMetods.getDataBaseFilePat_ActualPersonalAndExternal();
+		String[] path = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 
 		List<Spisak_Prilogenia> spisak_Prilogenia_List = new ArrayList<Spisak_Prilogenia>();
 		for (String pathFile : path) {
@@ -2557,9 +2558,63 @@ public class PersonelManegementMethods {
 	}
 	
 	public static boolean checkIsClosedPersonAndExternalFile() {
-		String filePath[] = {
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		String filePath[] = {filePathPersonel, filePathExternal};
+		
+		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen"); 
+	String dialogString = "<html>";
+		for (int i = 0; i < filePath.length; i++) {
+		File file = new File(filePath[i]);
+	    File sameFileName = new File(filePath[i]);
+	    if(!file.renameTo(sameFileName)){
+	    	 System.out.println("file is opened");
+	    	dialogString += sameFileName.getName()+" "+fileIsOpen+"<br>";
+	        
+	    }
+		}
+		System.out.println(dialogString+"  "+dialogString.length());
+		if(dialogString.length() > 7) {
+			return OptionDialog(dialogString+"</html>",  "В Н И М А Н И Е");
+		}
+		return true;
+	}
+	
+	public static boolean checkIsClosedMonthANDPersonAndExternalFile(ActionIcone round) {
+		
+		    	 if(PersonelManegementMethods.checkIsClosedPersonAndExternalFile() 
+		 				&& PersonelManegementMethods.checkIsClosedMonthPersonAndExternalFile()) {
+		    	 round.StopWindow();
+		    	 return true;
+		 		}
+		    	round.StopWindow();
+		    	return false;
+	
+	}
+	
+	public static boolean checkIsClosedMonthPersonAndExternalFile() {
+		
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig");
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig");
+		
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test");
+		filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+		}
+			
+		String filePath[] = {filePathMonthPersonel, filePathMonthExternal};
+		
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen"); 
 	String dialogString = "<html>";
 		for (int i = 0; i < filePath.length; i++) {
@@ -2580,9 +2635,18 @@ public class PersonelManegementMethods {
 	
 	public static List<OpenedExcelClass> openClosedPersonAndExternalFile() {
 		List<OpenedExcelClass> list = new ArrayList<>();
-		String filePath[] = {
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+				
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		String filePath[] = {filePathPersonel, filePathExternal};
+		
 		for (int i = 0; i < filePath.length; i++) {
 		 File file = new File(filePath[i]);
 		    File sameFileName = new File(filePath[i]);
@@ -2598,9 +2662,18 @@ public class PersonelManegementMethods {
 	
 	
 	public static void ClosedPersonAndExternalFile(Workbook[] workbook) {
-		String filePath[] = {
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+	
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+				
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		String filePath[] = {filePathPersonel, filePathExternal};
+		
 		for (int i = 0; i < filePath.length; i++) {
 			FileOutputStream outputStream;
 			try {
@@ -2610,12 +2683,12 @@ public class PersonelManegementMethods {
 					workbook[i].write(outputStream);
 					outputStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				
 					e.printStackTrace();
 				}
 				
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+			
 				e.printStackTrace();
 			}
 			
@@ -2624,18 +2697,18 @@ public class PersonelManegementMethods {
 	
 	
 	
-	
-	
-	public static void copyExcelFileToDestDir(String sourceFilePath) {
-		String destFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir");
+	public static void copyExcelFileToDestDir(String sourceFilePath, String destFilePath) {
+		if(destFilePath == null) {
+		destFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir");
+		}
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("ddMMyy");
 		Date date = new Date();
 		String strDate = sdfrmt.format(date);
 
-		int slashIndex = sourceFilePath.indexOf("\\")+1;
+		int slashIndex = sourceFilePath.lastIndexOf("\\")+1;
 		int dotIndex = sourceFilePath.indexOf(".");
 		String destFileName = sourceFilePath.substring(slashIndex, dotIndex)+"-"+strDate+sourceFilePath.substring(dotIndex);
-		
+		System.out.println(destFilePath+destFileName+"---------------------------------");
 		File fileSorce = new File(sourceFilePath);
 		File fileDest = new File(destFilePath+destFileName);
 		
@@ -2665,7 +2738,7 @@ public class PersonelManegementMethods {
 		Workbook workbook = new HSSFWorkbook(inputStream);
 		return new OpenedExcelClass(excelFilePath, workbook);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 	}
 	return null;

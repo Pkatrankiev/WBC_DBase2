@@ -46,7 +46,7 @@ public class AplicationMetods {
 		switch (key) {
 		case "Person": {
 			// read and set Person
-			List<Person> listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile, null, "");
+			List<Person> listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile, null, "", null);
 			System.out.println("--> "+listPerson.size());
 			if(save) {
 			ReadPersonFromExcelFile.setToDBaseListPerson(listPerson, null, "");
@@ -58,7 +58,7 @@ public class AplicationMetods {
 		case "Spisak_Prilogenia": {
 			// read and set Spisak_Prilogenia
 			List<Spisak_Prilogenia> Spisak_PrilogeniaList = ReadSpisak_PrilogeniaFromExcelFile
-					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, null, "");
+					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, null, "", null);
 			
 			ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 			System.out.println("--> "+Spisak_PrilogeniaList.size());
@@ -73,7 +73,7 @@ public class AplicationMetods {
 			// read and set PersonStatus
 			
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
-					year, null, "");
+					year, null, "", null);
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 			System.out.println("--> "+list.size());
 			if(save) {
@@ -86,7 +86,7 @@ public class AplicationMetods {
 		case "KodeStatus": {
 			// read and set KodeStatus
 			List<KodeStatus> listKodeStatus = ReadKodeStatusFromExcelFile.getListKodeStatusFromExcelFile(pathFile,
-					firmName, year, null, "");
+					firmName, year, null, "", null);
 			ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
 			System.out.println("--> "+listKodeStatus.size());
 			if(save) {
@@ -98,7 +98,7 @@ public class AplicationMetods {
 		break;
 		case "Measuring": {
 			// read and set Measuring
-			List<Measuring>  listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile, null, "");
+			List<Measuring>  listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile, null, "", null);
 			ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
 			System.out.println("--> "+listMeasuring.size());
 			if(save) {
@@ -110,7 +110,7 @@ public class AplicationMetods {
 		break;
 		case "ResultsWBC": {
 			// read and set ResultsWBC
-			List<ResultsWBC>  listResultsWBC = ReadResultsWBCFromExcelFile.generateListFromResultsWBCFromExcelFile(pathFile, null, "");
+			List<ResultsWBC>  listResultsWBC = ReadResultsWBCFromExcelFile.generateListFromResultsWBCFromExcelFile(pathFile, null, "", null);
 			ReadResultsWBCFromExcelFile.ListResultsWBCToBData(listResultsWBC);
 			System.out.println("--> "+listResultsWBC.size());
 			if(save) {
@@ -136,35 +136,27 @@ public class AplicationMetods {
 	}
 
 	public static String[] getDataBaseFilePat_ArhivePersonalAndExternal() {
-		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
+		String dataArhiveExcelFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataArhiveExcelFilePath");
 		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhivePersonel");
 		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathArhiveExternal");
-		String[] excellFiles = {dataBaseFilePath+filePathArhivePersonel, dataBaseFilePath+filePathArhiveExternal};
+		String[] excellFiles = {dataArhiveExcelFilePath+filePathArhivePersonel, dataArhiveExcelFilePath+filePathArhiveExternal};
 		return excellFiles;
 	}
 
-	public static String[] getDataBaseFilePat_ArhivePersonalAndExternal_test() {
-		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
-		String filePathArhivePersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_test");
-		String filePathArhiveExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_test");
-		String[] excellFiles = {dataBaseFilePath+filePathArhivePersonel, dataBaseFilePath+filePathArhiveExternal};
-		return excellFiles;
-	}
 	
-	
-	public static String[] getDataBaseFilePat_ActualPersonalAndExternal() {
-		String dataBaseFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dataBaseFilePath");
-		String filePathActualPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathActualPersonel");
-		String filePathActualExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathActualExternal");
-		String[] excellFiles = {dataBaseFilePath+filePathActualPersonel, dataBaseFilePath+filePathActualExternal};
-		return excellFiles;
-	}
 	
 	
 	public static String[] getDataBaseFilePat_OriginalPersonalAndExternal() {
-	
+		
+		
 		String filePathExternal_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
 		String filePathPersonel_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel_orig = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
 		String[] excellFiles = {filePathPersonel_orig, filePathExternal_orig };
 		return excellFiles;
 	}

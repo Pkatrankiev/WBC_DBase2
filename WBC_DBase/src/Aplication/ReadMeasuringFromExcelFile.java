@@ -26,12 +26,12 @@ import BasicClassAccessDbase.UsersWBC;
 
 public class ReadMeasuringFromExcelFile {
 
-	public static List<Measuring> generateListFromMeasuringFromExcelFile(String pathFile, ActionIcone round,  String textIcon) {
+	public static List<Measuring> generateListFromMeasuringFromExcelFile(String pathFile, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 				
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<Measuring> listMeasuring = new ArrayList<>();
 		if(workbook.getNumberOfSheets()>2) {
-			listMeasuring = generateListFromMeasuringFromBigExcelFile(workbook, round, textIcon);
+			listMeasuring = generateListFromMeasuringFromBigExcelFile(workbook, round, textIcon, listDiferentRow);
 				
 		}else {
 			listMeasuring = getListMeasuringFromSmalExcelFile(workbook);	
@@ -89,7 +89,7 @@ public class ReadMeasuringFromExcelFile {
 
 
 
-	public static List<Measuring> generateListFromMeasuringFromBigExcelFile(Workbook workbook, ActionIcone round,  String textIcon) {	
+	public static List<Measuring> generateListFromMeasuringFromBigExcelFile(Workbook workbook, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {	
 		String lab;
 		Date date;
 		
@@ -101,7 +101,26 @@ public class ReadMeasuringFromExcelFile {
 		Sheet sheet = workbook.getSheetAt(1);
 		Cell cell, cell1, cell2;
 		List<Measuring> listMeasuring = new ArrayList<>();
-		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		
+		int StartRow = 0;
+		int endRow = 0;
+		
+		if(listDiferentRow != null) {
+			StartRow = 0;
+			endRow = listDiferentRow.size();
+		}else {
+			StartRow = 5;
+			endRow = sheet.getLastRowNum();
+		}
+		int row = 0;
+		for (int index = StartRow; index < endRow ; index += 1) {
+
+			if(listDiferentRow != null) {
+				row = listDiferentRow.get(index);
+			}else {
+				row  = index;
+			}
+			
 
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
@@ -141,7 +160,7 @@ public class ReadMeasuringFromExcelFile {
 					}
 				}
 			}
-			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
+			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
 		return listMeasuring;
 	}

@@ -20,7 +20,7 @@ import BasicClassAccessDbase.Workplace;
 public class ReadSpisak_PrilogeniaFromExcelFile {
 
 	public static List<Spisak_Prilogenia> getSpisak_Prilogenia_ListFromExcelFile(String FILE_PATH, String firmName,
-			String year, ActionIcone round,  String textIcon) {
+			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		
 
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(FILE_PATH);
@@ -36,7 +36,26 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 			String[] masiveWorkplace = ReadExcelFileWBC.getMasiveString(firmName);
 			Sheet sheet = workbook.getSheetAt(3);
 			Cell cell, cell1;
-			for (int row = 0; row <= sheet.getLastRowNum(); row += 1) {
+			
+			int StartRow = 0;
+			int endRow = 0;
+			
+			if(listDiferentRow != null) {
+				StartRow = 0;
+				endRow = listDiferentRow.size();
+			}else {
+				StartRow = 0;
+				endRow = sheet.getLastRowNum();
+			}
+			int row = 0;
+			for (int index = StartRow; index < endRow ; index += 1) {
+
+				if(listDiferentRow != null) {
+					row = listDiferentRow.get(index);
+				}else {
+					row  = index;
+				}
+				
 				if (sheet.getRow(row) != null) {
 					cell = sheet.getRow(row).getCell(5);
 					cell1 = sheet.getRow(row).getCell(6);
@@ -61,7 +80,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 
 					}
 				}
-				ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
+				ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 			}
 		}
 		return spisak_Prilogenia_List;

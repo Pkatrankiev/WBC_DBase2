@@ -31,11 +31,11 @@ public class ReadPersonStatusFromExcelFile {
 
 	static Spisak_Prilogenia spPrObhodList = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(11177);
 	
-	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon) {
+	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatus> listPerStat = new ArrayList<>();
 		if (workbook.getNumberOfSheets() > 2) {
-			listPerStat = getListPersonStatusFromBigExcelFile(workbook, firmName, year, round, textIcon);
+			listPerStat = getListPersonStatusFromBigExcelFile(workbook, firmName, year, round, textIcon, listDiferentRow); 
 
 		} else {
 			listPerStat = getListPersonStatusFromSmalExcelFile(workbook, firmName, year);
@@ -182,7 +182,7 @@ public class ReadPersonStatusFromExcelFile {
 	}
 
 	public static List<PersonStatus> getListPersonStatusFromBigExcelFile(Workbook workbook, String firmName,
-			String year, ActionIcone round,  String textIcon) {
+			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 
 		Set<String> mySet = new HashSet<String>();
 		int countMySet;
@@ -209,7 +209,27 @@ public class ReadPersonStatusFromExcelFile {
 		Sheet sheet = workbook.getSheetAt(3);
 		Cell cell, cell1;
 		boolean fl ;
-		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		
+		int StartRow = 0;
+		int endRow = 0;
+		
+		if(listDiferentRow != null) {
+			StartRow = 0;
+			endRow = listDiferentRow.size();
+		}else {
+			StartRow = 5;
+			endRow = sheet.getLastRowNum();
+		}
+		int row = 0;
+		for (int index = StartRow; index < endRow ; index += 1) {
+
+			if(listDiferentRow != null) {
+				row = listDiferentRow.get(index);
+			}else {
+				row  = index;
+			}
+			
+
 			zab = "";
 			fl = false;
 			PersonStatus personStatus_NotInList = null;
@@ -285,7 +305,7 @@ public class ReadPersonStatusFromExcelFile {
 				}
 			}
 			}
-			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
+			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
 
 		return listPerStat;

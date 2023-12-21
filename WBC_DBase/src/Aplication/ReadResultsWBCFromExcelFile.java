@@ -27,12 +27,12 @@ import BasicClassAccessDbase.UsersWBC;
 
 public class ReadResultsWBCFromExcelFile {
 
-	public static List<ResultsWBC> generateListFromResultsWBCFromExcelFile(String pathFile , ActionIcone round,  String textIcon) {
+	public static List<ResultsWBC> generateListFromResultsWBCFromExcelFile(String pathFile , ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<ResultsWBC> listResultsWBC = new ArrayList<>();
 		if(workbook.getNumberOfSheets()>2) {
-			listResultsWBC = generateListFromResultsWBCFromBigExcelFile(workbook, round, textIcon);
+			listResultsWBC = generateListFromResultsWBCFromBigExcelFile(workbook, round, textIcon, listDiferentRow);
 				
 		}else {
 			listResultsWBC = generateListFromResultsWBCFromSmalExcelFile(workbook);	
@@ -130,7 +130,7 @@ public class ReadResultsWBCFromExcelFile {
 
 
 
-	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook , ActionIcone round,  String textIcon) {
+	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook , ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
 		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
@@ -143,8 +143,27 @@ public class ReadResultsWBCFromExcelFile {
 		Cell cell, cell1, cell2;
 	
 		List<ResultsWBC> listResultsWBC = new ArrayList<>();
-		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		
+		int StartRow = 0;
+		int endRow = 0;
+		
+		if(listDiferentRow != null) {
+			StartRow = 0;
+			endRow = listDiferentRow.size();
+		}else {
+			StartRow = 5;
+			endRow = sheet.getLastRowNum();
+		}
+		int row = 0;
+		for (int index = StartRow; index < endRow ; index += 1) {
 
+			if(listDiferentRow != null) {
+				row = listDiferentRow.get(index);
+			}else {
+				row  = index;
+			}
+
+			
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
 				
@@ -215,7 +234,7 @@ public class ReadResultsWBCFromExcelFile {
 					}
 				}
 			}
-			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
+			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
 		return listResultsWBC;
 	}

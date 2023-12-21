@@ -16,7 +16,7 @@ import BasicClassAccessDbase.Person;
 public class ReadPersonFromExcelFile {
 
 	
-	public static List<Person> updatePersonFromExcelFile(String pathFile, ActionIcone round,  String textIcon) {
+	public static List<Person> updatePersonFromExcelFile(String pathFile, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
 		Set<String> mySet = new HashSet<String>();
 		int countMySet;
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
@@ -24,16 +24,35 @@ public class ReadPersonFromExcelFile {
 		Sheet sheet = workbook.getSheetAt(0);
 		Cell cell, cell1;
 		List<Person> listPerson = new ArrayList<>();
-		for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+		
+		int StartRow = 0;
+		int endRow = 0;
+		
+		if(listDiferentRow != null) {
+			StartRow = 0;
+			endRow = listDiferentRow.size();
+		}else {
+			StartRow = 5;
+			endRow = sheet.getLastRowNum();
+		}
+		int row = 0;
+		for (int index = StartRow; index < endRow ; index += 1) {
 
+			if(listDiferentRow != null) {
+				row = listDiferentRow.get(index);
+			}else {
+				row  = index;
+			}
+			System.out.println(row+" ++++++++++");
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
 				cell1 = sheet.getRow(row).getCell(6);
-
+				System.out.println(cell1+" *************");
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 					countMySet = mySet.size();
 					mySet.add(EGN);
+					System.out.println(EGN+" eeeeeeeeeeee "+countMySet+" - "+ mySet.size());
 					if (ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell) == null && (countMySet+1) == mySet.size()) {
 						System.out.println("++++++++++++++++++++"+EGN);
 						FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
@@ -46,9 +65,9 @@ public class ReadPersonFromExcelFile {
 					}
 				}
 			}
-			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
-
+			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
+		System.out.println("sssssssssssssssss "+listPerson.size());
 		return listPerson;
 	}
 

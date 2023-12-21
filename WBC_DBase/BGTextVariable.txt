@@ -1,55 +1,45 @@
 
 minYearInDbase = 2005
 Version = v.231123
-dataBaseFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
-databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
-
-
+dataArhiveExcelFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
 filePathArhivePersonel =  Arhive\\PERSONNEL_
 filePathArhiveExternal =  Arhive\\EXTERNAL_
-filePathActualExternal = Arhive\\EXTERNAL_actual.xls
-filePathActualPersonel =  Arhive\\PERSONNEL_actual.xls
-filePathExternal_test = Arhive\\EXTERNAL_test.xls
-filePathPersonel_test =  Arhive\\PERSONNEL_test.xls
+destinationPathArhiveNow = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\ArhiveNow\\
 
 databaseEncriptOID = qwer1234
 databaseEncript = password
 
+--------------------------------------------------------------------------
+testFilesToD = 0
 
 ###############   originale File  #####################################
-databaseURL_1 = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
+databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
 
-filePathExternal_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
-filePathPersonel_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
+filePathExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\EXTERNAL.xls
+filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONNEL.xls
 
-filePathMonthExternal_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
-filePathMonthPersonel_orig_1 = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
-
-
+filePathMonthExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
+filePathMonthPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
 
 ###############   test File  #####################################
-databaseURL = jdbc:ucanaccess://D://WBC_DBase231123+.mdb
+databaseURL_test = jdbc:ucanaccess://D://WBC_DBase.mdb
 
-filePathExternal_orig = d:\\EXTERNAL.xls
-filePathPersonel_orig = d:\\PERSONNEL.xls
+filePathExternal_orig_test = d:\\EXTERNAL.xls
+filePathPersonel_orig_test = d:\\PERSONNEL.xls
 
-filePathMonthExternal_orig = d:\\month\\wbc_month.xls
-filePathMonthExternal_orig = d:\\month\\wbc_month_P.xls
+filePathMonthExternal_orig_test = d:\\month\\wbc_month.xls
+filePathMonthPersonel_orig_test = d:\\month\\wbc_month_P.xls
 
+-----------------------------------------------------------------------
 
 destinationDir = DIRECTORY/
 
+databaseOID = jdbc:ucanaccess://D://NewOid.mdb
+
+
 destinationIcons = ICONS/ajaxLoader.gif
-
-
-
-filePathOBD = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\
-
-databaseOID = jdbc:ucanaccess://D://NewOid_1.mdb
-
-
 modifiIcon = ICONS/Modify.gif
 main_Icon = ICONS/Icon14.png
 arrowIcon = ICONS/arrow.gif

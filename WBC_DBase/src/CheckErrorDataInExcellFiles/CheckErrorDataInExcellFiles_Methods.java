@@ -141,11 +141,29 @@ public class CheckErrorDataInExcellFiles_Methods {
 		String[][][] masuveMeasur2 = null;
 		String[][][] masiveDoze = null;
 
-		String filePath[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+		
+		String filePath[] = {filePathPersonel, filePathExternal };
 
-		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig") };
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig");
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig");
+		
+		testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test"); 
+			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+		}
+		
+		
+		String filePathMont[] = { filePathMonthPersonel, filePathMonthExternal };
 
 		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
 				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };
@@ -557,9 +575,20 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	public static String CheckCorrectionAllRowInSheets() {
 		String infotext = "";
-		String filePath[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
+		
 
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+		
+		String filePath[] = {filePathPersonel, filePathExternal };
+		
 		String fileName[] = { "Personel", "External" };
 
 		for (int i = 0; i < filePath.length; i++) {
@@ -613,8 +642,17 @@ public class CheckErrorDataInExcellFiles_Methods {
 
 	private static String[][][] MasiveFromMonthFile(int mounth) {
 
-		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig") };
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig");
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig");
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test"); 
+			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+		}
+				
+		String filePathMont[] = { filePathMonthPersonel, filePathMonthExternal };
+				
 
 		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
 				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };

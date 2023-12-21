@@ -54,7 +54,6 @@ import Aplication.ReadResultFromReport;
 import Aplication.ReadResultsWBCFromExcelFile;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
-import Aplication.UpdateBDataFromExcellFiles;
 import BasiClassDAO.ActualExcellFilesDAO;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeGenerateDAO;
@@ -85,6 +84,7 @@ import PersonReference.PersonExcellClass;
 import PersonReference.PersonReferenceExportToExcell;
 import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
 import SaveToExcellFile.SaveToPersonelORExternalFile;
+import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
 public class TestClasess {
 
@@ -146,62 +146,94 @@ public class TestClasess {
 
 	}
 
-	static List<List<String>> checkTwoExcelFiles(String PathTo1File, String PathTo2File) {
+	static List<List<String>> checkTwoExcelFiles(String PathToOldFile, String PathToNewFile) {
 
 		List<List<String>> listAllRowString = new ArrayList<>();
-		List<List<Integer>> listAllRowInteger = new ArrayList<>();
-		FileInputStream inputStream1;
-		FileInputStream inputStream2;
+//		List<List<Integer>> listAllRowInteger = new ArrayList<>();
+		FileInputStream inputOldStream;
+		FileInputStream inputNewStream;
 		try {
-			inputStream1 = new FileInputStream(PathTo1File);
-			try (Workbook workbook1 = new HSSFWorkbook(inputStream1)) {
-				inputStream2 = new FileInputStream(PathTo2File);
-				try (Workbook workbook2 = new HSSFWorkbook(inputStream2)) {
-					int lastRow1 = workbook1.getSheetAt(0).getLastRowNum();
-					int lastRow2 = workbook2.getSheetAt(0).getLastRowNum();
-					Sheet worksheet1;
-					Sheet worksheet2;
+			inputOldStream = new FileInputStream(PathToOldFile);
+			try (Workbook workbookOld = new HSSFWorkbook(inputOldStream)) {
+				inputNewStream = new FileInputStream(PathToNewFile);
+				try (Workbook workbooknew = new HSSFWorkbook(inputNewStream)) {
+//					
+					int lastRowNew = getLastRowInSheet(workbooknew.getSheetAt(0));
+					int lastRowOld = getLastRowInSheet(workbookOld.getSheetAt(0));
+					int countRow = lastRowOld;
+					int indexOldRow;
+					Sheet worksheetOld;
+					Sheet worksheetNew;
 
-					Row sourceRow1;
-					Row sourceRow2;
-					String str1 = "";
-					String str2 = "";
+					Row sourceRowOld;
+					Row sourceRowNew;
+					String strOld = "";
+					String strNew = "";
 					String str = "";
-					if (lastRow1 == lastRow2) {
+					
+					String egnOld = "";
+					String egnNew = "";
 
 						for (int i = 0; i < 4; i++) {
-							List<String> listRow = new ArrayList<>();
-							worksheet1 = workbook1.getSheetAt(i);
-							worksheet2 = workbook2.getSheetAt(i);
+							List<String> listRowStr = new ArrayList<>();
+//							List<Integer> listRowInt = new ArrayList<>();
+							worksheetOld = workbookOld.getSheetAt(i);
+							worksheetNew = workbooknew.getSheetAt(i);
 
-							for (int j = 0; j < lastRow1; j++) {
+							indexOldRow = 0;
+							for (int j = 0; j < countRow; j++) {
 
-								sourceRow1 = worksheet1.getRow(j);
-								sourceRow2 = worksheet2.getRow(j);
+								sourceRowOld = worksheetOld.getRow(indexOldRow);
+								sourceRowNew = worksheetNew.getRow(j);
 
-								if (sourceRow1 != null && sourceRow2 != null) {
+								if (sourceRowOld != null && sourceRowNew != null) {
 
+									
+									
 									for (int k = 0; k < 256; k++) {
 
-										str = ReadExcelFileWBC.getStringfromCell(sourceRow1.getCell(k));
+										
+										
+										str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(k));
 										if (!str.isEmpty()) {
-											str1 += str + " | ";
+											strOld += str + " | ";
 										}
 
-										str = ReadExcelFileWBC.getStringfromCell(sourceRow2.getCell(k));
+										str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(k));
 										if (!str.isEmpty()) {
-											str2 += str + " | ";
+											strNew += str + " | ";
 										}
 									}
-									if (!str1.equals(str2)) {
-										listRow.add(j + ": 1 - " + str1 + ": 2 - " + str2);
+									
+									egnOld = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(5));
+									egnNew = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(5));
+									System.out.println("indexOldRow "+indexOldRow+" " + egnOld+" j "+j+" " + egnNew);
+									
+									if (lastRowOld < lastRowNew) {
+										if(!egnOld.equals(egnNew)){
+											strOld = "";
+											indexOldRow--;
+										}
+												
+									}else {
+										if(!egnOld.equals(egnNew)){
+											strNew = "";
+											j--;
+										}	
 									}
-									str1 = "";
-									str2 = "";
+									
+									
+									if (!strOld.equals(strNew)) {
+										listRowStr.add(j + ": 1 - " + strOld + ": 2 - " + strNew);
+//										listRowInt.add(j);
+									}
+									strOld = "";
+									strNew = "";
 								}
+								indexOldRow++;
 							}
-							listAllRowString.add(listRow);
-							
+							listAllRowString.add(listRowStr);
+//							listAllRowInteger.add(listRowInt);
 						}
 						
 						
@@ -221,11 +253,11 @@ public class TestClasess {
 						}
 						
 						
-					} else {
-
-						System.out.println("Ima nowi redowe file1 = " + lastRow1 + "  file2 = " + lastRow2);
-						return null;
-					}
+//					} else {
+//						
+//						System.out.println("Ima nowi redowe file1 = " + lastRowOld + "  file2 = " + lastRowNew);
+//						return null;
+//					}
 				}
 			}
 
@@ -235,6 +267,19 @@ public class TestClasess {
 		}
 		return listAllRowString;
 
+	}
+
+	private static int getLastRowInSheet(Sheet sheet) {
+	Cell cell;
+		for (int row = 0; row < sheet.getLastRowNum(); row++) {
+			cell = sheet.getRow(row).getCell(6);
+			if (sheet.getRow(row) != null && ReadExcelFileWBC.CellNOEmpty(cell)) {
+				if(ReadExcelFileWBC.getStringfromCell(cell).equals("край на базата")) {
+					return row;
+				}
+			}
+		}
+		return -1;
 	}
 
 	static void movePersonInWorkplaceArea(int endRowOtdel, String egn) {
@@ -446,8 +491,18 @@ public class TestClasess {
 	}
 
 	static void createCellComment(String egn, String commentText) throws FileNotFoundException {
-		String filePath[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig2"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig2") };
+		
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+				
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		 String filePath[] = {filePathPersonel, filePathExternal};
+				
 		String pathFile = filePath[1];
 		FileInputStream inputStream;
 		HSSFWorkbook workbook = null;
@@ -620,9 +675,19 @@ public class TestClasess {
 	@SuppressWarnings("deprecation")
 	public static void CheckForCorrectionMeasuringDataInSheet0AndSeet1() {
 		boolean fl = true;
-		String filePath[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig") };
-
+		
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+				
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+			
+		 String filePath[] = {filePathPersonel, filePathExternal};
+		 
+		
 		String fileName[] = { "Personel", "External" };
 
 		for (int i = 0; i < filePath.length; i++) {
@@ -988,7 +1053,7 @@ public class TestClasess {
 			List<Measuring> listMeasuring = null;
 //			try {
 			listMeasuring = ReadMeasuringFromExcelFile.generateListFromMeasuringFromExcelFile(pathFile,
-					new ActionIcone("            "), textIcon);
+					new ActionIcone("            "), textIcon, null);
 			for (Measuring string : listMeasuring) {
 				System.out.println(string.getPerson().getEgn() + " " + string.getDoze());
 			}
@@ -1345,9 +1410,17 @@ public class TestClasess {
 		int IndexLab = laborat.getLab_ID();
 		listWorkplace = WorkplaceDAO.getAllValueWorkplaceByLab(laborat);
 
-		String filePathMont[] = { ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"),
-				ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig") };
-
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig");
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig");
+		
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if(testFilesToD.equals("1")) {
+			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test"); 
+			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+		}
+				
+		String filePathMont[] = { filePathMonthPersonel, filePathMonthExternal };
+		
 		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
 				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };
 

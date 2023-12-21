@@ -1,6 +1,7 @@
 package Test;
 
 import java.io.FileNotFoundException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,6 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadResultsWBCFromExcelFile;
 import Aplication.ResourceLoader;
-import Aplication.UpdateBDataFromExcellFiles;
 import BasiClassDAO.ActualExcellFilesDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.LaboratoryDAO;
@@ -28,20 +28,24 @@ import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
+import BasicClassAccessDbase.conectToAccessDB;
 import PersonManagement.PersonelManegementFrame;
 import PersonReference.TextInAreaTextPanel;
 import ReferenceMeasuringLab.ReferenceMeasuringLabFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
+import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
 public class TestMainClass {
 
 	public static void main(String[] args) throws ParseException {
 		if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
-			String path1 = "d:\\!!000\\PERSONNEL-12-22.xls";
-			String path2 = "d:\\!!000\\PERSONNEL-13-42.xls";
-			TestClasess.checkTwoExcelFiles(path1, path2);
+//			String pathOld = "d:\\!!000\\PERSONNEL-09-00.xls";
+//			String pathNew = "d:\\!!000\\PERSONNEL-09-10.xls";
+//			TestClasess.checkTwoExcelFiles(pathOld, pathNew);
 	
-	
+			 conectToAccessDB.getKodeStatusByPersonZone("6902121962");
+			
+			
 		}
 	}
 		}

@@ -27,8 +27,12 @@ public class infoFrame extends JDialog {
 		setUndecorated(true);
 		
 		String zaDaZatvoriteRamkata = ReadFileBGTextVariable.getGlobalTextVariableMap().get("zaDaZatvoriteRamkata") + "\n\n";
-		
+		if(coord != null) {
 		setBounds(coord[0], coord[1], size[0], size[1]);
+		}else {
+			setSize(size[0], size[1]);
+			setLocationRelativeTo(null);
+		}
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
 //		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -75,7 +79,6 @@ public class infoFrame extends JDialog {
 			
 			}
 		});
-		if(round!= null) round.StopWindow();
 		setVisible(true);
 	}
 
