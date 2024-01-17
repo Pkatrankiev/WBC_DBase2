@@ -570,7 +570,19 @@ public class PersonStatusDAO {
 	}
 	
 
+public static List<PersonStatus>  getValuePersonStatusByWorkplace_DateStart_DateEnd_2( Workplace workplace, Date dateStart, Date dateEnd) {
+	
+	 List<PersonStatus> list =  getValuePersonStatusByWorkplace( workplace);
+	 List<PersonStatus> listPersonStatus = new ArrayList<PersonStatus>();
+	for (PersonStatus personStatus : list) {
+		Spisak_Prilogenia spPr = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
+		if(dateStart.before(spPr.getEndDate()) && dateEnd.after(spPr.getStartDate())) {
+			listPersonStatus.add(personStatus);
+		}
+	}
 
+		return listPersonStatus;
+	}
 
 
 

@@ -549,8 +549,8 @@ public class SaveToPersonelORExternalFile {
 			newRow.getCell(0).setCellValue(kode[0]);
 			newRow.getCell(1).setCellValue(kode[1]);
 			newRow.getCell(2).setCellValue(kode[2]);
-			newRow.getCell(3).setCellValue(kode[3]);
-			newRow.getCell(4).setCellValue(kode[4]);
+			newRow.getCell(3).setCellValue(kode[4]);
+			newRow.getCell(4).setCellValue(kode[3]);
 			newRow.getCell(5).setCellValue(person.getEgn());
 			newRow.getCell(6)
 					.setCellValue(person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
@@ -698,8 +698,8 @@ public class SaveToPersonelORExternalFile {
 			infoForPerson[i].getCell(0).setCellValue(kode[0]);
 			infoForPerson[i].getCell(1).setCellValue(kode[1]);
 			infoForPerson[i].getCell(2).setCellValue(kode[2]);
-			infoForPerson[i].getCell(3).setCellValue(kode[3]);
-			infoForPerson[i].getCell(4).setCellValue(kode[4]);
+			infoForPerson[i].getCell(3).setCellValue(kode[4]);
+			infoForPerson[i].getCell(4).setCellValue(kode[3]);
 			infoForPerson[i].getCell(6)
 					.setCellValue(person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
 

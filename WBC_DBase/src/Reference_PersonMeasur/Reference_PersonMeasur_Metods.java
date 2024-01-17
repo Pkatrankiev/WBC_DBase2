@@ -149,28 +149,31 @@ public class Reference_PersonMeasur_Metods {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 				Date dateStart = null, dateEnd = null;
 				try {
-					if(!year.isEmpty()) {
-					dateStart =  sdf.parse("01.01." + year);
-					}else {
-						dateStart =  sdf.parse("01.01." + curentYear);
-					}
-					if(!startDate.isEmpty()) {
-						dateStart =  sdf.parse(startDate);
-					}
+					dateStart =  sdf.parse(startDate);	
+					dateEnd =  sdf.parse(endDate);
 					
-					if(!year.isEmpty()) {
-					dateEnd =  sdf.parse("31.12." + year);
-					}else {
-						dateEnd =  sdf.parse("31.12." + curentYear);
-					}
-					if(!endDate.isEmpty()) {
-						dateEnd =  sdf.parse(endDate);
-					
-					}
+//					if(!year.isEmpty()) {
+//					dateStart =  sdf.parse("01.01." + year);
+//					}else {
+//						dateStart =  sdf.parse("01.01." + curentYear);
+//					}
+//					if(!startDate.isEmpty()) {
+//						dateStart =  sdf.parse(startDate);
+//					}
+//					
+//					if(!year.isEmpty()) {
+//					dateEnd =  sdf.parse("31.12." + year);
+//					}else {
+//						dateEnd =  sdf.parse("31.12." + curentYear);
+//					}
+//					if(!endDate.isEmpty()) {
+//						dateEnd =  sdf.parse(endDate);
+//					
+//					}
 				} catch (ParseException e1) {
 					e1.printStackTrace();
 				} 
-				System.out.println(startDate+"  "+ endDate);
+				System.out.println(sdf.format(dateStart)+"  "+ sdf.format(dateEnd));
 				if (!allFieldsEmnty() && !otdel.isEmpty()){
 					
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
@@ -180,7 +183,7 @@ public class Reference_PersonMeasur_Metods {
 					JButton btn_Export_ZeroMeasur_PersonMeasur = Reference_PersonMeasur_Frame.getBtn_ZeroMeasur_Export();
 					textArea_PersonMeasur.setText("");
 				
-					 List<Person>  listPerson = spisakPersonFromWorkplace(workPlace, curentYear);
+					 List<Person>  listPerson = spisakPersonFromWorkplace(workPlace, year);
 
 						String textForArea = TextInAreaTextPanel_Reference_PersonMeasur.createInfoPanelForPerson(listPerson, textField_Year.getText(), dateStart,  dateEnd);
 						if(textForArea.isEmpty()) {
@@ -339,7 +342,7 @@ public class Reference_PersonMeasur_Metods {
 		List<Integer> listPersonID = new ArrayList<>();
 		List<Person> listPerson = new ArrayList<>();
 		List<Person> listPersonNew = new ArrayList<>();
-		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplace_DateStart_DateEnd(workPlace, dateStart, dateEnd);
+		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplace_DateStart_DateEnd_2(workPlace, dateStart, dateEnd);
 		System.out.println(listPerStat.size());
 		
 		for (PersonStatus personStatus : listPerStat) {
