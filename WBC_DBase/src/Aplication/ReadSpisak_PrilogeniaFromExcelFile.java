@@ -86,7 +86,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		return spisak_Prilogenia_List;
 	}
 
-	@SuppressWarnings("deprecation")
+
 	public static Spisak_Prilogenia getOrCreateSisak_Prilogenie(int k, int row,  Sheet sheet, Date startDate, Date endDate, String formulyarName, Workplace workplace, String year) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date endDate0 = null, startDate0 = null;
@@ -119,7 +119,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		}
 		k++;
 		cell = sheet.getRow(row).getCell(k);
-		year = (endDate0.getYear()+1900)+"";
+		
 	Spisak_Prilogenia spPr = search_Spisak_Prilogenia(formulyarName, startDate, endDate, workplace, year);
 	
 	return spPr;	

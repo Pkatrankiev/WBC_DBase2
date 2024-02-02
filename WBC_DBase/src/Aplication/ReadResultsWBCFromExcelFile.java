@@ -131,9 +131,9 @@ public class ReadResultsWBCFromExcelFile {
 
 
 	public static List<ResultsWBC> generateListFromResultsWBCFromBigExcelFile(Workbook workbook , ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
-		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
-		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
-		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
+//		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
+//		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
+//		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
 		String lab;;
 		Date date;
 		double[] nuclideValue = new double[16];

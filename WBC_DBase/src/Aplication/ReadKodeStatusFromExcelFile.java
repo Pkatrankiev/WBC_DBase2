@@ -3,6 +3,7 @@ package Aplication;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,10 +13,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
-
+import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
+import BasicClassAccessDbase.UsersWBC;
 
 public class ReadKodeStatusFromExcelFile {
 
@@ -25,8 +27,11 @@ public class ReadKodeStatusFromExcelFile {
 			.getDataBaseFilePat_OriginalPersonalAndExternal();
 
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
+	static Date setdate = Calendar.getInstance().getTime();
 
 	public static List<KodeStatus> getListKodeStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
+		
+		UsersWBC setDataUser = UsersWBCDAO.getValueUsersWBCByID(1);
 		
 		Set<String> mySet = new HashSet<String>();
 		int countMySet;
@@ -108,23 +113,23 @@ public class ReadKodeStatusFromExcelFile {
 					if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("н")
 							&& !inCodeNotNumber(kodeKZ1)) {
 						listKodeStatus
-								.add(new KodeStatus(person, kodeKZ1, ZoneDAO.getValueZoneByID(1), true, year, zab));
+								.add(new KodeStatus(person, kodeKZ1, ZoneDAO.getValueZoneByID(1), true, year, zab, setDataUser, setdate));
 					}
 					if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("") && !inCodeNotNumber(kodeKZ2)) {
 						listKodeStatus
-								.add(new KodeStatus(person, kodeKZ2, ZoneDAO.getValueZoneByID(2), true, year, zab));
+								.add(new KodeStatus(person, kodeKZ2, ZoneDAO.getValueZoneByID(2), true, year, zab, setDataUser, setdate));
 					}
 					if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("") && !inCodeNotNumber(kodeHOG)) {
 						listKodeStatus
-								.add(new KodeStatus(person, kodeHOG, ZoneDAO.getValueZoneByID(3), true, year, zab));
+								.add(new KodeStatus(person, kodeHOG, ZoneDAO.getValueZoneByID(3), true, year, zab, setDataUser, setdate));
 					}
 					if (!kodeT1.equals("н") && !kodeT1.trim().equals("") && !inCodeNotNumber(kodeT1)) {
 						listKodeStatus
-								.add(new KodeStatus(person, kodeT1, ZoneDAO.getValueZoneByID(4), true, year, zab));
+								.add(new KodeStatus(person, kodeT1, ZoneDAO.getValueZoneByID(4), true, year, zab, setDataUser, setdate));
 					}
 					if (!kodeT2.equals("н") && !kodeT2.trim().equals("") && !inCodeNotNumber(kodeT2)) {
 						listKodeStatus
-								.add(new KodeStatus(person, kodeT2, ZoneDAO.getValueZoneByID(5), true, year, zab));
+								.add(new KodeStatus(person, kodeT2, ZoneDAO.getValueZoneByID(5), true, year, zab, setDataUser, setdate));
 					}
 				
 					}
@@ -481,7 +486,7 @@ public class ReadKodeStatusFromExcelFile {
 		return kod;
 	}
 
-	static Person getPersonFromEGNCell(Cell cell) {
+	public static Person getPersonFromEGNCell(Cell cell) {
 		String EGN = getEGNFromENGCell(cell);
 Person person = PersonDAO.getValuePersonByEGN(EGN);
 		return person;
@@ -511,7 +516,7 @@ Person person = PersonDAO.getValuePersonByEGN(EGN);
 		return sinpleKode;
 	}
 
-	static boolean inCodeNotNumber(String kode) {
+	public static boolean inCodeNotNumber(String kode) {
 		return kode.replaceAll("\\d*", "").length() == kode.length();
 	}
 

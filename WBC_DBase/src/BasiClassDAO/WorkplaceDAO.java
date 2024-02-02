@@ -284,9 +284,7 @@ public class WorkplaceDAO {
 		}
 		return list;
 	}
-	
-	
-	
+		
 	
 	public static List<Workplace> getAllActualValueWorkplace() {
 
@@ -353,6 +351,7 @@ public class WorkplaceDAO {
 				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
 				resultObject.setLab(lab);
 				}
+				
 				list.add(resultObject);
 			}
 			

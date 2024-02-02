@@ -34,11 +34,13 @@ import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementFrame;
@@ -516,6 +518,19 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	public static String getLastWorkplaceByPerson(Person person) {
+		
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByObjectSortByColumnName("Person_ID", person,
+					"DateSet");
+			List<PersonStatusNew> sortedReversPeStatList = list.stream()
+					.sorted(Comparator.comparing(PersonStatusNew::getPersonStatusNew_ID).reversed()).collect(Collectors.toList());
+			if (sortedReversPeStatList.size() > 0) {
+				return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
+			} else {
+				return "";
+			}	
+		}else {
 		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
 				"DateSet");
 		List<PersonStatus> sortedReversPeStatList = list.stream()
@@ -524,6 +539,7 @@ public class PersonReferenceFrame extends JFrame {
 			return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
 		} else {
 			return "";
+		}
 		}
 	}
 
@@ -701,7 +717,44 @@ public class PersonReferenceFrame extends JFrame {
 			listSelectionPersonKZHog = listSelectionPersonKZ2;
 		}
 		System.out.println("listSelectionPersonKZHog = " + listSelectionPersonKZHog.size());
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			List<PersonStatusNew> listAllPerStat = new ArrayList<>();
+			if (otdel != null && !otdel.trim().isEmpty()) {
+				Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
+//				System.out.println("workplace = " + workplace.getOtdel());
+				for (Person person : listSelectionPersonKZHog) {
+					
+					List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByPersonAndWorkplace(person,
+							workplace);
+					if (listPerStat.size() > 0) {
+						listAllPerStat.addAll(listPerStat);
 
+//						System.out.println(person.getEgn() + " " + listPerStat.size());
+					}
+
+				}
+//				System.out.println("listAllPerStat = " + listAllPerStat.size());
+				if (!year.trim().isEmpty()) {
+//					System.out.println("Spisak_Prilogenia_year " + Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year).size());
+						
+						for (PersonStatusNew prStat : listAllPerStat) {
+							if (prStat.getYear().equals(year)) {
+								listSelectionPersonOtdel.add(prStat.getPerson());
+							}
+						}
+					
+				} else {
+					for (PersonStatusNew prStat : listAllPerStat) {
+						listSelectionPersonOtdel.add(prStat.getPerson());
+					}
+				}
+
+			} else {
+				listSelectionPersonOtdel = listSelectionPersonKZHog;
+			}
+			
+	}else {
 		List<PersonStatus> listAllPerStat = new ArrayList<>();
 		if (otdel != null && !otdel.trim().isEmpty()) {
 			Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
@@ -737,6 +790,10 @@ public class PersonReferenceFrame extends JFrame {
 		} else {
 			listSelectionPersonOtdel = listSelectionPersonKZHog;
 		}
+	}
+		
+		
+		
 		System.out.println("listSelectionPersonOtdel = " + listSelectionPersonOtdel.size());
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
 	}
@@ -799,7 +856,7 @@ public class PersonReferenceFrame extends JFrame {
 
 					if (listSelectionPerson.size() == 1) {
 						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(),
-								listSelectionPerson.get(0), false));
+								listSelectionPerson.get(0), false, 0));
 						viewInfoPanel();
 					}
 
@@ -840,7 +897,7 @@ public class PersonReferenceFrame extends JFrame {
 
 					if (listSelectionPerson.size() == 1) {
 						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(),
-								listSelectionPerson.get(0).getPerson(), true));
+								listSelectionPerson.get(0).getPerson(), true, 0));
 						viewInfoPanel();
 					}
 
@@ -874,7 +931,7 @@ public class PersonReferenceFrame extends JFrame {
 					System.out.println("--->> " + str.substring(0, index));
 					Person person = PersonDAO.getValuePersonByEGN(str.substring(0, index));
 					textArea.setText(
-							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false));
+							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false, 0));
 					viewInfoPanel();
 					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 				}
@@ -1060,7 +1117,7 @@ public class PersonReferenceFrame extends JFrame {
 					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), egn_code_Colum).toString();
 					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
 					textArea.setText(
-							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false));
+							TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(), person, false, 0));
 					viewInfoPanel();
 					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 				}

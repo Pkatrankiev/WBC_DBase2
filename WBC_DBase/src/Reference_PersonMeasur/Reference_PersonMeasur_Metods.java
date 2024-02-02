@@ -46,9 +46,11 @@ import Aplication.RemouveDublikateFromList;
 import Aplication.ResourceLoader;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceExportToExcell;
@@ -342,6 +344,18 @@ public class Reference_PersonMeasur_Metods {
 		List<Integer> listPersonID = new ArrayList<>();
 		List<Person> listPerson = new ArrayList<>();
 		List<Person> listPersonNew = new ArrayList<>();
+		
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByWorkplace_DateStart_DateEnd(workPlace, dateStart, dateEnd);
+			System.out.println(listPerStat.size());
+			
+			for (PersonStatusNew personStatus : listPerStat) {
+						listPersonID.add(personStatus.getPerson().getId_Person());	
+			
+			}	
+		}else {
+		
 		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplace_DateStart_DateEnd_2(workPlace, dateStart, dateEnd);
 		System.out.println(listPerStat.size());
 		
@@ -349,7 +363,7 @@ public class Reference_PersonMeasur_Metods {
 					listPersonID.add(personStatus.getPerson().getId_Person());	
 		
 		}
-		
+		}
 		 listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
 		System.out.println(listPersonID.size());
 		for (Integer integer : listPersonID) {
@@ -357,7 +371,22 @@ public class Reference_PersonMeasur_Metods {
 		}
 
 		for (Person person : listPerson) {
+			
+			if(PerStatNewSet.equals("1")) {
+				PersonStatusNew perStat = getLastPersonStatusNewByPerson(person);
+				
+				if(perStat!=null) {
+				String zabel = perStat.getZabelejka();
+				String formuliarName = perStat.getFormulyarName();
+				if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ") 
+						&& !formuliarName.contains("NotInList")) {
+					System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
+					listPersonNew.add(person);		
+			}
+				}	
+			}else {
 			PersonStatus perStat = getLastPersonStatusByPerson(person);
+			
 			if(perStat!=null) {
 			String zabel = perStat.getZabelejka();
 			String formuliarName = perStat.getSpisak_prilogenia().getFormulyarName();
@@ -366,6 +395,7 @@ public class Reference_PersonMeasur_Metods {
 				System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
 				listPersonNew.add(person);		
 		}
+			}
 			}
 		}
 		return listPersonNew;
@@ -383,6 +413,18 @@ public class Reference_PersonMeasur_Metods {
 		}
 	}
 		
+	public static PersonStatusNew getLastPersonStatusNewByPerson(Person person) {
+		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByObjectSortByColumnName("Person_ID", person,
+				"DateSet");
+		List<PersonStatusNew> sortedReversPeStatList = list.stream()
+				.sorted(Comparator.comparing(PersonStatusNew::getPersonStatusNew_ID).reversed()).collect(Collectors.toList());
+		if (sortedReversPeStatList.size() > 0) {
+			return sortedReversPeStatList.get(0);
+		} else {
+			return null;
+		}
+	}
+	
 	protected static boolean allFieldsEmnty() {
 		JTextField textField_EndDate = Reference_PersonMeasur_Frame.getTextField_EndDate();
 		JTextField textField_StartDate = Reference_PersonMeasur_Frame.getTextField_StartDate();

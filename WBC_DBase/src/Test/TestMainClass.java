@@ -19,6 +19,7 @@ import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.ActualExcellFiles;
@@ -43,9 +44,14 @@ public class TestMainClass {
 //			String pathNew = "d:\\!!000\\PERSONNEL-09-10.xls";
 //			TestClasess.checkTwoExcelFiles(pathOld, pathNew);
 	
-			 conectToAccessDB.getKodeStatusByPersonZone("6902121962");
+			;
+//			TestClasess.PersonStatusNewCheckDublicate();
 			
-			
+//			TestClasess.deleteKodeStatusByMisingPerson();
+//			PersonStatusNewDAO.deleteValuePersonStatusNew(PersonStatusNewDAO.getValuePersonStatusNewByID(0));
+//			TestClasess.deleteDublikatePersonStatusWithWorkpliceInYere("2023");
+//			TestClasess.PresonStatusNewWithYear();
+			TestClasess.CheckCurentDataInExcelFile();
 		}
 	}
 		}

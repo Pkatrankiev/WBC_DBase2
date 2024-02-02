@@ -1,6 +1,7 @@
 package BasicClassAccessDbase;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +23,12 @@ public class KodeStatus implements Serializable {
 	private boolean freeKode;
 	private String year;
 	private String zabelejkaKodeStatus;
+	@ManyToOne
+	private UsersWBC setData_UsersWBC;
+	private Date dateSet;
 	
 	public KodeStatus (Person person,
-	String kode, Zone zone, boolean freeKode, String year, String zabelejkaKodeStatus) {
+	String kode, Zone zone, boolean freeKode, String year, String zabelejkaKodeStatus, UsersWBC setData_UsersWBC, Date dateSet) {
 		
 		this.person = person;
 		this.kode = kode;
@@ -32,6 +36,8 @@ public class KodeStatus implements Serializable {
 		this.freeKode = freeKode;
 		this.year = year;
 		this.zabelejkaKodeStatus = zabelejkaKodeStatus;
+		this.setData_UsersWBC = setData_UsersWBC;
+		this.dateSet = dateSet;
 	}
 	
 	public KodeStatus() {
@@ -96,6 +102,22 @@ public class KodeStatus implements Serializable {
 
 	public void setZabelejkaKodeStatus(String zabelejkaKodeStatus) {
 		this.zabelejkaKodeStatus = zabelejkaKodeStatus;
+	}
+
+	public UsersWBC getSetData_UsersWBC() {
+		return setData_UsersWBC;
+	}
+
+	public void setSetData_UsersWBC(UsersWBC setData_UsersWBC) {
+		this.setData_UsersWBC = setData_UsersWBC;
+	}
+
+	public Date getDateSet() {
+		return dateSet;
+	}
+
+	public void setDateSet(Date dateSet) {
+		this.dateSet = dateSet;
 	}
 	
 	

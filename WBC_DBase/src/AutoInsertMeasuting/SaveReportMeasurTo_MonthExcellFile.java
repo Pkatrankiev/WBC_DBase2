@@ -25,9 +25,11 @@ import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 
 public class SaveReportMeasurTo_MonthExcellFile {
 
@@ -231,11 +233,18 @@ public class SaveReportMeasurTo_MonthExcellFile {
 
 	private static String getLastWorkplace(Person person) {
 //		System.out.println("otdel " + getLastPersonStatus(person).getWorkplace().getOtdel());
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			return getLastPersonStatusNew(person).getWorkplace().getOtdel();
+		}else {
+		
 		return getLastPersonStatus(person).getWorkplace().getOtdel();
+		}
 	}
 	
 	private static PersonStatus getLastPersonStatus(Person person) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
+		
 		Date lastDate = null;
 		PersonStatus lastPersonStatus = null;
 		try {
@@ -259,4 +268,29 @@ public class SaveReportMeasurTo_MonthExcellFile {
 		return lastPersonStatus;
 	}
 
+	private static PersonStatusNew getLastPersonStatusNew(Person person) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
+		
+		Date lastDate = null;
+		PersonStatusNew lastPersonStatus = null;
+		try {
+			lastDate = sdf.parse("01.01.2000");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByObject("Person_ID", person);
+//		System.out.println("List<PersonStatus> listSize " + list.size());
+		for (PersonStatusNew personStatus : list) {
+
+			Date endDate = personStatus.getStartDate();
+//			System.out.println("endDate " + endDate);
+			if (lastDate.before(endDate)) {
+				lastDate = endDate;
+				lastPersonStatus = personStatus;
+//				System.out.println("lastDate " + lastDate);
+			}
+		}
+
+		return lastPersonStatus;
+	}
 }

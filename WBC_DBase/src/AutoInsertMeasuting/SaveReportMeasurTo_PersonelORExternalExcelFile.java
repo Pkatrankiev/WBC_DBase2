@@ -31,7 +31,7 @@ import BasicClassAccessDbase.Person;
 
 public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 
-	static boolean flNotDublicateData;
+	static boolean flNotDublicateData = true;
 	static List<ReportMeasurClass> listReportMeasurClass = new ArrayList<>();
 	
 	public static void SaveListReportMeasurClassToExcellFile(List<ReportMeasurClass> list,
@@ -77,7 +77,9 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 						listForSaveMeasurToMont.add(reportMeasur);
 						listReportMeasurClass.add(reportMeasur);
 					} else {
-						if(flNotDublicateData)	listForNotSaveMeasur.add(reportMeasur);
+						if(flNotDublicateData) {
+							listForNotSaveMeasur.add(reportMeasur);
+						}
 						
 					}
 				}
@@ -102,7 +104,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		if (forPersonalExcellFile) {
 			if (listForNotSaveMeasur.size() > 0) {
 				String reportNotSaveMesur = "<html>"
-						+ ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSaveMeasur");
+						+ ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSaveMeasur") + "<br>";
 				for (ReportMeasurClass reportMeasur : listForNotSaveMeasur) {
 					reportNotSaveMesur = reportNotSaveMesur + getNamePersonAndEGN(reportMeasur) + "<br>";
 				}
@@ -110,6 +112,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 				MessageDialog(reportNotSaveMesur, "");
 			}
 		} else {
+			System.out.println("+++++++++++++++++++"+listForNotSaveMeasur.size());
 			forPersonalExcellFile = true;
 			SaveListReportMeasurClassToExcellFile(listForNotSaveMeasur, forPersonalExcellFile);
 		}

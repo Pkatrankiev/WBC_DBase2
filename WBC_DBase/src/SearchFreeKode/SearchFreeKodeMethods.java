@@ -370,7 +370,7 @@ System.out.println(masiveUsedKode.size()+"  -  "+k+ " + " +newMasive.length);
 			k++;
 		}
 		Person person = PersonDAO.getValuePersonByEGN(egn);
-		text = TextInAreaTextPanel.createInfoPanelForPerson(year, person, true);
+		text = TextInAreaTextPanel.createInfoPanelForPerson(year, person, true, 0);
 
 		return text;
 	}

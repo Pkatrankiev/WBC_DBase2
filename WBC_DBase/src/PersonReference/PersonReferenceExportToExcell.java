@@ -255,6 +255,7 @@ public class PersonReferenceExportToExcell {
 		//				Create column	
 					
 						startRow++;
+						System.out.println(dataTable[0].length+"  "+dataTable.length);
 						int cc = dataTable[0].length;
 						for (int tableRow = 0; tableRow < dataTable.length; tableRow++) {
 							row = sheet.createRow(startRow);
@@ -273,7 +274,11 @@ public class PersonReferenceExportToExcell {
 								}else {
 									
 								cell = row.createCell(tableColumCount, CellType.STRING);
-								cell.setCellValue(dataTable[tableRow][tableColumCount].replace(",", "."));
+								String textCell = "";
+								if(dataTable[tableRow][tableColumCount] != null) {
+									 textCell = dataTable[tableRow][tableColumCount].replace(",", ".");
+								}
+								cell.setCellValue(textCell.replace(",", "."));
 								}
 		
 							}

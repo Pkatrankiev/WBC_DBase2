@@ -11,13 +11,11 @@ import java.util.HashSet;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,6 +36,7 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import MenuClasses.WBC_MainWindowFrame;
@@ -83,19 +82,21 @@ public class UpdateBDataFromExcellFiles {
 		String MainWindowFrame_Label = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_Label");
 		ActualExcellFiles actualExcellFiles_LastActuals = ActualExcellFilesDAO.getValueActualExcellFilesByName("LastActuals");
 		String date_LastActuals = sdfrmt.format(actualExcellFiles_LastActuals.getActualExcellFiles_Date());
+		System.out.println("tt 1");
 		WBC_MainWindowFrame.getLblNewLabel().setText(MainWindowFrame_Label+" "+date_LastActuals);
 		
 		String destinationPathArhiveNow = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationPathArhiveNow");
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
+		System.out.println("tt 2");
 		List<ActualExcellFiles> listActualExcellFiles = ActualExcellFilesDAO.getAllValueActualExcellFiles();
 		List<String> listChengeExcellFilePath = listChengeExcellFile(round, listActualExcellFiles, excellFiles);
-		
+		System.out.println("tt 3");
 		List<String> listPathOldFileFromArhive = getListAllExcelFileFromArhive(new File(destinationPathArhiveNow));
-		
+		System.out.println("tt 4");
 		List<List<List<String>>> listStringForDiferentRow = checkTwoExcelFiles(listPathOldFileFromArhive, listChengeExcellFilePath);
-		
+		System.out.println("tt 5 "+listStringForDiferentRow.size());
 		String textForInfoFrame = generateInfoDiferentRow(listStringForDiferentRow);
-		System.out.println(textForInfoFrame);
+		System.out.println("tt "+textForInfoFrame);
 		
 		
 		
@@ -231,6 +232,7 @@ public class UpdateBDataFromExcellFiles {
 		
 		String PathToOldFile = ListPathToOldFile.get(0);
 		for (String PathToNewFile : excellFiles) {
+		
 			String excelFileName = "Per";
 			if (PathToNewFile.contains("EXTERNAL")) {
 				PathToOldFile = ListPathToOldFile.get(1);
@@ -244,7 +246,7 @@ public class UpdateBDataFromExcellFiles {
 				inputNewStream = new FileInputStream(PathToNewFile);
 				try (Workbook workbooknew = new HSSFWorkbook(inputNewStream)) {
 				
-					int lastRowNew = workbooknew.getSheetAt(0).getPhysicalNumberOfRows();
+//					int lastRowNew = workbooknew.getSheetAt(0).getPhysicalNumberOfRows();
 					int lastRowOld = workbookOld.getSheetAt(0).getPhysicalNumberOfRows();
 					
 				
@@ -296,21 +298,47 @@ public class UpdateBDataFromExcellFiles {
 									egnOld = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(5));
 									egnNew = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(5));
 									
-									if (lastRowOld < lastRowNew) {
-										if(!egnOld.equals(egnNew)){
-											strOld = "";
-											indexOldRow--;
-										}
-												
-									}
+//									if (lastRowOld < lastRowNew) {
+//										if(!egnOld.equals(egnNew)){
+//											strOld = "";
+//											indexOldRow--;
+//										}
+//												
+//									}
+									
+									
 //									else {
 //										if(!egnOld.equals(egnNew)){
 //											strNew = "";
 //											j--;
 //										}	
 //									}
+									boolean fl =false;
+									System.out.println("old "+egnOld+" new"+egnNew);
+									if(!egnOld.equals(egnNew)){
+										System.out.println("оооооооооооооооооооо");
+									for (int k = j; k < j+10; k++) {
+										sourceRowOld = worksheetOld.getRow(indexOldRow);
+										sourceRowNew = worksheetNew.getRow(k);
+										egnOld = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(5));
+										egnNew = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(5));
+										if(egnOld.equals(egnNew)){
+											fl = true;
+											k = j+10;
+										}
+									} 	
+								if(fl) {		
+									strOld = "";
+									indexOldRow--;
+								}else {
+									strNew = "";
+									j--;
+									}	
+								}	
 									
-									
+									System.out.println("old  "+indexOldRow+" "+strOld);
+									System.out.println(" new "+j+" "+strNew);
+									System.out.println();
 									if (!strOld.equals(strNew)) {
 										listRowStr.add(excelFileName + " :"+ j + ": 1 - " + strOld + ": 2 - " + strNew);
 									
@@ -349,7 +377,7 @@ public class UpdateBDataFromExcellFiles {
 		for (List<String> listInt : listAllRowString) {
 			if (listInt.size() > 0) {
 				text += "Razliki w Sheet " + l + "\n";
-//				System.out.println("Razliki w Sheet " + l);
+				System.out.println("Razliki w Sheet " + l+" size "+listInt.size());
 				for (String integer : listInt) {
 					String[] rowStr = integer.split(":");
 					text += rowStr[0]+" - row " + rowStr[1] + "\n";
@@ -381,6 +409,8 @@ public class UpdateBDataFromExcellFiles {
 
 
 	private static void extracted(ActionIcone round, List<String> listChengeExcellFilePath, List<List<List<String>>> listStringForDiferentRow) {
+		
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		String[] key = { 
 				"Person", 
 				"Spisak_Prilogenia", 
@@ -489,6 +519,23 @@ public class UpdateBDataFromExcellFiles {
 
 				case "PersonStatus": {
 					// read and set PersonStatus
+					if(PerStatNewSet.equals("1")) {
+						List<PersonStatusNew> list = null;
+						try {
+							list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile,
+									firmName, year, round, textIcon, listDiferentRow);
+							System.out.println("list PersonStatus from Excell " + list.size());
+//							ReadPersonStatusFromExcelFile.ListPersonStatus(list);
+							System.out.println("--> " + list.size());
+						} catch (Exception e) {
+							save = OptionDialog(errorText);
+							
+						}
+						if (save) {
+							ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
+							System.out.println("Save set PersonStatus " + firmName);
+						}
+					}else {
 					List<PersonStatus> list = null;
 					try {
 						list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile,
@@ -503,6 +550,7 @@ public class UpdateBDataFromExcellFiles {
 					if (save) {
 						ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, round, textIcon);
 						System.out.println("Save set PersonStatus " + firmName);
+					}
 					}
 				}
 					break;
@@ -565,6 +613,16 @@ public class UpdateBDataFromExcellFiles {
 					break;
 				case "ObhodenList": {
 					// read and set ObhodenList in PersonStatus
+					if(PerStatNewSet.equals("1")) {
+						List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusNewFromExcelFile(pathFile, firmName,
+								year, round, textIcon);
+						ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
+						System.out.println(year+ " --> "+list.size());
+						if(save) {
+						ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
+						System.out.println("Save "+firmName);
+						}
+					}else {
 					List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
 							year, round, textIcon);
 					ReadPersonStatusFromExcelFile.ListPersonStatus(list);
@@ -572,6 +630,7 @@ public class UpdateBDataFromExcellFiles {
 					if(save) {
 					ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, round, textIcon);
 					System.out.println("Save "+firmName);
+					}
 					}
 				}
 				}

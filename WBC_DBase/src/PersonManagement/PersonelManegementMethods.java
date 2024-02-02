@@ -75,6 +75,7 @@ import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
@@ -86,6 +87,7 @@ import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
@@ -206,7 +208,7 @@ public class PersonelManegementMethods {
 					if (listSelectionPerson.size() == 1) {
 						btn_savePerson_Insert.setEnabled(true);
 						selectionPerson = listSelectionPerson.get(0);
-						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", selectionPerson, false));
+						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", selectionPerson, false, 0));
 
 						textField_EGN.setText(selectionPerson.getEgn());
 						textField_FName.setText(selectionPerson.getFirstName());
@@ -373,7 +375,7 @@ public class PersonelManegementMethods {
 						multytextInTextArea = false;
 						btn_savePerson_Insert.setEnabled(true);
 						selectionPerson = PersonDAO.getValuePersonByEGN(egn);
-						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", selectionPerson, false));
+						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", selectionPerson, false, 0));
 
 						textField_EGN.setText(selectionPerson.getEgn());
 						textField_FName.setText(selectionPerson.getFirstName());
@@ -675,9 +677,16 @@ public class PersonelManegementMethods {
 							} catch (ParseException e1) {
 
 							}
+							
+							String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 
+							if(PerStatNewSet.equals("1")) {
+								PersonStatusNewDAO.setValuePersonStatusNew(person, workplace, spisPril.getFormulyarName(), spisPril.getStartDate(), spisPril.getEndDate(), spisPril.getYear(),  user, curentDate,
+										comment);
+							}else {
 							PersonStatusDAO.setValuePersonStatus(person, workplace, spisPril, user, curentDate,
 									comment);
+							}
 
 						}
 
@@ -786,13 +795,14 @@ public class PersonelManegementMethods {
 	}
 	
 	private static void setKodeStatusInDBase(Person person, String[] infoForPerson, String year) {
-
+		Date setdate = Calendar.getInstance().getTime();
+		UsersWBC setDataUser = UsersWBCDAO.getValueUsersWBCByID(1);
 		for (int i = 0; i < 5; i++) {
 
 			String kodeByFrame = infoForPerson[i];
 			KodeStatus kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYear(person, i + 1, year);
 			KodeStatus newKodeStat = new KodeStatus(person, kodeByFrame, ZoneDAO.getValueZoneByID(i+1), true,
-					year, "");
+					year, "", setDataUser, setdate);
 			setKodeToDBase(kodeByFrame, kodeStat, newKodeStat);
 		}
 
@@ -1027,7 +1037,7 @@ public class PersonelManegementMethods {
 		setitemInChoise(comboBox_svePerson_Firm, comboBox_svePerson_Otdel);
 		comboBox_svePerson_Otdel.select(masiveKode[6]);
 		oldOtdelPerson = masiveKode[6];
-		textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", person, false));
+		textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", person, false, 0));
 	}
 
 	public static void setitemInChoise(Choice comboBox_Firm, Choice comboBox_Otdel) {
@@ -1200,6 +1210,7 @@ public class PersonelManegementMethods {
 
 	public static void setKodeToDBase(String kodeByFrame, KodeStatus kodeStst, KodeStatus newKodeStst) {
 		String kodByDBase;
+		Date setdate = Calendar.getInstance().getTime();
 		if (kodeByFrame.equals("н") || kodeByFrame.equals("ЕП-2")) {
 			kodeByFrame = "";
 		}
@@ -1213,6 +1224,7 @@ public class PersonelManegementMethods {
 			} else {
 				if (kodeStst != null) {
 					kodeStst.setKode(kodeByFrame);
+					kodeStst.setDateSet(setdate);
 					KodeStatusDAO.updateValueKodeStatus(kodeStst);
 				} else {
 					KodeStatusDAO.setObjectKodeStatusToTable(newKodeStst);
@@ -1328,7 +1340,21 @@ public class PersonelManegementMethods {
 		String[] masive = new String[7] ;
 		String[] masiveKodeStatus = getKodeStatusByPersonFromDBase(person);
 
-//		PersonStatus perStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+
+		if(PerStatNewSet.equals("1")) {
+			
+			List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByPerson(person);
+			sortByStartDateNew( listPerStat);
+			PersonStatusNew perStat = listPerStat.get(0);
+				for (int i = 0; i < masiveKodeStatus.length; i++) {
+					masive[i] = masiveKodeStatus[i];
+				}
+			
+			masive[5] = perStat.getWorkplace().getFirmName();
+			masive[6] = perStat.getWorkplace().getOtdel();
+		}else {
+		
 		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByPerson(person);
 		sortByStartDate( listPerStat);
 		PersonStatus perStat = listPerStat.get(0);
@@ -1338,7 +1364,7 @@ public class PersonelManegementMethods {
 		
 		masive[5] = perStat.getWorkplace().getFirmName();
 		masive[6] = perStat.getWorkplace().getOtdel();
-
+		}
 
 		return masive;
 	}
@@ -1473,13 +1499,19 @@ public class PersonelManegementMethods {
 	}
 
 	private static List<Spisak_Prilogenia> getSisPril(String curentYear2, Workplace workPl) {
-		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workPl, curentYear);
-
 		List<Integer> listSpInt = new ArrayList<>();
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			List<Spisak_Prilogenia> list = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByYear_Workplace(curentYear, workPl.getId_Workplace());
+			for (Spisak_Prilogenia spPr : list) {
+				listSpInt.add(spPr.getSpisak_Prilogenia_ID());
+			}
+		}else {
+		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workPl, curentYear);
 		for (PersonStatus personStatus : list) {
 			listSpInt.add(personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
 		}
-
+		}
 		List<Integer> listSp2 = removeDuplicatess(listSpInt);
 		List<Spisak_Prilogenia> listSp = new ArrayList<>();
 		for (Integer personStatusInt : listSp2) {
@@ -1896,8 +1928,7 @@ public class PersonelManegementMethods {
 		return textCheck;
 	}
 
-	 public static void sortByStartDate(List<PersonStatus> perStat)
-	    {	    		    	
+	 public static void sortByStartDate(List<PersonStatus> perStat){	    		    	
 
   		Collections.sort(perStat, new Comparator<PersonStatus>() {
   		 
@@ -1909,6 +1940,18 @@ public class PersonelManegementMethods {
   	
 	    }
 	
+	 public static void sortByStartDateNew(List<PersonStatusNew> perStat){	    		    	
+
+	  		Collections.sort(perStat, new Comparator<PersonStatusNew>() {
+	  		 
+			@Override
+			public int compare(PersonStatusNew o1, PersonStatusNew o2) {
+				 return o2.getStartDate().compareTo(o1.getStartDate());
+			}
+	  		});
+	  	
+		    }
+	 
 	public static void convertToBigCyr(JTextField textField, int zoneID) {
 		
 		String kode = textField.getText();
@@ -2188,7 +2231,7 @@ public class PersonelManegementMethods {
 
 		if (listPersonFromFile.size() == 1) {
 			textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_svePerson_Year.getText(),
-					listPersonFromFile.get(0).getPerson(), false));
+					listPersonFromFile.get(0).getPerson(), false, 0));
 			PersonelManegementFrame.viewInfoPanel();
 			if (dataTable != null) {
 				btnBackToTable.setEnabled(true);
@@ -2316,12 +2359,21 @@ public class PersonelManegementMethods {
 		for (Person person : listPerson) {
 			listStringEGN[i] ="";
 			listStringPerson[i] ="";
+			
+			String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+			if(PerStatNewSet.equals("1")) {
+				PersonStatusNew personStat = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
+				if (personStat != null) {
+					listStringWorkplace[i] = personStat.getWorkplace().getOtdel();
+					
+				}	
+			}else {
 			PersonStatus personStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
 			if (personStat != null) {
 				listStringWorkplace[i] = personStat.getWorkplace().getOtdel();
 				
 			}
-			
+			}
 			listStringEGN[i] = person.getEgn();
 			listStringPerson[i] = person.getFirstName() + " " + person.getSecondName() + " "+ person.getLastName();
 			
@@ -2413,7 +2465,7 @@ public class PersonelManegementMethods {
 					System.out.println(reqCodeStr);
 					Person person = PersonDAO.getValuePersonByEGN(reqCodeStr);
 					textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_svePerson_Year.getText(),
-							person, false));
+							person, false, 0));
 					PersonelManegementFrame.viewInfoPanel();
 					if (dataTable != null) {
 						btnBackToTable.setEnabled(true);

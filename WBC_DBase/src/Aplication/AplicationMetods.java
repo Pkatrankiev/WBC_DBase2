@@ -25,6 +25,7 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 
@@ -33,6 +34,7 @@ public class AplicationMetods {
 
 	public static void readInfoFromGodExcelFile(String year, String key, boolean save) {
 	
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		String[] excellFiles = getDataBaseFilePat_ArhivePersonalAndExternal();	
 		 
 		for (String pathFile : excellFiles) {
@@ -71,7 +73,16 @@ public class AplicationMetods {
 		
 		case "PersonStatus": {
 			// read and set PersonStatus
-			
+			if(PerStatNewSet.equals("1")) {
+				List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile, firmName,
+						year, null, "", null);
+				ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
+				System.out.println("--> "+list.size());
+				if(save) {
+				ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, null, "");
+				System.out.println("Save "+firmName);
+				}	
+			}else {
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
 					year, null, "", null);
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
@@ -79,6 +90,7 @@ public class AplicationMetods {
 			if(save) {
 			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
 			System.out.println("Save "+firmName);
+			}
 			}
 		}
 		break;
@@ -121,6 +133,19 @@ public class AplicationMetods {
 		break;
 		case "ObhodenList": {
 			// read and set ObhodenList in PersonStatus
+			
+			if(PerStatNewSet.equals("1")) {
+				List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusNewFromExcelFile(pathFile, firmName,
+						year, null, "");
+				ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
+				System.out.println(year+ " --> "+list.size());
+				if(save) {
+				ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, null, "");
+				System.out.println("Save "+firmName);
+				}	
+				
+				
+			}else {
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
 					year, null, "");
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
@@ -129,8 +154,10 @@ public class AplicationMetods {
 			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
 			System.out.println("Save "+firmName);
 			}
-		}
 		
+			
+		}
+		}
 		}
 		}
 	}
@@ -270,7 +297,26 @@ public class AplicationMetods {
 	    return flag;
 	  }
 	
-	
+	public static SimpleDateFormat extractedSimleDateFormatFromDate(String strDate) {
+		String strD = strDate.replace(".", ":");
+		
+		String[] val = strD.split(":");
+		
+		String sdfrmtSTR="";
+		for (int i = 0; i < val[0].length(); i++) {
+			sdfrmtSTR += "d";
+		}
+		sdfrmtSTR += ".";
+		for (int i = 0; i < val[1].length(); i++) {
+			sdfrmtSTR += "M";
+		}
+		sdfrmtSTR += ".";
+		for (int i = 0; i < val[2].length(); i++) {
+			sdfrmtSTR += "y";
+		}
+		SimpleDateFormat sdfrmt = new SimpleDateFormat(sdfrmtSTR);
+		return sdfrmt;
+	}
 	
 	public static String getCurentYear() {
 	return Calendar.getInstance().get(Calendar.YEAR) + "";

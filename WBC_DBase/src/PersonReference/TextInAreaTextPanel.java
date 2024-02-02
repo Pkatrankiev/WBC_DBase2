@@ -6,20 +6,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
+import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Zone;
 
@@ -48,24 +52,48 @@ public class TextInAreaTextPanel {
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_GGP"),
 			ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_Doza")};
 	private static String[][] masiveMeasur;
+	private static int countIteration;
 	
-	public static String createInfoPanelForPerson(String year, Person personInport, boolean fromExcell) {
-		List<KodeStatus> listK = null;
-		List<PersonStatus> listP = null;
-		List<Measuring> listM = null;
-		person = personInport;
+	public static String createInfoPanelForPerson(String year, Person personInport, boolean fromExcell, int inputCountIteration) {
+		List<KodeStatus> listKodeStatus = null;
+		List<PersonStatus> listPersonStatus = null;
+		List<PersonStatusNew> listPersonstatusNew = null;
+		List<Measuring> listMeasuring = null;
+		
+		countIteration = inputCountIteration;
+		
+		person = PersonDAO.getValuePersonByEGN(personInport.getEgn());
+		
+		
+		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		if(PerStatNewSet.equals("1")) {
+			
+			if(fromExcell) {
+				listPersonstatusNew =SearchFromExcellFiles.getListPersonStatusNewFromExcelFile(year, person);
+			}else{
+				listPersonstatusNew = PersonStatusNewDAO.getValuePersonStatusNewByObjectSortByColumnName("Person_ID", person,"StartDate");
+			}
+			masivePersonStatus = null;
+			if(listPersonstatusNew.size()>0) {
+			masivePersonStatus = generateMasivePersonStatusNew(year, listPersonstatusNew);
+			masivePersonStatus = remoteNullFromArray(masivePersonStatus);
+			sortbyStartDateColumn(masivePersonStatus);
+			}
+		}else {
 		
 		if(fromExcell) {
-			listP =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, person);
+			listPersonStatus =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, person);
 		}else{
-		listP = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
+		listPersonStatus = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
 		}
 		masivePersonStatus = null;
-		if(listP.size()>0) {
-		masivePersonStatus = generateMasivePersonStatus(year, listP);
+		if(listPersonStatus.size()>0) {
+		masivePersonStatus = generateMasivePersonStatus(year, listPersonStatus);
 		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
 		sortbyStartDateColumn(masivePersonStatus);
 		}
+		}
+		
 		String textSpis ="";
 				if(masivePersonStatus!=null && masivePersonStatus.length>0) {
 		textSpis = setTextInfoPersonStatus(masivePersonStatus, masivePersonStatusName);
@@ -73,12 +101,16 @@ public class TextInAreaTextPanel {
 		
 		masiveZoneName = getMasiveZoneName();
 		if(fromExcell) {
-			listK = SearchFromExcellFiles.getListKodeStatusFromExcelFile(year, personInport);
+			listKodeStatus = SearchFromExcellFiles.getListKodeStatusFromExcelFile(year, personInport);
 		}else{
-		listK = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
+		listKodeStatus = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
 		}
-		
-		masiveKode = generateMasiveKodeStatus(year, listK, listP);
+		if(PerStatNewSet.equals("1")) {
+			
+			masiveKode = generateMasiveKodeStatusNew(year, listKodeStatus, listPersonstatusNew,  personInport, fromExcell);
+		}else {
+		masiveKode = generateMasiveKodeStatus(year, listKodeStatus, listPersonStatus);
+		}
 		String textKode ="";
 		if(masiveKode.length>0) {
 		textKode = setTextInfoKode(masiveKode, masiveZoneName);
@@ -87,8 +119,8 @@ public class TextInAreaTextPanel {
 		if(fromExcell) {
 			masiveMeasur = SearchFromExcellFiles.generateMasiveMeasurFromExcelFile( year, person);
 		}else{
-		listM = MeasuringDAO.getValueMeasuringByObjectSortByColumnName("Person_ID", person, "Date");
-		masiveMeasur = generateMasiveMeasur(year, listM);
+		listMeasuring = MeasuringDAO.getValueMeasuringByObjectSortByColumnName("Person_ID", person, "Date");
+		masiveMeasur = generateMasiveMeasur(year, listMeasuring);
 		}
 		
 		String textMeasur ="";
@@ -234,9 +266,23 @@ public class TextInAreaTextPanel {
 	
 	private static String setTextInfoPersonStatus(String[][] masivePersonStatus, String[] masivePersonStatusName) {
 		String personStatusString = "";
-		
+		String[][] masivePersonStatusNew = masivePersonStatus;
 		int[] max = {5,7,8,15,15};
 		int[] columnSize = getMaxSizecolumn(masivePersonStatus, max);
+		Set<String> listYear = new HashSet<String>();
+		for (int i = 0; i < masivePersonStatus.length; i++) {
+			if(masivePersonStatus[i][0]!=null ) {
+				listYear.add(masivePersonStatus[i][0]);
+			}
+		}
+	
+		for (String stringYear : listYear) {
+			for (int i = 0; i < masivePersonStatus.length; i++) {
+				if(masivePersonStatus[i][0]!=null && masivePersonStatus[i][0].equals(stringYear) ) {
+				masivePersonStatusNew[i] = masivePersonStatus[i];
+			}
+		}
+		}
 		
 		for (int j = 0; j < 5; j++) {
 			personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatusName[j]) +masivePersonStatusName[j];	
@@ -246,15 +292,16 @@ public class TextInAreaTextPanel {
 		for (int i = 0; i < masivePersonStatus.length; i++) {
 			if(masivePersonStatus[i][0]!=null ) {
 			for (int j = 0; j < 5; j++) {
-				personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatus[i][j]) + masivePersonStatus[i][j];	
+				personStatusString = personStatusString + getAddSpace(columnSize[j], masivePersonStatusNew[i][j]) + masivePersonStatusNew[i][j];	
 			}
-			personStatusString = personStatusString + " "+ masivePersonStatus[i][5]+ "\n";	
+			personStatusString = personStatusString + " "+ masivePersonStatusNew[i][5]+ "\n";	
 			}
 		}
 		
 	
 		return personStatusString;
 	}
+		
 
 	public static int[] getMaxSizecolumn(String[][] masivePersonStatus, int[] max) {
 		
@@ -293,6 +340,30 @@ public class TextInAreaTextPanel {
 		return masivePersonStatus;
 	}
 
+	private static String[][] generateMasivePersonStatusNew(String year, List<PersonStatusNew> listP) {
+		String[][] masivePersonStatus = new String[listP.size()][6];
+		if(!year.trim().isEmpty()) {
+			int k=0;
+			for (PersonStatusNew perStat : listP) {
+
+				String yyy = perStat.getYear();
+				if (yyy.equals(year)) {
+					masivePersonStatus[k] = generateRowByMasive( perStat);
+					k++;
+				}
+
+				}
+		}else {
+			int k=0;
+			for (PersonStatusNew perStat : listP) {
+				masivePersonStatus[k] = generateRowByMasive( perStat);
+				k++;
+				}
+			}
+		return masivePersonStatus;
+	}
+
+	
 	static String[] generateRowByMasive( PersonStatus perStat) {
 		
 		String[] masivePersonStatus = new String[6];
@@ -304,12 +375,32 @@ public class TextInAreaTextPanel {
 		masivePersonStatus[2] = perStat.getSpisak_prilogenia().getFormulyarName();
 		masivePersonStatus[3] =  sdf.format(perStat.getSpisak_prilogenia().getStartDate());
 		masivePersonStatus[4] =  sdf.format(perStat.getSpisak_prilogenia().getEndDate());
+		masivePersonStatus[5] = "";
+		if(perStat.getZabelejka()!=null) {
 		masivePersonStatus[5] =  perStat.getZabelejka().replaceAll("\n", " ");
+		}
 		
 		return masivePersonStatus;
 	}
 	
+	static String[] generateRowByMasive( PersonStatusNew perStat) {
+		
+		String[] masivePersonStatus = new String[6];
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 	
+		masivePersonStatus[0] = perStat.getYear() ;
+		masivePersonStatus[1] = perStat.getWorkplace().getOtdel();
+		masivePersonStatus[2] = perStat.getFormulyarName();
+		masivePersonStatus[3] =  sdf.format(perStat.getStartDate());
+		masivePersonStatus[4] =  sdf.format(perStat.getEndDate());
+		masivePersonStatus[5] = "";
+		if(perStat.getZabelejka() != null) {
+		masivePersonStatus[5] =  perStat.getZabelejka().replaceAll("\n", " ");
+		}
+		
+		return masivePersonStatus;
+	}
 	
 	private static String[][] generateMasiveKodeStatus(String year, List<KodeStatus> listK, List<PersonStatus> listP) {
 		String yearKode="";
@@ -362,6 +453,92 @@ public class TextInAreaTextPanel {
 		return newMasiveKode;
 	}
 	
+	private static String[][] generateMasiveKodeStatusNew(String year, List<KodeStatus> listK, List<PersonStatusNew> listP, Person personInport, boolean fromExcell) {
+		String yearKode="";
+		String otdell = "";
+		int index = -1;
+		boolean isNewPersonStatusNewOject = false;
+			String[][] masiveKode = new String[listK.size()][7];
+		masiveKode = setDefoutValueInMasive(masiveKode);
+			for (KodeStatus kodeStat : listK) {
+				if (year.trim().isEmpty() || kodeStat.getYear().equals(year)) {
+					
+					if(!kodeStat.getYear().equals(yearKode)) {
+					yearKode = kodeStat.getYear();
+					index++;
+					}
+					masiveKode[index][0] = yearKode;
+					otdell = getOtdelByYearNew(yearKode, listP);
+					System.out.println(listP.size()+" "+yearKode+" /*/*/ "+otdell);
+					if(otdell.isEmpty() && countIteration < 2) {
+						isNewPersonStatusNewOject = true;
+						countIteration++;
+					otdell = searchANDsetPrsonStatusNewForYear(personInport, yearKode);
+					
+					System.out.println(yearKode+" - "+otdell);
+					}
+					masiveKode[index][1] = otdell ;
+					switch (kodeStat.getZone().getId_Zone()) {
+					case 1: {
+						masiveKode[index][2] =  kodeStat.getKode();
+					}
+					break;
+					
+					case 2: {
+						masiveKode[index][3] =  kodeStat.getKode();
+					}
+					break;
+					case 3: {
+						masiveKode[index][4] =  kodeStat.getKode();
+					}
+					break;
+					case 4: {
+						masiveKode[index][5] =  kodeStat.getKode();
+					}
+					break;
+					case 5: {
+						masiveKode[index][6] =  kodeStat.getKode();
+					}
+					break;
+					
+					}	
+			
+					
+				}
+				
+		}
+			String[][] newMasiveKode = new String[index+1][7];
+			for (int i = 0; i < newMasiveKode.length; i++) {
+				newMasiveKode[i] = masiveKode[i];
+			}
+			if(isNewPersonStatusNewOject) {
+				createInfoPanelForPerson( year, personInport, fromExcell, countIteration);
+			}
+		return newMasiveKode;
+	}
+	
+	
+	private static String searchANDsetPrsonStatusNewForYear(Person person, String yearKode) {
+		String otdel = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		
+		PersonStatusNew PerStat = SearchFromExcellFiles.getPersonStatusNewFromExcelFileIntoPersonReference(yearKode, person);
+		if(PerStat != null) {
+			String str = PerStat.getPerson().getEgn()+" - "+PerStat.getFormulyarName()+" - "+PerStat.getYear()+" - "+
+					sdf.format(PerStat.getStartDate())+" - "+sdf.format(PerStat.getEndDate())+" - "+sdf.format(PerStat.getDateSet())+" - "+PerStat.getWorkplace().getOtdel()+" - "+
+					PerStat.getZabelejka()+" - "+PerStat.getUserWBC().getLastName();
+			PersonStatusNewDAO.setObjectPersonStatusNewToTable(PerStat);
+			System.out.println(str);
+			otdel = PerStat.getWorkplace().getOtdel();
+		}
+		return otdel;
+	}
+
+
+	
+
+
+
 	private static String getOtdelByYear(String yearKode, List<PersonStatus> listP) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		String otdel = "";
@@ -373,6 +550,20 @@ public class TextInAreaTextPanel {
 			}
 		}
 		return otdel;
+	}
+	
+	private static String getOtdelByYearNew(String yearKode, List<PersonStatusNew> listP) {
+		
+		String date;
+		for (int i = 0; i < listP.size(); i++) {
+			
+			date = listP.get(i).getYear();
+			System.out.println(date+" ** "+yearKode);
+			if(date.equals(yearKode)) {
+				return listP.get(i).getWorkplace().getOtdel();
+			}
+		}
+		return "";
 	}
 
 	public static String[][] setDefoutValueInMasive(String[][] masiveKode) {
@@ -436,11 +627,21 @@ public class TextInAreaTextPanel {
 	    {	    		    	
 		 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
      	int columnStartDate = 3;
+     	int columnYeare = 0;
      	Arrays.sort(arr, new Comparator<String[]>() {
 
 	        
 				@Override
 				public int compare(String[] entry1, String[] entry2) {
+					
+					Integer y1 = Integer.parseInt(entry1[columnYeare]);
+					Integer y2 = Integer.parseInt(entry2[columnYeare]);
+					
+					int sComp = y1.compareTo(y2);	
+		        	 
+		        	 if(sComp != 0) {
+		        		 return sComp;
+		        	 }
 					
 					if(entry1[0].equals("-")) {
 						entry1[0] = "01.01.2000";
@@ -448,7 +649,7 @@ public class TextInAreaTextPanel {
 					if(entry2[0].equals("-")) {
 						entry2[0] = "01.01.2000";
 					}
-					if( entry1[0].equals(entry2[0])){
+					
 						  Date dateSet1 = null;
 			        	  Date dateSet2 = null;
 			        	 
@@ -459,11 +660,12 @@ public class TextInAreaTextPanel {
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
-			        	 
-			        	  return dateSet1.compareTo(dateSet2);	
-					}
 					
-					return 0;
+			        	return dateSet1.compareTo(dateSet2);	
+			        	 
+			        	
+					
+				
 				}
 	        });
 	    }

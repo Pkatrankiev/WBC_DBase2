@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
 
+import Aplication.AplicationMetods;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import BasiClassDAO.DimensionWBCDAO;
@@ -290,25 +291,12 @@ public class ExtractSpectriWithDozaFromSICH2 {
 
 	public static Date reformarDateMeasur(String origin_date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		SimpleDateFormat sdf6 = new SimpleDateFormat("d.M.yy");
-		SimpleDateFormat sdf7 = new SimpleDateFormat("dd.M.yy");
-		SimpleDateFormat sdf8 = new SimpleDateFormat("dd.MM.yy");
-		Date date = new Date();
+		SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(origin_date);
 
+		Date date = null;
 		try {
-			if (origin_date.length() == 6) {
-				date = sdf6.parse(origin_date);
-			}
-			if (origin_date.length() == 7) {
-				date = sdf7.parse(origin_date);
-			}
-			if (origin_date.length() == 8) {
-				date = sdf8.parse(origin_date);
-			}
-			if (origin_date.length() == 10) {
-				date = sdf.parse(origin_date);
-			}
+			date = sdfrmt.parse(origin_date);
+			
 		} catch (ParseException e) {
 			JOptionPane.showMessageDialog(null, "nekorektna date", "Error Data", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();

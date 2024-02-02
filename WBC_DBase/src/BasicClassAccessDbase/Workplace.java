@@ -77,7 +77,8 @@ public class Workplace implements Serializable {
 	}
 
 	public String getNapOtdelSector() {
-		return NapOtdelSector;
+		
+		return NapOtdelSector == null ? "" : NapOtdelSector;
 	}
 
 	public void setNapOtdelSector(String napOtdelSector) {

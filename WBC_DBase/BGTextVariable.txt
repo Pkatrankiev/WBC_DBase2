@@ -11,6 +11,8 @@ destinationPathArhiveNow = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 По�
 databaseEncriptOID = qwer1234
 databaseEncript = password
 
+
+PerStatNewSet = 1
 --------------------------------------------------------------------------
 testFilesToD = 0
 
@@ -195,6 +197,7 @@ checkCorrectinDataInExcell = Проверка за грешни данни в Ex
 checkCorrectinDataInExcell_labelErrorColumn = Проверка за несъвпадения на първите 5 колони в EXTERNAL.xls и PERSONNEL.xls
 checkCorrectinDataInExcell_labelErrorExcell = Проверка за несъвпадения на данните между EXTERNAL.xls, PERSONNEL.xls и wbc_month
 checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = Проверка за несъвпадения на данните за измерванията в базата и wbc_month
+checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile = Проверка за несъвпадения на данните за имена и кодове в базата и excelFiles
 checkCorrectinDataInExcell_ImaGoV = Има го в
 checkCorrectinDataInExcell_NoGoNiamaV = ,но го няма в
 checkCorrectinDataInExcell_IzmerSICH = Изм СИЧ

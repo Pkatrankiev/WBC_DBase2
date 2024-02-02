@@ -12,17 +12,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
@@ -41,6 +45,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.hsqldb.lib.FileUtil;
 
 import Aplication.ActionIcone;
@@ -52,27 +57,36 @@ import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
 import Aplication.ReadResultsWBCFromExcelFile;
+import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
+import Aplication.RemouveDublikateFromList;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import BasiClassDAO.ActualExcellFilesDAO;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeGenerateDAO;
+import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
+import BasiClassDAO.NuclideWBCDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
+import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.ActualExcellFiles;
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.KodeGenerate;
+import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
+import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
+import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.TypeMeasur;
@@ -82,6 +96,7 @@ import BasicClassAccessDbase.conectToAccessDB;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonExcellClass;
 import PersonReference.PersonReferenceExportToExcell;
+import PersonReference.TextInAreaTextPanel;
 import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
@@ -99,7 +114,7 @@ public class TestClasess {
 //	String key = "ResultsWBC";
 		String key = "ObhodenList";
 
-		String year = "2022";
+//		String year = "2022";
 
 		boolean save = true;
 //	boolean save = false;
@@ -170,89 +185,83 @@ public class TestClasess {
 					String strOld = "";
 					String strNew = "";
 					String str = "";
-					
+
 					String egnOld = "";
 					String egnNew = "";
 
-						for (int i = 0; i < 4; i++) {
-							List<String> listRowStr = new ArrayList<>();
+					for (int i = 0; i < 4; i++) {
+						List<String> listRowStr = new ArrayList<>();
 //							List<Integer> listRowInt = new ArrayList<>();
-							worksheetOld = workbookOld.getSheetAt(i);
-							worksheetNew = workbooknew.getSheetAt(i);
+						worksheetOld = workbookOld.getSheetAt(i);
+						worksheetNew = workbooknew.getSheetAt(i);
 
-							indexOldRow = 0;
-							for (int j = 0; j < countRow; j++) {
+						indexOldRow = 0;
+						for (int j = 0; j < countRow; j++) {
 
-								sourceRowOld = worksheetOld.getRow(indexOldRow);
-								sourceRowNew = worksheetNew.getRow(j);
+							sourceRowOld = worksheetOld.getRow(indexOldRow);
+							sourceRowNew = worksheetNew.getRow(j);
 
-								if (sourceRowOld != null && sourceRowNew != null) {
+							if (sourceRowOld != null && sourceRowNew != null) {
 
-									
-									
-									for (int k = 0; k < 256; k++) {
+								for (int k = 0; k < 256; k++) {
 
-										
-										
-										str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(k));
-										if (!str.isEmpty()) {
-											strOld += str + " | ";
-										}
-
-										str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(k));
-										if (!str.isEmpty()) {
-											strNew += str + " | ";
-										}
+									str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(k));
+									if (!str.isEmpty()) {
+										strOld += str + " | ";
 									}
-									
-									egnOld = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(5));
-									egnNew = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(5));
-									System.out.println("indexOldRow "+indexOldRow+" " + egnOld+" j "+j+" " + egnNew);
-									
-									if (lastRowOld < lastRowNew) {
-										if(!egnOld.equals(egnNew)){
-											strOld = "";
-											indexOldRow--;
-										}
-												
-									}else {
-										if(!egnOld.equals(egnNew)){
-											strNew = "";
-											j--;
-										}	
+
+									str = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(k));
+									if (!str.isEmpty()) {
+										strNew += str + " | ";
 									}
-									
-									
-									if (!strOld.equals(strNew)) {
-										listRowStr.add(j + ": 1 - " + strOld + ": 2 - " + strNew);
+								}
+
+								egnOld = ReadExcelFileWBC.getStringEGNfromCell(sourceRowOld.getCell(5));
+								egnNew = ReadExcelFileWBC.getStringEGNfromCell(sourceRowNew.getCell(5));
+								System.out.println(
+										"indexOldRow " + indexOldRow + " " + egnOld + " j " + j + " " + egnNew);
+
+								if (lastRowOld < lastRowNew) {
+									if (!egnOld.equals(egnNew)) {
+										strOld = "";
+										indexOldRow--;
+									}
+
+								} else {
+									if (!egnOld.equals(egnNew)) {
+										strNew = "";
+										j--;
+									}
+								}
+
+								if (!strOld.equals(strNew)) {
+									listRowStr.add(j + ": 1 - " + strOld + ": 2 - " + strNew);
 //										listRowInt.add(j);
-									}
-									strOld = "";
-									strNew = "";
 								}
-								indexOldRow++;
+								strOld = "";
+								strNew = "";
 							}
-							listAllRowString.add(listRowStr);
+							indexOldRow++;
+						}
+						listAllRowString.add(listRowStr);
 //							listAllRowInteger.add(listRowInt);
-						}
-						
-						
-						int l = 1;
-						for (List<String> listInt : listAllRowString) {
-							if (listInt.size() > 0) {
-								System.out.println("Razliki w Sheet " + l);
-								for (String integer : listInt) {
-									String[] rowStr = integer.split(":");
-									System.out.println("row " + rowStr[0]);
-									System.out.println("fail " + rowStr[1]);
-									System.out.println("fail " + rowStr[2]);
+					}
 
-								}
+					int l = 1;
+					for (List<String> listInt : listAllRowString) {
+						if (listInt.size() > 0) {
+							System.out.println("Razliki w Sheet " + l);
+							for (String integer : listInt) {
+								String[] rowStr = integer.split(":");
+								System.out.println("row " + rowStr[0]);
+								System.out.println("fail " + rowStr[1]);
+								System.out.println("fail " + rowStr[2]);
+
 							}
-							l++;
 						}
-						
-						
+						l++;
+					}
+
 //					} else {
 //						
 //						System.out.println("Ima nowi redowe file1 = " + lastRowOld + "  file2 = " + lastRowNew);
@@ -262,7 +271,7 @@ public class TestClasess {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return listAllRowString;
@@ -270,11 +279,11 @@ public class TestClasess {
 	}
 
 	private static int getLastRowInSheet(Sheet sheet) {
-	Cell cell;
+		Cell cell;
 		for (int row = 0; row < sheet.getLastRowNum(); row++) {
 			cell = sheet.getRow(row).getCell(6);
 			if (sheet.getRow(row) != null && ReadExcelFileWBC.CellNOEmpty(cell)) {
-				if(ReadExcelFileWBC.getStringfromCell(cell).equals("край на базата")) {
+				if (ReadExcelFileWBC.getStringfromCell(cell).equals("край на базата")) {
 					return row;
 				}
 			}
@@ -336,7 +345,7 @@ public class TestClasess {
 			outputStream.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -349,7 +358,7 @@ public class TestClasess {
 		try {
 			dateSet = sdfrmt.parse("31.12.2022");
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 
@@ -399,7 +408,7 @@ public class TestClasess {
 		try {
 			dateSet = sdfrmt.parse("31.12.2022");
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 
@@ -465,7 +474,6 @@ public class TestClasess {
 
 	}
 
-	@SuppressWarnings("unused")
 	public static void testMeasuringToResultWCB() {
 		Measuring measur;
 		List<ResultsWBC> listresulterror = new ArrayList<>();
@@ -491,18 +499,18 @@ public class TestClasess {
 	}
 
 	static void createCellComment(String egn, String commentText) throws FileNotFoundException {
-		
+
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
-		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
-				
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+
 		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
-		if(testFilesToD.equals("1")) {
-		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
-		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		if (testFilesToD.equals("1")) {
+			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		}
-			
-		 String filePath[] = {filePathPersonel, filePathExternal};
-				
+
+		String filePath[] = { filePathPersonel, filePathExternal };
+
 		String pathFile = filePath[1];
 		FileInputStream inputStream;
 		HSSFWorkbook workbook = null;
@@ -568,7 +576,7 @@ public class TestClasess {
 			outputStream.close();
 
 		} catch (OldExcelFormatException | IOException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 
@@ -585,6 +593,7 @@ public class TestClasess {
 
 	public static void newComments33() throws IOException {
 
+		@SuppressWarnings("resource")
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Cell comments in POI HSSF");
 
@@ -675,19 +684,18 @@ public class TestClasess {
 	@SuppressWarnings("deprecation")
 	public static void CheckForCorrectionMeasuringDataInSheet0AndSeet1() {
 		boolean fl = true;
-		
+
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
-		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
-				
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+
 		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
-		if(testFilesToD.equals("1")) {
-		filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
-		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		if (testFilesToD.equals("1")) {
+			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		}
-			
-		 String filePath[] = {filePathPersonel, filePathExternal};
-		 
-		
+
+		String filePath[] = { filePathPersonel, filePathExternal };
+
 		String fileName[] = { "Personel", "External" };
 
 		for (int i = 0; i < filePath.length; i++) {
@@ -853,7 +861,7 @@ public class TestClasess {
 
 		for (Workplace workplace : listWorkplace) {
 
-			for (Iterator iterator = listStr.iterator(); iterator.hasNext();) {
+			for (Iterator<String> iterator = listStr.iterator(); iterator.hasNext();) {
 				String strOtdelFromExcell = (String) iterator.next();
 
 				if (strOtdelFromExcell.equals(workplace.getOtdel())
@@ -889,7 +897,7 @@ public class TestClasess {
 		List<Integer> listErrorID = getAllValueSpisak_Prilogenia();
 		List<String> listStrErrorID = new ArrayList<>();
 		List<Workplace> listWorkplace = new ArrayList<>();
-		List<Spisak_Prilogenia> listSpisak_Prilogenia = new ArrayList<>();
+//		List<Spisak_Prilogenia> listSpisak_Prilogenia = new ArrayList<>();
 
 		System.out.println("listErrorID = " + listErrorID.size());
 		for (int id : listErrorID) {
@@ -1045,6 +1053,7 @@ public class TestClasess {
 		String textIcon = "<html><center>Update " + " (" + 55 + "/7)" + "<br>" + "rrrrrrrr ";
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		for (String pathFile : excellFiles) {
+			@SuppressWarnings("unused")
 			String firmName = "АЕЦ Козлодуй";
 			if (pathFile.contains("EXTERNAL")) {
 				firmName = "Външни организации";
@@ -1131,6 +1140,7 @@ public class TestClasess {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	static void RemoveWorkplace_54_101_FromPersonStatus(int idWorkplace, String egn) {
 
 		Workplace workplace54 = WorkplaceDAO.getValueWorkplaceByID(idWorkplace);
@@ -1410,17 +1420,21 @@ public class TestClasess {
 		int IndexLab = laborat.getLab_ID();
 		listWorkplace = WorkplaceDAO.getAllValueWorkplaceByLab(laborat);
 
-		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig");
-		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig");
-		
+		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("filePathMonthPersonel_orig");
+		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("filePathMonthExternal_orig");
+
 		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
-		if(testFilesToD.equals("1")) {
-			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test"); 
-			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+		if (testFilesToD.equals("1")) {
+			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("filePathMonthExternal_orig_test");
+			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("filePathMonthPersonel_orig_test");
 		}
-				
+
 		String filePathMont[] = { filePathMonthPersonel, filePathMonthExternal };
-		
+
 		Workbook workbookMont[] = { ReadExcelFileWBC.openExcelFile(filePathMont[0]),
 				ReadExcelFileWBC.openExcelFile(filePathMont[1]) };
 
@@ -1503,4 +1517,818 @@ public class TestClasess {
 
 	}
 
+	public static void Spisak_PrilogeniaToSpisak_PrilogeniaNew() {
+
+		System.out.println("*****************************");
+		List<Spisak_Prilogenia> listSpisak_Prilogenia = Spisak_PrilogeniaDAO.getAllValueSpisak_Prilogenia();
+		System.out.println("++++++++++++++++++++++++++++++++++" + listSpisak_Prilogenia.size());
+
+		int m = 0;
+		for (Spisak_Prilogenia SpPr : listSpisak_Prilogenia) {
+
+			PersonStatusNew perStatNew = PersonStatusNewDAO
+					.getPersonStatusNewByWorkplace_FormulyarName_DateStart_DateEnd_Year(SpPr.getFormulyarName(),
+							SpPr.getWorkplace(), SpPr.getStartDate(), SpPr.getEndDate(), SpPr.getYear());
+
+			if (perStatNew == null) {
+				System.out.println("delete " + SpPr.getSpisak_Prilogenia_ID());
+				Spisak_PrilogeniaDAO.deleteValueSpisak_Prilogenia(SpPr.getSpisak_Prilogenia_ID());
+			}
+
+			System.out.println(m);
+
+			m++;
+		}
+
+	}
+
+	public static void PersonStatusToPersonStatusNew(String year1) {
+
+		List<PersonStatusNew> list = new ArrayList<>();
+
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		System.out.println("*****************************");
+		List<PersonStatus> listPersonStatus = PersonStatusDAO.getValuePersonStatusByWorkplace_Year_Spis(year1);
+		System.out.println("++++++++++++++++++++++++++++++++++" + listPersonStatus.size());
+		int k = 0;
+		int m = 0;
+		for (PersonStatus personStatus : listPersonStatus) {
+
+			Spisak_Prilogenia spPr = personStatus.getSpisak_prilogenia();
+//			if(spPr.getWorkplace().getId_Workplace()==personStatus.getWorkplace().getId_Workplace()) {
+			Date stDate = spPr.getStartDate();
+			String year = sdfrmt.format(stDate).substring(6);
+			if (year.equals("2000")) {
+				year = year1;
+			}
+			PersonStatusNew perStNew = new PersonStatusNew();
+			perStNew.setPerson(personStatus.getPerson());
+			perStNew.setWorkplace(personStatus.getWorkplace());
+			perStNew.setFormulyarName(spPr.getFormulyarName());
+			perStNew.setStartDate(stDate);
+			perStNew.setEndDate(spPr.getEndDate());
+			perStNew.setYear(year);
+			perStNew.setUserWBC(personStatus.getUserWBC());
+			perStNew.setDateSet(personStatus.getDateSet());
+			perStNew.setZabelejka(personStatus.getZabelejka());
+			if (k == 1000) {
+				k = 0;
+				System.out.println(m);
+			}
+
+			if (setPersonStatusNew(perStNew)) {
+				list.add(perStNew);
+			}
+//			}
+			k++;
+			m++;
+		}
+		System.out.println("list.size " + list.size());
+		for (PersonStatusNew perStatusNew : list) {
+			if (!perStatusNew.getZabelejka().trim().isEmpty()) {
+				PersonStatusNew perStat = PersonStatusNewDAO
+						.getPersonStatusNewByPerson_Workplace_DateStart_DateEnd_Year(perStatusNew.getPerson(),
+								perStatusNew.getWorkplace(), perStatusNew.getStartDate(), perStatusNew.getEndDate(),
+								perStatusNew.getYear());
+				perStat.setZabelejka(perStatusNew.getZabelejka());
+				PersonStatusNewDAO.updateValuePersonStatusNew(perStat);
+			}
+		}
+
+	}
+
+	public static void DeleteEpmtyFormuliarNameINPersonStatusNew() {
+		List<PersonStatusNew> ListPerStatNew = PersonStatusNewDAO.getValuePersonStatusNewByObject("FormulyarName", "");
+		System.out.println("size " + ListPerStatNew.size());
+		int k = 0;
+		for (PersonStatusNew personStatusNew : ListPerStatNew) {
+			System.out.println(k);
+			PersonStatusNewDAO.deleteValuePersonStatusNew(personStatusNew);
+			k++;
+		}
+	}
+
+	public static void PersonStatusNewCheckDublicate() {
+
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		System.out.println("*****************************");
+		List<PersonStatusNew> listPersonStatus = PersonStatusNewDAO.getValuePersonStatusNewByYear("2023");
+		System.out.println("listPersonStatus " + listPersonStatus.size());
+
+		ArrayList<Person> listPerson = new ArrayList<>();
+		for (PersonStatusNew personStatus : listPersonStatus) {
+
+			listPerson.add(personStatus.getPerson());
+		}
+		System.out.println("listPerson " + listPerson.size());
+		ArrayList<Person> listPersonNew = RemouveDublikateFromList.removeDuplicates(listPerson);
+		System.out.println("listPersonNew " + listPersonNew.size());
+		for (Person person : listPersonNew) {
+
+			List<PersonStatusNew> listPersonStatusPerson = PersonStatusNewDAO
+					.getValuePersonStatusNewByPerson_Year(person, "2023");
+//			System.out.println("listPersonStatusPerson "+listPersonStatusPerson.size());
+			ArrayList<String> listFormName = new ArrayList<>();
+			for (PersonStatusNew personStatus : listPersonStatusPerson) {
+				listFormName.add(personStatus.getFormulyarName());
+			}
+//			System.out.println("listFormName "+listFormName.size());
+			ArrayList<String> listFormNameNew = RemouveDublikateFromList.removeDuplicates(listFormName);
+//			System.out.println("listFormNameNew "+listFormNameNew.size());
+			for (String formName : listFormNameNew) {
+				List<PersonStatusNew> listPersonStatusPersonFormName = PersonStatusNewDAO
+						.getValuePersonStatusNewByPerson_FormuliarName_DateSetInYear(person, formName, "2023");
+//				System.out.println("listPersonStatusPersonFormName "+listPersonStatusPersonFormName.size());
+
+				Workplace work = null;
+				if (listPersonStatusPersonFormName.size() > 1) {
+					Workplace[] masive = getPersonStatFromExcel(person.getEgn());
+					String str = "";
+					for (PersonStatusNew prStNew : listPersonStatusPersonFormName) {
+						str += prStNew.getPerson().getEgn() + " " + prStNew.getFormulyarName() + " "
+								+ prStNew.getWorkplace().getOtdel() + " " + sdfrmt.format(prStNew.getStartDate()) + " "
+								+ sdfrmt.format(prStNew.getEndDate()) + " " + prStNew.getZabelejka() + "\n";
+						if (!prStNew.getWorkplace().getOtdel().equals(masive[1].getOtdel())) {
+							work = prStNew.getWorkplace();
+						}
+					}
+					System.out.println(str);
+					System.out.println("/////////////////////////////////////////////");
+					if (work != null) {
+
+						List<PersonStatusNew> listPersonStatusPersonWork = PersonStatusNewDAO
+								.getValuePersonStatusNewByPerson_Workplace_DateSetInYear(person, work, "2023");
+						System.out.println(
+								"------------------ " + work.getOtdel() + "  " + listPersonStatusPersonWork.size());
+						for (PersonStatusNew personStat : listPersonStatusPersonWork) {
+							PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
+						}
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+	public static Workplace[] getPersonStatFromExcel(String egn) {
+		// read and set PersonStatus
+
+		Workplace[] masive = new Workplace[2];
+		String[] path = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();
+		int k = 0;
+		for (int year = 2022; year < 2024; year++) {
+
+			Workplace workplace = null;
+			for (String pathFile : path) {
+				pathFile = pathFile + year + ".xls";
+
+				Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+				if (workbook != null) {
+
+					Sheet sheet = workbook.getSheetAt(3);
+					Cell cell, cell1;
+
+					int StartRow = 0;
+					int endRow = 0;
+					String EGN = "";
+					String otdelName = "";
+					StartRow = 5;
+					endRow = sheet.getLastRowNum();
+
+					int row = 0;
+					for (int index = StartRow; index < endRow; index += 1) {
+						row = index;
+
+						if (sheet.getRow(row) != null) {
+							cell = sheet.getRow(row).getCell(5);
+							cell1 = sheet.getRow(row).getCell(6);
+
+							if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+								otdelName = cell1.getStringCellValue().trim();
+								if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
+									workplace = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdelName);
+								}
+
+							}
+
+//				workplace(54) - Транспортиране на СЯГ и ОЯГ;  workplace(101) - Транспортиране СОЯГ 
+							if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace != null && workplace.getOtdel() != null
+									&& workplace.getId_Workplace() != 54 && workplace.getId_Workplace() != 101) {
+
+								EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+								if (EGN.equals(egn)) {
+
+									masive[k] = workplace;
+									System.out.println(year + "  " + workplace.getOtdel());
+								}
+							}
+						}
+					}
+				}
+			}
+			k++;
+		}
+		return masive;
+	}
+
+	public static boolean setPersonStatusNew(PersonStatusNew PersonStatusNew) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+
+		String sql = "INSERT INTO PersonStatusNew (Person_ID, Workplace_ID, FormulyarName, StartDate, EndDate, Year, UsersWBC_ID,"
+				+ "DateSet, Zabelejka) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, PersonStatusNew.getPerson().getId_Person());
+			preparedStatement.setInt(2, PersonStatusNew.getWorkplace().getId_Workplace());
+			preparedStatement.setString(3, PersonStatusNew.getFormulyarName());
+			preparedStatement.setDate(4, PersonStatusNewDAO.convertDate(PersonStatusNew.getStartDate()));
+			preparedStatement.setDate(5, PersonStatusNewDAO.convertDate(PersonStatusNew.getEndDate()));
+			preparedStatement.setString(6, PersonStatusNew.getYear());
+			preparedStatement.setInt(7, PersonStatusNew.getUserWBC().getId_Users());
+			preparedStatement.setDate(8, PersonStatusNewDAO.convertDate(PersonStatusNew.getDateSet()));
+			preparedStatement.setString(9, PersonStatusNew.getZabelejka());
+
+			preparedStatement.executeUpdate();
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			if (e.toString().contains("unique")) {
+				return true;
+
+			} else {
+				e.printStackTrace();
+
+			}
+		}
+		return false;
+	}
+
+//	****************************************************************************************************
+
+	public static void deleteKodeStatusByMisingPerson() {
+		List<KodeStatus> listKodeStat = KodeStatusDAO.getValueKodeStatusByObject("Year", "2024");
+		System.out.println(listKodeStat.size());
+		List<Person> ListPerson = getAllEGNFromExcelFile();
+		System.out.println(ListPerson.size());
+		boolean fl;
+		int k = 0, l = 0;
+		for (KodeStatus kodeStatus : listKodeStat) {
+			fl = true;
+			for (int i = 0; i < ListPerson.size(); i++) {
+				if (kodeStatus.getPerson().getId_Person() == ListPerson.get(i).getId_Person()) {
+					fl = false;
+					i = ListPerson.size();
+				}
+			}
+			if (fl) {
+				System.out.println(kodeStatus.getPerson().getEgn());
+				KodeStatusDAO.deleteValueKodeStatus(kodeStatus.getKodeStatus_ID());
+			}
+
+			if (l == 100) {
+				System.out.println(k);
+				l = 0;
+			}
+			k++;
+			l++;
+		}
+	}
+
+	public static boolean searchPersonInExcelFile(Person person) {
+
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if (testFilesToD.equals("1")) {
+			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+
+		String filePath[] = { filePathPersonel, filePathExternal };
+		Cell cell, cell1;
+		String EGN;
+
+		for (int ii = 0; ii < filePath.length; ii++) {
+
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
+			Sheet sheet = workbook.getSheetAt(0);
+
+			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+
+				if (sheet.getRow(row) != null) {
+					cell = sheet.getRow(row).getCell(5);
+					cell1 = sheet.getRow(row).getCell(6);
+
+					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+
+						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+
+						if (person.getEgn().equals(EGN)) {
+							return true;
+
+						}
+					}
+				}
+
+			}
+		}
+		return false;
+	}
+
+	public static List<Person> getAllEGNFromExcelFile() {
+		List<Person> list = new ArrayList<>();
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+		Person person;
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if (testFilesToD.equals("1")) {
+			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+
+		String filePath[] = { filePathPersonel, filePathExternal };
+		Cell cell, cell1;
+		String EGN;
+
+		for (int ii = 0; ii < filePath.length; ii++) {
+
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
+			Sheet sheet = workbook.getSheetAt(0);
+
+			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+
+				if (sheet.getRow(row) != null) {
+					cell = sheet.getRow(row).getCell(5);
+					cell1 = sheet.getRow(row).getCell(6);
+
+					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+
+						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+						person = PersonDAO.getValuePersonByEGN(EGN);
+						if (person != null) {
+							list.add(person);
+
+						}
+					}
+				}
+
+			}
+		}
+		return list;
+	}
+
+//  ******************************************************************************************************************
+
+	public static void deleteDublikatePersonStatusWithWorkpliceInYere(String year) {
+
+		List<PersonStatus> listPersonSatus = getPersonStatFromExcelByYear(year);
+		System.out.println(listPersonSatus.size());
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		int k = 0, l = 0;
+		boolean fl;
+		for (PersonStatus personStat : listPersonSatus) {
+			fl = false;
+			List<PersonStatusNew> listPersonStatusNew = PersonStatusNewDAO
+					.getValuePersonStatusNewByPerson_Year(personStat.getPerson(), year);
+			if (listPersonStatusNew.size() > 1) {
+				System.out.println("****************" + personStat.getPerson().getEgn() + " "
+						+ personStat.getWorkplace().getOtdel() + "****************");
+				for (PersonStatusNew personStatNew : listPersonStatusNew) {
+
+					if (!personStatNew.getWorkplace().getOtdel().equals(personStat.getWorkplace().getOtdel())) {
+//				PersonStatusNewDAO.deleteValuePersonStatusNew(personStatNew);
+						System.out.println(personStatNew.getPersonStatusNew_ID() + " "
+								+ personStatNew.getWorkplace().getOtdel() + " " + personStatNew.getFormulyarName() + " "
+								+ sdfrmt.format(personStatNew.getStartDate()) + " "
+								+ sdfrmt.format(personStatNew.getStartDate()));
+						fl = true;
+					}
+
+				}
+				if (fl) {
+					System.out.println();
+				}
+			}
+
+			if (l == 100) {
+				System.out.println(k);
+				l = 0;
+			}
+			k++;
+			l++;
+		}
+	}
+
+	public static List<PersonStatus> getPersonStatFromExcelByYear(String year) {
+		// read and set PersonStatus
+
+		String[] path = AplicationMetods.getDataBaseFilePat_ArhivePersonalAndExternal();
+		String[] pathToFiles_OriginalPersonalAndExternal = AplicationMetods
+				.getDataBaseFilePat_OriginalPersonalAndExternal();
+
+		int curentYear = Calendar.getInstance().get(Calendar.YEAR);
+		int insertYear = Integer.parseInt(year);
+
+		if (insertYear == curentYear) {
+			path = pathToFiles_OriginalPersonalAndExternal;
+		}
+
+		List<PersonStatus> list = new ArrayList<>();
+		PersonStatus personStat;
+		Workplace workplace = null;
+		for (String pathFile : path) {
+
+			if (insertYear != curentYear) {
+				pathFile = pathFile + year + ".xls";
+			}
+
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+			if (workbook != null) {
+
+				Sheet sheet = workbook.getSheetAt(3);
+				Cell cell, cell1;
+
+				int StartRow = 5;
+				int endRow = sheet.getLastRowNum();
+				String EGN = "";
+				String otdelName = "";
+				Person person;
+				for (int row = StartRow; row < endRow; row += 1) {
+
+					if (sheet.getRow(row) != null) {
+						cell = sheet.getRow(row).getCell(5);
+						cell1 = sheet.getRow(row).getCell(6);
+
+						if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+							otdelName = cell1.getStringCellValue().trim();
+							if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
+								workplace = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdelName);
+							}
+
+						}
+
+//			workplace(54) - Транспортиране на СЯГ и ОЯГ;  workplace(101) - Транспортиране СОЯГ 
+						if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace != null && workplace.getOtdel() != null
+								&& workplace.getId_Workplace() != 54 && workplace.getId_Workplace() != 101) {
+
+							EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+							person = PersonDAO.getValuePersonByEGN(EGN);
+							if (person != null) {
+								personStat = new PersonStatus(person, workplace, null, null, null, "");
+								list.add(personStat);
+
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return list;
+	}
+
+//  ******************************************************************************************************************
+
+	public static void chengeStartDateInPresonStatusNewWithYear() {
+
+		List<PersonStatusNew> listPersonSatus = PersonStatusNewDAO.getValuePersonStatusNewByObject("FormulyarName",
+				"NotInformation");
+		System.out.println(listPersonSatus.size());
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		String date = "";
+		int k = 0, l = 0;
+		for (PersonStatusNew personStat : listPersonSatus) {
+			date = "01.01." + personStat.getYear();
+			try {
+				personStat.setStartDate(sdfrmt.parse(date));
+				PersonStatusNewDAO.updateValuePersonStatusNew(personStat);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			if (l == 100) {
+				System.out.println(k);
+				l = 0;
+			}
+			k++;
+			l++;
+		}
+	}
+
+	public static void PresonStatusNewWithYear() {
+
+		int startID = 219000, endID;
+		for (int i = 1; i <= 10; i++) {
+			endID = startID + 1000;
+			System.out.println(startID + " " + endID);
+			List<PersonStatusNew> listPersonSatus = PersonStatusNewDAO
+					.getValuePersonStatusNewByTausenObjectStartedBy(startID, endID);
+			System.out.println(listPersonSatus.size());
+			for (PersonStatusNew personStat : listPersonSatus) {
+				setObjectPersonStatusNewToTable(personStat);
+			}
+			startID = endID;
+		}
+
+	}
+
+	public static void setObjectPersonStatusNewToTable(PersonStatusNew PersonStatusNew) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+
+		String sql = "INSERT INTO PersonStatus2024 (Person_ID, Workplace_ID, FormulyarName, StartDate, EndDate, Year, UsersWBC_ID,"
+				+ "DateSet, Zabelejka) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, PersonStatusNew.getPerson().getId_Person());
+			preparedStatement.setInt(2, PersonStatusNew.getWorkplace().getId_Workplace());
+			preparedStatement.setString(3, PersonStatusNew.getFormulyarName());
+			preparedStatement.setDate(4, PersonStatusNewDAO.convertDate(PersonStatusNew.getStartDate()));
+			preparedStatement.setDate(5, PersonStatusNewDAO.convertDate(PersonStatusNew.getEndDate()));
+			preparedStatement.setString(6, PersonStatusNew.getYear());
+			preparedStatement.setInt(7, PersonStatusNew.getUserWBC().getId_Users());
+			preparedStatement.setDate(8, PersonStatusNewDAO.convertDate(PersonStatusNew.getDateSet()));
+			preparedStatement.setString(9, PersonStatusNew.getZabelejka());
+
+			preparedStatement.executeUpdate();
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			if (e.toString().indexOf("unique") < 0) {
+				e.printStackTrace();
+				ResourceLoader.appendToFile(e);
+			}
+		}
+	}
+
+//  ******************************************************************************************************************
+
+	public static List<Person> CheckCurentDataInExcelFile() {
+		List<Person> list = new ArrayList<>();
+		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
+
+		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
+		if (testFilesToD.equals("1")) {
+			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
+			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		}
+
+		String filePath[] = { filePathPersonel, filePathExternal };
+		Cell cell, cell1;
+		String EGN;
+		for (int ii = 0; ii < filePath.length; ii++) {
+System.out.println("*****************************************");
+System.out.println();
+			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
+
+			Sheet sheet = workbook.getSheetAt(0);
+
+			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+
+				if (sheet.getRow(row) != null) {
+					cell = sheet.getRow(row).getCell(5);
+					cell1 = sheet.getRow(row).getCell(6);
+
+					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+						checkEGN(EGN, sheet, row);
+						checkDoza(sheet, row);
+						checkMeasur(workbook, row);
+						checkPersonStat(workbook, row);
+
+					}
+				}
+
+			}
+		}
+		return list;
+	}
+
+	private static void checkEGN(String EGN, Sheet sheet, int row) {
+		String str;
+		try {
+			Long.parseLong(EGN);
+		} catch (Exception e) {
+			str = "row " + row + " egn " + EGN;
+		
+			System.out.println(str);
+		}
+	}
+
+	private static void checkDoza(Sheet sheet, int row) {
+		String str;
+		String doze;
+		Cell cell_Doze;
+		for (int mont = 0; mont < 12; mont++) {
+			cell_Doze = sheet.getRow(row).getCell(mont + 77);
+			doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
+//									System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
+			if (!doze.isEmpty()) {
+				try {
+					Double.parseDouble(doze);
+				} catch (Exception e) {
+					if(!doze.equals("<0.10")) {
+				str = "row "+row+" doze "+doze;
+				System.out.println(str);
+					}
+				}
+			}
+		}
+	
+	}
+	
+	
+	private static void checkMeasur(Workbook workbook, int row) {
+	
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
+		Sheet sheet = workbook.getSheetAt(1);
+		int k = 7;
+		double val = 0;
+		Cell cell;
+		String str, nuclideVal = "";
+		String lab = "" ;
+	Cell cell1 = sheet.getRow(row).getCell(k);
+	k++;
+	Cell cell2 = sheet.getRow(row).getCell(k);
+	while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
+		
+	
+	CheckDate(row, k, cell1, " dateMeasur ");
+	
+	try {
+	lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
+	int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
+	if(indexLab < 1 && indexLab > 3) {
+		str = "row "+row+" col "+k+" measurLab "+lab;
+		System.out.println(str);
+	}
+	} catch (Exception e) {
+		str = "row "+row+" col "+k+" measurLab "+lab;
+		System.out.println(str);
+	}
+	
+	k++;
+	
+	for (int i = 0; i < 16; i++) {
+		cell = sheet.getRow(row).getCell(k);
+		if(cell!=null) {
+			String type = cell.getCellType().toString();
+			switch (type) {
+			case "STRING": {
+				try {
+					nuclideVal = cell.getStringCellValue();
+				Double.parseDouble(nuclideVal);
+				} catch (Exception e) {
+					str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
+					System.out.println(str);
+				}
+			}
+			break;
+			case "NUMERIC": {
+				try {
+					val = cell.getNumericCellValue();	
+				} catch (Exception e) {
+					str = "row "+row+" col "+k+" nuclideVal "+val;
+					System.out.println(str);
+				}
+			
+			}
+				break;
+			case "DATA":{
+				
+			Date dat = cell.getDateCellValue();
+			str = "row "+row+" col "+k+" nuclideVal "+sdfrmt.format(dat);
+			System.out.println(str);
+				
+			}
+				break;
+			}
+			}
+		
+		k++;
+	}
+	
+	if(k>253) {
+		k=6;
+		sheet = workbook.getSheetAt(2);
+	}
+	
+	k++;
+	cell1 = sheet.getRow(row).getCell(k);
+	k++;
+	cell2 = sheet.getRow(row).getCell(k);
+	
+	}
+	}
+
+	private static void CheckDate(int row, int k, Cell cell1, String ttext) {
+		String str;
+		if (cell1 != null) {
+			String type = cell1.getCellType().toString();
+			switch (type) {
+			case "STRING": {
+				if(isNotLegalDate(cell1.getStringCellValue(), cell1)) {
+					str = "row "+row+" col "+k+ttext+cell1.getStringCellValue();
+					System.out.println(str);
+				}
+			}
+				break;
+			case "DATA":
+			case "NUMERIC": {
+				try {
+				cell1.getDateCellValue();
+				} catch (Exception e) {
+					str = "row "+row+" col "+k+ttext+cell1.getStringCellValue();
+					System.out.println(str);
+				}
+			}
+				break;
+
+			}
+		}
+	}
+	
+	private static void checkPersonStat(Workbook workbook, int row) {
+		
+		
+		Sheet sheet = workbook.getSheetAt(3);
+		
+		int k = 7;
+		Cell cell = sheet.getRow(row).getCell(k);
+		
+				
+		while (ReadExcelFileWBC.CellNOEmpty(cell)) {
+			
+			
+			k++;
+			cell = sheet.getRow(row).getCell(k);
+			if (ReadExcelFileWBC.CellNOEmpty(cell)
+					&& !ReadExcelFileWBC.getStringfromCell(cell).isEmpty()) {
+			
+						
+				CheckDate(row,  k,  cell, " StartDatePerStat ");
+			}
+			k++;
+			cell = sheet.getRow(row).getCell(k);
+			if (ReadExcelFileWBC.CellNOEmpty(cell)
+					&& !ReadExcelFileWBC.getStringfromCell(cell).isEmpty()) {
+				CheckDate(row,  k,  cell, " endDatePerStat ");
+			}
+			k++;
+			cell = sheet.getRow(row).getCell(k);
+			
+			
+
+		}
+	
+	}
+	
+	
+	
+	public static boolean isNotLegalDate(String strDate, Cell cell) {
+		
+		Date dd;
+		if (!strDate.trim().isEmpty()) {
+			strDate = strDate.replaceAll("г.", "");
+			strDate = strDate.replaceAll("г", "");
+			strDate = strDate.trim();
+			
+			SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(strDate);
+			try {
+				
+					dd = sdfrmt.parse(strDate);
+					if(!sdfrmt.format(dd).equals(strDate)) {
+						return true;
+					}
+				
+			} catch (Exception e) {
+				System.out.println(strDate+" catch "+strDate.length());
+			return true;
+			}
+
+		}
+
+		return false;
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
 }

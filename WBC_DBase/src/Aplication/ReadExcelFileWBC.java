@@ -87,7 +87,8 @@ public class ReadExcelFileWBC {
 	}
 
 	public static boolean CellNOEmpty(Cell cell) {
-		return cell != null && cell.getCellType() != CellType.BLANK;
+		
+		return cell != null && cell.getCellType() != CellType.BLANK && !getStringfromCell(cell).trim().isEmpty();
 	}
 	
 	public static String getStringfromCell(Cell cell) {
@@ -217,7 +218,7 @@ public class ReadExcelFileWBC {
 	}
 	
 	public static Date isLegalDate(String strDate, Cell cell) {
-		SimpleDateFormat sdfrmt = null;
+		
 		Date javaDate = null;
 
 		if (strDate.trim().equals("")) {
@@ -226,24 +227,10 @@ public class ReadExcelFileWBC {
 			strDate = strDate.replaceAll("г.", "");
 			strDate = strDate.replaceAll("г", "");
 			strDate = strDate.trim();
+			SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(strDate);
 			try {
-				if (strDate.length() == 8) {
-					sdfrmt = new SimpleDateFormat("dd.MM.yy");
-					sdfrmt.setLenient(false);
-				}
-				if (strDate.length() == 9) {
-					sdfrmt = new SimpleDateFormat("dd.M.yyyy");
-					sdfrmt.setLenient(false);
-				}
-				if (strDate.length() == 10) {
-					sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-					sdfrmt.setLenient(false);
-				}
-				if (strDate.length() == 7) {
-					sdfrmt = new SimpleDateFormat("dd.M.yy");
-					sdfrmt.setLenient(false);
-				}
-					javaDate = sdfrmt.parse(strDate);
+				sdfrmt.setLenient(false);
+				javaDate = sdfrmt.parse(strDate);
 			} catch (Exception e) {
 				
 				String cellSring = "Cell = " + CellReference.convertNumToColString(cell.getColumnIndex())
@@ -345,20 +332,28 @@ public class ReadExcelFileWBC {
 
 		}
 		if (fl) {
-			String ss = InputDialog(masiveWorkplace, otdelName);
-			if (ss == null) {
-				String m = JOptionPane.showInputDialog(null, "Въведете нов обект", otdelName);
-				if(m==null) {
+			String selectOtdelName = InputDialog(masiveWorkplace, otdelName);
+			if (selectOtdelName == null) {
+				String inputNewOtdel = JOptionPane.showInputDialog(null, "Въведете нов обект", otdelName);
+				if(inputNewOtdel==null) {
 					workplace = selectWorkplace(firmName, masiveWorkplace,  otdelName, listAllWorkplaceByFirmName);
 				}
-				workplace = new Workplace(firmName, m, "",true,"",null);
+				workplace = new Workplace(firmName, inputNewOtdel, "",true,"",null);
 				WorkplaceDAO.setObjectWorkplaceToTable(workplace);
-				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", m).get(0);
+				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", inputNewOtdel).get(0);
 
 			} else {
-				String m = JOptionPane.showInputDialog(null, ss, otdelName);
-				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", ss).get(0);
-				workplace.setSecondOtdelName(m);
+				String secondOtdelName = JOptionPane.showInputDialog(null, selectOtdelName, otdelName);
+				workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", selectOtdelName).get(0);
+				workplace.setSecondOtdelName(secondOtdelName);
+				System.out.println(
+						workplace.getFirmName()+" "+
+				workplace.getOtdel()+" "+
+				workplace.getSecondOtdelName()+" "+
+				workplace.getActual()+" "+
+				workplace.getNapOtdelSector()+" "+
+				workplace.getLab().getLab_ID()
+				);
 				WorkplaceDAO.updateValueWorkplace(workplace);
 				
 			}

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -14,6 +15,9 @@ import javax.swing.JOptionPane;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
+import BasicClassAccessDbase.PersonStatusNew;
+import BasicClassAccessDbase.UsersWBC;
+import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
 import BasicClassAccessDbase.conectToAccessDB;
 
@@ -25,11 +29,13 @@ public class KodeStatusDAO {
 			int zone_ID,
 			boolean freeKode,
 			String year,
-			String zabelejkaKodeStatus) {
+			String zabelejkaKodeStatus,
+			UsersWBC setData_UsersWBC,
+			Date dateSet) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO KodeStatus (Person_ID, Kode, Zone_ID, FreeKode, Year, zabelejkaKodeStatus) VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO KodeStatus (Person_ID, Kode, Zone_ID, FreeKode, Year, zabelejkaKodeStatus, SetData_UsersWBC_ID, DateSet) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -40,6 +46,8 @@ public class KodeStatusDAO {
 			preparedStatement.setBoolean(4, freeKode);
 			preparedStatement.setString(5, year);
 			preparedStatement.setString(6, zabelejkaKodeStatus);
+			preparedStatement.setInt(7, setData_UsersWBC.getId_Users());
+			preparedStatement.setDate(8, convertDate(dateSet));
 			
 
 			preparedStatement.executeUpdate();
@@ -56,7 +64,7 @@ public class KodeStatusDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO KodeStatus (Person_ID, Kode, Zone_ID, FreeKode, Year, zabelejkaKodeStatus) VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO KodeStatus (Person_ID, Kode, Zone_ID, FreeKode, Year, zabelejkaKodeStatus, SetData_UsersWBC_ID, DateSet) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -67,6 +75,9 @@ public class KodeStatusDAO {
 			preparedStatement.setBoolean(4, kodeStatus.getisFreeKode());
 			preparedStatement.setString(5, kodeStatus.getYear());
 			preparedStatement.setString(6, kodeStatus.getZabelejkaKodeStatus());
+			preparedStatement.setInt(7, kodeStatus.getSetData_UsersWBC().getId_Users());
+			preparedStatement.setDate(8, convertDate(kodeStatus.getDateSet()));
+			
 
 			preparedStatement.executeUpdate();
 
@@ -85,7 +96,7 @@ public class KodeStatusDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update KodeStatus SET Person_ID = ? , Kode = ? , Zone_ID = ? , FreeKode = ? , Year = ?, zabelejkaKodeStatus = ?  where KodeStatus_ID = ? ";
+		String sqlUpdate = "Update KodeStatus SET Person_ID = ? , Kode = ? , Zone_ID = ? , FreeKode = ? , Year = ?, zabelejkaKodeStatus = ?, SetData_UsersWBC_ID = ?, DateSet = ?  where KodeStatus_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
@@ -96,9 +107,11 @@ public class KodeStatusDAO {
 			preparedStatement.setBoolean(4, kodeStatus.getisFreeKode());
 			preparedStatement.setString(5, kodeStatus.getYear());
 			preparedStatement.setString(6, kodeStatus.getZabelejkaKodeStatus());
+			preparedStatement.setInt(7, kodeStatus.getSetData_UsersWBC().getId_Users());
+			preparedStatement.setDate(8, convertDate(kodeStatus.getDateSet()));
 			
 
-			preparedStatement.setInt(7, kodeStatus.getKodeStatus_ID());
+			preparedStatement.setInt(9, kodeStatus.getKodeStatus_ID());
 
 			preparedStatement.executeUpdate();
 
@@ -138,16 +151,8 @@ public class KodeStatusDAO {
 			ResultSet result = statement.executeQuery(sql);
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
+							
 				listKodeStatus.add(KodeStatus);
 				
 				
@@ -162,6 +167,8 @@ public class KodeStatusDAO {
 		return listKodeStatus;
 	}
 
+	
+
 	public static List<KodeStatus> getAllValueKodeStatusSortByColumnName(String sortColumnName) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -173,16 +180,9 @@ public class KodeStatusDAO {
 			ResultSet result = statement.executeQuery(sql);
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+
+				KodeStatus KodeStatus = setKodeStatus(result);
+				
 				listKodeStatus.add(KodeStatus);
 			}
 			
@@ -229,16 +229,7 @@ public class KodeStatusDAO {
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -275,16 +266,7 @@ public class KodeStatusDAO {
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -312,16 +294,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -353,16 +326,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -395,16 +359,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -434,16 +389,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -473,16 +419,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -512,16 +449,7 @@ public class KodeStatusDAO {
 			result = preparedStatement.executeQuery();
 	
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -557,16 +485,7 @@ public class KodeStatusDAO {
 		
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -579,6 +498,72 @@ public class KodeStatusDAO {
 			return null;
 		}
 	}
+	
+	public static List<KodeStatus> getListKodeStatusByPersonZoneYear(Person person, int zoneID, String year) {
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+
+			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Zone_ID = ? and Year = ?  ORDER BY KodeStatus_ID DESC";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setInt(1, person.getId_Person());
+		
+			preparedStatement.setInt(2,zoneID );
+	
+			preparedStatement.setString(3, year);
+			
+			result = preparedStatement.executeQuery();
+		
+		
+
+			while (result.next()) {
+				KodeStatus KodeStatus = setKodeStatus(result);
+				listKodeStatus.add(KodeStatus);
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		
+			return listKodeStatus;
+		
+	}
+	
+	public static KodeStatus getKodeStatusByPersonZoneYaerAndKode(Person person, int zoneID, String year, String kod) {
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+			sql = "SELECT * FROM KodeStatus where Person_ID = ? and Year = ? and Kode = ? and Zone_ID = ? LIMIT 1";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setInt(1, person.getId_Person());
+			preparedStatement.setString(2, year);
+			preparedStatement.setString(3, kod);
+			preparedStatement.setInt(4, zoneID );
+			
+			result = preparedStatement.executeQuery();
+	
+			while (result.next()) {
+				KodeStatus KodeStatus = setKodeStatus(result);
+				listKodeStatus.add(KodeStatus);
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		if(listKodeStatus.size()>0) {
+			return listKodeStatus.get(0);
+			}else {
+				return null;
+			}
+	}	
+	
+	
 	
 	public static List<KodeStatus> getKodeStatusByZoneAndYear(int zoneID, String year) {
 		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
@@ -599,16 +584,7 @@ public class KodeStatusDAO {
 		
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -634,16 +610,7 @@ public class KodeStatusDAO {
 			ResultSet result = preparedStatement.executeQuery();
 
 			while (result.next()) {
-				KodeStatus KodeStatus = new KodeStatus();
-				KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
-				Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
-				KodeStatus.setPerson(Person);
-				KodeStatus.setKode(result.getString("Kode"));
-				Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
-				KodeStatus.setZone(zone);
-				KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
-				KodeStatus.setYear(result.getString("Year"));
-				KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+				KodeStatus KodeStatus = setKodeStatus(result);;
 				listKodeStatus.add(KodeStatus);
 			}
 		} catch (SQLException e) {
@@ -652,6 +619,33 @@ public class KodeStatusDAO {
 		}
 		return listKodeStatus.get(0);
 	}
-
 	
+	private static KodeStatus setKodeStatus(ResultSet result) throws SQLException {
+		KodeStatus KodeStatus = new KodeStatus();
+		KodeStatus.setKodeStatus_ID(result.getInt("KodeStatus_ID"));
+		Person Person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+		KodeStatus.setPerson(Person);
+		KodeStatus.setKode(result.getString("Kode"));
+		Zone zone = ZoneDAO.getValueZoneByID((result.getInt("Zone_ID")));
+		KodeStatus.setZone(zone);
+		KodeStatus.setisFreeKode(result.getBoolean("FreeKode"));
+		KodeStatus.setYear(result.getString("Year"));
+		KodeStatus.setZabelejkaKodeStatus(result.getString("zabelejkaKodeStatus"));
+		int kk = 1;
+		if(result.getInt("SetData_UsersWBC_ID")>1) {
+			kk = result.getInt("SetData_UsersWBC_ID");
+		}
+		UsersWBC setData_UsersWBC = UsersWBCDAO.getValueUsersWBCByID(kk);
+		KodeStatus.setSetData_UsersWBC(setData_UsersWBC);
+		KodeStatus.setDateSet(result.getDate("DateSet"));
+		return KodeStatus;
+	}
+	
+	
+
+	public static java.sql.Date convertDate(Date data) {
+		java.sql.Date newDate = new java.sql.Date(data.getTime());
+		return newDate;
+	}
+
 }
