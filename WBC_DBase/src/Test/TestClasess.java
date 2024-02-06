@@ -2150,7 +2150,7 @@ System.out.println();
 	}
 	
 	
-	private static void checkMeasur(Workbook workbook, int row) {
+	private static void checkMeasur1(Workbook workbook, int row) {
 	
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
 		Sheet sheet = workbook.getSheetAt(1);
@@ -2295,6 +2295,117 @@ System.out.println();
 	
 	}
 	
+	private static void checkMeasur(Workbook workbook, int row) {
+		
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
+		Sheet sheet = workbook.getSheetAt(1);
+		int k = 7;
+		double val = 0;
+		Cell cell;
+		String str, nuclideVal = "";
+		String lab = "" ;
+	Cell cell1 = sheet.getRow(row).getCell(k);
+	k++;
+	Cell cell2 = sheet.getRow(row).getCell(k);
+	while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
+		
+	
+	CheckDate(row, k, cell1, " dateMeasur ");
+	
+	try {
+	lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
+	int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
+	if(indexLab < 1 && indexLab > 3) {
+		str = "row "+row+" col "+k+" measurLab "+lab;
+		System.out.println(str);
+	}
+	} catch (Exception e) {
+		str = "row "+row+" col "+k+" measurLab "+lab;
+		System.out.println(str);
+	}
+	
+	k++;
+	
+	for (int i = 0; i < 17; i++) {
+		cell = sheet.getRow(row).getCell(k);
+		if(cell!=null) {
+			nuclideVal = ReadExcelFileWBC.getStringEGNfromCell(cell);
+//			System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
+			if (!nuclideVal.isEmpty()) {
+			
+			try {
+				Double.parseDouble(nuclideVal);
+			} catch (Exception e) {
+				if(!nuclideVal.equals("<0.10")) {
+			
+			str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
+			System.out.println(str);
+				}
+			}
+			
+}else {
+	if(i==16) {
+		str = "row "+row+" col "+k+" nuclideVal is empty";
+		System.out.println(str);
+	}
+}
+			
+			
+			
+			
+//			switch (type) {
+//			case "STRING": {
+//				try {
+//					nuclideVal = cell.getStringCellValue();
+//				Double.parseDouble(nuclideVal);
+//				} catch (Exception e) {
+//					str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
+//					System.out.println(str);
+//				}
+//			}
+//			break;
+//			case "NUMERIC": {
+//				try {
+//					val = cell.getNumericCellValue();	
+//				} catch (Exception e) {
+//					str = "row "+row+" col "+k+" nuclideVal "+val;
+//					System.out.println(str);
+//				}
+//			
+//			}
+//				break;
+//			case "DATA":{
+//				
+//			Date dat = cell.getDateCellValue();
+//			str = "row "+row+" col "+k+" nuclideVal "+sdfrmt.format(dat);
+//			System.out.println(str);
+//				
+//			}
+//				break;
+//			}
+			}else {
+				if(i==16) {
+					str = "row "+row+" col "+k+" nuclideVal is empty";
+					System.out.println(str);
+				}
+			}
+		
+		k++;
+	}
+	
+	if(k>253) {
+		k=6;
+		sheet = workbook.getSheetAt(2);
+	}
+	
+	k++;
+	cell1 = sheet.getRow(row).getCell(k);
+	k++;
+	cell2 = sheet.getRow(row).getCell(k);
+	
+	}
+	}
+
 	
 	
 	public static boolean isNotLegalDate(String strDate, Cell cell) {
