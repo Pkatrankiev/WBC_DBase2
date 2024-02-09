@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
@@ -144,8 +145,8 @@ public class TestClasess {
 		int k = 0;
 		for (PersonStatus personStatusMOOR : listMOOR) {
 
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				PersonStatus personStatus = (PersonStatus) iterator.next();
+			for (Iterator<PersonStatus> iterator = list.iterator(); iterator.hasNext();) {
+				PersonStatus personStatus = iterator.next();
 
 				if (personStatus.getPersonStatus_ID() != personStatusMOOR.getPersonStatus_ID()
 						&& personStatus.getPerson().getId_Person() == personStatusMOOR.getPerson().getId_Person()
@@ -862,7 +863,7 @@ public class TestClasess {
 		for (Workplace workplace : listWorkplace) {
 
 			for (Iterator<String> iterator = listStr.iterator(); iterator.hasNext();) {
-				String strOtdelFromExcell = (String) iterator.next();
+				String strOtdelFromExcell = iterator.next();
 
 				if (strOtdelFromExcell.equals(workplace.getOtdel())
 						|| strOtdelFromExcell.equals(workplace.getSecondOtdelName())) {
@@ -2074,366 +2075,20 @@ public class TestClasess {
 
 //  ******************************************************************************************************************
 
-	public static List<Person> CheckCurentDataInExcelFile() {
-		List<Person> list = new ArrayList<>();
-		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
-		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
-
-		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
-		if (testFilesToD.equals("1")) {
-			filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig_test");
-			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
-		}
-
-		String filePath[] = { filePathPersonel, filePathExternal };
-		Cell cell, cell1;
-		String EGN;
-		for (int ii = 0; ii < filePath.length; ii++) {
-System.out.println("*****************************************");
-System.out.println();
-			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
-
-			Sheet sheet = workbook.getSheetAt(0);
-
-			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
-
-				if (sheet.getRow(row) != null) {
-					cell = sheet.getRow(row).getCell(5);
-					cell1 = sheet.getRow(row).getCell(6);
-
-					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
-						checkEGN(EGN, sheet, row);
-						checkDoza(sheet, row);
-						checkMeasur(workbook, row);
-						checkPersonStat(workbook, row);
-
-					}
-				}
-
-			}
-		}
-		return list;
-	}
-
-	private static void checkEGN(String EGN, Sheet sheet, int row) {
-		String str;
-		try {
-			Long.parseLong(EGN);
-		} catch (Exception e) {
-			str = "row " + row + " egn " + EGN;
-		
-			System.out.println(str);
-		}
-	}
-
-	private static void checkDoza(Sheet sheet, int row) {
-		String str;
-		String doze;
-		Cell cell_Doze;
-		for (int mont = 0; mont < 12; mont++) {
-			cell_Doze = sheet.getRow(row).getCell(mont + 77);
-			doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
-//									System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
-			if (!doze.isEmpty()) {
-				try {
-					Double.parseDouble(doze);
-				} catch (Exception e) {
-					if(!doze.equals("<0.10")) {
-				str = "row "+row+" doze "+doze;
-				System.out.println(str);
-					}
-				}
-			}
-		}
-	
-	}
-	
-	
-	private static void checkMeasur1(Workbook workbook, int row) {
-	
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
-		Sheet sheet = workbook.getSheetAt(1);
-		int k = 7;
-		double val = 0;
-		Cell cell;
-		String str, nuclideVal = "";
-		String lab = "" ;
-	Cell cell1 = sheet.getRow(row).getCell(k);
-	k++;
-	Cell cell2 = sheet.getRow(row).getCell(k);
-	while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
-		
-	
-	CheckDate(row, k, cell1, " dateMeasur ");
-	
-	try {
-	lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
-	int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
-	if(indexLab < 1 && indexLab > 3) {
-		str = "row "+row+" col "+k+" measurLab "+lab;
-		System.out.println(str);
-	}
-	} catch (Exception e) {
-		str = "row "+row+" col "+k+" measurLab "+lab;
-		System.out.println(str);
-	}
-	
-	k++;
-	
-	for (int i = 0; i < 16; i++) {
-		cell = sheet.getRow(row).getCell(k);
-		if(cell!=null) {
-			String type = cell.getCellType().toString();
-			switch (type) {
-			case "STRING": {
-				try {
-					nuclideVal = cell.getStringCellValue();
-				Double.parseDouble(nuclideVal);
-				} catch (Exception e) {
-					str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
-					System.out.println(str);
-				}
-			}
-			break;
-			case "NUMERIC": {
-				try {
-					val = cell.getNumericCellValue();	
-				} catch (Exception e) {
-					str = "row "+row+" col "+k+" nuclideVal "+val;
-					System.out.println(str);
-				}
-			
-			}
-				break;
-			case "DATA":{
-				
-			Date dat = cell.getDateCellValue();
-			str = "row "+row+" col "+k+" nuclideVal "+sdfrmt.format(dat);
-			System.out.println(str);
-				
-			}
-				break;
-			}
-			}
-		
-		k++;
-	}
-	
-	if(k>253) {
-		k=6;
-		sheet = workbook.getSheetAt(2);
-	}
-	
-	k++;
-	cell1 = sheet.getRow(row).getCell(k);
-	k++;
-	cell2 = sheet.getRow(row).getCell(k);
-	
-	}
-	}
-
-	private static void CheckDate(int row, int k, Cell cell1, String ttext) {
-		String str;
-		if (cell1 != null) {
-			String type = cell1.getCellType().toString();
-			switch (type) {
-			case "STRING": {
-				if(isNotLegalDate(cell1.getStringCellValue(), cell1)) {
-					str = "row "+row+" col "+k+ttext+cell1.getStringCellValue();
-					System.out.println(str);
-				}
-			}
-				break;
-			case "DATA":
-			case "NUMERIC": {
-				try {
-				cell1.getDateCellValue();
-				} catch (Exception e) {
-					str = "row "+row+" col "+k+ttext+cell1.getStringCellValue();
-					System.out.println(str);
-				}
-			}
-				break;
-
-			}
-		}
-	}
-	
-	private static void checkPersonStat(Workbook workbook, int row) {
-		
-		
-		Sheet sheet = workbook.getSheetAt(3);
-		
-		int k = 7;
-		Cell cell = sheet.getRow(row).getCell(k);
-		
-				
-		while (ReadExcelFileWBC.CellNOEmpty(cell)) {
-			
-			
-			k++;
-			cell = sheet.getRow(row).getCell(k);
-			if (ReadExcelFileWBC.CellNOEmpty(cell)
-					&& !ReadExcelFileWBC.getStringfromCell(cell).isEmpty()) {
-			
-						
-				CheckDate(row,  k,  cell, " StartDatePerStat ");
+	public static void deletePersonStatusNewInYere(String year) {
+		List<PersonStatusNew> listPersonSatus = PersonStatusNewDAO.getValuePersonStatusNewByYear(year);
+		System.out.println(listPersonSatus.size());
+		int k = 0, l = 0;
+		for (PersonStatusNew personStat : listPersonSatus) {
+		PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
+			if (l == 100) {
+				System.out.println(k);
+				l = 0;
 			}
 			k++;
-			cell = sheet.getRow(row).getCell(k);
-			if (ReadExcelFileWBC.CellNOEmpty(cell)
-					&& !ReadExcelFileWBC.getStringfromCell(cell).isEmpty()) {
-				CheckDate(row,  k,  cell, " endDatePerStat ");
-			}
-			k++;
-			cell = sheet.getRow(row).getCell(k);
-			
-			
-
+			l++;
 		}
-	
 	}
-	
-	private static void checkMeasur(Workbook workbook, int row) {
-		
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.M.yyyy");
-		Sheet sheet = workbook.getSheetAt(1);
-		int k = 7;
-		double val = 0;
-		Cell cell;
-		String str, nuclideVal = "";
-		String lab = "" ;
-	Cell cell1 = sheet.getRow(row).getCell(k);
-	k++;
-	Cell cell2 = sheet.getRow(row).getCell(k);
-	while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
-		
-	
-	CheckDate(row, k, cell1, " dateMeasur ");
-	
-	try {
-	lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
-	int indexLab = Integer.parseInt(lab.substring(lab.length()-1));
-	if(indexLab < 1 && indexLab > 3) {
-		str = "row "+row+" col "+k+" measurLab "+lab;
-		System.out.println(str);
-	}
-	} catch (Exception e) {
-		str = "row "+row+" col "+k+" measurLab "+lab;
-		System.out.println(str);
-	}
-	
-	k++;
-	
-	for (int i = 0; i < 17; i++) {
-		cell = sheet.getRow(row).getCell(k);
-		if(cell!=null) {
-			nuclideVal = ReadExcelFileWBC.getStringEGNfromCell(cell);
-//			System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
-			if (!nuclideVal.isEmpty()) {
-			
-			try {
-				Double.parseDouble(nuclideVal);
-			} catch (Exception e) {
-				if(!nuclideVal.equals("<0.10")) {
-			
-			str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
-			System.out.println(str);
-				}
-			}
-			
-}else {
-	if(i==16) {
-		str = "row "+row+" col "+k+" nuclideVal is empty";
-		System.out.println(str);
-	}
-}
-			
-			
-			
-			
-//			switch (type) {
-//			case "STRING": {
-//				try {
-//					nuclideVal = cell.getStringCellValue();
-//				Double.parseDouble(nuclideVal);
-//				} catch (Exception e) {
-//					str = "row "+row+" col "+k+" nuclideVal "+nuclideVal;
-//					System.out.println(str);
-//				}
-//			}
-//			break;
-//			case "NUMERIC": {
-//				try {
-//					val = cell.getNumericCellValue();	
-//				} catch (Exception e) {
-//					str = "row "+row+" col "+k+" nuclideVal "+val;
-//					System.out.println(str);
-//				}
-//			
-//			}
-//				break;
-//			case "DATA":{
-//				
-//			Date dat = cell.getDateCellValue();
-//			str = "row "+row+" col "+k+" nuclideVal "+sdfrmt.format(dat);
-//			System.out.println(str);
-//				
-//			}
-//				break;
-//			}
-			}else {
-				if(i==16) {
-					str = "row "+row+" col "+k+" nuclideVal is empty";
-					System.out.println(str);
-				}
-			}
-		
-		k++;
-	}
-	
-	if(k>253) {
-		k=6;
-		sheet = workbook.getSheetAt(2);
-	}
-	
-	k++;
-	cell1 = sheet.getRow(row).getCell(k);
-	k++;
-	cell2 = sheet.getRow(row).getCell(k);
-	
-	}
-	}
-
-	
-	
-	public static boolean isNotLegalDate(String strDate, Cell cell) {
-		
-		Date dd;
-		if (!strDate.trim().isEmpty()) {
-			strDate = strDate.replaceAll("г.", "");
-			strDate = strDate.replaceAll("г", "");
-			strDate = strDate.trim();
-			
-			SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(strDate);
-			try {
-				
-					dd = sdfrmt.parse(strDate);
-					if(!sdfrmt.format(dd).equals(strDate)) {
-						return true;
-					}
-				
-			} catch (Exception e) {
-				System.out.println(strDate+" catch "+strDate.length());
-			return true;
-			}
-
-		}
-
-		return false;
-	}
-
 
 	
 	

@@ -30,6 +30,7 @@ import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
+import CheckErrorDataInExcellFiles.CheckErrorDataInExcellFiles_Frame;
 import PersonManagement.PersonelManegementFrame;
 import PersonReference.TextInAreaTextPanel;
 import ReferenceMeasuringLab.ReferenceMeasuringLabFrame;
@@ -49,9 +50,13 @@ public class TestMainClass {
 			
 //			TestClasess.deleteKodeStatusByMisingPerson();
 //			PersonStatusNewDAO.deleteValuePersonStatusNew(PersonStatusNewDAO.getValuePersonStatusNewByID(0));
-//			TestClasess.deleteDublikatePersonStatusWithWorkpliceInYere("2023");
+//			TestClasess.deletePersonStatusNewInYere("2024");
 //			TestClasess.PresonStatusNewWithYear();
-			TestClasess.CheckCurentDataInExcelFile();
+			
+//			TestClasess.CheckCurentDataInExcelFiles();
+			
+			 new CheckErrorDataInExcellFiles_Frame ();
+			
 		}
 	}
 		}

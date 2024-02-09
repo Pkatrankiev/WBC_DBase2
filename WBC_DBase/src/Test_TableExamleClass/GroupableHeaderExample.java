@@ -45,6 +45,7 @@ import javax.swing.table.*;
 /**
  * @version 1.0 11/09/98
  */
+@SuppressWarnings("serial")
 public class GroupableHeaderExample extends JFrame {
 
   GroupableHeaderExample() {

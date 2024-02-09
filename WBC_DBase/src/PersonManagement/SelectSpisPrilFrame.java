@@ -12,15 +12,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import Aplication.ActionIcone;
+import Aplication.ReadFileBGTextVariable;
 
 @SuppressWarnings("serial")
 public class SelectSpisPrilFrame extends JDialog {
 
 	private JPanel contentPane;
 	static int selectedContent = -1;
-
+	static String PersonManegement_SelectSpisPrilFramee_Label = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PersonManegement_SelectSpisPrilFramee_Label");
+	
 	public SelectSpisPrilFrame(JFrame parent, int[] coord, String [] masiveSipisPril, int[] size, int maxFormulyarName, ActionIcone round) {
-		super(parent, "", true);
+		super(parent, PersonManegement_SelectSpisPrilFramee_Label, true);
 
 		setBounds(coord[0], coord[1], size[0], size[1]);
 		contentPane = new JPanel();

@@ -1,6 +1,6 @@
 
 minYearInDbase = 2005
-Version = v.231123
+Version = v.090224
 
 dataArhiveExcelFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
@@ -46,11 +46,19 @@ modifiIcon = ICONS/Modify.gif
 main_Icon = ICONS/Icon14.png
 arrowIcon = ICONS/arrow.gif
 
-
+mainWindow_LogInStr_Btn = logIn
+mainWindow_LogOutStr_Btn = logOut
+mainWindow_Title = ОК(С) КЦ-ПД СИЧ
 MainWindowFrame_BtnActual = Актуализиране
 MainWindowFrame_Label = Последно актуализиране на базата от Ексел файловете:
 insertMeasuring = Измервания
 insertMeasuringTipText = Въвеждане на резултати от измерванията
+
+logInMesege = Логнете се
+LoginFrame_Title = Логване
+LoginFrame_UserName = потребителско име
+LoginFrame_pass = парола
+MainWindow_Title_work =  -> работи 
 
 autoInsertMeasuting = Авоматично нанасяне на измерванията
 autoInsertMeasutingTipText = въвеждане на измерванията от репорт фаилове
@@ -193,7 +201,11 @@ svePersonManegement_InsertToListChengeKode = Да се добави ли в сп
 svePersonManegement_CheckBoxLbIs_EnteredInZone = Има ли влизания в зоната?
 svePersonManegement_EnteredInZoneANDChangeKode = Има промяна на код и влизания в зоната.
 
+PersonManegement_SelectSpisPrilFramee_Label = Списък на Прил. и Спис. от този отдел
+
+
 checkCorrectinDataInExcell = Проверка за грешни данни в Excell
+checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles = Проверка за некоректни данни в EXTERNAL.xls и PERSONNEL.xls
 checkCorrectinDataInExcell_labelErrorColumn = Проверка за несъвпадения на първите 5 колони в EXTERNAL.xls и PERSONNEL.xls
 checkCorrectinDataInExcell_labelErrorExcell = Проверка за несъвпадения на данните между EXTERNAL.xls, PERSONNEL.xls и wbc_month
 checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = Проверка за несъвпадения на данните за измерванията в базата и wbc_month

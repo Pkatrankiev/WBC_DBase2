@@ -14,13 +14,14 @@ import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
+import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
 //четене на списък-приложения от годишния ексел фаил
 
 public class ReadSpisak_PrilogeniaFromExcelFile {
 
 	public static List<Spisak_Prilogenia> getSpisak_Prilogenia_ListFromExcelFile(String FILE_PATH, String firmName,
-			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {
+			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
 		
 
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(FILE_PATH);
@@ -52,6 +53,9 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 
 				if(listDiferentRow != null) {
 					row = listDiferentRow.get(index);
+					otdelName = UpdateBDataFromExcellFiles.getOtdelNameByListArreaOtdels(arreaOtdels, row);
+					workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
+							listAllWorkplaceBiFirmName);
 				}else {
 					row  = index;
 				}
@@ -68,12 +72,18 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 							int k = 7;
 							cell = sheet.getRow(row).getCell(k);
 							while (ReadExcelFileWBC.CellNOEmpty(cell)) {
+								if(listDiferentRow != null) {
+									
+								}
 								Spisak_Prilogenia spPr =  getOrCreateSisak_Prilogenie(k,  row,   sheet,  startDate,  endDate, formulyarName,  workplace,  year);
 								
 								k = k+3;
 								cell = sheet.getRow(row).getCell(k);
-															
+								if(workplace.getId_Workplace()==38) {
+									System.out.println("************************************"+workplace.getOtdel());
+									System.out.println(spPr.getFormulyarName()+" "+spPr.getYear()+" "+spPr.getStartDate()+" "+spPr.getEndDate()+" "+workplace.getOtdel());
 
+								}
 								spisak_Prilogenia_List.add(spPr);
 							}
 						}
@@ -85,6 +95,9 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		}
 		return spisak_Prilogenia_List;
 	}
+
+
+	
 
 
 	public static Spisak_Prilogenia getOrCreateSisak_Prilogenie(int k, int row,  Sheet sheet, Date startDate, Date endDate, String formulyarName, Workplace workplace, String year) {
@@ -119,13 +132,14 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		}
 		k++;
 		cell = sheet.getRow(row).getCell(k);
-		
-	Spisak_Prilogenia spPr = search_Spisak_Prilogenia(formulyarName, startDate, endDate, workplace, year);
+		Spisak_Prilogenia spPr = new Spisak_Prilogenia(formulyarName, year, startDate, endDate, workplace, "from Arhive");
+//	Spisak_Prilogenia spPr = search_Spisak_Prilogenia(formulyarName, startDate, endDate, workplace, year);
 	
 	return spPr;	
 	
 	}	
 	
+	@SuppressWarnings("unused")
 	private static Spisak_Prilogenia search_Spisak_Prilogenia(String formulyarName, Date startDate, Date endDate,
 			Workplace workplace, String year) {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");

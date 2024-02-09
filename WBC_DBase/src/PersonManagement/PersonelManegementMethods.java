@@ -5,7 +5,6 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -21,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,14 +48,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.BadLocationException;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -72,7 +66,6 @@ import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ResourceLoader;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
-import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -83,8 +76,6 @@ import BasiClassDAO.ZoneDAO;
 
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
-import BasicClassAccessDbase.Laboratory;
-import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
@@ -99,9 +90,7 @@ import PersonReference.TextInAreaTextPanel;
 
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import SearchFreeKode.SearchFreeKodeFrame;
-import net.coderazzi.filters.gui.AutoChoices;
-import net.coderazzi.filters.gui.TableFilterHeader;
-import AutoInsertMeasuting.AutoInsertMeasutingMethods;
+import WBCUsersLogin.WBCUsersLogin;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class PersonelManegementMethods {
@@ -143,7 +132,7 @@ public class PersonelManegementMethods {
 //	static List<List<String>> ListZvenaFromExcellFiles = SearchFreeKodeMethods.generateListZvenaFromExcellFiles();
 
 	static String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
-	static UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(1);
+	static UsersWBC user = WBCUsersLogin.getCurentUser();
 	static List<List<KodeStatus>> kodeStatusFromExcelFiles = getMasiveKodeStatusFromDBaseForCurentYear(curentYear);
 
 	static boolean FirstNameOK;

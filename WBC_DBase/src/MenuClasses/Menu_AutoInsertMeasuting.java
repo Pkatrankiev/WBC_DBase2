@@ -2,13 +2,14 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
+
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.AutoInsertMeasutingMethods;
-import PersonManagement.PersonelManegementFrame;
+import BasicClassAccessDbase.UsersWBC;
 import PersonManagement.PersonelManegementMethods;
-
-
+import WBCUsersLogin.WBCUsersLogin;
 
 
 public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
@@ -24,6 +25,11 @@ public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
+		UsersWBC loginDlg = WBCUsersLogin.getCurentUser();
+		if (loginDlg == null) {
+			JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("logInMesege"));
+		} else {
+		
 		ActionIcone round = new ActionIcone();
 		 final Thread thread = new Thread(new Runnable() {
 		     @Override
@@ -35,7 +41,7 @@ public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
 		    });
 		    thread.start();	
 		
-		
+		}
 		
 		
 		

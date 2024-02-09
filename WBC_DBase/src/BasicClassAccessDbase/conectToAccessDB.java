@@ -11,8 +11,6 @@ import java.util.List;
 import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
-import BasiClassDAO.PersonDAO;
-import BasiClassDAO.ZoneDAO;
 
 public class conectToAccessDB {
 

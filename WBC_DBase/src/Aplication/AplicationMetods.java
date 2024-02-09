@@ -60,7 +60,7 @@ public class AplicationMetods {
 		case "Spisak_Prilogenia": {
 			// read and set Spisak_Prilogenia
 			List<Spisak_Prilogenia> Spisak_PrilogeniaList = ReadSpisak_PrilogeniaFromExcelFile
-					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, null, "", null);
+					.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, null, "", null, null);
 			
 			ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 			System.out.println("--> "+Spisak_PrilogeniaList.size());
@@ -75,7 +75,7 @@ public class AplicationMetods {
 			// read and set PersonStatus
 			if(PerStatNewSet.equals("1")) {
 				List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile, firmName,
-						year, null, "", null);
+						year, null, "", null, null);
 				ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
 				System.out.println("--> "+list.size());
 				if(save) {
@@ -84,7 +84,7 @@ public class AplicationMetods {
 				}	
 			}else {
 			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
-					year, null, "", null);
+					year, null, "", null, null);
 			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 			System.out.println("--> "+list.size());
 			if(save) {

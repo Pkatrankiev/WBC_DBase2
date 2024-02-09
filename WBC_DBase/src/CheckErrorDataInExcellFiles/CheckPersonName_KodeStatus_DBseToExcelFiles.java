@@ -21,10 +21,8 @@ import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import BasiClassDAO.KodeStatusDAO;
-import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
 import BasicClassAccessDbase.KodeStatus;
-import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import PersonReference.TextInAreaTextPanel;
 
@@ -77,9 +75,6 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 	}
 	
 	
-	
-	
-	
 	public static String checkPersonNameKodeStatus() {
 
 		String[][] masive = new String[2][8];
@@ -104,11 +99,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		String strKods, strId, strText;
 		Cell cell, cell1;
 		Set<String> mySet = new HashSet<String>();
-		int countMySet;
 		boolean notEquals = false;
 		boolean setinMasive = false;
 
-		String infoStrText = "";
+	
 
 		for (int ii = 0; ii < filePath.length; ii++) {
 
@@ -139,9 +133,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 						person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
-						countMySet = mySet.size();
-						mySet.add(EGN);
-						if ((countMySet + 1) == mySet.size()) {
+						if (mySet.add(EGN)) {
 							for (int j = 0; j < 8; j++) {
 								masive[0][j] = "";
 								masive[1][j] = "";
@@ -265,6 +257,13 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 		listMasiveForClear = listMasive;
 		
+		String infoStrText = creadStringToInfoText(ExtMasive, columnWith);
+
+		return infoStrText;
+	}
+
+	public static String creadStringToInfoText(String[][] ExtMasive, Integer[] columnWith) {
+		String infoStrText = "";
 		int i;
 		for (String[] masiv : ExtMasive) {
 			i = 0;
@@ -277,11 +276,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 			infoStrText = infoStrText + "\n";
 
 		}
-
 		return infoStrText;
 	}
 
-	private static Integer[] extractColumnWith(String[][] extMasive) {
+	public static Integer[] extractColumnWith(String[][] extMasive) {
 		Integer[] columnWith = new Integer[8];
 		for (int j = 0; j < columnWith.length; j++) {
 			columnWith[j] = 0;

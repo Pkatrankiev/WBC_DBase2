@@ -15,9 +15,7 @@ import javax.swing.JOptionPane;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.UsersWBC;
-import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
 import BasicClassAccessDbase.conectToAccessDB;
 

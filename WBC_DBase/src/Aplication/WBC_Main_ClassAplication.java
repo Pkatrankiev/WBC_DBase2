@@ -1,6 +1,7 @@
 package Aplication;
 
 import MenuClasses.WBC_MainWindowFrame;
+import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
 public class WBC_Main_ClassAplication {
  
@@ -11,7 +12,7 @@ public static void main(String[] args) {
 		new WBC_MainWindowFrame();
 		
 		boolean afterExcelUpdate = false;
-		WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
+		UpdateBDataFromExcellFiles.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
 		
 		GeneralMethods.cerateDestinationDir();
 	

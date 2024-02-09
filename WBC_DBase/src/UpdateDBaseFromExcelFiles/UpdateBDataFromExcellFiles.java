@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -67,7 +68,6 @@ public class UpdateBDataFromExcellFiles {
 	     public void run() {
 	       
 	    	 updataFromGodExcelFile(round);
-			
 	    	 
 	     }
 	  
@@ -132,7 +132,7 @@ public class UpdateBDataFromExcellFiles {
 			}
 		}else {
 			boolean afterExcelUpdate = true;
-			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
+			updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
 		}
 		
 		
@@ -407,18 +407,30 @@ public class UpdateBDataFromExcellFiles {
 	}
 	
 
+	public static void updateLastActualsDBaseFromExcelFile(boolean afterExcelUpdate) {
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+		String MainWindowFrame_Label = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_Label");
+		ActualExcellFiles actualExcellFiles_LastActuals = ActualExcellFilesDAO.getValueActualExcellFilesByName("LastActuals");
+		if(afterExcelUpdate) {
+		actualExcellFiles_LastActuals.setActualExcellFiles_Date(new Timestamp(System.currentTimeMillis()));
+		ActualExcellFilesDAO.updateValueActualExcellFiles(actualExcellFiles_LastActuals);
+		}
+		String date_LastActuals = sdfrmt.format(actualExcellFiles_LastActuals.getActualExcellFiles_Date());
+		WBC_MainWindowFrame.getLblNewLabel().setText(MainWindowFrame_Label+" "+date_LastActuals);
+	}
+
 
 	private static void extracted(ActionIcone round, List<String> listChengeExcellFilePath, List<List<List<String>>> listStringForDiferentRow) {
 		
 		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		String[] key = { 
-				"Person", 
+//				"Person", 
 				"Spisak_Prilogenia", 
-				"PersonStatus", 
-				"KodeStatus", 
-				"Measuring", 
-				"ResultsWBC", 
-				"ObhodenList"
+//				"PersonStatus", 
+//				"KodeStatus", 
+//				"Measuring", 
+//				"ResultsWBC", 
+//				"ObhodenList"
 				};
 		String year = AplicationMetods.getCurentYear();
 		String textIcon;
@@ -472,7 +484,14 @@ public class UpdateBDataFromExcellFiles {
 					}else {
 							listDiferentRow = null;
 						}
+				List<String> arreaOtdels = getListArreaOtdels(pathFile);
 				
+//				for (String string : arreaOtdels) {
+//					String[] val = string.split("#");
+//					System.out.println(val[0]+" "+val[1]+" "+val[2]);
+//				}
+				
+					
 				textIcon ="<html><center>Update " + key[i]+" ("+(i+1)+ "/7)" +"<br>"+firmName+" ";
 				save = true;
 				switch (key[i]) {
@@ -500,7 +519,7 @@ public class UpdateBDataFromExcellFiles {
 										
 					try {
 						Spisak_PrilogeniaList = ReadSpisak_PrilogeniaFromExcelFile
-								.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, round, textIcon, listDiferentRow);
+								.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
 
 //						ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
 						System.out.println("--> " + Spisak_PrilogeniaList.size());
@@ -523,7 +542,7 @@ public class UpdateBDataFromExcellFiles {
 						List<PersonStatusNew> list = null;
 						try {
 							list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile,
-									firmName, year, round, textIcon, listDiferentRow);
+									firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
 							System.out.println("list PersonStatus from Excell " + list.size());
 //							ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 							System.out.println("--> " + list.size());
@@ -539,7 +558,7 @@ public class UpdateBDataFromExcellFiles {
 					List<PersonStatus> list = null;
 					try {
 						list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile,
-								firmName, year, round, textIcon, listDiferentRow);
+								firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
 						System.out.println("list PersonStatus from Excell " + list.size());
 //						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 						System.out.println("--> " + list.size());
@@ -651,11 +670,43 @@ public class UpdateBDataFromExcellFiles {
 			}
 			
 			boolean afterExcelUpdate = true;
-			WBC_MainWindowFrame.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
+			updateLastActualsDBaseFromExcelFile(afterExcelUpdate);
 			
 		}
 		round.StopWindow();
 	}
+
+	private static List<String> getListArreaOtdels(String pathFile) {
+		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
+		List<String> list = new ArrayList<>();
+		if (workbook.getNumberOfSheets() > 2) {
+			String otdelName = "";
+		
+			Sheet sheet = workbook.getSheetAt(0);
+			Cell cell, cell1;
+			int start = 5;
+			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+
+				if (sheet.getRow(row) != null) {
+					cell = sheet.getRow(row).getCell(5);
+					cell1 = sheet.getRow(row).getCell(6);
+					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+						
+						if (cell1.getStringCellValue().equals("край")) {
+							list.add(start+"#"+row+"#"+otdelName);
+							start = row+1;
+						}else {
+							otdelName = cell1.getStringCellValue();
+						}
+					
+							}
+						}
+
+					}
+				}
+		return list;
+	}
+
 
 	private static List<Integer> revoveAndSortList(List<Integer> list) {
 		List<Integer> deDupStringList = new ArrayList<>(new HashSet<>(list));
@@ -742,7 +793,20 @@ public class UpdateBDataFromExcellFiles {
 		return x;
 	}
 	
+	public static String getOtdelNameByListArreaOtdels(List<String> arreaOtdels, int row) {
+		int start =0;
+		int end =0;
+		for (String string : arreaOtdels) {
+		String[] val = string.split("#");
+		start = Integer.parseInt(val[0]);
+		end = Integer.parseInt(val[1]);
+		if(start < row && row < end) {
+			return val[2];
+		}
+		}
 	
+		return "";
+	}
 	
 	
 }

@@ -7,15 +7,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;

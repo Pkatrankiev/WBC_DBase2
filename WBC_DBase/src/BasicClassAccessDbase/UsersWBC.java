@@ -17,13 +17,15 @@ public class UsersWBC  implements Serializable {
 	private String nikName;
 	private String pass;
 	private String lastName_EG;
+	private boolean acting;
 	
-	public UsersWBC (String name,	String lastName, String nikName, String pass, String lastName_EG) {
+	public UsersWBC (String name,	String lastName, String nikName, String pass, String lastName_EG, boolean acting) {
 		this.name = name;
 		this.lastName = lastName;
 		this.nikName = nikName;
 		this.pass = pass;
 		this.lastName_EG = lastName_EG;
+		this.setActing(acting);
 	}
 	
 	public UsersWBC() {
@@ -76,6 +78,14 @@ public class UsersWBC  implements Serializable {
 
 	public void setPass(String pass) {
 		this.pass = pass;
+	}
+
+	public boolean getActing() {
+		return acting;
+	}
+
+	public void setActing(boolean acting) {
+		this.acting = acting;
 	}
 	
 	

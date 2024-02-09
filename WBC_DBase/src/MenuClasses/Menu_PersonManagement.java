@@ -1,15 +1,15 @@
 package MenuClasses;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import PersonManagement.OpenedExcelClass;
+import BasicClassAccessDbase.UsersWBC;
 import PersonManagement.PersonelManegementFrame;
 import PersonManagement.PersonelManegementMethods;
+import WBCUsersLogin.WBCUsersLogin;
 
 
 public class Menu_PersonManagement extends AbstractMenuAction{
@@ -25,7 +25,10 @@ public class Menu_PersonManagement extends AbstractMenuAction{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		
+		UsersWBC loginDlg = WBCUsersLogin.getCurentUser();
+		if (loginDlg == null) {
+			JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("logInMesege"));
+		} else {
 		
 		
 		ActionIcone round = new ActionIcone();
@@ -41,7 +44,7 @@ public class Menu_PersonManagement extends AbstractMenuAction{
 		    });
 		    thread.start();	
 		
-		
+		}
 		
 		
 		

@@ -40,6 +40,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	private static JButton btn_CheckDBase_Clear;
 	private static JButton btn_CheckDBaseNameKodeStat;
 	private static JButton btn_CheckDBaseNameKodeStat_Clear;
+	private static JButton btn_CheckCurentDataInExcelFiles;
 	
 
 
@@ -48,10 +49,12 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	static String curentYear = AplicationMetods.getCurentYear();
 	String checkCorrectinDataInExcell = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell");
+	String checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles");
 	String checkCorrectinDataInExcell_labelErrorColumn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelErrorColumn");
 	String checkCorrectinDataInExcell_labelErrorExcell = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelErrorExcell");
 	String checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckDBaseToMouthFile");
 	String checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile");
+	
 
 	
 	
@@ -85,6 +88,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		JScrollPane sp = new JScrollPane(textArea);
 		infoPanel.add(sp, BorderLayout.CENTER);
 		
+		panel_0();
 		panel_1();
 		panel_2();
 		panel_3();
@@ -103,13 +107,37 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBase_Clear(panel_Search, btn_CheckDBase_Clear, textArea);
 		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat(panel_Search, btn_CheckDBaseNameKodeStat, textArea);
 		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat_Clear(panel_Search, btn_CheckDBaseNameKodeStat_Clear, textArea);
+		CheckCurentDataInExcelFilesMetod.ActionListener_Btn_CheckCurentDataInExcelFiles(panel_Search, btn_CheckCurentDataInExcelFiles, textArea);
 
 		setVisible(true);
 		
 		
 	}
 
-	
+	private JPanel panel_0() {
+		
+		JPanel panel0 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel0.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		flowLayout.setVgap(2);
+		panel_Search.add(panel0);
+		
+		JLabel lbl_Year_1 = new JLabel(checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles);
+		
+		lbl_Year_1.setPreferredSize(new Dimension(550, 15));
+		lbl_Year_1.setHorizontalAlignment(SwingConstants.LEFT);
+		lbl_Year_1.setBorder(null);
+		lbl_Year_1.setAlignmentX(0.5f);
+		panel0.add(lbl_Year_1);
+		
+		btn_CheckCurentDataInExcelFiles = new JButton("Search");
+		panel0.add(btn_CheckCurentDataInExcelFiles);
+		btn_CheckCurentDataInExcelFiles.setMargin(new Insets(2, 5, 2, 5));
+		btn_CheckCurentDataInExcelFiles.setPreferredSize(new Dimension(110, 23));
+		
+		
+		return panel0;
+	}
 
 	private JPanel panel_1() {
 		
@@ -322,6 +350,18 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	public static void setBtn_CheckDBaseNameKodeStat_Clear(JButton btn_CheckDBaseNameKodeStat_Clear) {
 		CheckErrorDataInExcellFiles_Frame.btn_CheckDBaseNameKodeStat_Clear = btn_CheckDBaseNameKodeStat_Clear;
+	}
+
+
+
+	public static JButton getBtn_CheckCurentDataInExcelFiles() {
+		return btn_CheckCurentDataInExcelFiles;
+	}
+
+
+
+	public static void setBtn_CheckCurentDataInExcelFiles(JButton btn_CheckCurentDataInExcelFiles) {
+		CheckErrorDataInExcellFiles_Frame.btn_CheckCurentDataInExcelFiles = btn_CheckCurentDataInExcelFiles;
 	}
 
 	

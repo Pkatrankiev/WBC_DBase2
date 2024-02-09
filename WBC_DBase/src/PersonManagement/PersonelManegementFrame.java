@@ -37,10 +37,6 @@ import Aplication.ReadFileBGTextVariable;
 
 import PersonReference.PersonReferenceFrame;
 import java.util.Calendar;
-import java.util.List;
-
-
-
 
 
 

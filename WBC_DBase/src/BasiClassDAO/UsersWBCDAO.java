@@ -14,11 +14,11 @@ import BasicClassAccessDbase.conectToAccessDB;
 
 public class UsersWBCDAO {
 
-	public static void setValueUsersWBC(String name,	String lastName, String nikName,	String pass,  String lastName_EG) {
+	public static void setValueUsersWBC(String name,	String lastName, String nikName,	String pass,  String lastName_EG, boolean acting) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG) VALUES (?, ?, ?, ?,?)";
+		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting) VALUES (?, ?, ?, ?,?, ?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -28,6 +28,7 @@ public class UsersWBCDAO {
 			preparedStatement.setString(3, nikName);
 			preparedStatement.setString(4, pass);
 			preparedStatement.setString(5, lastName_EG);
+			preparedStatement.setBoolean(6, acting);
 			
 			preparedStatement.executeUpdate();
 			
@@ -44,7 +45,7 @@ public class UsersWBCDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG) VALUES (?, ?, ?, ?,?)";
+		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting) VALUES (?, ?, ?, ?,?,?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -54,6 +55,7 @@ public class UsersWBCDAO {
 			preparedStatement.setString(3, usersWBC.getNikName());
 			preparedStatement.setString(4, usersWBC.getPass());
 			preparedStatement.setString(5, usersWBC.getLastName_EG());
+			preparedStatement.setBoolean(6, usersWBC.getActing());
 			
 			preparedStatement.executeUpdate();
 			
@@ -69,7 +71,7 @@ public class UsersWBCDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update usersWBC SET Name = ?, LastName = ?, NikName = ?, Pass = ?, LastName_EG = ?  where UsersWBC_ID = ? ";
+		String sqlUpdate = "Update usersWBC SET Name = ?, LastName = ?, NikName = ?, Pass = ?, LastName_EG = ?, acting = ?  where UsersWBC_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
@@ -79,8 +81,9 @@ public class UsersWBCDAO {
 			preparedStatement.setString(3, usersWBC.getNikName());
 			preparedStatement.setString(4, usersWBC.getPass());
 			preparedStatement.setString(5, usersWBC.getLastName_EG());
+			preparedStatement.setBoolean(6, usersWBC.getActing());
 			
-			preparedStatement.setInt(6, id_UsersWBC);
+			preparedStatement.setInt(7, id_UsersWBC);
 
 			preparedStatement.executeUpdate();
 			
@@ -134,7 +137,8 @@ public class UsersWBCDAO {
 				object.setLastName(result.getString("LastName"));
 				object.setNikName(result.getString("NikName"));
 				object.setPass(result.getString("Pass"));
-				object.setPass(result.getString("LastName_EG"));
+				object.setLastName_EG(result.getString("LastName_EG"));
+				object.setActing(result.getBoolean("acting"));
 				
 				list.add(object);
 			}
@@ -166,7 +170,8 @@ public class UsersWBCDAO {
 				object.setLastName(result.getString("LastName"));
 				object.setNikName(result.getString("NikName"));
 				object.setPass(result.getString("Pass"));
-				object.setPass(result.getString("LastName_EG"));
+				object.setLastName_EG(result.getString("LastName_EG"));
+				object.setActing(result.getBoolean("acting"));
 				
 				list.add(object);
 			}
@@ -202,7 +207,8 @@ public class UsersWBCDAO {
 				resultObject.setLastName(result.getString("LastName"));
 				resultObject.setNikName(result.getString("NikName"));
 				resultObject.setPass(result.getString("Pass"));
-				resultObject.setPass(result.getString("LastName_EG"));
+				resultObject.setLastName_EG(result.getString("LastName_EG"));
+				resultObject.setActing(result.getBoolean("acting"));
 				
 				list.add(resultObject);
 			}
@@ -238,7 +244,8 @@ public class UsersWBCDAO {
 				resultObject.setLastName(result.getString("LastName"));
 				resultObject.setNikName(result.getString("NikName"));
 				resultObject.setPass(result.getString("Pass"));
-				resultObject.setPass(result.getString("LastName_EG"));
+				resultObject.setLastName_EG(result.getString("LastName_EG"));
+				resultObject.setActing(result.getBoolean("acting"));
 				
 				list.add(resultObject);
 			}
@@ -300,7 +307,8 @@ public class UsersWBCDAO {
 				resultObject.setLastName(result.getString("LastName"));
 				resultObject.setNikName(result.getString("NikName"));
 				resultObject.setPass(result.getString("Pass"));
-				resultObject.setPass(result.getString("LastName_EG"));
+				resultObject.setLastName_EG(result.getString("LastName_EG"));
+				resultObject.setActing(result.getBoolean("acting"));
 				
 				list.add(resultObject);
 			}
@@ -325,7 +333,42 @@ public class UsersWBCDAO {
 		}
 		return masive;
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	public static List<UsersWBC> getValueUsersWBCByActing() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM UsersWBC  where acting = true ";
+		
+		List<UsersWBC> list = new ArrayList<UsersWBC>();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet result = preparedStatement.executeQuery();
+
+
+			while (result.next()) {
+				UsersWBC resultObject = new UsersWBC();
+				resultObject.setId_Users(result.getInt("UsersWBC_ID"));
+				resultObject.setName (result.getString("Name"));
+				resultObject.setLastName(result.getString("LastName"));
+				resultObject.setNikName(result.getString("NikName"));
+				resultObject.setPass(result.getString("Pass"));
+				resultObject.setLastName_EG(result.getString("LastName_EG"));
+				resultObject.setActing(result.getBoolean("acting"));
+				
+				list.add(resultObject);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile( e);
+		}
+		return list;
+	}
 	
 	
 }
