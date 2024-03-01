@@ -148,7 +148,7 @@ public class UpdateBDataFromExcellFiles {
 		     @Override
 		     public void run() {
 		    	
-		    	 extracted(round2, listChengeExcellFilePath, listStringForDiferentRow);
+		    	 extracted(round2, listChengeExcellFilePath, listStringForDiferentRow, null);
 				
 		    	 
 		     }
@@ -420,18 +420,24 @@ public class UpdateBDataFromExcellFiles {
 	}
 
 
-	private static void extracted(ActionIcone round, List<String> listChengeExcellFilePath, List<List<List<String>>> listStringForDiferentRow) {
+	static void extracted(ActionIcone round, List<String> listChengeExcellFilePath, List<List<List<String>>> listStringForDiferentRow, String[] keyInsert) {
 		
 		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
+		
 		String[] key = { 
-//				"Person", 
+				"Person", 
 				"Spisak_Prilogenia", 
-//				"PersonStatus", 
-//				"KodeStatus", 
-//				"Measuring", 
-//				"ResultsWBC", 
-//				"ObhodenList"
+				"PersonStatus", 
+				"KodeStatus", 
+				"Measuring", 
+				"ResultsWBC", 
+				"ObhodenList"
 				};
+		
+		if(keyInsert != null) {
+			key = keyInsert;
+		}
+		
 		String year = AplicationMetods.getCurentYear();
 		String textIcon;
 		String errorText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorText");
@@ -554,22 +560,6 @@ public class UpdateBDataFromExcellFiles {
 							ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
 							System.out.println("Save set PersonStatus " + firmName);
 						}
-					}else {
-					List<PersonStatus> list = null;
-					try {
-						list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile,
-								firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
-						System.out.println("list PersonStatus from Excell " + list.size());
-//						ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-						System.out.println("--> " + list.size());
-					} catch (Exception e) {
-						save = OptionDialog(errorText);
-						
-					}
-					if (save) {
-						ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, round, textIcon);
-						System.out.println("Save set PersonStatus " + firmName);
-					}
 					}
 				}
 					break;
@@ -656,7 +646,7 @@ public class UpdateBDataFromExcellFiles {
 			}
 
 		}
-		if (save) {
+		if (save && keyInsert == null) {
 			String destinationPathArhiveNow = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationPathArhiveNow");
 			for (String filePath : listChengeExcellFilePath) {
 				File file = new File(filePath);

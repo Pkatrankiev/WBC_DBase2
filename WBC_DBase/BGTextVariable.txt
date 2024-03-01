@@ -1,6 +1,6 @@
 
 minYearInDbase = 2005
-Version = v.090224
+Version = v.010324
 
 dataArhiveExcelFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
@@ -203,6 +203,8 @@ svePersonManegement_EnteredInZoneANDChangeKode = Има промяна на ко
 
 PersonManegement_SelectSpisPrilFramee_Label = Списък на Прил. и Спис. от този отдел
 
+Menu_CustomUpDate_Title = Частично Синхронизиране
+Menu_CustomUpDate_TipText = Частично Синхронизиране на Базата с Excel файловете
 
 checkCorrectinDataInExcell = Проверка за грешни данни в Excell
 checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles = Проверка за некоректни данни в EXTERNAL.xls и PERSONNEL.xls

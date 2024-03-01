@@ -7,8 +7,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,8 +20,6 @@ import javax.swing.border.EmptyBorder;
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
-import BasiClassDAO.ActualExcellFilesDAO;
-import BasicClassAccessDbase.ActualExcellFiles;
 import BasicClassAccessDbase.UsersWBC;
 
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
@@ -236,6 +232,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		
 		personReferenceMenu.add(new Menu_PersonManagement());
 		personReferenceMenu.addSeparator();
+		personReferenceMenu.add(new Menu_CustomUpDate());
 		
 		return personReferenceMenu;
 	}

@@ -139,10 +139,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 								masive[1][j] = "";
 							}
 							FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
-							if (person == null) {
-//							System.out.println(EGN+" - "+FirstName);
-//							ReadPersonStatusFromExcelFile.MessageDialog(EGN+" - "+FirstName);
-							}
+							if (person != null && FirstName.contains("АЕЦ")) {
 							masive[0][0] = EGN;
 							masive[0][1] = FirstName;
 							cell = sheet.getRow(row).getCell(0);
@@ -192,6 +189,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 							}
 							setinMasive = true;
 						}
+					}
 					}
 				}
 

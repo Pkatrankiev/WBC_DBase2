@@ -90,7 +90,7 @@ public class ReadMeasuringFromExcelFile {
 
 
 	public static List<Measuring> generateListFromMeasuringFromBigExcelFile(Workbook workbook, ActionIcone round,  String textIcon, List<Integer> listDiferentRow) {	
-		String lab;
+		String lab, FirstName;
 		Date date;
 		
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
@@ -124,11 +124,13 @@ public class ReadMeasuringFromExcelFile {
 
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
-				
+				cell1 = sheet.getRow(row).getCell(6);
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
-					if (person != null) {
+				
+				FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
+					if (person != null && FirstName.contains("АЕЦ")) {
 						
 						int k = 7;
 						cell1 = sheet.getRow(row).getCell(k);

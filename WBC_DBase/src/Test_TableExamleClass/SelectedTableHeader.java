@@ -11,7 +11,8 @@ public class SelectedTableHeader {
     private JTableHeader header;
     private Object selectedColumn = null;
     private String[] columnNames = {"String", "Integer", "Float", "Double", "Locale & Double", "Boolean"};
-    private Object[][] data = {
+    @SuppressWarnings("removal")
+	private Object[][] data = {
         {"aaa", new Integer(12), new Float(12.15), new Double(100.05), new Double(12.05), true},
         {"bbb", new Integer(5), new Float(7.154), new Double(6.1555), new Double(417.55), false},
         {"CCC", new Integer(92), new Float(0.1135), new Double(3.1455), new Double(11.05), true},
@@ -34,7 +35,7 @@ public class SelectedTableHeader {
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component c = super.prepareRenderer(renderer, row, column);
                 int firstRow = 0;
-                int secondRow = 0;
+//                int secondRow = 0;
                 int lastRow = table.getRowCount() - 1;
                 if (row == lastRow) {
                     ((JComponent) c).setBackground(Color.GREEN);
@@ -112,7 +113,8 @@ public class SelectedTableHeader {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                SelectedTableHeader sTH = new SelectedTableHeader();
+                @SuppressWarnings("unused")
+				SelectedTableHeader sTH = new SelectedTableHeader();
             }
         });
     }

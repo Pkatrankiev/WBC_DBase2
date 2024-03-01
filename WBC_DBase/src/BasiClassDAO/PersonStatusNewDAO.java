@@ -369,7 +369,7 @@ public class PersonStatusNewDAO {
 			Workplace workplace) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatusNew where Person_ID = ?  AND  Workplace_ID = ?";
+		String sql = "SELECT * FROM PersonStatusNew where Person_ID = ?  AND  Workplace_ID = ?  ORDER BY StartDate DESC";
 
 		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
 
@@ -662,6 +662,40 @@ public class PersonStatusNewDAO {
 		return listPersonStatusNew;
 	}
 	
+public static PersonStatusNew getLastPersonStatusNewByPerson_Year(Person person, String year) {
+		
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew where  Person_ID = ? and Year = ? ORDER BY StartDate DESC";
+
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, year);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+
+				listPersonStatusNew.add(setPersonStatusNew(result));
+
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		return listPersonStatusNew.get(0);
+	}
+	
+	
 	public static List<PersonStatusNew> getValuePersonStatusNewByPersonAndDateSet(Person person, Date dateSet) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -781,7 +815,7 @@ public class PersonStatusNewDAO {
 	public static PersonStatusNew getLastValuePersonStatusNewByPerson(Person person) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatusNew where Person_ID = ?  ORDER BY Year DESC";
+		String sql = "SELECT * FROM PersonStatusNew where Person_ID = ?  ORDER BY StartDate DESC";
 
 		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
 

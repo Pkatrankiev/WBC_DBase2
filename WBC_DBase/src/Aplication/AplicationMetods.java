@@ -82,15 +82,6 @@ public class AplicationMetods {
 				ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, null, "");
 				System.out.println("Save "+firmName);
 				}	
-			}else {
-			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getListPersonStatusFromExcelFile(pathFile, firmName,
-					year, null, "", null, null);
-			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-			System.out.println("--> "+list.size());
-			if(save) {
-			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
-			System.out.println("Save "+firmName);
-			}
 			}
 		}
 		break;

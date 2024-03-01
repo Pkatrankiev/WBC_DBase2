@@ -134,7 +134,7 @@ public class ReadResultsWBCFromExcelFile {
 //		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 //		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
 //		TypeMeasur tipeM_R = TypeMeasurDAO.getValueTypeMeasurByID(1);
-		String lab;;
+		String lab, FirstName;
 		Date date;
 		double[] nuclideValue = new double[16];
 		String[] simbolNuclide = new String[16];
@@ -166,10 +166,11 @@ public class ReadResultsWBCFromExcelFile {
 			
 			if (sheet.getRow(row) != null) {
 				cell = sheet.getRow(row).getCell(5);
-				
+				cell1 = sheet.getRow(row).getCell(6);
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
-					if (person != null) {
+				FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
+				if (person != null && FirstName.contains("АЕЦ")) {
 						
 						
 						int k = 7;

@@ -98,6 +98,7 @@ public class SaveToPersonelORExternalFile {
 			
 			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName, workplace);
 			
+			reformatSheetSpPr(workbook);
 			
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
 			workbook.write(outputStream);
@@ -124,6 +125,67 @@ public class SaveToPersonelORExternalFile {
 	
 	
 	
+	private static void reformatSheetSpPr(Workbook workbook) {
+		
+		
+		Sheet sheetSpPr = workbook.getSheetAt(3);
+		int maxRow = sheetSpPr.getLastRowNum();
+		
+		CellStyle cellStyle0, cellStyle1, cellStyle2;
+		
+		CellStyle cellStyleYelow0 = sheetSpPr.getRow(5).getCell(7).getCellStyle();
+		CellStyle cellStyleYelow1 = sheetSpPr.getRow(5).getCell(8).getCellStyle();
+		CellStyle cellStyleYelow2 = sheetSpPr.getRow(5).getCell(9).getCellStyle();
+		
+		CellStyle cellStyleUser0 = sheetSpPr.getRow(6).getCell(7).getCellStyle();
+		CellStyle cellStyleUser1 = sheetSpPr.getRow(6).getCell(8).getCellStyle();
+		CellStyle cellStyleUser2 = sheetSpPr.getRow(6).getCell(9).getCellStyle();
+		
+		int row = 5;
+		Cell cell, cell1 ;
+
+		while (row < maxRow) {
+			if (sheetSpPr.getRow(row) != null) {
+				
+				cellStyle0 = cellStyleUser0;
+				cellStyle1 = cellStyleUser1;
+				cellStyle2 = cellStyleUser2;
+				
+				cell = sheetSpPr.getRow(row).getCell(5);
+				cell1 = sheetSpPr.getRow(row).getCell(6);
+				if (ReadExcelFileWBC.CellNOEmpty(cell) || ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					
+				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					cellStyle0 = cellStyleYelow0;
+					cellStyle1 = cellStyleYelow1;
+					cellStyle2 = cellStyleYelow2;
+				}
+				
+				System.out.println(row );
+				for (int m = 7; m <= 254; m += 3) {
+					
+						cell = sheetSpPr.getRow(row).getCell(m);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell)) cell.setCellStyle(cellStyle0);
+						cell = sheetSpPr.getRow(row).getCell(m+1);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+1);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle1);
+						cell = sheetSpPr.getRow(row).getCell(m+2);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+2);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle2);
+					
+				}
+				}
+			}
+			row++;
+		}
+	}
+
+
+
+
+
+
 	private static void saveInfoByInListChangeKode(boolean checkbx_EnterInListChangeKode, String oldWorkplace, Spisak_Prilogenia spPril,
 			Workbook workbook, Person person, String firmName, Workplace workplace) {
 		System.out.println("checkbx_EnterInListChangeKode "+checkbx_EnterInListChangeKode);

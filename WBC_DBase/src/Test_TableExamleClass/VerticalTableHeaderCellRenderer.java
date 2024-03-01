@@ -5,9 +5,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
-import javax.swing.JTable;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -21,6 +18,7 @@ import ReferenceMeasuringLab.VerticalLabelUI;
  * @see VerticalLabelUI
  * @author Darryl
  */
+@SuppressWarnings("serial")
 public class VerticalTableHeaderCellRenderer
         extends DefaultTableCellRenderer {
 
@@ -65,7 +63,8 @@ public class VerticalTableHeaderCellRenderer
    * This implementation assumes that the L&F provides ascending and
    * descending sort icons of identical size.
    */
-  private enum VerticalSortIcon implements Icon {
+  @SuppressWarnings("unused")
+private enum VerticalSortIcon implements Icon {
 
     ASCENDING(UIManager.getIcon("Table.ascendingSortIcon")),
     DESCENDING(UIManager.getIcon("Table.descendingSortIcon"));

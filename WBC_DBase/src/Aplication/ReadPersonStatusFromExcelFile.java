@@ -36,18 +36,7 @@ public class ReadPersonStatusFromExcelFile {
 	
 	static Spisak_Prilogenia spPrObhodList = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("FormulyarName", "Обходен лист").get(0);
 	
-	public static List<PersonStatus> getListPersonStatusFromExcelFile(String pathFile, String firmName, String year, ActionIcone round, 
-			String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
-		List<PersonStatus> listPerStat = new ArrayList<>();
-		if (workbook.getNumberOfSheets() > 2) {
-			listPerStat = getListPersonStatusFromBigExcelFile(workbook, firmName, year, round, textIcon, listDiferentRow, arreaOtdels); 
-
-		} else {
-			listPerStat = getListPersonStatusFromSmalExcelFile(workbook, firmName, year);
-		}
-		return listPerStat;
-	}
+	
 
 	public static List<PersonStatusNew> getListPersonStatusNewFromExcelFile(String pathFile, String firmName, String year, 
 			ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
@@ -128,6 +117,7 @@ public class ReadPersonStatusFromExcelFile {
 		return n;
 	}
 	
+	@SuppressWarnings("unused")
 	private static List<PersonStatus> getListPersonStatusFromSmalExcelFile(Workbook workbook, String firmName,
 			String year) {
 		Spisak_Prilogenia spPr = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
@@ -210,141 +200,7 @@ public class ReadPersonStatusFromExcelFile {
 
 	
 
-	public static List<PersonStatus> getListPersonStatusFromBigExcelFile(Workbook workbook, String firmName,
-			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
-
-		Set<String> mySet = new HashSet<String>();
-		int countMySet;
-		
-		List<PersonStatus> listPerStat = new ArrayList<>();
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateSet = null,nulldate= null;
-		try {
-			dateSet = sdfrmt.parse("31.12." + year);
-			nulldate = sdfrmt.parse("01.01." + year);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		Person person;
-		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
-		List<Workplace> listAllWorkplaceBiFirmName = WorkplaceDAO.getValueWorkplaceByObject("FirmName", firmName);
-		String EGN = "", FirstName = "", zab = "";
-		Date startDate = null;
-		Date endDate = null;
-		String otdelName = "", formulyarName = "";
-		Workplace workplace = new Workplace();
-		String[] masiveWorkplace = ReadExcelFileWBC.getMasiveString(firmName);
-		Sheet sheet = workbook.getSheetAt(3);
-		Cell cell, cell1;
-		boolean fl ;
-		
-		int StartRow = 0;
-		int endRow = 0;
-		
-		if(listDiferentRow != null) {
-			StartRow = 0;
-			endRow = listDiferentRow.size();
-		}else {
-			StartRow = 5;
-			endRow = sheet.getLastRowNum();
-		}
-		int row = 0;
-		for (int index = StartRow; index < endRow ; index += 1) {
-
-			if(listDiferentRow != null) {
-				row = listDiferentRow.get(index);
-				otdelName = UpdateBDataFromExcellFiles.getOtdelNameByListArreaOtdels(arreaOtdels, row);
-				workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
-						listAllWorkplaceBiFirmName);
-				System.out.println("workplace "+workplace.getOtdel());
-			}else {
-				row  = index;
-			}
-			
-
-			zab = "";
-			fl = false;
-			PersonStatus personStatus_NotInList = null;
-			if (sheet.getRow(row) != null) {
-				cell = sheet.getRow(row).getCell(5);
-				cell1 = sheet.getRow(row).getCell(6);
-
-				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					otdelName = cell1.getStringCellValue().trim();
-					if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
-						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
-								listAllWorkplaceBiFirmName);
-					}
-				}
-
-//				workplace(54) - Транспортиране на СЯГ и ОЯГ;  workplace(101) - Транспортиране СОЯГ 
-				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null && workplace.getId_Workplace()!= 54 && workplace.getId_Workplace()!= 101) {
-					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
-					zab = searchComent(workbook, row);
-					
-					EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
-					countMySet = mySet.size();
-					mySet.add(EGN);
-					person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
-					if (person == null && (countMySet+1) == mySet.size()) {
-						MessageDialog(EGN+" - "+FirstName);
-					}
-
-					int k = 7;
-					cell = sheet.getRow(row).getCell(k);
-					List<PersonStatus> ListPrStat = PersonStatusDAO.getValuePersonStatusByPerson_Workplace_DateSetInYear(person, workplace, year);
-					
-					if(ListPrStat.size()==1 && ListPrStat.get(0).getSpisak_prilogenia().getFormulyarName().equals("NotInList")) {
-						personStatus_NotInList = ListPrStat.get(0); 
-					}
-					
-					
-					
-					while (ReadExcelFileWBC.CellNOEmpty(cell)) {
-						Spisak_Prilogenia spPr = ReadSpisak_PrilogeniaFromExcelFile.getOrCreateSisak_Prilogenie(k, row,
-								sheet, startDate, endDate, formulyarName, workplace, year);
-							
-						if(personStatus_NotInList != null) {
-								personStatus_NotInList.setSpisak_prilogenia(spPr);
-								personStatus_NotInList.setUserWBC(userSet);
-								personStatus_NotInList.setDateSet(dateSet);
-								PersonStatusDAO.updateValuePersonStatus(personStatus_NotInList);
-								personStatus_NotInList = null;
-							}else {
-								if(workplace.getOtdel().equals(spPr.getWorkplace().getOtdel())) {
-						PersonStatus personStat = new PersonStatus(person, workplace, spPr, userSet, dateSet, "");
-						listPerStat.add(personStat);
-								}
-							}
-
-						k = k + 3;
-						cell = sheet.getRow(row).getCell(k);
-						
-						fl = true;
-
-					}
-					if(listPerStat.size()>0 && fl) {
-						listPerStat.get(listPerStat.size() - 1).setZabelejka(zab);
-						}else {
-							Spisak_PrilogeniaDAO.setValueSpisak_Prilogenia("NotInList", year, nulldate, dateSet, workplace, "");
-							Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByFormulyarName_Year_Workplace("NotInList", year, workplace.getId_Workplace());
-						
-							if(spPrNotInfo != null) {
-							if(workplace.getOtdel().equals(spPrNotInfo.getWorkplace().getOtdel())) {
-							listPerStat.add(new PersonStatus(person, workplace, spPrNotInfo, userSet, dateSet, zab));
-							}
-						}
-				}
-			}
-			}
-			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
-		}
-
-		return listPerStat;
-
-	}
-
+	
 	public static List<PersonStatusNew> getListPersonStatusNewFromBigExcelFile(Workbook workbook, String firmName,
 			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
 
@@ -353,11 +209,12 @@ public class ReadPersonStatusFromExcelFile {
 		
 		List<PersonStatusNew> listPerStatNew = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateSet = null,nulldate= null;
+		Date dateSet = null,nulldate= null, nulldateEnd= null;
 		try {
 //			dateSet = sdfrmt.parse("31.12." + year);
 			dateSet = new Date();
 			nulldate = sdfrmt.parse("01.01." + year);
+			nulldateEnd = sdfrmt.parse("31.12." + year);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -427,6 +284,7 @@ public class ReadPersonStatusFromExcelFile {
 						MessageDialog(EGN+" - "+FirstName);
 					}
 
+					if(!FirstName.contains("АЕЦ")) {
 					int k = 7;
 					cell = sheet.getRow(row).getCell(k);
 					List<PersonStatusNew> ListPrStatNew = PersonStatusNewDAO.getValuePersonStatusNewByPerson_Workplace_DateSetInYear(person, workplace, year);
@@ -466,8 +324,9 @@ public class ReadPersonStatusFromExcelFile {
 					if(listPerStatNew.size()>0 && fl) {
 						listPerStatNew.get(listPerStatNew.size() - 1).setZabelejka(zab);
 						}else {
-							listPerStatNew.add(new PersonStatusNew(person, workplace, "NotInList", nulldate, dateSet, year, userSet, dateSet, zab));
+							listPerStatNew.add(new PersonStatusNew(person, workplace, "NotInList", nulldate, nulldateEnd, year, userSet, dateSet, zab));
 						
+				}
 				}
 			}
 			}

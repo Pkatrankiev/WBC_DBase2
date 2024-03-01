@@ -335,7 +335,7 @@ public class UsersWBCDAO {
 	}
 
 
-	@SuppressWarnings("unchecked")
+
 	public static List<UsersWBC> getValueUsersWBCByActing() {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();

@@ -33,15 +33,11 @@ import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
-import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
-import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementFrame;
 
@@ -60,7 +56,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -518,29 +516,10 @@ public class PersonReferenceFrame extends JFrame {
 	}
 
 	public static String getLastWorkplaceByPerson(Person person) {
+				
+		PersonStatusNew per = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
 		
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if(PerStatNewSet.equals("1")) {
-			List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByObjectSortByColumnName("Person_ID", person,
-					"DateSet");
-			List<PersonStatusNew> sortedReversPeStatList = list.stream()
-					.sorted(Comparator.comparing(PersonStatusNew::getPersonStatusNew_ID).reversed()).collect(Collectors.toList());
-			if (sortedReversPeStatList.size() > 0) {
-				return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
-			} else {
-				return "";
-			}	
-		}else {
-		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
-				"DateSet");
-		List<PersonStatus> sortedReversPeStatList = list.stream()
-				.sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed()).collect(Collectors.toList());
-		if (sortedReversPeStatList.size() > 0) {
-			return sortedReversPeStatList.get(0).getWorkplace().getOtdel();
-		} else {
-			return "";
-		}
-		}
+		return per == null? "":per.getWorkplace().getOtdel();
 	}
 
 	public static String getLastKodeByPersonAndZone(Person person, int zonaID) {
@@ -719,7 +698,10 @@ public class PersonReferenceFrame extends JFrame {
 		System.out.println("listSelectionPersonKZHog = " + listSelectionPersonKZHog.size());
 		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		if(PerStatNewSet.equals("1")) {
+//			Set<PersonWorkYearClass> listPersonWorkYearClass = new HashSet<PersonWorkYearClass>();
+			Set<Person> listPersonHash = new HashSet<Person>();
 			List<PersonStatusNew> listAllPerStat = new ArrayList<>();
+			
 			if (otdel != null && !otdel.trim().isEmpty()) {
 				Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
 //				System.out.println("workplace = " + workplace.getOtdel());
@@ -728,25 +710,39 @@ public class PersonReferenceFrame extends JFrame {
 					List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByPersonAndWorkplace(person,
 							workplace);
 					if (listPerStat.size() > 0) {
-						listAllPerStat.addAll(listPerStat);
+						for (PersonStatusNew personStatusNew : listPerStat) {
+							System.out.println("personStatusNew "+	personStatusNew.getPerson().getEgn()+" "+personStatusNew.getStartDate()+
+									" "+personStatusNew.getYear()+" "+personStatusNew.getFormulyarName());
+							
+						if(listPersonHash.add(personStatusNew.getPerson())){
+						listAllPerStat.add(personStatusNew);
+						}
 
+						}
 //						System.out.println(person.getEgn() + " " + listPerStat.size());
 					}
 
 				}
-//				System.out.println("listAllPerStat = " + listAllPerStat.size());
+				System.out.println("listAllPerStat = " + listAllPerStat.size());
 				if (!year.trim().isEmpty()) {
 //					System.out.println("Spisak_Prilogenia_year " + Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year).size());
 						
 						for (PersonStatusNew prStat : listAllPerStat) {
 							if (prStat.getYear().equals(year)) {
+								PersonStatusNew perStatYear = PersonStatusNewDAO.getLastPersonStatusNewByPerson_Year( prStat.getPerson(),  year);
+								if(perStatYear.getWorkplace().getOtdel().equals(otdel)) {
+								System.out.println("prStat "+	prStat.getPerson().getEgn()+" "+prStat.getStartDate()+" "+prStat.getYear()+" "+prStat.getFormulyarName());
 								listSelectionPersonOtdel.add(prStat.getPerson());
+							}
 							}
 						}
 					
 				} else {
+					Set<String> personEGN = new HashSet<String>();
 					for (PersonStatusNew prStat : listAllPerStat) {
+						if(personEGN.add(prStat.getPerson().getEgn())){
 						listSelectionPersonOtdel.add(prStat.getPerson());
+						}
 					}
 				}
 
@@ -754,42 +750,6 @@ public class PersonReferenceFrame extends JFrame {
 				listSelectionPersonOtdel = listSelectionPersonKZHog;
 			}
 			
-	}else {
-		List<PersonStatus> listAllPerStat = new ArrayList<>();
-		if (otdel != null && !otdel.trim().isEmpty()) {
-			Workplace workplace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
-//			System.out.println("workplace = " + workplace.getOtdel());
-			for (Person person : listSelectionPersonKZHog) {
-				
-				List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByPersonAndWorkplace(person,
-						workplace);
-				if (listPerStat.size() > 0) {
-					listAllPerStat.addAll(listPerStat);
-
-//					System.out.println(person.getEgn() + " " + listPerStat.size());
-				}
-
-			}
-//			System.out.println("listAllPerStat = " + listAllPerStat.size());
-			if (!year.trim().isEmpty()) {
-//				System.out.println("Spisak_Prilogenia_year " + Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year).size());
-				for (Spisak_Prilogenia spPr : Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year)) {
-					
-					for (PersonStatus prStat : listAllPerStat) {
-						if (prStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
-							listSelectionPersonOtdel.add(prStat.getPerson());
-						}
-					}
-				}
-			} else {
-				for (PersonStatus prStat : listAllPerStat) {
-					listSelectionPersonOtdel.add(prStat.getPerson());
-				}
-			}
-
-		} else {
-			listSelectionPersonOtdel = listSelectionPersonKZHog;
-		}
 	}
 		
 		
@@ -1236,4 +1196,7 @@ public class PersonReferenceFrame extends JFrame {
 	public static Choice getComboBox_Results() {
 		return comboBox_Results;
 	}
+
 }
+	
+

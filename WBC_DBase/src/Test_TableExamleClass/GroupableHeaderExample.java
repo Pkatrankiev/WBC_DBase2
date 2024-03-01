@@ -24,22 +24,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
 
-
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
 import javax.swing.plaf.basic.*;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
 
 
 /**
@@ -109,9 +96,12 @@ public class GroupableHeaderExample extends JFrame {
   * @author Nobuo Tamemasa
   */
 
- class GroupableTableHeader extends JTableHeader {
-  private static final String uiClassID = "GroupableTableHeaderUI";
-  protected Vector columnGroups = null;
+ @SuppressWarnings("serial")
+class GroupableTableHeader extends JTableHeader {
+  @SuppressWarnings("unused")
+private static final String uiClassID = "GroupableTableHeaderUI";
+  @SuppressWarnings("rawtypes")
+protected Vector columnGroups = null;
     
   public GroupableTableHeader(TableColumnModel model) {
     super(model);
@@ -126,14 +116,16 @@ public class GroupableHeaderExample extends JFrame {
     reorderingAllowed = false;
   }
     
-  public void addColumnGroup(ColumnGroup g) {
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+public void addColumnGroup(ColumnGroup g) {
     if (columnGroups == null) {
       columnGroups = new Vector();
     }
     columnGroups.addElement(g);
   }
 
-  public Enumeration getColumnGroups(TableColumn col) {
+  @SuppressWarnings("rawtypes")
+public Enumeration getColumnGroups(TableColumn col) {
     if (columnGroups == null) return null;
     Enumeration e = columnGroups.elements();
     while (e.hasMoreElements()) {
@@ -146,7 +138,8 @@ public class GroupableHeaderExample extends JFrame {
     return null;
   }
   
-  public void setColumnMargin() {
+  @SuppressWarnings("rawtypes")
+public void setColumnMargin() {
     if (columnGroups == null) return;
     int columnMargin = getColumnModel().getColumnMargin();
     Enumeration e = columnGroups.elements();
@@ -170,7 +163,8 @@ public class GroupableHeaderExample extends JFrame {
 
 class GroupableTableHeaderUI extends BasicTableHeaderUI {
   
-  public void paint(Graphics g, JComponent c) {
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+public void paint(Graphics g, JComponent c) {
     Rectangle clipBounds = g.getClipBounds();
     if (header.getColumnModel() == null) return;
     ((GroupableTableHeader)header).setColumnMargin();
@@ -213,7 +207,8 @@ class GroupableTableHeaderUI extends BasicTableHeaderUI {
     }
   }
 
-  private void paintCell(Graphics g, Rectangle cellRect, int columnIndex) {
+  @SuppressWarnings("serial")
+private void paintCell(Graphics g, Rectangle cellRect, int columnIndex) {
     TableColumn aColumn = header.getColumnModel().getColumn(columnIndex);
     TableCellRenderer renderer = aColumn.getHeaderRenderer();
     //revised by Java2s.com
@@ -255,7 +250,8 @@ class GroupableTableHeaderUI extends BasicTableHeaderUI {
         cellRect.width, cellRect.height, true);
   }
 
-  private int getHeaderHeight() {
+  @SuppressWarnings("rawtypes")
+private int getHeaderHeight() {
     int height = 0;
     TableColumnModel columnModel = header.getColumnModel();
     for(int column = 0; column < columnModel.getColumnCount(); column++) {
@@ -290,7 +286,8 @@ class GroupableTableHeaderUI extends BasicTableHeaderUI {
     return new Dimension((int)width, getHeaderHeight());
   }
 
-  public Dimension getPreferredSize(JComponent c) {
+  @SuppressWarnings("rawtypes")
+public Dimension getPreferredSize(JComponent c) {
     long width = 0;
     Enumeration enumeration = header.getColumnModel().getColumns();
     while (enumeration.hasMoreElements()) {
@@ -317,7 +314,8 @@ class GroupableTableHeaderUI extends BasicTableHeaderUI {
  
 class ColumnGroup {
   protected TableCellRenderer renderer;
-  protected Vector v;
+  @SuppressWarnings("rawtypes")
+protected Vector v;
   protected String text;
   protected int margin=0;
 
@@ -325,7 +323,8 @@ class ColumnGroup {
     this(null,text);
   }
 
-  public ColumnGroup(TableCellRenderer renderer,String text) {
+  @SuppressWarnings({ "serial", "rawtypes" })
+public ColumnGroup(TableCellRenderer renderer,String text) {
     if (renderer == null) {
       this.renderer = new DefaultTableCellRenderer() {
   public Component getTableCellRendererComponent(JTable table, Object value,
@@ -353,7 +352,8 @@ class ColumnGroup {
   /**
    * @param obj    TableColumn or ColumnGroup
    */
-  public void add(Object obj) {
+  @SuppressWarnings("unchecked")
+public void add(Object obj) {
     if (obj == null) { return; }
     v.addElement(obj);
   }
@@ -363,7 +363,8 @@ class ColumnGroup {
    * @param c    TableColumn
    * @param v    ColumnGroups
    */
-  public Vector getColumnGroups(TableColumn c, Vector g) {
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+public Vector getColumnGroups(TableColumn c, Vector g) {
     g.addElement(this);
     if (v.contains(c)) return g;    
     Enumeration e = v.elements();
@@ -392,7 +393,8 @@ class ColumnGroup {
     return text;
   }
   
-  public Dimension getSize(JTable table) {
+  @SuppressWarnings("rawtypes")
+public Dimension getSize(JTable table) {
     Component comp = renderer.getTableCellRendererComponent(
         table, getHeaderValue(), false, false,-1, -1);
     int height = comp.getPreferredSize().height; 
@@ -411,7 +413,8 @@ class ColumnGroup {
     return new Dimension(width, height);
   }
 
-  public void setColumnMargin(int margin) {
+  @SuppressWarnings("rawtypes")
+public void setColumnMargin(int margin) {
     this.margin = margin;
     Enumeration e = v.elements();
     while (e.hasMoreElements()) {

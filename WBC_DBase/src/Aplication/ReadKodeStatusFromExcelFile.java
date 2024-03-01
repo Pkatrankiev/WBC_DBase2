@@ -85,6 +85,7 @@ public class ReadKodeStatusFromExcelFile {
 						ReadPersonStatusFromExcelFile.MessageDialog(EGN+" - "+FirstName);
 					}
 
+					if(!FirstName.contains("АЕЦ")) {
 					cell = sheet.getRow(row).getCell(0);
 					if (cell != null)
 						kodeKZ1 = cell.getStringCellValue();
@@ -131,7 +132,7 @@ public class ReadKodeStatusFromExcelFile {
 						listKodeStatus
 								.add(new KodeStatus(person, kodeT2, ZoneDAO.getValueZoneByID(5), true, year, zab, setDataUser, setdate));
 					}
-				
+					}
 					}
 				}
 			}

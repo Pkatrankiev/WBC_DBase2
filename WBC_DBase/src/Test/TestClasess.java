@@ -12,25 +12,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -42,12 +36,11 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
-import org.hsqldb.lib.FileUtil;
+
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
@@ -57,18 +50,16 @@ import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
-import Aplication.ReadResultsWBCFromExcelFile;
-import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
+
 import Aplication.RemouveDublikateFromList;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
-import BasiClassDAO.ActualExcellFilesDAO;
-import BasiClassDAO.DimensionWBCDAO;
+
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.NuclideWBCDAO;
+
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -77,28 +68,23 @@ import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
-import BasiClassDAO.ZoneDAO;
-import BasicClassAccessDbase.ActualExcellFiles;
-import BasicClassAccessDbase.DimensionWBC;
+
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
-import BasicClassAccessDbase.NuclideWBC;
+
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
-import BasicClassAccessDbase.TypeMeasur;
+
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import PersonManagement.PersonelManegementMethods;
-import PersonReference.PersonExcellClass;
-import PersonReference.PersonReferenceExportToExcell;
-import PersonReference.TextInAreaTextPanel;
-import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
+
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
@@ -133,7 +119,6 @@ public class TestClasess {
 
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static void testDelNoInfo() {
 
 		List<PersonStatus> list = getValuePersonStatusByPersonAndDateSet();
@@ -2090,11 +2075,90 @@ public class TestClasess {
 		}
 	}
 
+
+//  ******************************************************************************************************************
+
+	
+	static void reformat4Sheet() {
+		String filePathPersonel  = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		FileInputStream inputStream;
+		try {
+			inputStream = new FileInputStream(filePathPersonel);
+		
+		@SuppressWarnings("resource")
+		Workbook workbook = new HSSFWorkbook(inputStream);
+		
+		Sheet sheetSpPr = workbook.getSheetAt(3);
+		int maxRow = sheetSpPr.getLastRowNum();
+		
+		CellStyle cellStyle0, cellStyle1, cellStyle2;
+		
+		CellStyle cellStyleYelow0 = sheetSpPr.getRow(5).getCell(7).getCellStyle();
+		CellStyle cellStyleYelow1 = sheetSpPr.getRow(5).getCell(8).getCellStyle();
+		CellStyle cellStyleYelow2 = sheetSpPr.getRow(5).getCell(9).getCellStyle();
+		
+		CellStyle cellStyleUser0 = sheetSpPr.getRow(6).getCell(7).getCellStyle();
+		CellStyle cellStyleUser1 = sheetSpPr.getRow(6).getCell(8).getCellStyle();
+		CellStyle cellStyleUser2 = sheetSpPr.getRow(6).getCell(9).getCellStyle();
+		
+		int row = 5;
+		Cell cell, cell1 ;
+
+		while (row < maxRow) {
+			if (sheetSpPr.getRow(row) != null) {
+				
+				cellStyle0 = cellStyleUser0;
+				cellStyle1 = cellStyleUser1;
+				cellStyle2 = cellStyleUser2;
+				
+				cell = sheetSpPr.getRow(row).getCell(5);
+				cell1 = sheetSpPr.getRow(row).getCell(6);
+				if (ReadExcelFileWBC.CellNOEmpty(cell) || ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					
+				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					cellStyle0 = cellStyleYelow0;
+					cellStyle1 = cellStyleYelow1;
+					cellStyle2 = cellStyleYelow2;
+				}
+				
+				System.out.println(row );
+				for (int m = 7; m <= 254; m += 3) {
+					
+						cell = sheetSpPr.getRow(row).getCell(m);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell)) cell.setCellStyle(cellStyle0);
+						cell = sheetSpPr.getRow(row).getCell(m+1);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+1);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle1);
+						cell = sheetSpPr.getRow(row).getCell(m+2);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+2);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle2);
+					
+				}
+				}else {
+					System.out.println("******************************************************************");
+				}
+			}
+			row++;
+		}
+		
+		FileOutputStream outputStream = new FileOutputStream(filePathPersonel);
+		workbook.write(outputStream);
+
+		workbook.close();
+
+		outputStream.flush();
+		outputStream.close();
 	
 	
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	
-	
-	
-	
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	}
 	
 }
