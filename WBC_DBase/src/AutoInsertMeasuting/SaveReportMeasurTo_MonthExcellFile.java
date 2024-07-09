@@ -43,12 +43,20 @@ public class SaveReportMeasurTo_MonthExcellFile {
 
 		String filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig"); 
 		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig"); 
+		
+		String filePathWBC1_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC1_KD_orig"); 
+		String filePathWBC2_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC2_KD_orig");
+		String filePathWBC3_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC3_KD_orig");
 				
 				
 		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
 		if(testFilesToD.equals("1")) {
 			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthExternal_orig_test"); 
 			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathMonthPersonel_orig_test");
+			
+			filePathWBC1_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC1_KD_orig_test"); 
+			filePathWBC2_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC2_KD_orig_test");
+			filePathWBC3_KD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathWBC3_KD_orig_test");
 		}
 		
 
@@ -61,6 +69,7 @@ public class SaveReportMeasurTo_MonthExcellFile {
 		}
 
 		try {
+			if(list.size()>0) {
 //			System.out.println("pathFile " + pathFile);
 			for (ReportMeasurClass reportMeasur : list) {
 			FileInputStream inputStream = new FileInputStream(pathFile);
@@ -76,6 +85,42 @@ public class SaveReportMeasurTo_MonthExcellFile {
 			FileOutputStream fileOut = new FileOutputStream(pathFile);
 			workbook.write(fileOut);
 			fileOut.close();
+			}
+			
+			int NumLab = list.get(0).getMeasur().getLab().getLab_ID();
+			
+			switch (NumLab) {
+			case 1:
+				pathFile = filePathWBC1_KD;
+				break;
+
+			case 2:
+				pathFile = filePathWBC2_KD;
+				break;
+				
+			case 3:
+				pathFile = filePathWBC3_KD;
+				break;
+			}
+			
+			for (ReportMeasurClass reportMeasur : list) {
+				FileInputStream inputStream = new FileInputStream(pathFile);
+				Workbook workbook = new HSSFWorkbook(inputStream);
+
+				
+					if (reportMeasur.getToExcell()) {
+//						System.out.println("EGN " + reportMeasur.getMeasur().getPerson().getEgn());
+						saveDataToKDExcelFile(reportMeasur, workbook);
+					}
+				
+
+				FileOutputStream fileOut = new FileOutputStream(pathFile);
+				workbook.write(fileOut);
+				fileOut.close();
+				}
+			
+			
+			
 			}
 		} catch (FileNotFoundException | OldExcelFormatException e) {
 			ResourceLoader.appendToFile(e);
@@ -178,6 +223,28 @@ public class SaveReportMeasurTo_MonthExcellFile {
 
 		}
 	}
+	
+	private static void saveDataToKDExcelFile(ReportMeasurClass reportMeasur, Workbook workbook) {
+		
+		Sheet sheet = workbook.getSheetAt(0);
+		Cell cellEGN, cellDate;
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yyyy");
+			int row = 0;
+	while (row < sheet.getLastRowNum()) {
+			cellEGN = sheet.getRow(row).getCell(0);
+			if(cellEGN == null || SaveReportMeasurTo_PersonelORExternalExcelFile.getValueFromCellToString(cellEGN).trim().isEmpty()) {
+					row = sheet.getLastRowNum();
+				}
+				row++;
+		}
+				Row lasRow = sheet.createRow(row+1);
+				cellEGN = lasRow.createCell(0,  CellType.STRING);
+				cellEGN .setCellValue(reportMeasur.getMeasur().getPerson().getEgn());
+				cellDate = lasRow.createCell(1,  CellType.STRING);
+				cellDate .setCellValue(sdf1.format(reportMeasur.getMeasur().getDate()));
+		}
+	
+	
 	
 	private static Cell getFirstCellFromLastRow(Sheet sheet) {
 		Cell cell = null;

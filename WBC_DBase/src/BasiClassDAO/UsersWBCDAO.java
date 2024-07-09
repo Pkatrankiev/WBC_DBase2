@@ -14,11 +14,11 @@ import BasicClassAccessDbase.conectToAccessDB;
 
 public class UsersWBCDAO {
 
-	public static void setValueUsersWBC(String name,	String lastName, String nikName,	String pass,  String lastName_EG, boolean acting) {
+	public static void setValueUsersWBC(String name,	String lastName, String nikName,	String pass,  String lastName_EG, boolean acting, boolean isAdmin) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting) VALUES (?, ?, ?, ?,?, ?)";
+		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting, isAdmin) VALUES (?, ?, ?, ?,?, ?,?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -29,6 +29,7 @@ public class UsersWBCDAO {
 			preparedStatement.setString(4, pass);
 			preparedStatement.setString(5, lastName_EG);
 			preparedStatement.setBoolean(6, acting);
+			preparedStatement.setBoolean(7, isAdmin);
 			
 			preparedStatement.executeUpdate();
 			
@@ -45,7 +46,7 @@ public class UsersWBCDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting) VALUES (?, ?, ?, ?,?,?)";
+		String sql = "INSERT INTO UsersWBC (Name, LastName, NikName, Pass, LastName_EG, acting, isAdmin) VALUES (?, ?, ?, ?,?, ?,?)";
 
 		PreparedStatement preparedStatement;
 		try {
@@ -56,6 +57,7 @@ public class UsersWBCDAO {
 			preparedStatement.setString(4, usersWBC.getPass());
 			preparedStatement.setString(5, usersWBC.getLastName_EG());
 			preparedStatement.setBoolean(6, usersWBC.getActing());
+			preparedStatement.setBoolean(7, usersWBC.get_isAdmin());
 			
 			preparedStatement.executeUpdate();
 			
@@ -71,7 +73,7 @@ public class UsersWBCDAO {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
-		String sqlUpdate = "Update usersWBC SET Name = ?, LastName = ?, NikName = ?, Pass = ?, LastName_EG = ?, acting = ?  where UsersWBC_ID = ? ";
+		String sqlUpdate = "Update usersWBC SET Name = ?, LastName = ?, NikName = ?, Pass = ?, LastName_EG = ?, acting = ? , isAdmin = ?  where UsersWBC_ID = ? ";
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
@@ -82,6 +84,7 @@ public class UsersWBCDAO {
 			preparedStatement.setString(4, usersWBC.getPass());
 			preparedStatement.setString(5, usersWBC.getLastName_EG());
 			preparedStatement.setBoolean(6, usersWBC.getActing());
+			preparedStatement.setBoolean(7, usersWBC.get_isAdmin());
 			
 			preparedStatement.setInt(7, id_UsersWBC);
 
@@ -139,6 +142,7 @@ public class UsersWBCDAO {
 				object.setPass(result.getString("Pass"));
 				object.setLastName_EG(result.getString("LastName_EG"));
 				object.setActing(result.getBoolean("acting"));
+				object.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(object);
 			}
@@ -172,6 +176,7 @@ public class UsersWBCDAO {
 				object.setPass(result.getString("Pass"));
 				object.setLastName_EG(result.getString("LastName_EG"));
 				object.setActing(result.getBoolean("acting"));
+				object.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(object);
 			}
@@ -209,6 +214,7 @@ public class UsersWBCDAO {
 				resultObject.setPass(result.getString("Pass"));
 				resultObject.setLastName_EG(result.getString("LastName_EG"));
 				resultObject.setActing(result.getBoolean("acting"));
+				resultObject.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(resultObject);
 			}
@@ -246,6 +252,7 @@ public class UsersWBCDAO {
 				resultObject.setPass(result.getString("Pass"));
 				resultObject.setLastName_EG(result.getString("LastName_EG"));
 				resultObject.setActing(result.getBoolean("acting"));
+				resultObject.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(resultObject);
 			}
@@ -309,6 +316,7 @@ public class UsersWBCDAO {
 				resultObject.setPass(result.getString("Pass"));
 				resultObject.setLastName_EG(result.getString("LastName_EG"));
 				resultObject.setActing(result.getBoolean("acting"));
+				resultObject.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(resultObject);
 			}
@@ -356,6 +364,7 @@ public class UsersWBCDAO {
 				resultObject.setPass(result.getString("Pass"));
 				resultObject.setLastName_EG(result.getString("LastName_EG"));
 				resultObject.setActing(result.getBoolean("acting"));
+				resultObject.set_isAdmin(result.getBoolean("isAdmin"));
 				
 				list.add(resultObject);
 			}

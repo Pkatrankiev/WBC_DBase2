@@ -44,7 +44,7 @@ public class ReadPersonFromExcelFile {
 				row  = index;
 			}
 			System.out.println(row+" ++++++++++");
-			if (sheet.getRow(row) != null) {
+			if (sheet.getRow(row) != null && row > 0) {
 				cell = sheet.getRow(row).getCell(5);
 				cell1 = sheet.getRow(row).getCell(6);
 				System.out.println(cell1+" *************");

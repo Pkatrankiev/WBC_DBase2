@@ -36,6 +36,7 @@ import java.util.List;
 
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 
 public class Reference_PersonMeasur_Frame extends JFrame {
 
@@ -65,6 +66,9 @@ public class Reference_PersonMeasur_Frame extends JFrame {
 		setTitle(referencePersonMeasur);
 
 		setMinimumSize(new Dimension(850, 900));
+		
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

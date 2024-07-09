@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,23 +33,29 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 	static String curentYear = AplicationMetods.getCurentYear();
 	
 	public static void ActionListener_Btn_CheckDBaseNameKodeStat(JPanel panel_AllSaerch,
-			JButton btn_CheckDBaseNameKodeStat, JTextArea textArea) {
+			JButton btn_CheckDBaseNameKodeStat, JTextArea textArea, JProgressBar progressBar) {
 		btn_CheckDBaseNameKodeStat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textArea.setText("");
-				GeneralMethods.setWaitCursor(panel_AllSaerch);
+//				GeneralMethods.setWaitCursor(panel_AllSaerch);
 				listMasiveForClear = new ArrayList<>();
-				String textForArea = checkPersonNameKodeStatus();
+				
+				
+				new MySwingWorker(progressBar, textArea, panel_AllSaerch, "CheckDBaseNameKodeStat").execute();
+				
+				
+				
+//				String textForArea = checkPersonNameKodeStatus();
+//
+//				if (textForArea.isEmpty()) {
+//					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
+//					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
+//				} else {
+//					textArea.setText(textForArea);
+//					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(true);
+//				}
 
-				if (textForArea.isEmpty()) {
-					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
-				} else {
-					textArea.setText(textForArea);
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(true);
-				}
-
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+//				GeneralMethods.setDefaultCursor(panel_AllSaerch);
 			}
 
 		});
@@ -75,8 +82,9 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 	}
 	
 	
-	public static String checkPersonNameKodeStatus() {
+	public static String checkPersonNameKodeStatus(JProgressBar aProgressBar, JPanel panel_AllSaerch) {
 
+		GeneralMethods.setWaitCursor(panel_AllSaerch);
 		String[][] masive = new String[2][8];
 
 		List<String> listMasive = new ArrayList<String>();
@@ -90,6 +98,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		}
 
+		
+
+		double ProgressBarSize = 1;
+		
 		String filePath[] = { filePathPersonel, filePathExternal };
 
 		Person person;
@@ -112,11 +124,17 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				listMasive.add("IN PERSONEL FILE");
 			}
 
+			double stepForProgressBar = 50;
+			
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
 			Sheet sheet = workbook.getSheetAt(0);
-
-			System.out.println(sheet.getLastRowNum());
+			stepForProgressBar = stepForProgressBar / sheet.getLastRowNum();
+//			System.out.println(stepForProgressBar+"*******************************************");  
+//			System.out.println(sheet.getLastRowNum());
 			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+				aProgressBar.setValue((int) ProgressBarSize);
+//				 System.out.println(ProgressBarSize+"  -------------------------------------------------------");
+				ProgressBarSize += stepForProgressBar;
 //				System.out.println(row);
 				notEquals = false;
 				setinMasive = false;
@@ -139,7 +157,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 								masive[1][j] = "";
 							}
 							FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
-							if (person != null && FirstName.contains("АЕЦ")) {
+							if (person != null) {
 							masive[0][0] = EGN;
 							masive[0][1] = FirstName;
 							cell = sheet.getRow(row).getCell(0);
@@ -226,11 +244,19 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 					}
 
 					for (int s = 1; s < 7; s++) {
+						if(s==1) {
+							if (!masive[1][s].replace("*", "").contains(masive[0][s])) {
+								masive[1][7] += s + ";";
+//								System.out.println(masive[0][s]+" <-> "+masive[1][s]);
+								notEquals = true;
+							}
+						}else {
 						if (!masive[0][s].equals(masive[1][s].replace("*", ""))) {
 							masive[1][7] += s + ";";
 //							System.out.println(masive[0][s]+" <-> "+masive[1][s]);
 							notEquals = true;
 						}
+					}
 					}
 					if (masive[1][7].length() > 0) {
 						masive[1][7] = masive[1][7].substring(0, masive[1][7].length() - 1);
@@ -248,15 +274,23 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				}
 			}
 
+			if(listMasive.size()==1) {
+				listMasive = new ArrayList<String>();
+			}
 		}
 
+		String infoStrText ="";
+		if(listMasive.size() > 0) {
 		String[][] ExtMasive = extractedMasive(listMasive);
 		Integer[] columnWith = extractColumnWith(ExtMasive);
 
 		listMasiveForClear = listMasive;
 		
-		String infoStrText = creadStringToInfoText(ExtMasive, columnWith);
-
+		infoStrText = creadStringToInfoText(ExtMasive, columnWith);
+		}
+		
+		GeneralMethods.setDefaultCursor(panel_AllSaerch);
+		
 		return infoStrText;
 	}
 

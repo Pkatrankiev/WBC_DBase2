@@ -259,7 +259,7 @@ public class ReadPersonStatusFromExcelFile {
 			zab = "";
 			fl = false;
 			PersonStatusNew personStatusNew_NotInList = null;
-			if (sheet.getRow(row) != null) {
+			if (sheet.getRow(row) != null && row > 0) {
 				cell = sheet.getRow(row).getCell(5);
 				cell1 = sheet.getRow(row).getCell(6);
 
@@ -271,6 +271,7 @@ public class ReadPersonStatusFromExcelFile {
 					}
 				}
 
+				System.out.println("workplace 2 "+workplace.getOtdel());
 //				workplace(54) - Транспортиране на СЯГ и ОЯГ;  workplace(101) - Транспортиране СОЯГ 
 				if (ReadExcelFileWBC.CellNOEmpty(cell) && workplace.getOtdel() != null && workplace.getId_Workplace()!= 54 && workplace.getId_Workplace()!= 101) {
 					FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
@@ -293,12 +294,12 @@ public class ReadPersonStatusFromExcelFile {
 						personStatusNew_NotInList = ListPrStatNew.get(0); 
 					}
 					
-					
+//					System.out.println("////////////////////////////////////// ");
 					
 					while (ReadExcelFileWBC.CellNOEmpty(cell)) {
 						Spisak_Prilogenia spPr = ReadSpisak_PrilogeniaFromExcelFile.getOrCreateSisak_Prilogenie(k, row,
 								sheet, startDate, endDate, formulyarName, workplace, year);
-							
+//						System.out.println("111111111111111111111111111 ");
 						if(personStatusNew_NotInList != null) {
 								personStatusNew_NotInList.setFormulyarName(spPr.getFormulyarName());
 								personStatusNew_NotInList.setStartDate(spPr.getStartDate());

@@ -62,6 +62,7 @@ public class SaveToPersonelORExternalFile {
 	static UsersWBC workingUser;
 	static String commentText;
 
+	
 	public static void saveInfoFromPersonManegementToExcelFile(JFrame frame, Person person, String firmName, Spisak_Prilogenia spPril,
 			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, boolean checkbx_EnterInListChengeKode, boolean obhodenList) {
 	
@@ -82,6 +83,8 @@ public class SaveToPersonelORExternalFile {
 			FileInputStream inputStream = new FileInputStream(pathFile);
 			Workbook workbook = new HSSFWorkbook(inputStream);
 
+			
+			
 			firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
 			
 			writePersonToOtdel(person, workbook);
@@ -98,7 +101,7 @@ public class SaveToPersonelORExternalFile {
 			
 			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName, workplace);
 			
-			reformatSheetSpPr(workbook);
+//			reformatSheetSpPr(workbook);
 			
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
 			workbook.write(outputStream);
@@ -125,6 +128,7 @@ public class SaveToPersonelORExternalFile {
 	
 	
 	
+	@SuppressWarnings("unused")
 	private static void reformatSheetSpPr(Workbook workbook) {
 		
 		
@@ -637,6 +641,9 @@ public class SaveToPersonelORExternalFile {
 			}
 			
 			CopyValueFromOldCellToNewcell(oldCell,  newCell, withValues);
+			if(newCell.getColumnIndex()<7) {
+				setWHITEandBLACKCellStyle(newCell);
+			}
 			}
 		
 
@@ -644,12 +651,13 @@ public class SaveToPersonelORExternalFile {
 
 	private static void CopyValueFromOldCellToNewcell(Cell oldCell, Cell newCell, boolean withValues) {
 
-				Sheet worksheet = newCell.getSheet();
 			
+			Sheet worksheet = newCell.getSheet();
+			System.out.println("Copy style from");
 			// Copy style from old cell and apply to new cell
-			CellStyle newCellStyle = worksheet.getWorkbook().createCellStyle();
-			newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
-			newCell.setCellStyle(newCellStyle);
+			CellStyle style = worksheet.getWorkbook().createCellStyle();
+			style.cloneStyleFrom(oldCell.getCellStyle());
+			newCell.setCellStyle(style);
 
 			// If there is a cell comment, copy
 			if (oldCell.getCellComment() != null) {

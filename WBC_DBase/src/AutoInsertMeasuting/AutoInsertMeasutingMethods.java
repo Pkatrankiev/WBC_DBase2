@@ -39,6 +39,7 @@ public class AutoInsertMeasutingMethods {
 		File[] files = chooiser.getSelectedFiles();
 		System.out.println(files.length);
 
+		if(files.length>0) {
 		ActionIcone round = new ActionIcone();
 		final Thread thread = new Thread(new Runnable() {
 			@Override
@@ -55,6 +56,7 @@ public class AutoInsertMeasutingMethods {
 		});
 		thread.start();
 
+		}
 	}
 
 	public static void SaveMesuring(List<ReportMeasurClass> listReportMeasurClassToSave, ActionIcone round) {
@@ -215,13 +217,14 @@ public class AutoInsertMeasutingMethods {
 
 		String mesage = "";
 		for (int i = 0; i < countData; i++) {
+			System.out.println(i+" - "+textFieldDoza[i].getText());
 			dozeStr = textFieldDoza[i].getText();
 			if ((!dozeStr.isEmpty() && Double.parseDouble(dozeStr.replaceAll(",", ".")) > 0)
 					|| comboBoxTypeMeasur[i].getSelectedItem().toString().equals("M")) {
-				if (Double.parseDouble(dozeStr.replaceAll(",", ".")) > 0) {
-					textFieldDoza[i].setBackground(Color.RED);
-					emtryDozeNuclide = true;
-				}
+//				if (Double.parseDouble(dozeStr.replaceAll(",", ".")) > 0) {
+//					textFieldDoza[i].setBackground(Color.RED);
+//					emtryDozeNuclide = true;
+//				}
 				for (int k = 0; k < 20; k++) {
 					if (comboBox_Nuclide[i][k] != null) {
 						isnuclide = true;

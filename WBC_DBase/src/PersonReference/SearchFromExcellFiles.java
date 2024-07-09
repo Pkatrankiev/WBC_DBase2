@@ -60,7 +60,7 @@ public class SearchFromExcellFiles {
 	
 	static Spisak_Prilogenia spPrNotInfo = Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByID(546);
 
-	protected static void addListStringSelectionPersonToComboBox(List<PersonExcellClass> listSelectionPerson, Choice comboBox_Results) {
+	public static void addListStringSelectionPersonToComboBox(List<PersonExcellClass> listSelectionPerson, Choice comboBox_Results) {
 		comboBox_Results.removeAll();
 		List<String> list = new ArrayList<>();
 		for (PersonExcellClass person : listSelectionPerson) {
@@ -73,7 +73,7 @@ public class SearchFromExcellFiles {
 
 	}
 	
-	protected static String[][] addListStringSelectionPersonExcellClassToComboBox(List<PersonExcellClass> listSelectionPerson) {
+	public static String[][] addListStringSelectionPersonExcellClassToComboBox(List<PersonExcellClass> listSelectionPerson) {
 		
 		String[][] dataTable = new String[listSelectionPerson.size()][8];
 	
@@ -184,7 +184,7 @@ public class SearchFromExcellFiles {
 		return str;
 	}
 
-	protected static List<PersonExcellClass> getListSearchingPerson() {
+	public static List<PersonExcellClass> getListSearchingPerson() {
 		
 			
 		
@@ -295,7 +295,7 @@ public class SearchFromExcellFiles {
 		return RemouveDublikateFromList.removeDuplicates(new ArrayList<PersonExcellClass>(listSelectionPersonOtdel));
 	}
 
-	static boolean checkContainsStrings(String str1, String str2) {
+	public static boolean checkContainsStrings(String str1, String str2) {
 		str1 = str1.toLowerCase().trim();
 		str2 = str2.toLowerCase().trim();
 	return str1.contains(str2);
@@ -379,7 +379,7 @@ public class SearchFromExcellFiles {
 		return listExcellPerson;
 	}	
 
-	private static List<PersonExcellClass> addNewExcellPerson(List<PersonExcellClass> listExcellPerson,
+	public static List<PersonExcellClass> addNewExcellPerson(List<PersonExcellClass> listExcellPerson,
 			PersonExcellClass newPersonExcellClass) {
 		
 		for (PersonExcellClass personExcellClass : listExcellPerson) {

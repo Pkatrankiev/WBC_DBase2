@@ -1,6 +1,6 @@
 
 minYearInDbase = 2005
-Version = v.010324
+Version = v.110324
 
 dataArhiveExcelFilePath = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\
 
@@ -16,6 +16,7 @@ PerStatNewSet = 1
 --------------------------------------------------------------------------
 testFilesToD = 0
 
+
 ###############   originale File  #####################################
 databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
 
@@ -25,26 +26,36 @@ filePathPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\PERSONN
 filePathMonthExternal_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month.xls
 filePathMonthPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc_month_P.xls
 
+filePathWBC1_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc1-KD.xls
+filePathWBC2_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc2-KD.xls
+filePathWBC3_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc3-KD.xls
+
 ###############   test File  #####################################
 databaseURL_test = jdbc:ucanaccess://D://WBC_DBase.mdb
 
-filePathExternal_orig_test = d:\\EXTERNAL.xls
-filePathPersonel_orig_test = d:\\PERSONNEL.xls
+filePathExternal_orig_test = d:\\0_LB\\EXTERNAL.xls
+filePathPersonel_orig_test = d:\\0_LB\\PERSONNEL.xls
 
-filePathMonthExternal_orig_test = d:\\month\\wbc_month.xls
-filePathMonthPersonel_orig_test = d:\\month\\wbc_month_P.xls
+filePathMonthExternal_orig_test = d:\\0_LB\\month\\wbc_month.xls
+filePathMonthPersonel_orig_test = d:\\0_LB\\month\\wbc_month_P.xls
+
+filePathWBC1_KD_orig_test = d:\\0_LB\\month\\wbc1-KD.xls
+filePathWBC2_KD_orig_test = d:\\0_LB\\month\\wbc2-KD.xls
+filePathWBC3_KD_orig_test = d:\\0_LB\\month\\wbc3-KD.xls
 
 -----------------------------------------------------------------------
 
 destinationDir = DIRECTORY/
 
-databaseOID = jdbc:ucanaccess://D://NewOid.mdb
+databaseOID = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//NewDB.mdb
 
+JustKatrankiev = В момента само Катранкиев ползва тази функция.
 
 destinationIcons = ICONS/ajaxLoader.gif
 modifiIcon = ICONS/Modify.gif
 main_Icon = ICONS/Icon14.png
 arrowIcon = ICONS/arrow.gif
+calendarIcon = ICONS/Calendar.png
 
 mainWindow_LogInStr_Btn = logIn
 mainWindow_LogOutStr_Btn = logOut
@@ -86,6 +97,7 @@ reference = Справки
 referenceTipText = извличане на справка
 
 personReference = Справки за служители
+personReference_OID = Справки за служители от ОИД
 personReferenceTipText = извличане на справка по различни показатели
 
 kodeReference = Справка за свободни кодове
@@ -144,8 +156,8 @@ referenceMeasuringLab_SUM_Doza = Сум.Доза
 referenceMeasuringLab_All = Общо
 referenceMeasuringLab_Mount = Месец
 
-
-
+referencePersonDokument = Документ
+personReference_Dokument = Справка за служители по документ
 
 klikToCopy = Клилнете за да копирате
 MenuOder_TitleName = Гама Кал. Екстракт
@@ -212,6 +224,7 @@ checkCorrectinDataInExcell_labelErrorColumn = Проверка за несъвп
 checkCorrectinDataInExcell_labelErrorExcell = Проверка за несъвпадения на данните между EXTERNAL.xls, PERSONNEL.xls и wbc_month
 checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = Проверка за несъвпадения на данните за измерванията в базата и wbc_month
 checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile = Проверка за несъвпадения на данните за имена и кодове в базата и excelFiles
+CheckPersonStatus_labelError = Проверка за несъвпадения на данните за отдела на служителите (мн. бавна справка)
 checkCorrectinDataInExcell_ImaGoV = Има го в
 checkCorrectinDataInExcell_NoGoNiamaV = ,но го няма в
 checkCorrectinDataInExcell_IzmerSICH = Изм СИЧ
@@ -220,5 +233,11 @@ checkCorrectinDataInExcell_ZaMesec = За месец:
 checkCorrectinDataInExcell_ErrorLab = Грешни маркирания на измервания СИЧ в
 checkCorrectinDataInExcell_IzmerVSICH = Изм в СИЧ
 checkCorrectinDataInExcell_MarkKato = маркирано като
+
+editBasicTable = Основни Таблици
+editBasicTable_TipText = Преглед и промяна в основните таблици
+
+dokumentStatusUser = Документ-Статус на служителите
+dokumentStatusUser_TipText = Преглед и промяна на Документ-Статус на служителите
 
 fileError = файлова грешка

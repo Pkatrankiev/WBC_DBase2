@@ -29,7 +29,7 @@ public class Menu_PersonManagement extends AbstractMenuAction{
 		if (loginDlg == null) {
 			JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("logInMesege"));
 		} else {
-		
+			if (loginDlg.getId_Users() == 1) {
 		
 		ActionIcone round = new ActionIcone();
 		 final Thread thread = new Thread(new Runnable() {
@@ -43,7 +43,9 @@ public class Menu_PersonManagement extends AbstractMenuAction{
 		     }
 		    });
 		    thread.start();	
-		
+			} else {
+				JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("JustKatrankiev"));	
+			}
 		}
 		
 		

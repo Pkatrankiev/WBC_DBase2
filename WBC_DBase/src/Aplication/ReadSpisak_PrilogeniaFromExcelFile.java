@@ -60,7 +60,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 					row  = index;
 				}
 				
-				if (sheet.getRow(row) != null) {
+				if (sheet.getRow(row) != null && row > 0) {
 					cell = sheet.getRow(row).getCell(5);
 					cell1 = sheet.getRow(row).getCell(6);
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
@@ -122,6 +122,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 		} else {
 			startDate = startDate0;
 		}
+//		System.out.println("33333333333333333333333333 ");
 		k++;
 		cell = sheet.getRow(row).getCell(k);
 		if (ReadExcelFileWBC.CellNOEmpty(cell)

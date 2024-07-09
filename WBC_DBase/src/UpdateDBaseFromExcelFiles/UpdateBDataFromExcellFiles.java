@@ -506,13 +506,14 @@ public class UpdateBDataFromExcellFiles {
 					List<Person> listPerson = null;
 					try {
 						listPerson = ReadPersonFromExcelFile.updatePersonFromExcelFile(pathFile, round, textIcon, listDiferentRow);
-						System.out.println("--> " + listPerson.size());
+						System.out.println("Person --> " + listPerson.size());
 					} catch (Exception e) {
 						e.printStackTrace();
 						save =OptionDialog(errorText);
 						
 					}
-					if (save) {
+					if (save && listPerson != null) {
+						
 						ReadPersonFromExcelFile.setToDBaseListPerson(listPerson, round, textIcon);
 						System.out.println("Save set Person " + firmName);
 					}
@@ -528,13 +529,13 @@ public class UpdateBDataFromExcellFiles {
 								.getSpisak_Prilogenia_ListFromExcelFile(pathFile, firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
 
 //						ReadSpisak_PrilogeniaFromExcelFile.ListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList);
-						System.out.println("--> " + Spisak_PrilogeniaList.size());
+						System.out.println("Spisak_Prilogenia --> " + Spisak_PrilogeniaList.size());
 					} catch (Exception e) {
 						e.printStackTrace();
-						save = OptionDialog(errorText);
+						save = OptionDialog("Spisak_Prilogenia" + errorText);
 						
 					}
-					if (save) {
+					if (save && Spisak_PrilogeniaList != null) {
 						ReadSpisak_PrilogeniaFromExcelFile
 								.setListSpisak_PrilogeniaToBData(Spisak_PrilogeniaList, round, textIcon);
 						System.out.println("Save set Spisak_Prilogenia " + firmName);
@@ -551,12 +552,12 @@ public class UpdateBDataFromExcellFiles {
 									firmName, year, round, textIcon, listDiferentRow, arreaOtdels);
 							System.out.println("list PersonStatus from Excell " + list.size());
 //							ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-							System.out.println("--> " + list.size());
+							System.out.println("PersonStatus --> " + list.size());
 						} catch (Exception e) {
-							save = OptionDialog(errorText);
+							save = OptionDialog("PersonStatus"+errorText);
 							
 						}
-						if (save) {
+						if (save && list != null) {
 							ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
 							System.out.println("Save set PersonStatus " + firmName);
 						}
@@ -571,12 +572,12 @@ public class UpdateBDataFromExcellFiles {
 						listKodeStatus = ReadKodeStatusFromExcelFile.getListKodeStatusFromExcelFile(pathFile,
 								firmName, year, round, textIcon, listDiferentRow);
 //						ReadKodeStatusFromExcelFile.ListKodeStatus(listKodeStatus);
-						System.out.println("--> " + listKodeStatus.size());
+						System.out.println("KodeStatus --> " + listKodeStatus.size());
 					} catch (Exception e) {
 						save = OptionDialog(errorText);
 						
 					}
-					if (save) {
+					if (save && listKodeStatus != null) {
 						ReadKodeStatusFromExcelFile.setToDBaseListKodeStatus(listKodeStatus, round, textIcon);
 						System.out.println("Save set KodeStatus " + firmName);
 					}
@@ -590,12 +591,12 @@ public class UpdateBDataFromExcellFiles {
 						listMeasuring = ReadMeasuringFromExcelFile
 								.generateListFromMeasuringFromExcelFile(pathFile, round, textIcon, listDiferentRow);
 //						ReadMeasuringFromExcelFile.ListMeasuringToBData(listMeasuring);
-						System.out.println("--> " + listMeasuring.size());
+						System.out.println("Measuring --> " + listMeasuring.size());
 					} catch (Exception e) {
 						save = OptionDialog(errorText);
 					
 					}
-					if (save) {
+					if (save && listMeasuring != null) {
 						ReadMeasuringFromExcelFile.setListMeasuringToBData(listMeasuring, round, textIcon);
 						System.out.println("Save set Measuring " + firmName);
 					}

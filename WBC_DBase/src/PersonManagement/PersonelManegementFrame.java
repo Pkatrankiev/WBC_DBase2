@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,8 +35,10 @@ import javax.swing.JCheckBox;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-
+import BasicClassAccessDbase.UsersWBC;
 import PersonReference.PersonReferenceFrame;
+import WBCUsersLogin.WBCUsersLogin;
+
 import java.util.Calendar;
 
 
@@ -66,6 +69,7 @@ public class PersonelManegementFrame extends JFrame {
 	private static JButton btn_ReadFileListPerson;
 	private static JButton btn_Clear;
 	private static JButton btn_savePerson_Insert;
+	private static JButton btn_savePerson_FromOiD;
 	private static JButton btn_Spisak;
 	private static JButton btn_SearchFreeKode;
 	private static JButton btnBackToTable;
@@ -117,12 +121,17 @@ public class PersonelManegementFrame extends JFrame {
 	private static JLabel lbl_svePerson_EnterInListChengeKode;
 	
 
+	static UsersWBC user = WBCUsersLogin.getCurentUser();
 	
 	
 
 	public PersonelManegementFrame(ActionIcone round) {
-		setTitle("Person Manegement");
+		
+		setTitle("Person Manegement"+" -> "+user.getLastName());
 
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setMinimumSize(new Dimension(730, 900));
 
 		contentPane = new JPanel();
@@ -190,9 +199,11 @@ public class PersonelManegementFrame extends JFrame {
 
 		PersonelManegementMethods.ActionListener_TextArea(btn_savePerson_Insert, textArea, panel_AllSaerch);
 
-		PersonelManegementMethods.ActionListener_Btn_SearchPerson(btn_SearchPerson, panel_AllSaerch, textArea, btn_savePerson_Insert);
+		PersonelManegementMethods.ActionListener_Btn_SearchPerson(btn_SearchPerson, panel_AllSaerch, textArea, btn_savePerson_Insert,
+				infoPanel, tablePane, scrollPane, textField_svePerson_Year, textField, btnBackToTable);
 
 		PersonelManegementMethods.ActionListener_Btn_savePerson_Insert(btn_savePerson_Insert, panel_AllSaerch, textArea);
+		PersonelManegementMethods.ActionListener_Btn_savePerson_FromOiD(btn_savePerson_FromOiD, panel_AllSaerch);
 
 		PersonelManegementMethods.ActionListener_Btn_Spisak(btn_Spisak);
 
@@ -205,7 +216,7 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
 		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
 		
-		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_EGN, 0);
+		PersonelManegementMethods.ActionListener_JTextFieldEGN(textField_svePerson_EGN, 0, btn_savePerson_FromOiD);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_FName, 0);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_SName, 0);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_LName, 0);
@@ -663,17 +674,17 @@ public class PersonelManegementFrame extends JFrame {
 		personSave_Personel_2_FildPanel.add(textField_svePerson_LName);
 		
 		btn_savePerson_Insert = new JButton("Insert");
-		btn_savePerson_Insert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		btn_savePerson_Insert.setMargin(new Insets(0, 1, 0, 1));
+		btn_savePerson_Insert.setPreferredSize(new Dimension(57, 23));
 		personSave_Personel_2_FildPanel.add(btn_savePerson_Insert);
 		btn_savePerson_Insert.setEnabled(false);
 		
-		JLabel lblNewLabel_1_1 = new JLabel();
-		lblNewLabel_1_1.setPreferredSize(new Dimension(48, 14));
-		personSave_Personel_2_FildPanel.add(lblNewLabel_1_1);
-		
+		btn_savePerson_FromOiD = new JButton("FromOiD");
+		btn_savePerson_FromOiD.setPreferredSize(new Dimension(52, 23));
+		btn_savePerson_FromOiD.setMargin(new Insets(2, 1, 2, 1));
+		personSave_Personel_2_FildPanel.add(btn_savePerson_FromOiD);
+		btn_savePerson_FromOiD.setEnabled(false);
+				
 		textField_svePerson_Year = new JTextField(curentYear);
 		textField_svePerson_Year.setColumns(6);
 		personSave_Personel_2_FildPanel.add(textField_svePerson_Year);
@@ -1393,6 +1404,10 @@ public class PersonelManegementFrame extends JFrame {
 
 	public static JCheckBox getCheckbx_svePerson_SaveToExcel() {
 		return chckbx_svePerson_SaveToExcel;
+	}
+
+	public static JButton getBtnBackToTable() {
+		return btnBackToTable;
 	}
 	
 	

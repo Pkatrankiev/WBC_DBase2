@@ -49,7 +49,7 @@ public class TableManagement {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date endDate0 = null, startDate0 = null;
 		try {
-			startDate0 = sdfrmt.parse("01.01." + curentYear);
+			startDate0 = sdfrmt.parse("01.01.2005");
 			endDate0 = sdfrmt.parse("31.12." + curentYear);
 		} catch (ParseException e) {
 			e.printStackTrace();

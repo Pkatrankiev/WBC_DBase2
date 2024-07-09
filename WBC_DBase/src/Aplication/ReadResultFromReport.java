@@ -159,6 +159,9 @@ public class ReadResultFromReport {
 							if(StringUtils.split(stringLine[j][1]).length > 1) {
 							operatorName = StringUtils.split(stringLine[j][1])[1].trim();
 							}
+							operatorName = operatorName.toLowerCase();
+							String s = operatorName.substring(0, 1).toUpperCase();
+							operatorName = s + operatorName.substring(1); 
 							 if(UsersWBCDAO.getValueUsersWBCByObject("LastName_EG", operatorName).size()<1) {
 									String str = "In file: "+ file.getName()+" Not Operator Name: "+ operatorName;
 												 MessageDialog(str);

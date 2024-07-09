@@ -65,8 +65,6 @@ public class TextInAreaTextPanel {
 		person = PersonDAO.getValuePersonByEGN(personInport.getEgn());
 		
 		
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if(PerStatNewSet.equals("1")) {
 			
 			if(fromExcell) {
 				listPersonstatusNew =SearchFromExcellFiles.getListPersonStatusNewFromExcelFile(year, person);
@@ -79,20 +77,7 @@ public class TextInAreaTextPanel {
 			masivePersonStatus = remoteNullFromArray(masivePersonStatus);
 			sortbyStartDateColumn(masivePersonStatus);
 			}
-		}else {
 		
-		if(fromExcell) {
-			listPersonStatus =SearchFromExcellFiles.getListPersonStatusFromExcelFile(year, person);
-		}else{
-		listPersonStatus = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,"DateSet");
-		}
-		masivePersonStatus = null;
-		if(listPersonStatus.size()>0) {
-		masivePersonStatus = generateMasivePersonStatus(year, listPersonStatus);
-		masivePersonStatus = remoteNullFromArray(masivePersonStatus);
-		sortbyStartDateColumn(masivePersonStatus);
-		}
-		}
 		
 		String textSpis ="";
 				if(masivePersonStatus!=null && masivePersonStatus.length>0) {
@@ -105,12 +90,9 @@ public class TextInAreaTextPanel {
 		}else{
 		listKodeStatus = KodeStatusDAO.getValueKodeStatusByObjectSortByColumnName("Person_ID", person, "Year");
 		}
-		if(PerStatNewSet.equals("1")) {
-			
+					
 			masiveKode = generateMasiveKodeStatusNew(year, listKodeStatus, listPersonstatusNew,  personInport, fromExcell);
-		}else {
-		masiveKode = generateMasiveKodeStatus(year, listKodeStatus, listPersonStatus);
-		}
+		
 		String textKode ="";
 		if(masiveKode.length>0) {
 		textKode = setTextInfoKode(masiveKode, masiveZoneName);
@@ -468,7 +450,12 @@ public class TextInAreaTextPanel {
 					index++;
 					}
 					masiveKode[index][0] = yearKode;
-					otdell = getOtdelByYearNew(yearKode, listP);
+//					otdell = getOtdelByYearNew(yearKode, listP);
+					otdell = "";
+					PersonStatusNew perStat = PersonStatusNewDAO.getLastPersonStatusNewByPerson_YearSortByStartDate(personInport, yearKode);
+					if(perStat != null) {
+					otdell = perStat.getWorkplace().getOtdel();
+					}
 					System.out.println(listP.size()+" "+yearKode+" /*/*/ "+otdell);
 					if(otdell.isEmpty() && countIteration < 2) {
 						isNewPersonStatusNewOject = true;

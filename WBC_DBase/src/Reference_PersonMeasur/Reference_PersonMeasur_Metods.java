@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -45,11 +43,9 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.RemouveDublikateFromList;
 import Aplication.ResourceLoader;
 import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementMethods;
@@ -57,7 +53,7 @@ import PersonReference.PersonReferenceExportToExcell;
 
 public class Reference_PersonMeasur_Metods {
 	static String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
-	static int	minYeare = Integer.parseInt(minYearInDbase);
+	static int minYeare = Integer.parseInt(minYearInDbase);
 	static String curentYear = AplicationMetods.getCurentYear();
 	static List<String> listOtdelKz;
 	static List<String> listOtdelVO;
@@ -67,30 +63,30 @@ public class Reference_PersonMeasur_Metods {
 	static String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
 	static List<String> listFirm = Arrays.asList("", AEC, VO);
 
-			
-	
-	public static void ActionListenerBtnExportToExcell( JPanel panel_Search) {
+	public static void ActionListenerBtnExportToExcell(JPanel panel_Search) {
 		JButton btn_Export_PersonMeasur = Reference_PersonMeasur_Frame.getBtn_Export();
 		btn_Export_PersonMeasur.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			boolean allMeasur = true;	
-			btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(), TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel() ,  panel_Search, allMeasur);
-			} 
-		
-	});
+			public void actionPerformed(ActionEvent e) {
+				boolean allMeasur = true;
+				btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(),
+						TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel(), panel_Search, allMeasur);
+			}
+
+		});
 	}
-	
-	public static void ActionListenerBtnExportZeroMeasurToExcell( JPanel panel_Search) {
+
+	public static void ActionListenerBtnExportZeroMeasurToExcell(JPanel panel_Search) {
 		JButton btn_Export_ZeroMeasur_PersonMeasur = Reference_PersonMeasur_Frame.getBtn_ZeroMeasur_Export();
 		btn_Export_ZeroMeasur_PersonMeasur.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			boolean allMeasur = false;	
-			btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(), TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel() ,  panel_Search, allMeasur);
-			} 
-		
-	});
+			public void actionPerformed(ActionEvent e) {
+				boolean allMeasur = false;
+				btnExportToExcell(TextInAreaTextPanel_Reference_PersonMeasur.getMasiveZoneName(),
+						TextInAreaTextPanel_Reference_PersonMeasur.getMasiveForInfoPanel(), panel_Search, allMeasur);
+			}
+
+		});
 	}
-	
+
 	public static void ActionListenerComboBox_Firm() {
 		Choice comboBox_Firm = Reference_PersonMeasur_Frame.getComboBox_Firm();
 		comboBox_Firm.addItemListener(new ItemListener() {
@@ -104,7 +100,7 @@ public class Reference_PersonMeasur_Metods {
 		});
 
 	}
-	
+
 	public static void setitemInChoise(Choice comboBox_Firm, Choice comboBox_Otdel) {
 
 		List<String> listAdd = new ArrayList<>();
@@ -120,24 +116,22 @@ public class Reference_PersonMeasur_Metods {
 		}
 		addItem(comboBox_Otdel, listAdd);
 	}
-	
+
 	public static void ActionListener_ComboBox_Firm(Choice comboBox_Firm, Choice comboBox_Otdel) {
 
 		comboBox_Firm.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-					setitemInChoise(comboBox_Firm, comboBox_Otdel);
+				setitemInChoise(comboBox_Firm, comboBox_Otdel);
 			}
 		});
 
-	
-
 	}
-	
+
 	public static void ActionListenerbBtn_Search(JPanel panel_AllSaerch, JButton btn_Search) {
 
 		btn_Search.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				JTextField textField_EndDate = Reference_PersonMeasur_Frame.getTextField_EndDate();
 				JTextField textField_StartDate = Reference_PersonMeasur_Frame.getTextField_StartDate();
@@ -147,13 +141,13 @@ public class Reference_PersonMeasur_Metods {
 				String year = textField_Year.getText();
 				String startDate = textField_StartDate.getText().trim();
 				String endDate = textField_EndDate.getText().trim();
-						
+
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 				Date dateStart = null, dateEnd = null;
 				try {
-					dateStart =  sdf.parse(startDate);	
-					dateEnd =  sdf.parse(endDate);
-					
+					dateStart = sdf.parse(startDate);
+					dateEnd = sdf.parse(endDate);
+
 //					if(!year.isEmpty()) {
 //					dateStart =  sdf.parse("01.01." + year);
 //					}else {
@@ -174,32 +168,33 @@ public class Reference_PersonMeasur_Metods {
 //					}
 				} catch (ParseException e1) {
 					e1.printStackTrace();
-				} 
-				System.out.println(sdf.format(dateStart)+"  "+ sdf.format(dateEnd));
-				if (!allFieldsEmnty() && !otdel.isEmpty()){
-					
+				}
+				System.out.println(sdf.format(dateStart) + "  " + sdf.format(dateEnd));
+				if (!allFieldsEmnty() && !otdel.isEmpty()) {
+
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					Workplace workPlace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
 					JTextArea textArea_PersonMeasur = Reference_PersonMeasur_Frame.getTextArea();
 					JButton btn_Export_PersonMeasur = Reference_PersonMeasur_Frame.getBtn_Export();
-					JButton btn_Export_ZeroMeasur_PersonMeasur = Reference_PersonMeasur_Frame.getBtn_ZeroMeasur_Export();
+					JButton btn_Export_ZeroMeasur_PersonMeasur = Reference_PersonMeasur_Frame
+							.getBtn_ZeroMeasur_Export();
 					textArea_PersonMeasur.setText("");
-				
-					 List<Person>  listPerson = spisakPersonFromWorkplace(workPlace, year);
 
-						String textForArea = TextInAreaTextPanel_Reference_PersonMeasur.createInfoPanelForPerson(listPerson, textField_Year.getText(), dateStart,  dateEnd);
-						if(textForArea.isEmpty()) {
-							textArea_PersonMeasur.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-							btn_Export_PersonMeasur.setEnabled(false);
-							btn_Export_ZeroMeasur_PersonMeasur.setEnabled(false);
-						}else {
-							textArea_PersonMeasur.setText(textForArea);
-							btn_Export_PersonMeasur.setEnabled(true);
-							btn_Export_ZeroMeasur_PersonMeasur.setEnabled(true);
-						}
-					 
-					 
-					 
+					List<Person> listPerson = spisakPersonFromWorkplace(workPlace, year);
+
+					String textForArea = TextInAreaTextPanel_Reference_PersonMeasur.createInfoPanelForPerson(listPerson,
+							textField_Year.getText(), dateStart, dateEnd);
+					if (textForArea.isEmpty()) {
+						textArea_PersonMeasur
+								.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
+						btn_Export_PersonMeasur.setEnabled(false);
+						btn_Export_ZeroMeasur_PersonMeasur.setEnabled(false);
+					} else {
+						textArea_PersonMeasur.setText(textForArea);
+						btn_Export_PersonMeasur.setEnabled(true);
+						btn_Export_ZeroMeasur_PersonMeasur.setEnabled(true);
+					}
+
 					GeneralMethods.setDefaultCursor(panel_AllSaerch);
 
 				}
@@ -207,7 +202,7 @@ public class Reference_PersonMeasur_Metods {
 		});
 
 	}
-			
+
 	public static void ActionListenertextField_Year(JTextField textField_Year, JButton btn_Search) {
 		textField_Year.addKeyListener(new KeyAdapter() {
 
@@ -236,7 +231,7 @@ public class Reference_PersonMeasur_Metods {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btn_Search.setEnabled(true);
-				if(comboBox_Otdel.getSelectedItem().isEmpty()){
+				if (comboBox_Otdel.getSelectedItem().isEmpty()) {
 					btn_Search.setEnabled(false);
 				}
 			}
@@ -245,33 +240,35 @@ public class Reference_PersonMeasur_Metods {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				btn_Search.setEnabled(true);
-				if(comboBox_Otdel.getSelectedItem().isEmpty()){
+				if (comboBox_Otdel.getSelectedItem().isEmpty()) {
 					btn_Search.setEnabled(false);
 				}
 			}
 		});
 	}
-	
-	public static void btnExportToExcell(String[] zoneNameMasive, String[][] masiveKode, JPanel panel_Btn, boolean allMeasur) {
+
+	public static void btnExportToExcell(String[] zoneNameMasive, String[][] masiveKode, JPanel panel_Btn,
+			boolean allMeasur) {
 
 		String fileError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileError");
 		GeneralMethods.setWaitCursor(panel_Btn);
-	
+
 		String excelFilePath = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationDir")
 				+ "exportInfoPerson.xls";
 		try {
-			int size =0;
-			if(masiveKode.length>0)
-			size = size +masiveKode.length * masiveKode[0].length;
-			
-			if ( size < 4000) {
+			int size = 0;
+			if (masiveKode.length > 0)
+				size = size + masiveKode.length * masiveKode[0].length;
+
+			if (size < 4000) {
 
 				Workbook workbook = new HSSFWorkbook();
 				Sheet sheet = workbook.createSheet("PersonReference");
 
 				CellStyle cellStyleBold = PersonReferenceExportToExcell.cellStyleBold(workbook);
 				int endRow = 0;
-				endRow = PersonReferenceExportToExcell.writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode, endRow, true, allMeasur);
+				endRow = PersonReferenceExportToExcell.writeCells(sheet, cellStyleBold, zoneNameMasive, masiveKode,
+						endRow, true, allMeasur);
 				endRow++;
 
 				FileOutputStream outFile = new FileOutputStream(new File(excelFilePath));
@@ -280,7 +277,8 @@ public class Reference_PersonMeasur_Metods {
 
 				PersonReferenceExportToExcell.openWordDoc(excelFilePath);
 			} else {
-				PersonReferenceExportToExcell.MessageDialog(ReadFileBGTextVariable.getGlobalTextVariableMap().get("cell_maximum_number_exceeded"),
+				PersonReferenceExportToExcell.MessageDialog(
+						ReadFileBGTextVariable.getGlobalTextVariableMap().get("cell_maximum_number_exceeded"),
 						fileError);
 			}
 
@@ -291,15 +289,14 @@ public class Reference_PersonMeasur_Metods {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
 		}
-		
+
 		GeneralMethods.setDefaultCursor(panel_Btn);
 	}
-	
-	
+
 	public static void addItemFirm(Choice comboBox_Firm) {
 		addItem(comboBox_Firm, listFirm);
 	}
-		
+
 	private static void addItem(Choice comboBox, List<String> list) {
 		comboBox.removeAll();
 		for (String otdel : list) {
@@ -314,7 +311,7 @@ public class Reference_PersonMeasur_Metods {
 		}
 		return list;
 	}
-	
+
 	static void setitemInChoise() {
 		Choice comboBox_Firm = Reference_PersonMeasur_Frame.getComboBox_Firm();
 		Choice comboBox_Otdel = Reference_PersonMeasur_Frame.getComboBox_Otdel();
@@ -329,107 +326,57 @@ public class Reference_PersonMeasur_Metods {
 		addItem(comboBox_Otdel, listAdd);
 	}
 
-	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, String curentYear ){
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateStart = null;
-		Date dateEnd = null;
-		try {
-			dateStart = sdf.parse("01.01." + curentYear);
-			dateEnd  = sdf.parse("31.12." + curentYear);
-		} catch (ParseException e) {
-		
-			e.printStackTrace();
-		}
+	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, String curentYear) {
 		
 		List<Integer> listPersonID = new ArrayList<>();
 		List<Person> listPerson = new ArrayList<>();
 		List<Person> listPersonNew = new ArrayList<>();
-		
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if(PerStatNewSet.equals("1")) {
-			List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByWorkplace_DateStart_DateEnd(workPlace, dateStart, dateEnd);
-			System.out.println(listPerStat.size());
-			
-			for (PersonStatusNew personStatus : listPerStat) {
-						listPersonID.add(personStatus.getPerson().getId_Person());	
-			
-			}	
-		}else {
-		
-		List<PersonStatus> listPerStat = PersonStatusDAO.getValuePersonStatusByWorkplace_DateStart_DateEnd_2(workPlace, dateStart, dateEnd);
+
+		List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByWorkplace_Year(workPlace,
+				curentYear);
 		System.out.println(listPerStat.size());
-		
-		for (PersonStatus personStatus : listPerStat) {
-					listPersonID.add(personStatus.getPerson().getId_Person());	
-		
+		Person person = new Person();
+		for (PersonStatusNew personStat : listPerStat) {
+
+			person = personStat.getPerson();
+			PersonStatusNew perStat = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
+
+			if (perStat != null) {
+				if (perStat.getWorkplace().getOtdel().equals(workPlace.getOtdel())) {
+					String zabel = perStat.getZabelejka();
+					String formuliarName = perStat.getFormulyarName();
+					if (!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("Обходен")
+							&& !formuliarName.contains("МЗ") && !formuliarName.contains("NotInList")) {
+						System.out.println(person.getEgn() + "  " + zabel + " -  " + formuliarName);
+						listPersonNew.add(person);
+					}
+				}
+			}
+
 		}
+
+		for (Person personn : listPersonNew) {
+			listPersonID.add(personn.getId_Person());
+
 		}
-		 listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
+
+		System.out.println(listPersonNew.size());
+
+		listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
 		System.out.println(listPersonID.size());
 		for (Integer integer : listPersonID) {
-			listPerson.add(PersonDAO.getValuePersonByID(integer));	
+			listPerson.add(PersonDAO.getValuePersonByID(integer));
 		}
 
-		for (Person person : listPerson) {
-			
-			if(PerStatNewSet.equals("1")) {
-				PersonStatusNew perStat = getLastPersonStatusNewByPerson(person);
-				
-				if(perStat!=null) {
-				String zabel = perStat.getZabelejka();
-				String formuliarName = perStat.getFormulyarName();
-				if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ") 
-						&& !formuliarName.contains("NotInList")) {
-					System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
-					listPersonNew.add(person);		
-			}
-				}	
-			}else {
-			PersonStatus perStat = getLastPersonStatusByPerson(person);
-			
-			if(perStat!=null) {
-			String zabel = perStat.getZabelejka();
-			String formuliarName = perStat.getSpisak_prilogenia().getFormulyarName();
-			if(!zabel.contains("Обходен") && !zabel.contains("Списък напуснали") && !formuliarName.contains("МЗ") 
-					&& !formuliarName.contains("NotInList")) {
-				System.out.println(person.getEgn()+"  "+zabel+" -  "+formuliarName);
-				listPersonNew.add(person);		
-		}
-			}
-			}
-		}
-		return listPersonNew;
+		return listPerson;
 	}
 
-	public static PersonStatus getLastPersonStatusByPerson(Person person) {
-		List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByObjectSortByColumnName("Person_ID", person,
-				"DateSet");
-		List<PersonStatus> sortedReversPeStatList = list.stream()
-				.sorted(Comparator.comparing(PersonStatus::getPersonStatus_ID).reversed()).collect(Collectors.toList());
-		if (sortedReversPeStatList.size() > 0) {
-			return sortedReversPeStatList.get(0);
-		} else {
-			return null;
-		}
-	}
-		
-	public static PersonStatusNew getLastPersonStatusNewByPerson(Person person) {
-		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByObjectSortByColumnName("Person_ID", person,
-				"DateSet");
-		List<PersonStatusNew> sortedReversPeStatList = list.stream()
-				.sorted(Comparator.comparing(PersonStatusNew::getPersonStatusNew_ID).reversed()).collect(Collectors.toList());
-		if (sortedReversPeStatList.size() > 0) {
-			return sortedReversPeStatList.get(0);
-		} else {
-			return null;
-		}
-	}
 	
 	protected static boolean allFieldsEmnty() {
 		JTextField textField_EndDate = Reference_PersonMeasur_Frame.getTextField_EndDate();
 		JTextField textField_StartDate = Reference_PersonMeasur_Frame.getTextField_StartDate();
 		JTextField textField_Year = Reference_PersonMeasur_Frame.getTextField_Year();
-		return ( textField_Year.getText().trim().isEmpty()  && textField_StartDate.getText().trim().isEmpty()
+		return (textField_Year.getText().trim().isEmpty() && textField_StartDate.getText().trim().isEmpty()
 				&& textField_EndDate.getText().trim().isEmpty());
 	}
 
@@ -445,7 +392,8 @@ public class Reference_PersonMeasur_Metods {
 			@Override
 			public void keyReleased(KeyEvent event) {
 
-				if (AplicationMetods.incorrectDate(textFieldDate.getText()) && !textFieldDate.getText().trim().isEmpty()) {
+				if (AplicationMetods.incorrectDate(textFieldDate.getText())
+						&& !textFieldDate.getText().trim().isEmpty()) {
 					btn_Search_PersonMeasur.setEnabled(false);
 					textFieldDate.setForeground(Color.RED);
 				} else {
@@ -463,7 +411,8 @@ public class Reference_PersonMeasur_Metods {
 	}
 
 	static List<String> getListKZ() {
-		List<String> listOtdelKz_new = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
+		List<String> listOtdelKz_new = PersonelManegementMethods
+				.getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
 //		listOtdelKz = SearchFreeKodeMethods.generateListZvenaKZ(ListZvenaFromExcellFiles, listZvenaFromDBase);
 		listOtdelKz_new.add("");
 		Collections.sort(listOtdelKz_new);
@@ -471,7 +420,8 @@ public class Reference_PersonMeasur_Metods {
 	}
 
 	static List<String> getListVO() {
-		List<String> listOtdelVO_new = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("Външни организации");
+		List<String> listOtdelVO_new = PersonelManegementMethods
+				.getStringListFromActualWorkplaceByFirmname("Външни организации");
 //		listOtdelVO = SearchFreeKodeMethods.generateListZvenaVO(ListZvenaFromExcellFiles, listZvenaFromDBase);
 		listOtdelVO_new.add("");
 		Collections.sort(listOtdelVO_new);
@@ -479,7 +429,7 @@ public class Reference_PersonMeasur_Metods {
 	}
 
 	static List<String> getListALL() {
-		List<String> listOtdelAll_new =  new ArrayList<>();
+		List<String> listOtdelAll_new = new ArrayList<>();
 		listOtdelAll_new.addAll(listOtdelKz);
 		listOtdelAll_new.addAll(listOtdelVO);
 //		listOtdelAll = SearchFreeKodeMethods.generateListZvena();
@@ -487,14 +437,14 @@ public class Reference_PersonMeasur_Metods {
 		Collections.sort(listOtdelAll_new);
 		return listOtdelAll_new;
 	}
-	
+
 	public static void generateListOtdels() {
 		listOtdelKz = getListKZ();
 		listOtdelVO = getListVO();
 		listOtdelAll = getListALL();
 
 	}
-		
+
 	public static void MessageDialog(String textInFrame, String textFrame) {
 		Icon otherIcon = null;
 		JFrame jf = new JFrame();
@@ -504,8 +454,4 @@ public class Reference_PersonMeasur_Metods {
 
 	}
 
-	
-
-	
-	
 }

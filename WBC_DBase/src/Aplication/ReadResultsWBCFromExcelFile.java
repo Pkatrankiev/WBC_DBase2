@@ -164,13 +164,13 @@ public class ReadResultsWBCFromExcelFile {
 			}
 
 			
-			if (sheet.getRow(row) != null) {
+			if (sheet.getRow(row) != null && row > 0) {
 				cell = sheet.getRow(row).getCell(5);
 				cell1 = sheet.getRow(row).getCell(6);
 				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
 				Person person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 				FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
-				if (person != null && FirstName.contains("АЕЦ")) {
+				if (person != null && !FirstName.contains("АЕЦ")) {
 						
 						
 						int k = 7;

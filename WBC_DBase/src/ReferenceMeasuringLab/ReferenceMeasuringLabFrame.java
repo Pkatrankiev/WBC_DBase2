@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -63,6 +64,9 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 	public ReferenceMeasuringLabFrame(ActionIcone round, String referencePersonMeasur) {
 		setTitle(referencePersonMeasur);
 
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setMinimumSize(new Dimension(900, 250));
 
 		contentPane = new JPanel();

@@ -284,7 +284,10 @@ public class WorkplaceDAO {
 		}
 		return list;
 	}
+	
+
 		
+	
 	
 	public static List<Workplace> getAllActualValueWorkplace() {
 

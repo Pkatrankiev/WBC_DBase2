@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,9 @@ import Aplication.ReadFileBGTextVariable;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
 
+
+import javax.swing.JProgressBar;
+
 public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -35,6 +39,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	private static JTextArea textArea;
 	private static JButton btn_Search;
+	private static JButton btn_Search_CheckPersonStatus;
 	private static JButton btn_SearchAllColumn;
 	private static JButton btn_CheckDBase;
 	private static JButton btn_CheckDBase_Clear;
@@ -54,6 +59,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	String checkCorrectinDataInExcell_labelErrorExcell = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelErrorExcell");
 	String checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckDBaseToMouthFile");
 	String checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile");
+	String CheckPersonStatus_labelError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("CheckPersonStatus_labelError");
+	
+	
+	private JProgressBar progressBar;
 	
 
 	
@@ -61,6 +70,9 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	public CheckErrorDataInExcellFiles_Frame() {
 		setTitle(checkCorrectinDataInExcell);
 
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setMinimumSize(new Dimension(730, 900));
 
 		contentPane = new JPanel();
@@ -91,28 +103,42 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		panel_0();
 		panel_1();
 		panel_2();
+		panel_2A();
 		panel_3();
 		panel_4();
 		
 		panel_Button();
 
+		progressBar = new JProgressBar(0,100);
+		 progressBar.setValue(0);
+	     progressBar.setStringPainted(true);
+		panel_Search.add(progressBar);
+		
+		 
 		setSize(737, 900);
 		setLocationRelativeTo(null);
 
 		
 
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchError(panel_Search, btn_Search, textArea);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_SearchAllColumn(panel_Search, btn_SearchAllColumn, textArea);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBaseToMounthFile(panel_Search, btn_CheckDBase, textArea);
-		CheckErrorDataInExcellFiles_Methods.ActionListener_Btn_CheckDBase_Clear(panel_Search, btn_CheckDBase_Clear, textArea);
-		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat(panel_Search, btn_CheckDBaseNameKodeStat, textArea);
+		CheckDataBethwinExcelFilesAndMonth.ActionListener_Btn_SearchError(panel_Search, btn_Search, textArea, progressBar);
+		CheckEqualsForFirst5Column.ActionListener_Btn_SearchAllColumn(panel_Search, btn_SearchAllColumn, textArea);
+		CheckMeasurDBaseToMounthFile.ActionListener_Btn_CheckDBaseToMounthFile(panel_Search, btn_CheckDBase, textArea);
+		CheckMeasurDBaseToMounthFile.ActionListener_Btn_CheckDBase_Clear(panel_Search, btn_CheckDBase_Clear, textArea);
+		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat(panel_Search, btn_CheckDBaseNameKodeStat, textArea, progressBar);
 		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat_Clear(panel_Search, btn_CheckDBaseNameKodeStat_Clear, textArea);
 		CheckCurentDataInExcelFilesMetod.ActionListener_Btn_CheckCurentDataInExcelFiles(panel_Search, btn_CheckCurentDataInExcelFiles, textArea);
-
+		CheckPersonStatus.ActionListener_Btn_CheckPersonStatus(panel_Search, btn_Search_CheckPersonStatus, textArea, progressBar);
+		
+		
 		setVisible(true);
 		
-		
+					
 	}
+	
+	public void updateBar(int newValue) {
+		progressBar.setValue(newValue);
+	  }
+
 
 	private JPanel panel_0() {
 		
@@ -189,6 +215,32 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		return panel2;
 	}
 
+	private JPanel panel_2A() {
+		
+		JPanel panel2A = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel2A.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		flowLayout.setVgap(2);
+		panel_Search.add(panel2A);
+
+		JLabel lbl_CheckPersonStatus = new JLabel(CheckPersonStatus_labelError);
+				
+		lbl_CheckPersonStatus.setPreferredSize(new Dimension(550, 15));
+		lbl_CheckPersonStatus.setHorizontalAlignment(SwingConstants.LEFT);
+		lbl_CheckPersonStatus.setBorder(null);
+		lbl_CheckPersonStatus.setAlignmentX(0.5f);
+		panel2A.add(lbl_CheckPersonStatus);
+		
+				btn_Search_CheckPersonStatus = new JButton("Search");
+				panel2A.add(btn_Search_CheckPersonStatus);
+				btn_Search_CheckPersonStatus.setMargin(new Insets(2, 5, 2, 5));
+				btn_Search_CheckPersonStatus.setPreferredSize(new Dimension(110, 23));
+				
+
+		return panel2A;
+	}
+
+	
 	private JPanel panel_3() {
 		
 		JPanel panel3 = new JPanel();
@@ -364,5 +416,9 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		CheckErrorDataInExcellFiles_Frame.btn_CheckCurentDataInExcelFiles = btn_CheckCurentDataInExcelFiles;
 	}
 
+	
+	
+	
+	
 	
 }

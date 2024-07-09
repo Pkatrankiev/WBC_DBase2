@@ -62,7 +62,7 @@ public class ReadKodeStatusFromExcelFile {
 			}else {
 				row  = index;
 			}
-			
+			if(row > 0) {
 			kodeKZ1 = "";
 			kodeKZ2 = "";
 			kodeHOG = "";
@@ -137,6 +137,7 @@ public class ReadKodeStatusFromExcelFile {
 				}
 			}
 			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
+		}
 		}
 		return listKodeStatus;
 	}

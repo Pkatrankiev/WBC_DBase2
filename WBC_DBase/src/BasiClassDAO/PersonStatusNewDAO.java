@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
@@ -59,7 +60,7 @@ public class PersonStatusNewDAO {
 		}
 	}
 
-	public static void setObjectPersonStatusNewToTable(PersonStatusNew PersonStatusNew) {
+	public static boolean setObjectPersonStatusNewToTable(PersonStatusNew PersonStatusNew) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -83,13 +84,17 @@ public class PersonStatusNewDAO {
 
 			preparedStatement.close();
 			connection.close();
+			
 
 		} catch (SQLException e) {
-			if (e.toString().indexOf("unique") < 0) {
+			if (e.toString().indexOf("unique") > 0) {
+				return false;
+			}else {
 				e.printStackTrace();
 				ResourceLoader.appendToFile(e);
 			}
 		}
+		return true;
 	}
 
 	public static java.sql.Date convertDate(Date data) {
@@ -97,7 +102,7 @@ public class PersonStatusNewDAO {
 		return newDate;
 	}
 
-	public static void updateValuePersonStatusNew(PersonStatusNew PersonStatusNew) {
+	public static boolean updateValuePersonStatusNew(PersonStatusNew PersonStatusNew) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -124,17 +129,17 @@ public class PersonStatusNewDAO {
 			connection.close();
 
 		} catch (SQLException e) {
-//			if (e.toString().indexOf("unique") > 0) {
-//				deleteValuePersonStatusNew(PersonStatusNew);
-//			} else 
-			{
-//				ResourceLoader.appendToFile(e);
+			if (e.toString().indexOf("unique") > 0) {
+				return false;
+			}else {
 				e.printStackTrace();
+				ResourceLoader.appendToFile(e);
 			}
 		}
+		return true;
 	}
 
-	public static void deleteValuePersonStatusNew(PersonStatusNew PersonStatusNew) {
+	public static boolean deleteValuePersonStatusNew(PersonStatusNew PersonStatusNew) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
@@ -153,7 +158,9 @@ public class PersonStatusNewDAO {
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	private static PersonStatusNew setPersonStatusNew(ResultSet result) throws SQLException {
@@ -662,11 +669,11 @@ public class PersonStatusNewDAO {
 		return listPersonStatusNew;
 	}
 	
-public static PersonStatusNew getLastPersonStatusNewByPerson_Year(Person person, String year) {
+	public static PersonStatusNew getLastPersonStatusNewByPerson_Year2(Person person, String year) {
 		
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatusNew where  Person_ID = ? and Year = ? ORDER BY StartDate DESC";
+		String sql = "SELECT * FROM PersonStatusNew where  Person_ID = ? and Year = ? ORDER BY personStatusNew_ID DESC";
 
 		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
 
@@ -903,7 +910,78 @@ public static PersonStatusNew getLastPersonStatusNewByPerson_Year(Person person,
 		}
 		return listPersonStatusNew;
 	}
+	
+	
+public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, JProgressBar progressBar) {
+		
 
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew where  Year = ? ";
+
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, year);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+
+				listPersonStatusNew.add(setPersonStatusNew(result));
+
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		return listPersonStatusNew;
+	}
+
+	public static List<PersonStatusNew> getValuePersonStatusNewByYearWithProgressBar(String year, JProgressBar fProgressBar, double stepForProgressBar) {
+		
+
+		double ProgressBarSize = 0;
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew where  Year = ? ";
+
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+		
+		
+
+		
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, year);
+			
+			ResultSet result = preparedStatement.executeQuery();
+			int k=0;
+			while (result.next()) {
+			k++;	
+			}
+			stepForProgressBar = stepForProgressBar / k;
+			result = preparedStatement.executeQuery();
+			while (result.next()) {
+				fProgressBar.setValue((int) ProgressBarSize);
+				listPersonStatusNew.add(setPersonStatusNew(result));
+				ProgressBarSize += stepForProgressBar;
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		return listPersonStatusNew;
+	}
+	
 	public static List<PersonStatusNew> getValuePersonStatusNewByTausenObjectStartedBy(int startID, int endID) {
 		
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -934,6 +1012,49 @@ public static PersonStatusNew getLastPersonStatusNewByPerson_Year(Person person,
 		return listPersonStatusNew;
 	}
 
+	public static PersonStatusNew getLastPersonStatusNewByPerson_YearSortByStartDate(Person person, String year) {
+		
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew where  Person_ID = ? and Year = ? ORDER BY StartDate DESC";
+
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, year);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+
+				listPersonStatusNew.add(setPersonStatusNew(result));
+
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		if (listPersonStatusNew.size() == 0)
+			return null;
+		
+		if (listPersonStatusNew.size() > 1) {
+			if(listPersonStatusNew.get(0).getPersonStatusNew_ID() > listPersonStatusNew.get(1).getPersonStatusNew_ID()) {
+				return listPersonStatusNew.get(0);	
+			}else {
+				return listPersonStatusNew.get(1);	
+			}
+		}
+		
+		return listPersonStatusNew.get(0);
+	}
 	
 	
 }

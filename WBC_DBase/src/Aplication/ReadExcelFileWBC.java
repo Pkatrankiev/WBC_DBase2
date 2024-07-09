@@ -103,6 +103,7 @@ public class ReadExcelFileWBC {
 		if(cell!= null) {
 		try {
 		String type = cell.getCellType().toString();
+//		System.out.println("type "+type);
 		switch (type) {
 		
 		case "STRING": {
@@ -116,13 +117,10 @@ public class ReadExcelFileWBC {
 			break;
 		
 		case "NUMERIC": {
-			try {
-				str = sdfrmt.format(cell.getDateCellValue());	
-			} catch (Exception e) {
+			
 				double doub = cell.getNumericCellValue();
-				str = new DecimalFormat("#").format(doub);
-			}
-		
+				str = new DecimalFormat("0.00").format(doub);
+	
 		}
 			break;
 		case "DATA":
@@ -145,6 +143,7 @@ public class ReadExcelFileWBC {
 		JOptionPane.showInputDialog(null, cellSring, cel);
 		
 	}
+//		System.out.println("str "+str);
 		if(str.equals("31.12.1899")) {
 			str = "";
 		}

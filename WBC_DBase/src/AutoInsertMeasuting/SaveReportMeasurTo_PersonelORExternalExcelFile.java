@@ -112,7 +112,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 				MessageDialog(reportNotSaveMesur, "");
 			}
 		} else {
-			System.out.println("+++++++++++++++++++"+listForNotSaveMeasur.size());
+//			System.out.println("+++++++++++++++++++"+listForNotSaveMeasur.size());
 			forPersonalExcellFile = true;
 			SaveListReportMeasurClassToExcellFile(listForNotSaveMeasur, forPersonalExcellFile);
 		}
@@ -172,7 +172,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		String egnMeasur = reportMeasurClassToSave.getMeasur().getPerson().getEgn();
 		Sheet sheet = workbook.getSheetAt(1);
 		int row = getRowByEgnInSheet(sheet, egnMeasur);
-		System.out.println("egn " + egnMeasur+" row "+row);
+//		System.out.println("egn " + egnMeasur+" row "+row);
 		if (row < 0) {
 			return "";
 		} else {
@@ -214,14 +214,15 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 				Cell cell2 = getCell(sheet, row, index + 18);
 				flNotDublicateData = checkNotDublicate(row, index, reportMeasurClassToSave, sheet);
 								
-				System.out.println("flNotDublicateData "+flNotDublicateData);
-				System.out.println(""+ReadExcelFileWBC.CellNOEmpty(cell) +" "+  
-						ReadExcelFileWBC.CellNOEmpty(cell1) +" "+ 
-						ReadExcelFileWBC.CellNOEmpty(cell2));
+//				System.out.println("flNotDublicateData "+flNotDublicateData);
+//				System.out.println(""+ReadExcelFileWBC.CellNOEmpty(cell) +" "+  
+//						ReadExcelFileWBC.CellNOEmpty(cell1) +" "+ 
+//						ReadExcelFileWBC.CellNOEmpty(cell2));
+//				System.out.println(" | "+ReadExcelFileWBC.getStringfromCell(cell)+" | "+ReadExcelFileWBC.getStringfromCell(cell1)+" | "+ReadExcelFileWBC.getStringfromCell(cell2)+" | ");
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell1) || 
 						!ReadExcelFileWBC.CellNOEmpty(cell2)) {
-//					System.out.println(cell.getStringCellValue());
+//					System.out.println("index "+index);
 					int excelColumn = saveDataToExcelFile(row, index, reportMeasurClassToSave, sheet);
 					reportFile = "Excel-"+reportMeasurClassToSave.getMeasur().getPerson().getEgn()+"/"+excelColumn;
 					saveSumDozeToExcelFile(row, reportMeasurClassToSave, workbook.getSheetAt(0));
@@ -247,7 +248,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		Cell cellDoze = getCell(sheet, row, column);
 	
 		String strCellDoze = getValueFromCellToString(cellDoze);
-		System.out.println("*********************************strCellDoze "+strCellDoze);
+//		System.out.println("*********************************strCellDoze "+strCellDoze);
 		if(strCellDoze.isEmpty()||(!strCellDoze.equals("<0.10") && strCellDoze.equals("0"))){
 			saveDozeToCell(cellDoze, dozeMeasurStr);
 		}
@@ -297,9 +298,9 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		
 		String dozeStr = convertDozeCellToString(cellDoze); 
 		
-		System.out.println(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate))+" <-ND> "+(date));
-		System.out.println(getValueFromCellToString(cellLab)+" <-ND> "+(lab));
-		System.out.println(dozeStr+" <-ND> "+(doseString));
+//		System.out.println(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate))+" <-ND> "+(date));
+//		System.out.println(getValueFromCellToString(cellLab)+" <-ND> "+(lab));
+//		System.out.println(dozeStr+" <-ND> "+(doseString));
 		
 		if(sdfrmt.format(ReadExcelFileWBC.readCellToDate(cellDate)).equals(date)
 			&& getValueFromCellToString(cellLab).equals(lab)
@@ -329,9 +330,11 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		
 		
 		Cell cell = getCell(sheet, row, column);
+//		System.out.println("1column "+column);
 		cell.setCellValue(sdfrmt.format(reportMeasurClassToSave.getMeasur().getDate()));
 		column++;
 		cell = getCell(sheet, row, column);
+//		System.out.println("2column "+column);
 		cell.setCellValue(reportMeasurClassToSave.getMeasur().getLab().getLab().toLowerCase());
 		List<String> listString = reportMeasurClassToSave.getListNuclideData();
 		if (listString.size() > 0) {
@@ -352,9 +355,9 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		double dozeDouble = reportMeasurClassToSave.getMeasur().getDoze();
 		String type = reportMeasurClassToSave.getMeasur().getTypeMeasur().getKodeType();
 		String doseString = convertDozeToString(dozeDouble, type);
-		
+//		System.out.println("3column "+column+17);
 		try {
-			System.out.println("doseString = "+doseString);
+//			System.out.println("doseString = "+doseString);
 			
 			cell.setCellValue(Double.parseDouble(doseString));
 		} catch (Exception e) {

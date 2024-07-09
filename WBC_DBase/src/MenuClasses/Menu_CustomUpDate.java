@@ -26,9 +26,13 @@ public class Menu_CustomUpDate extends AbstractMenuAction{
 		if (loginDlg == null) {
 			JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("logInMesege"));
 		} else {
+			if (loginDlg.getId_Users() == 1) {
 		    	 new CustomUpdate(Menu_CustomUpDate_Title);
 	
-	}
+			} else {
+				JOptionPane.showMessageDialog(null, ReadFileBGTextVariable.getGlobalTextVariableMap().get("JustKatrankiev"));	
+			}
+		}
 	}
 	
 }

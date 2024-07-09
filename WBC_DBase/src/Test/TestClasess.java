@@ -1,5 +1,8 @@
 package Test;
 
+import java.awt.Choice;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,8 +25,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -41,9 +48,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
+import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
@@ -84,7 +97,10 @@ import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import PersonManagement.PersonelManegementMethods;
-
+import PersonReference_OID.OID_Person_AEC;
+import PersonReference_OID.OID_Person_AECDAO;
+import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
+import Reference_PersonMeasur.TextInAreaTextPanel_Reference_PersonMeasur;
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
@@ -1638,14 +1654,14 @@ public class TestClasess {
 							work = prStNew.getWorkplace();
 						}
 					}
-					System.out.println(str);
-					System.out.println("/////////////////////////////////////////////");
+//					System.out.println(str);
+//					System.out.println("/////////////////////////////////////////////");
 					if (work != null) {
 
 						List<PersonStatusNew> listPersonStatusPersonWork = PersonStatusNewDAO
 								.getValuePersonStatusNewByPerson_Workplace_DateSetInYear(person, work, "2023");
-						System.out.println(
-								"------------------ " + work.getOtdel() + "  " + listPersonStatusPersonWork.size());
+//						System.out.println(
+//								"------------------ " + work.getOtdel() + "  " + listPersonStatusPersonWork.size());
 						for (PersonStatusNew personStat : listPersonStatusPersonWork) {
 							PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
 						}
@@ -2065,7 +2081,7 @@ public class TestClasess {
 		System.out.println(listPersonSatus.size());
 		int k = 0, l = 0;
 		for (PersonStatusNew personStat : listPersonSatus) {
-		PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
+			PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
 			if (l == 100) {
 				System.out.println(k);
 				l = 0;
@@ -2075,90 +2091,209 @@ public class TestClasess {
 		}
 	}
 
-
 //  ******************************************************************************************************************
 
-	
 	static void reformat4Sheet() {
-		String filePathPersonel  = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
+		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		FileInputStream inputStream;
 		try {
 			inputStream = new FileInputStream(filePathPersonel);
-		
-		@SuppressWarnings("resource")
-		Workbook workbook = new HSSFWorkbook(inputStream);
-		
-		Sheet sheetSpPr = workbook.getSheetAt(3);
-		int maxRow = sheetSpPr.getLastRowNum();
-		
-		CellStyle cellStyle0, cellStyle1, cellStyle2;
-		
-		CellStyle cellStyleYelow0 = sheetSpPr.getRow(5).getCell(7).getCellStyle();
-		CellStyle cellStyleYelow1 = sheetSpPr.getRow(5).getCell(8).getCellStyle();
-		CellStyle cellStyleYelow2 = sheetSpPr.getRow(5).getCell(9).getCellStyle();
-		
-		CellStyle cellStyleUser0 = sheetSpPr.getRow(6).getCell(7).getCellStyle();
-		CellStyle cellStyleUser1 = sheetSpPr.getRow(6).getCell(8).getCellStyle();
-		CellStyle cellStyleUser2 = sheetSpPr.getRow(6).getCell(9).getCellStyle();
-		
-		int row = 5;
-		Cell cell, cell1 ;
 
-		while (row < maxRow) {
-			if (sheetSpPr.getRow(row) != null) {
-				
-				cellStyle0 = cellStyleUser0;
-				cellStyle1 = cellStyleUser1;
-				cellStyle2 = cellStyleUser2;
-				
-				cell = sheetSpPr.getRow(row).getCell(5);
-				cell1 = sheetSpPr.getRow(row).getCell(6);
-				if (ReadExcelFileWBC.CellNOEmpty(cell) || ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					
-				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-					cellStyle0 = cellStyleYelow0;
-					cellStyle1 = cellStyleYelow1;
-					cellStyle2 = cellStyleYelow2;
+			@SuppressWarnings("resource")
+			Workbook workbook = new HSSFWorkbook(inputStream);
+
+			Sheet sheetSpPr = workbook.getSheetAt(3);
+			int maxRow = sheetSpPr.getLastRowNum();
+
+			CellStyle cellStyle0, cellStyle1, cellStyle2;
+
+			CellStyle cellStyleYelow0 = sheetSpPr.getRow(5).getCell(7).getCellStyle();
+			CellStyle cellStyleYelow1 = sheetSpPr.getRow(5).getCell(8).getCellStyle();
+			CellStyle cellStyleYelow2 = sheetSpPr.getRow(5).getCell(9).getCellStyle();
+
+			CellStyle cellStyleUser0 = sheetSpPr.getRow(6).getCell(7).getCellStyle();
+			CellStyle cellStyleUser1 = sheetSpPr.getRow(6).getCell(8).getCellStyle();
+			CellStyle cellStyleUser2 = sheetSpPr.getRow(6).getCell(9).getCellStyle();
+
+			int row = 5;
+			Cell cell, cell1;
+
+			while (row < maxRow) {
+				if (sheetSpPr.getRow(row) != null) {
+
+					cellStyle0 = cellStyleUser0;
+					cellStyle1 = cellStyleUser1;
+					cellStyle2 = cellStyleUser2;
+
+					cell = sheetSpPr.getRow(row).getCell(5);
+					cell1 = sheetSpPr.getRow(row).getCell(6);
+					if (ReadExcelFileWBC.CellNOEmpty(cell) || ReadExcelFileWBC.CellNOEmpty(cell1)) {
+
+						if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+							cellStyle0 = cellStyleYelow0;
+							cellStyle1 = cellStyleYelow1;
+							cellStyle2 = cellStyleYelow2;
+						}
+
+						System.out.println(row);
+						for (int m = 7; m <= 254; m += 3) {
+
+							cell = sheetSpPr.getRow(row).getCell(m);
+							if (cell == null)
+								cell = sheetSpPr.getRow(row).createCell(m);
+							if (!ReadExcelFileWBC.CellNOEmpty(cell))
+								cell.setCellStyle(cellStyle0);
+							cell = sheetSpPr.getRow(row).getCell(m + 1);
+							if (cell == null)
+								cell = sheetSpPr.getRow(row).createCell(m + 1);
+							if (!ReadExcelFileWBC.CellNOEmpty(cell))
+								cell.setCellStyle(cellStyle1);
+							cell = sheetSpPr.getRow(row).getCell(m + 2);
+							if (cell == null)
+								cell = sheetSpPr.getRow(row).createCell(m + 2);
+							if (!ReadExcelFileWBC.CellNOEmpty(cell))
+								cell.setCellStyle(cellStyle2);
+
+						}
+					} else {
+						System.out.println("******************************************************************");
+					}
 				}
-				
-				System.out.println(row );
-				for (int m = 7; m <= 254; m += 3) {
-					
-						cell = sheetSpPr.getRow(row).getCell(m);
-						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m);
-						if (!ReadExcelFileWBC.CellNOEmpty(cell)) cell.setCellStyle(cellStyle0);
-						cell = sheetSpPr.getRow(row).getCell(m+1);
-						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+1);
-						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle1);
-						cell = sheetSpPr.getRow(row).getCell(m+2);
-						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+2);
-						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyle2);
-					
-				}
-				}else {
-					System.out.println("******************************************************************");
+				row++;
+			}
+
+			FileOutputStream outputStream = new FileOutputStream(filePathPersonel);
+			workbook.write(outputStream);
+
+			workbook.close();
+
+			outputStream.flush();
+			outputStream.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+//  ******************************************************************************************************************
+
+	public static void submittingForm() throws Exception {
+		final WebClient webClient = new WebClient();
+
+		// Get the first page
+		final HtmlPage page1 = webClient.getPage("https://2-sis-12/ACS/");
+
+		// Get the form that we are dealing with and within that form,
+		// find the submit button and the field that we want to change.
+		final HtmlForm form = page1.getFormByName("MasertForm");
+
+//		  final HtmlSubmitInput button = form.getInputByName("submitbutton");
+		final HtmlTextInput textField = form.getInputByName("ctl00$ContentPlaceHolderBody$tb_PID");
+
+		// Change the value of the text field
+		textField.setValueAttribute("root");
+
+		// Now submit the form by clicking the button and get back the second page.
+//		  final HtmlPage page2 = button.click();
+
+		webClient.closeAllWindows();
+	}
+
+//  ******************************************************************************************************************
+
+	public static void generationHCode() {
+
+		String year = "2024";
+
+		
+		List<String> listOtdelKz = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
+		String code = "";
+		for (String otdel : listOtdelKz) {
+			System.out.println(otdel + " ------------------------------------------------");
+			Workplace workPlace = WorkplaceDAO.getValueWorkplaceByObject("Otdel", otdel).get(0);
+
+			List<Person> listPerson = spisakPersonFromWorkplace(workPlace, year);
+			List<String> CodeWorcplace = new ArrayList<>();
+			for (Person person : listPerson) {
+				code = getPostCode(person.getEgn());
+				CodeWorcplace.add(code);
+
+				System.out.println(person.getEgn() + " - " + code);
+			}
+
+			CodeWorcplace = RemouveDublikateFromList.removeDuplicates(new ArrayList<String>(CodeWorcplace));
+			System.out.println(" **************************************************");
+			for (String string : CodeWorcplace) {
+				System.out.println(string);
+			}
+
+		}
+
+	}
+
+	public static String getPostCode(String egn) {
+		String str = "";
+		OID_Person_AEC person_AEC = OID_Person_AECDAO.getOID_Person_AECByEGN(egn);
+		if (person_AEC != null) {
+
+			int org_str = OID_Person_AECDAO.get_ORG_STR_ID_By_Oid_Person_AEC_ID(person_AEC.getOid_Person_AEC_ID());
+
+			int dep = OID_Person_AECDAO.get_DEP_ID_By_ORG_STR_ID(org_str);
+
+			str = OID_Person_AECDAO.get_DEPT_CODE_By_DEP_ID(dep);
+		}
+		return str;
+	}
+
+	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, String curentYear) {
+
+		List<Integer> listPersonID = new ArrayList<>();
+		List<Person> listPerson = new ArrayList<>();
+		List<Person> listPersonNew = new ArrayList<>();
+
+		List<PersonStatusNew> listPerStat = PersonStatusNewDAO.getValuePersonStatusNewByWorkplace_Year(workPlace,
+				curentYear);
+//		System.out.println(listPerStat.size());
+		Person person = new Person();
+		for (PersonStatusNew personStat : listPerStat) {
+
+			person = personStat.getPerson();
+			PersonStatusNew perStat = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
+
+			if (perStat != null) {
+				if (perStat.getWorkplace().getOtdel().equals(workPlace.getOtdel())) {
+					String zabel = perStat.getZabelejka();
+					String formuliarName = perStat.getFormulyarName();
+					if (!zabel.contains("Обходен") && !zabel.contains("Списък напуснали")
+							&& !formuliarName.contains("Обходен") && !formuliarName.contains("МЗ")
+							&& !formuliarName.contains("NotInList")) {
+//						System.out.println(person.getEgn() + "  " + zabel + " -  " + formuliarName);
+						listPersonNew.add(person);
+					}
 				}
 			}
-			row++;
+
 		}
-		
-		FileOutputStream outputStream = new FileOutputStream(filePathPersonel);
-		workbook.write(outputStream);
 
-		workbook.close();
+		for (Person personn : listPersonNew) {
+			listPersonID.add(personn.getId_Person());
 
-		outputStream.flush();
-		outputStream.close();
-	
-	
-	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		}
+
+//		System.out.println(listPersonNew.size());
+
+		listPersonID = RemouveDublikateFromList.removeDuplicates(new ArrayList<Integer>(listPersonID));
+//		System.out.println(listPersonID.size());
+		for (Integer integer : listPersonID) {
+			listPerson.add(PersonDAO.getValuePersonByID(integer));
+		}
+
+		return listPerson;
 	}
-	}
-	
+
 }

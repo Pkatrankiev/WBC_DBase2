@@ -57,6 +57,31 @@ public class ActionIcone {
 
 			}
 	
+	public ActionIcone(String str, int k) {
+//		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("destinationIcons");
+		frame = new JWindow();
+//		frame.setMinimumSize(new Dimension(100, 100));
+		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+				frame.setVisible(true);
+				frame.setAlwaysOnTop(true);
+				frame.setBackground(new Color(0, 0, 0, 0));
+				JPanel pan = new JPanel();
+				pan.setOpaque(false);
+				frame.setContentPane(pan);
+//				ImageIcon pic = new ImageIcon(getClass().getClassLoader().getResource(iconn));
+				lab = new JLabel();
+				lab.setFont(new Font("Verdana", Font.BOLD, 13));
+				lab.setText(str);
+//				lab.setIcon(pic);
+				
+				lab.setHorizontalTextPosition(JLabel.CENTER);
+			    lab.setVerticalTextPosition(JLabel.CENTER);
+				frame.getContentPane().add(lab);
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+
+			}
+	
 	public static void roundWithText(ActionIcone round, String textIcon, String newText, int count, int ofCounts) {
 		String textIcon2 =textIcon + newText + " " + count + "/" + ofCounts + "</center></html>";
 		round.setTextToImage(textIcon2);

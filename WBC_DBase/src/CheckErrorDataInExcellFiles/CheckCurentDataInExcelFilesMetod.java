@@ -68,7 +68,7 @@ public class CheckCurentDataInExcelFilesMetod {
 		TreeSet<Object> set = new TreeSet<>();
 		String filePath[] = { filePathPersonel, filePathExternal };
 		Cell cell, cell1;
-		String EGN;
+		String EGN, FirstName;
 		list.add("Ред#Колона#Текст#Грешка");
 		for (int ii = 0; ii < filePath.length; ii++) {
 			if(list.size() == 2) {
@@ -99,8 +99,13 @@ public class CheckCurentDataInExcelFilesMetod {
 						String str;
 						try {
 							Long.parseLong(EGN);
-							if(row < rowSOYAG && !set.add(EGN)) {
-								listEGN.add(row + "#" + 5 + "#" + EGN + "#" + "дублиран ЕГН");	
+							FirstName = ReadExcelFileWBC.getStringfromCell(cell1);
+							if(row < rowSOYAG && !set.add(EGN) ) {
+								str = "дублиран ЕГН";
+								if(FirstName.contains("АЕЦ")) {
+									str += " - преместен в АЕЦ";
+								}
+								listEGN.add(row + "#" + 5 + "#" + EGN + "#" + str);	
 							}
 						} catch (Exception e) {
 							str = row + "#" + 5 + "#" + EGN+ "#" + "некоректно ЕГН";

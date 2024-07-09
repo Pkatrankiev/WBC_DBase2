@@ -28,7 +28,6 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import Aplication.RemouveDublikateFromList;
 import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 import BasiClassDAO.KodeStatusDAO;
@@ -59,12 +58,15 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
+
 import javax.swing.JTable;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
@@ -122,6 +124,9 @@ public class PersonReferenceFrame extends JFrame {
 		setTitle(title);
 		setMinimumSize(new Dimension(740, 900));
 
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 		notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
 		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
@@ -549,7 +554,10 @@ public class PersonReferenceFrame extends JFrame {
 		List<Person> listSelectionPersonKZ2 = new ArrayList<>();
 		List<Person> listSelectionPersonKZHog = new ArrayList<>();
 		List<Person> listSelectionPersonOtdel = new ArrayList<>();
+		List<Person> listSelectionPersonLast = new ArrayList<>();
 
+		TreeSet<Object> set = new TreeSet<>();
+		
 		String egn = "";
 		String firstName = "";
 		String secontName = "";
@@ -575,6 +583,8 @@ public class PersonReferenceFrame extends JFrame {
 			firstName = PersonelManegementFrame.getTextField_FName().getText();
 			secontName = PersonelManegementFrame.getTextField_SName().getText();
 			lastName = PersonelManegementFrame.getTextField_LName().getText();
+			otdel = PersonelManegementFrame.getComboBox_Otdel().getSelectedItem();
+			year = curentYear;
 		}
 		
 		KodeStatus kodeStatusNull = null;
@@ -729,8 +739,8 @@ public class PersonReferenceFrame extends JFrame {
 						
 						for (PersonStatusNew prStat : listAllPerStat) {
 							if (prStat.getYear().equals(year)) {
-								PersonStatusNew perStatYear = PersonStatusNewDAO.getLastPersonStatusNewByPerson_Year( prStat.getPerson(),  year);
-								if(perStatYear.getWorkplace().getOtdel().equals(otdel)) {
+								PersonStatusNew perStatYear = PersonStatusNewDAO.getLastPersonStatusNewByPerson_YearSortByStartDate( prStat.getPerson(),  year);
+								if(perStatYear != null && perStatYear.getWorkplace().getOtdel().equals(otdel)) {
 								System.out.println("prStat "+	prStat.getPerson().getEgn()+" "+prStat.getStartDate()+" "+prStat.getYear()+" "+prStat.getFormulyarName());
 								listSelectionPersonOtdel.add(prStat.getPerson());
 							}
@@ -751,11 +761,15 @@ public class PersonReferenceFrame extends JFrame {
 			}
 			
 	}
-		
-		
-		
 		System.out.println("listSelectionPersonOtdel = " + listSelectionPersonOtdel.size());
-		return RemouveDublikateFromList.removeDuplicates(new ArrayList<Person>(listSelectionPersonOtdel));
+		for (Person person : listSelectionPersonOtdel) {
+		if(set.add(person.getEgn())) {
+			listSelectionPersonLast.add(person);
+			}
+		}
+		
+		System.out.println("listSelectionPersonLast = " + listSelectionPersonLast.size());
+		return listSelectionPersonLast;
 	}
 
 	private static List<Person> generateListPersonByKodeStatus(List<Person> listSelectionPersonKZ1, int zone,

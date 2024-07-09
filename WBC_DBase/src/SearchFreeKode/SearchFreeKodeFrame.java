@@ -2,6 +2,7 @@ package SearchFreeKode;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -59,6 +60,10 @@ public class SearchFreeKodeFrame extends JFrame {
 	public SearchFreeKodeFrame(ActionIcone round, String otdel, String zona) {
 		String kodeReference = ReadFileBGTextVariable.getGlobalTextVariableMap().get("kodeReference");
 		setTitle(kodeReference);
+		
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 //		List<String> masiveZvenaExcell = SearchFreeKodeMethods.getMasiveZvenaFromExcellFiles();

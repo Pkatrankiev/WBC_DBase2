@@ -467,6 +467,55 @@ public class MeasuringDAO {
 		return null;
 	}
 
+	public static List<Measuring> getListValueMeasuringByPersonDozeDate(Person person, Date date, Double doze, Laboratory lab) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Person_ID = ? and Date = ? and Doze = ? and Lab_ID = ?";
+
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, person.getId_Person());
+			preparedStatement.setObject(2, date);
+			preparedStatement.setObject(3, doze);
+			preparedStatement.setObject(4, lab.getLab_ID());
+
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}
+	
 	public static Measuring getValueMeasuringByPersonDozeDate(Person person, Date date, Double doze, Laboratory lab) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();

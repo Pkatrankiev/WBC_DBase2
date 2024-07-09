@@ -2,6 +2,7 @@ package AutoInsertMeasuting;
 
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -104,6 +105,9 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			String[] listNameTypeMeasurIN, Point pointFrame) {
 		setTitle(autoInsertMeasuting);
 
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setResizable(false);
 		int numberLine = 0;
 		int y = 190, x = 1200;

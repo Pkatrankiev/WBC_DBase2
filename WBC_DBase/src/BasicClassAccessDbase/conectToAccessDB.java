@@ -48,9 +48,11 @@ public class conectToAccessDB {
 		
 		String databaseURL = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseOID");
 		@SuppressWarnings("unused")
-		String databaseEncript = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseEncript");
+		String databaseEncriptOID = ReadFileBGTextVariable.getGlobalTextVariableMap().get("databaseEncriptOID");
 	Connection connection = null;
+	
 	 try  {
+	
 		connection = DriverManager.getConnection(databaseURL);
 		
 	 } catch (SQLException ex) {
@@ -59,22 +61,36 @@ public class conectToAccessDB {
 	return connection;
 	}
 	
+		
+	
+	
+	
 	
 	public static List<String> getKodeStatusByPersonZone(String egn) {
 		List<String> listKodeStatus = new ArrayList<>();
-		Connection connection = conectToAccessDB.conectionBDtoAccessOID();
-		ResultSet result;
+		System.out.println("4444444444444444");
+		Connection connection = conectionBDtoAccessOID();
+//		ResultSet result;
 		String sql;
+		System.out.println("555555555555555555555555555");
 		try {
 			
 		
-			sql = "SELECT * FROM tblMain where ЕГН = ? ";	
+			sql = "SELECT * FROM tblMain WHERE ЕГН = ?";	
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			
+//			
 			preparedStatement.setString(1, egn);
-		
-			result = preparedStatement.executeQuery();
+//		
+			
+			ResultSet result = preparedStatement.executeQuery();
+			
+//			result = preparedStatement.executeQuery();
 	
+//			Statement statement = connection.createStatement();
+//			ResultSet result = statement.executeQuery(sql);
+			
+			
+			
 			while (result.next()) {
 			
 				listKodeStatus.add(result.getString("name"));

@@ -16,10 +16,14 @@ import javax.swing.SwingConstants;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
+import Aplication.ReadFileBGTextVariable;
 
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.EtchedBorder;
@@ -28,6 +32,7 @@ public class CustomUpdate extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JCheckBox chckbxCheckAll;
 	private String[] key = { 
 			"Person", 
 			"Spisak_Prilogenia", 
@@ -45,8 +50,12 @@ public class CustomUpdate extends JFrame {
 		setMinimumSize(new Dimension(350, 350));
 		
 		setTitle(title);
+		
+		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		
 		setPreferredSize(new Dimension(300, 350));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		
@@ -76,6 +85,17 @@ public class CustomUpdate extends JFrame {
 		panel.add(oblastButonPanel);
 		oblastButonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
+		String autoInsertMeasuting_cancel = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("autoInsertMeasuting_cancel");
+		JButton btnCancel = new JButton(autoInsertMeasuting_cancel);
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose(); // Destroy the JFrame object
+			}
+		});
+		oblastButonPanel.add(btnCancel);
+		
+		
 		JButton printButton = new JButton("UpDate");
 		printButton.setHorizontalAlignment(SwingConstants.LEFT);
 //		printButton.setPreferredSize(new Dimension(70, 15));
@@ -123,6 +143,7 @@ public class CustomUpdate extends JFrame {
 		});
 		oblastButonPanel.add(printButton);
 		
+		setchckbxCheckAll( chckbxCheckAll,  checkBox); 
 		
 		setVisible(true);
 	}
@@ -139,8 +160,38 @@ public class CustomUpdate extends JFrame {
 		lblNewLabel_5.setMaximumSize(new Dimension(80, 14));
 		lblNewLabel_5.setMinimumSize(new Dimension(80, 14));
 		panel_1_1.add(lblNewLabel_5);
+		
+		chckbxCheckAll = new JCheckBox("За всички");
+		chckbxCheckAll.setSelected(true);
+		panel_1_1.add(chckbxCheckAll);
+				
 	}
 
+	private void setchckbxCheckAll(JCheckBox chckbxCheckAll, JCheckBox[] checkBox) {
+	chckbxCheckAll.addMouseListener(new MouseAdapter() {
+
+		boolean selectTrue;
+
+		public void mousePressed(MouseEvent me) {
+
+			if (chckbxCheckAll.isSelected()) {
+				selectTrue = false;
+			} else {
+				selectTrue = true;
+			}
+			for (int i = 0; i < key.length; i++) {
+				checkBox[i].setSelected(selectTrue);
+				
+			}
+			
+			
+			repaint();
+
+		}
+
+	});
+	}
+	
 	private void setOblastPanel(JPanel panel, String oblast, JCheckBox checkBox) {
 		JPanel oblastPanel = new JPanel();
 		oblastPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));

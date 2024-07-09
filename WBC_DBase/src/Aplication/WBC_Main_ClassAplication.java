@@ -9,7 +9,8 @@ public static void main(String[] args) {
 	
 	if(ReadFileBGTextVariable.CreadMasiveFromReadFile()) {
 //		UpdateBDataFromExcellFiles.updataFromGodExcelFile();
-		new WBC_MainWindowFrame();
+		 String version = "140324";
+		new WBC_MainWindowFrame(version);
 		
 		boolean afterExcelUpdate = false;
 		UpdateBDataFromExcellFiles.updateLastActualsDBaseFromExcelFile(afterExcelUpdate);

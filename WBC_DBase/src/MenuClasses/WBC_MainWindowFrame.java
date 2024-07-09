@@ -7,6 +7,10 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +22,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
+import Aplication.MyDarkerLaf;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.UsersWBC;
@@ -53,18 +58,26 @@ public class WBC_MainWindowFrame extends JFrame {
 	private static String mainWindow_Title = ReadFileBGTextVariable.getGlobalTextVariableMap()
 			.get("mainWindow_Title");
 	private static String Version = ReadFileBGTextVariable.getGlobalTextVariableMap().get("Version");
+	private static String InputVersion; 
 	
-	public WBC_MainWindowFrame() {
+	public WBC_MainWindowFrame(String Mainversion) {
 	
+		
+		
 		String MainWindowFrame_BtnActual = ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindowFrame_BtnActual");
 		
+		InputVersion = compareByDateJarFileAndInputVersion(Mainversion);
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
-		setTitle(mainWindow_Title+" "+Version); 
-		setMinimumSize(new Dimension(600, 300));
-		GetVisibleLAF(this);	
+		setTitle(mainWindow_Title+" "+getVersion()); 
+		setMinimumSize(new Dimension(700, 300));
+		 if(ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD").equals("1")) {
+				FlatLightLafSetup(this);
+			}else {
+		GetVisibleLAF(this);
+			}
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setSize(600, 300);
+		setSize(700, 300);
 		setLocationRelativeTo(null);
 		
 		setJMenuBar(createMenuBar(this)); 
@@ -80,7 +93,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
 		lblNewLabel = new JLabel();
-		lblNewLabel.setPreferredSize(new Dimension(450, 20));
+		lblNewLabel.setPreferredSize(new Dimension(550, 20));
 
 		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -109,6 +122,8 @@ public class WBC_MainWindowFrame extends JFrame {
 				}
 			});
 		  
+		 
+		  
 			setVisible(true);
 			
 	}
@@ -132,6 +147,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		menu.add(createMenu_Reference());
 		menu.add(createMenu_PersonManagement());
 		menu.add(createMenu_CheckErrorData());
+		menu.add(createMenu_EditBasicTable());
 		
 		return menu;
 	}
@@ -146,6 +162,8 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.setMnemonic(KeyEvent.VK_P);
 		
 		personReferenceMenu.add(new Menu_Reference_Person());
+		personReferenceMenu.add(new Menu_OID_Reference_Person());
+		personReferenceMenu.add(new Menu_PersonReference_Dokument());
 		personReferenceMenu.add(new Menu_Reference_Kode());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_Reference_PersonMeasur());
@@ -154,6 +172,22 @@ public class WBC_MainWindowFrame extends JFrame {
 		return personReferenceMenu;
 	}
 
+	
+	private JMenu createMenu_EditBasicTable() {
+		 String editBasicTable = ReadFileBGTextVariable.getGlobalTextVariableMap().get("editBasicTable");
+		 String editBasicTable_TipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("editBasicTable_TipText");
+		
+		JMenu personReferenceMenu = new JMenu(editBasicTable);
+		personReferenceMenu.setToolTipText(editBasicTable_TipText);
+		personReferenceMenu.setMnemonic(KeyEvent.VK_B);
+		
+		personReferenceMenu.add(new Menu_PersonReference_PersonStatus());
+		
+		
+		return personReferenceMenu;
+	}
+	
+	
 
 	private JButton createLoginMenu(Frame win) {
 		JButton loginMenu = new JButton(mainWindow_LogInStr_Btn);
@@ -170,7 +204,7 @@ public class WBC_MainWindowFrame extends JFrame {
 					WBCUsersLogin.logOut();
 
 					loginMenu.setText(mainWindow_LogInStr_Btn);
-					win.setTitle(mainWindow_Title+" "+Version);
+					win.setTitle(mainWindow_Title+" "+getVersion());
 
 				} else {
 					final Thread thread = new Thread(new Runnable() {
@@ -201,7 +235,7 @@ public class WBC_MainWindowFrame extends JFrame {
 			@SuppressWarnings("static-access")
 			UsersWBC user = loginDlg.getCurentUser();
 
-			win.setTitle(mainWindow_Title+" "+Version + " "
+			win.setTitle(mainWindow_Title+" "+getVersion() + " "
 					+ ReadFileBGTextVariable.getGlobalTextVariableMap().get("MainWindow_Title_work") + " "
 					+ user.getName() + " " + user.getLastName());
 			loginMenu.setText(mainWindow_LogOutStr_Btn);
@@ -247,17 +281,69 @@ public class WBC_MainWindowFrame extends JFrame {
 		return checkErrorDataMenu;
 	}
 	
-	private void GetVisibleLAF(final JFrame win) {
+	
+	public static  void GetVisibleLAF(final JFrame win) {
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			SwingUtilities.updateComponentTreeUI(win);
-			this.pack();
+			win.pack();
 		} catch (Exception ex) {
 			ResourceLoader.appendToFile(ex);
 			Logger.getLogger(JFileChooser.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 	
-	
+	public static void FlatLightLafSetup(JFrame frame) {
+		
+		
+		
+		MyDarkerLaf.setup(); //setting the look and feel
+//	UIManager.put( "TitlePane.background" , new Color(23,180,252));
+//	JFrame.setDefaultLookAndFeelDecorated(true);
+//	frame.getRootPane().putClientProperty("JRootPane.titleBarBackground", new Color(23,180,252));
+//	       frame.getRootPane().putClientProperty("JRootPane.titleBarForeground", Color.white);
+	}
 
+	private static String getVersion() {
+		Date datMainVersion = null;
+		Date datVersion = null;
+			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");
+			try {
+				datMainVersion = sdf.parse(InputVersion);
+				datVersion = sdf.parse(Version.replace("v.", ""));
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return Version;
+			}
+		
+
+		return datMainVersion.before(datVersion) ? Version : "v."+InputVersion;
+	}
+
+
+	public static String  compareByDateJarFileAndInputVersion(String Mainversion) {
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");
+		Date jarVersion = null, datMainVersion = null;
+		
+		try {
+			datMainVersion = sdf.parse(Mainversion);
+		
+		File fis = new File("WBC_DBase.jar");
+		long lastModifiedFile = fis.lastModified();
+		String stringday = sdf.format(lastModifiedFile);
+		jarVersion = sdf.parse(stringday);
+		if(jarVersion.after(datMainVersion)) {
+			return stringday;
+		}
+
+		} catch (ParseException e) {
+		e.printStackTrace();
+			return Mainversion;
+		}
+		return Mainversion;
+		
+	}
+	
+	
+	
 }
