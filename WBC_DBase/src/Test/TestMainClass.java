@@ -24,6 +24,8 @@ import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import CheckErrorDataInExcellFiles.CheckErrorDataInExcellFiles_Frame;
 import CheckErrorDataInExcellFiles.CheckPersonStatus;
+import DozeArt.DozeArtFrame;
+import DozeArt.DozeArt_Methods;
 import MenuClasses.WBC_MainWindowFrame;
 import PersonReference.PersonReferenceFrame;
 import PersonReference_OID.OID_Metods;
@@ -52,9 +54,12 @@ public class TestMainClass {
 //			String pathNew = "d:\\!!000\\PERSONNEL-09-10.xls";
 //			TestClasess.checkTwoExcelFiles(pathOld, pathNew);
 	
-			;
-			TestClasess.generationHCode();
 			
+//			 DozeArt_Methods.viewData("Zn-65");
+			
+			new DozeArtFrame();
+			
+//			DozeArt_Methods.givenEmpList_SortEmpList_thenCheckSortedList();
 //			TestClasess.deleteKodeStatusByMisingPerson();
 //			PersonStatusNewDAO.deleteValuePersonStatusNew(PersonStatusNewDAO.getValuePersonStatusNewByID(0));
 //			TestClasess.deletePersonStatusNewInYere("2024");
