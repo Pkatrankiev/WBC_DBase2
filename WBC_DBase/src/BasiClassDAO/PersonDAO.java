@@ -246,7 +246,7 @@ public class PersonDAO {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
 		}
-		return listPerson.get(0);
+		return listPerson.size()>0 ? listPerson.get(0): null;
 	}
 	
 	public static Person getValuePersonByEGN(String EGN) {
@@ -316,4 +316,135 @@ public class PersonDAO {
 		return listPerson;
 	}
 
+	public static List<Person> getValuePersonBySecondAndLastName(String SName, String LName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person where SecondName = ? and LastName = ?";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, SName);
+			preparedStatement.setObject(2, LName);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPerson;
+	}
+
+	public static List<Person> getValuePersonByFirstAndLastName(String FName, String LName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person where FirstName = ? and LastName = ?";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, FName);
+			preparedStatement.setObject(2, LName);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPerson;
+	}
+
+	public static List<Person> getValuePersonByFirstAndSecondName(String FName, String SName) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person where FirstName = ? and SecondName = ?";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, FName);
+			preparedStatement.setObject(2, SName);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		return listPerson;
+	}
+
+	
+	public static List<Person>  getListValuePersonByEGN(String EGN) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person where EGN LIKE '*" + EGN + "*'";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//			preparedStatement.setObject(1, EGN);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		
+		
+		return  listPerson; 
+		
+	}
+	
 }

@@ -6,8 +6,8 @@ import javax.swing.JOptionPane;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.AutoInsertMeasutingMethods;
 import BasicClassAccessDbase.UsersWBC;
+import InsertMeasuting.AutoInsertMeasutingMethods;
 import PersonManagement.PersonelManegementMethods;
 import WBCUsersLogin.WBCUsersLogin;
 
@@ -35,7 +35,7 @@ public class Menu_AutoInsertMeasuting extends AbstractMenuAction{
 		     @Override
 		     public void run() {
 		    	 if(PersonelManegementMethods.checkIsClosedMonthANDPersonAndExternalFile(round)) {
-		    	AutoInsertMeasutingMethods.AutoInsertMeasutingStartFrame();
+		    	AutoInsertMeasutingMethods.AutoInsertMeasutingStartFrame(loginDlg);
 		 		}
 		     }
 		    });

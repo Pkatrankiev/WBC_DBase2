@@ -28,8 +28,8 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
@@ -259,7 +259,7 @@ public class ReferenceMeasuringLabFrame extends JFrame {
 		cancelButton.setPreferredSize(new Dimension(150, 23));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PersonelManegementMethods.setChoisePerson("");
+//				PersonelManegementMethods.setChoisePerson("");
 				dispose(); // Destroy the JFrame object
 			}
 		});

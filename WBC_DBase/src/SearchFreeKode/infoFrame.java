@@ -79,6 +79,8 @@ public class infoFrame extends JDialog {
 			
 			}
 		});
+		
+		round.StopWindow();
 		setVisible(true);
 	}
 

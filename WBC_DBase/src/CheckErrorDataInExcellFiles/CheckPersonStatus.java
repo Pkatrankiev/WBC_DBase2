@@ -54,6 +54,7 @@ public class CheckPersonStatus {
 
 	public static String  compareLists(List<Person> listPerson, List<Person> listPersonFile) {
 		String str = "";
+		String strPerStat = "";
 		boolean fl;
 		Collection<String> listOne = new ArrayList<String>();
 		for (Person person : listPerson) {
@@ -85,7 +86,12 @@ public class CheckPersonStatus {
 			}
 			if(fl) {
 			Person person = PersonDAO.getValuePersonByEGN(egn);
-			str += egn + " " +  person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName() + "\n";
+			PersonStatusNew perStat = PersonStatusNewDAO.getLastPersonStatusNewByPerson_YearSortByStartDate(person, curentYear);
+			strPerStat = "";
+			if(perStat != null) {
+				strPerStat = perStat.getFormulyarName() + " " + perStat.getZabelejka();
+			}
+			str += egn + " " +  person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName() + " " + strPerStat + "\n";
 			}
 		}
 		return str;
@@ -156,7 +162,7 @@ public class CheckPersonStatus {
 		List<Workplace> listWorkpl = new ArrayList<>();
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		double stepForProgressBar = 30;
-		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, progressBar, stepForProgressBar);
+		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, null, progressBar, stepForProgressBar);
 		System.out.println("----------------------------------------------------------");
 		for (PersonStatusNew personStatusNew : list) {
 
@@ -169,7 +175,7 @@ public class CheckPersonStatus {
 
 	}
 
-	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace, int count, int ofCounts ) {
+	public static List<Person> spisakPersonFromWorkplace(Workplace workPlace) {
 
 		List<Integer> listPersonID = new ArrayList<>();
 		List<Person> listPerson = new ArrayList<>();
@@ -180,8 +186,8 @@ public class CheckPersonStatus {
 		Person person = new Person();
 
 		for (PersonStatusNew personStat : listPerStat) {
-
-			person = personStat.getPerson();
+			System.out.println(personStat.getPersonStatusNew_ID());
+	person = personStat.getPerson();
 			PersonStatusNew perStat = PersonStatusNewDAO.getLastPersonStatusNewByPerson_YearSortByStartDate(person, curentYear);
 
 			if (perStat != null) {
@@ -245,7 +251,7 @@ public class CheckPersonStatus {
 			System.out.println();
 			System.out.println("*****************************************************");
 			System.out.println("otdel " + workplace.getOtdel());
-			List<Person> listPerson = spisakPersonFromWorkplace(workplace, count, ofCounts);
+			List<Person> listPerson = spisakPersonFromWorkplace(workplace);
 			 
 			aProgressBar.setValue((int) ProgressBarSize);
 			 System.out.println(ProgressBarSize+"  -------------------------------------------------------");
@@ -261,8 +267,10 @@ public class CheckPersonStatus {
 			if(!diferentPerson.isEmpty()) {
 				str += workplace.getOtdel() + "\n";
 				str += diferentPerson;
+				str += "\n";
 			}
 			count++;
+			
 		}
 		}
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);

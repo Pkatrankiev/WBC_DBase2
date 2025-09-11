@@ -29,24 +29,8 @@ public class CheckDataBethwinExcelFilesAndMonth {
 			public void actionPerformed(ActionEvent e) {
 				textArea.setText("");
 				
-				
 				new MySwingWorker(progressBar, textArea, panel_AllSaerch, "SearchError").execute();
-				
-				
-				
-//				GeneralMethods.setWaitCursor(panel_AllSaerch);
-//
-//				String textForArea = CheckForCorrectionMeasuringInSheet0AndInMonth();
-//
-//				if (textForArea.isEmpty()) {
-//					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-//
-//				} else {
-//					textArea.setText(textForArea);
-//
-//				}
-//
-//				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+
 			}
 
 		});
@@ -57,11 +41,17 @@ public class CheckDataBethwinExcelFilesAndMonth {
 		
 		GeneralMethods.setWaitCursor(panel_AllSaerch);
 		
-		double ProgressBarSize = 1;
+		double ProgressBarSize = 0;
 		aProgressBar.setValue((int) ProgressBarSize);
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		String infotext = "";
 
+		List<String> listMoveEGN = CheckErrorDataInExcellFiles_Frame.getListMoveEGN();
+		if(listMoveEGN == null) {
+			CheckCurentDataInExcelFilesMetod.CheckCurentDataInExcelFiles(aProgressBar, 30);
+			listMoveEGN = CheckErrorDataInExcellFiles_Frame.getListMoveEGN();
+		}
+		
 		String[][][] masiveStrMonth = null;
 		String[][][] masiveStrMonthLab = null;
 		String[][][] masiveMeasur = null;
@@ -101,20 +91,31 @@ public class CheckDataBethwinExcelFilesAndMonth {
 		String fileName[] = { "Personel", "External" };
 
 		
+		ProgressBarSize = 30;
 		
 		for (int i = 0; i < 2; i++) {
 
-			double stepForProgressBar = 50;
+			
 			
 			masiveStrMonth = MasiveFromMonth(sdfrmt, workbookMont[i]);
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			masiveStrMonthLab = MasiveFromMonthCheckLab(sdfrmt, workbookMont[i]);
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			masiveMeasur = masiveMeasur(sdfrmt, workbook[i]);
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			masiveMeasur2 = masiveMeasur(sdfrmt, workbook[i]);
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			masiveDoze = masiveDoze(workbook[i]);
-
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			masiveMeasur = generateCheckMasiveMeasur(masiveMeasur, masiveDoze);
-
-			stepForProgressBar = stepForProgressBar / 12;
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
+			
 			for (int mont = 0; mont < 12; mont++) {
 
 				aProgressBar.setValue((int) ProgressBarSize);
@@ -150,8 +151,10 @@ public class CheckDataBethwinExcelFilesAndMonth {
 				}
 
 			}
+			ProgressBarSize += 5;
+			aProgressBar.setValue((int) ProgressBarSize);
 			infotext += GenerateInfoString(fileName[i], masiveStrMonth, masiveStrMonthLab, masiveMeasur, masiveMeasur2,
-					masiveDoze);
+					masiveDoze,listMoveEGN);
 			System.out.println("*************************************" + infotext);
 
 		}
@@ -216,7 +219,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 
 	private static String GenerateInfoString(String fileName, String[][][] masiveStrMonth,
 			String[][][] masiveStrMonthLab, String[][][] masuveMeasur, String[][][] masuveMeasur2,
-			String[][][] masiveDoze) {
+			String[][][] masiveDoze, List<String> listMoveEGN) {
 		String ImaGoV = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ImaGoV");
 		String NoGoNiamaV = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("checkCorrectinDataInExcell_NoGoNiamaV");
@@ -244,7 +247,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 						fl = false;
 					}
 					infoTextM += (j + 1) + " - " + IzmerVSICH + " " + masiveStrMonthLab[m][j][3] + " " + MarkKato + " "
-							+ masiveStrMonthLab[m][j][2] + "\n";
+							+ masiveStrMonthLab[m][j][2] +" "+ searchEGNInMoveList(masiveStrMonthLab[m][j][0], listMoveEGN) + "\n";
 				}
 			}
 
@@ -257,7 +260,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 						fl = false;
 					}
 					infoTextM += (j + 1) + " - " + masiveStrMonth[m][j][0] + " " + masiveStrMonth[m][j][1] + " "
-							+ masiveStrMonth[m][j][2] + " " + masiveStrMonth[m][j][3] + "\n";
+							+ masiveStrMonth[m][j][2] + " " + masiveStrMonth[m][j][3] +" "+ searchEGNInMoveList(masiveStrMonth[m][j][0], listMoveEGN)+ "\n";
 				}
 			}
 
@@ -271,7 +274,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 						fl = false;
 					}
 					infoTextM += (j + 1) + " - " + masuveMeasur2[m][j][0] + " " + masuveMeasur2[m][j][1] + " "
-							+ masuveMeasur2[m][j][2] + " " + masuveMeasur2[m][j][3] + "\n";
+							+ masuveMeasur2[m][j][2] + " " + masuveMeasur2[m][j][3] +" "+ searchEGNInMoveList(masuveMeasur2[m][j][0], listMoveEGN) + "\n";
 				}
 			}
 
@@ -283,8 +286,10 @@ public class CheckDataBethwinExcelFilesAndMonth {
 								+ "\n";
 						fl = false;
 					}
+					
+					
 					infoTextM += (j + 1) + " - " + masuveMeasur[m][j][0] + " " + masuveMeasur[m][j][1] + " "
-							+ masuveMeasur[m][j][2] + " " + masuveMeasur[m][j][3] + "\n";
+							+ masuveMeasur[m][j][2] + " " + masuveMeasur[m][j][3] +" "+ searchEGNInMoveList(masuveMeasur[m][j][0], listMoveEGN)+"\n";
 				}
 			}
 
@@ -297,7 +302,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 								+ "\n";
 						fl = false;
 					}
-					infoTextM += (j + 1) + " - " + masiveDoze[m][j][0] + " " + masiveDoze[m][j][1] + "\n";
+					infoTextM += (j + 1) + " - " + masiveDoze[m][j][0] + " " + masiveDoze[m][j][1] +" "+ searchEGNInMoveList(masiveDoze[m][j][0], listMoveEGN) + "\n";
 				}
 			}
 			if (!infoTextM.isEmpty()) {
@@ -306,6 +311,17 @@ public class CheckDataBethwinExcelFilesAndMonth {
 
 		}
 		return infoText;
+	}
+
+	private static String searchEGNInMoveList(String egn, List<String> listMoveEGN) {
+		String coment = "";
+		for (String egn2 : listMoveEGN) {
+				System.out.println(egn+" <-> "+egn2);
+			if(egn.equals(egn2)) {
+				coment = " - преместен в АЕЦ";
+			}
+		}
+		return coment;
 	}
 
 	private static String[][][] masiveDoze(Workbook workbook) {
@@ -393,7 +409,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 
 						maxindexMonth[mont]++;
 
-						if (k > 253) {
+						if (k > 252) {
 							k = 6;
 							sheet1 = workbook.getSheetAt(2);
 						}
@@ -404,6 +420,7 @@ public class CheckDataBethwinExcelFilesAndMonth {
 						cell_Lab = sheet1.getRow(row0).getCell(k);
 
 					}
+					sheet1 = workbook.getSheetAt(1);
 				}
 
 			}

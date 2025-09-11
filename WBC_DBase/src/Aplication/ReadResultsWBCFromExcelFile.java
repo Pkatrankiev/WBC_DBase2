@@ -104,7 +104,7 @@ public class ReadResultsWBCFromExcelFile {
 						}
 					}
 				
-					if(k>253) {
+					if(k>252) {
 						k=6;
 						sheet = workbook.getSheetAt(2);
 					}
@@ -117,6 +117,7 @@ public class ReadResultsWBCFromExcelFile {
 					
 					
 					}
+					sheet = workbook.getSheetAt(1);
 				}
 				}
 			}
@@ -219,7 +220,7 @@ public class ReadResultsWBCFromExcelFile {
 							}
 						}
 					
-						if(k>253) {
+						if(k>252) {
 							k=6;
 							sheet = workbook.getSheetAt(2);
 						}
@@ -232,6 +233,7 @@ public class ReadResultsWBCFromExcelFile {
 						
 						
 						}
+						sheet = workbook.getSheetAt(1);
 					}
 				}
 			}

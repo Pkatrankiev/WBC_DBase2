@@ -284,6 +284,7 @@ System.out.println(masiveUsedKode.size()+"  -  "+k+ " + " +newMasive.length);
 
 				int col = table.columnAtPoint(e.getPoint());
 				if (col >= 0) {
+					if (e.getClickCount() == 2) {
 					String reqCodeStr = model.getValueAt(getSelectedModelRow(table), col).toString();
 
 					String selectYear = "";
@@ -305,7 +306,7 @@ System.out.println(masiveUsedKode.size()+"  -  "+k+ " + " +newMasive.length);
 						reqCodeStr = model.getValueAt(getSelectedModelRow(table), 3).toString();
 						generateInfoPanel(zveno, reqCodeStr, selectYear);
 					}
-
+					}
 				}
 			}
 

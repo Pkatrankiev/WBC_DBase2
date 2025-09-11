@@ -14,7 +14,7 @@ import PersonReference.PersonReferenceFrame;
 
 public class TableManagement {
 
-	protected static Object[][] addListStringSelectionPersonToComboBox(List<PersonManegement> listSelectionPerson) {
+	public static Object[][] addListStringSelectionPersonToComboBox(List<PersonManegement> listSelectionPerson) {
 
 		Object[][] dataTable = new Object[listSelectionPerson.size()][10];
 

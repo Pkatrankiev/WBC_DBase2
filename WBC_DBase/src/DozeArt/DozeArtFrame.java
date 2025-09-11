@@ -4,9 +4,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
-import DatePicker.DatePicker;
-import PersonReference_PersonStatus.PersonReference_PersonStatus_Frame;
+import PersonManagement.SelectSpisPrilFrame;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
@@ -18,18 +19,19 @@ import java.awt.FlowLayout;
 import java.awt.Choice;
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
-import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
-import java.awt.Label;
-import java.awt.Point;
 
 import javax.swing.JRadioButton;
 import java.awt.Component;
@@ -44,12 +46,13 @@ import javax.swing.border.MatteBorder;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
-import java.awt.Panel;
-import java.awt.Rectangle;
+
 import java.awt.Font;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 
-public class DozeArtFrame extends JFrame {
+@SuppressWarnings("serial")
+public class DozeArtFrame extends JDialog {
 
 	private static JPanel contentPane;
 	private static JTextField textField_Date_MeasurNaw;
@@ -91,7 +94,7 @@ public class DozeArtFrame extends JFrame {
 	private static JPanel panel_FreePanelMeasur;
 	
 	private static JLabel lbl_Monitoring;
-	private static JRadioButton rdbtnSecialen;
+	private static JRadioButton rdbtnSpecialen;
 	private static JRadioButton rdbtnRutinen;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
@@ -112,28 +115,53 @@ public class DozeArtFrame extends JFrame {
 	
 	private static String[] dimentionStr = {"Bq","µCi"};
 
-	private static JScrollBar scrollBarToPrePrevios;
-	private static JScrollBar scrollBarToPrevios;
-	private JPanel panel_Nuclide_1;
+	private static JButton buttonToPreviosMinus;
+	private static JButton buttonToPreviosPlus;
 	
+	private static JButton buttonToPrePreviosMinus;
+	private static JButton buttonToPrePreviosPlus;
 	
-	private static Choice choice_NuclideName;
-	private static Choice choice_AMAD; 
+	private static JLabel lbl_DozeAll;
 	
+	private static JPanel panel_Nuclide_Data;
+	private static Choice[] choice_NuclideName;
+	private static Choice[] choice_AMAD;
+	
+	private static JTextField[] textField_Activity;
+	private static JTextField[] textField_PreviosPostaplenie;
+	@SuppressWarnings("rawtypes")
+	private static JComboBox[] cmbBox_ActivityDimencion;
+	
+	private static JLabel[] lbl_PostaplenieBq;
+	private static JLabel[] lbl_PostaplenieMCi;
+	private static JLabel[] lbl_GGPCalc;
+	private static JLabel[] lbl_DozaNuclide;
+	
+	private static JButton[] btn_MinusNuclide;
+	private static JButton[] btn_PlusNuclide;
+	
+	private static JButton btn_Calculation;
+	private static JButton btn_Report;
+	private static JButton btn_Export;
+	
+	private static JLabel lbl_InfoPersonMeasur;
 	List<String>  listNuclideName = DozeArt_Methods.ReadNuclideList();
-	
-	
-	public DozeArtFrame() {
+	static Object[] masive_FromDatePanel;
+	static int countNuclide = 3;
+	int frameWith = 370;
+	private boolean fromDBase = false;
+	private static String[][] dataForAutoInsertMeasur = null;
+	static String dozeCalculateTipText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("dozeCalculateTipText");
+	public DozeArtFrame(JFrame parent, String[][] oldNuclideData, String[] infoFromDBase) {
 		
+		super(parent, dozeCalculateTipText, true);
+				
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
+		generateMasivsElements(countNuclide); 
 		
-		setPreferredSize(new Dimension(690, 355));
-		setMinimumSize(new Dimension(690, 355));
-		setResizable(false);
-		setMaximumSize(new Dimension(690, 355));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 355);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -146,22 +174,24 @@ public class DozeArtFrame extends JFrame {
 
 		setPanelDate(panel_All);
 
-		setPanel_Nuclide(panel_All);
+		setPanel_Nuclide(oldNuclideData, infoFromDBase);
 		
+		setPanel_Buttons(infoFromDBase);
 	
 		
-		DozeArt_Methods.ActionListenerChoiceNuclide(choice_NuclideName,choice_AMAD);
 		
-		DozeArt_Methods.ActionListenerMonitoringButtons(rdbtnRutinen, rdbtnSecialen);
+		
+		DozeArt_Methods.ActionListenerMonitoringButtons(rdbtnRutinen, rdbtnSpecialen);
 		
 		DozeArt_Methods.ActionListenerPostaplenieButtons(rdbtnEdnokratno, rdbtnMnogokratno, rdbtnNeprekasnato, rdbtnSrTotchka);
 		
 		DozeArt_Methods.ActionListenerSetDateByDatePicker(lbl_Icon_Naw, textField_Date_MeasurNaw);
 		DozeArt_Methods.ActionListenerSetDateByDatePicker(lbl_Icon_Pred, textField_dateMeasurPrev);
 		DozeArt_Methods.ActionListenerSetDateByDatePicker(lbl_Icon_PrePred, textField_dateMeasurPrePrev);
-		
-		DozeArt_Methods.scrollBarToPreviosListener(scrollBarToPrevios, lbl_DateToPrevios, lbl_Count_DayToPrevios);
-		DozeArt_Methods.scrollBarToPrePreviosListener(scrollBarToPrePrevios, lbl_DateToPrePrevios, lbl_Count_DayToPrePrevios);
+		boolean toPrevios = true;
+		ScrollBar_Methods.scrollBarToPreviosListener(buttonToPreviosMinus, buttonToPreviosPlus, lbl_DateToPrevios, lbl_Count_DayToPrevios, toPrevios);
+		toPrevios = false;
+		ScrollBar_Methods.scrollBarToPreviosListener(buttonToPrePreviosMinus, buttonToPrePreviosPlus, lbl_DateToPrePrevios, lbl_Count_DayToPrePrevios, toPrevios);
 		
 		DozeArt_Methods.ActionListenerSetDateByDatePicker_Spetial(lbl_Icon_Start, textField_dateMeasur_Start);
 		DozeArt_Methods.ActionListenerSetDateByDatePicker_Spetial(lbl_Icon_End, textField_dateMeasur_End);
@@ -169,31 +199,158 @@ public class DozeArtFrame extends JFrame {
 		DozeArt_Methods.ActionListenerSetDateByDatePicker_MnogokratnoMeasur(lbl_Icon_MnogokratnoMeasur, textField_MnogokratnoMeasur, btn_MnogokratnoMeasur);
 		DozeArt_Methods.ActionListener_AddDateInJList(textField_MnogokratnoMeasur,btn_MnogokratnoMeasur,jlist);
 		
+		if(infoFromDBase !=null) {
+			textField_Date_MeasurNaw.setText(infoFromDBase[1]);
+			textField_dateMeasurPrev.setText(infoFromDBase[2]);
+			textField_dateMeasurPrePrev.setText(infoFromDBase[3]);
+			DozeArt_Methods.editPanelsByCorectTextField(textField_dateMeasurPrev, true);
+			DozeArt_Methods.editPanelsByCorectTextField(textField_dateMeasurPrePrev, true);
+		}
+		
+		
+		setSize(700, frameWith);
+//		setResizable(false);
+		infoFromDBase = null;
+		oldNuclideData = null;
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				dataForAutoInsertMeasur = null;
+				setVisible(false);
+				dispose();
+//				System.exit(0);
+			}
+		});
+		
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
+
+	private void generateMasivsElements(int count) {
+		choice_NuclideName = new Choice[count];
+		choice_AMAD = new Choice[count];
+		
+		textField_Activity = new JTextField[count];
+		textField_PreviosPostaplenie = new JTextField[count];
+		
+		cmbBox_ActivityDimencion = new JComboBox[count];
+		
+		lbl_PostaplenieBq = new JLabel[count];
+		lbl_PostaplenieMCi = new JLabel[count];
+		lbl_GGPCalc = new JLabel[count];
+		lbl_DozaNuclide = new JLabel[count];
+		
+		btn_MinusNuclide = new JButton[count]; 
+		btn_PlusNuclide = new JButton[count];
+	}
+
+
+	private void setPanel_Nuclide(String[][] oldNuclideData, String[] infoFromDBase) {
+		
+		panel_Nuclide_Data = new JPanel();
+		panel_Nuclide_Data.setLayout(new BoxLayout(panel_Nuclide_Data, BoxLayout.Y_AXIS));
+		contentPane.add(panel_Nuclide_Data, BorderLayout.CENTER);
+		
+		SetNuclideDataAll(oldNuclideData, infoFromDBase);
+		
 	
-	private void setPanel_Nuclide(JPanel panel_All) {
-		panel_Nuclide_1 = new JPanel();
-		panel_Nuclide_1.setLayout(new BoxLayout(panel_Nuclide_1, BoxLayout.Y_AXIS));
-		contentPane.add(panel_All, BorderLayout.NORTH);
-		panel_All.add(panel_Nuclide_1);
+		
+	}
 
-		setPanel_NuclideLabel(panel_Nuclide_1);
 
-		setPanel_NuclieData(panel_Nuclide_1);
+	private void SetNuclideDataAll(String[][] oldNuclideData, String[] infoFromDBase) {
+		JPanel panel_Nuclide_DataAll = new JPanel();
+		panel_Nuclide_DataAll.setLayout(new BoxLayout(panel_Nuclide_DataAll, BoxLayout.Y_AXIS));
+		panel_Nuclide_Data.add(panel_Nuclide_DataAll, BorderLayout.NORTH);
+
+		setPanel_NuclideLabel(panel_Nuclide_DataAll);
+
+		if(oldNuclideData != null) {
+			countNuclide = oldNuclideData.length;
+			}
+		
+		if(infoFromDBase!= null) {
+			countNuclide = infoFromDBase.length-4;
+			 oldNuclideData = generateMasiveForNuclideData(infoFromDBase);
+			fromDBase  = true;
+		}
+		
+		generateMasivsElements(countNuclide); 
+		
+		for (int i = 0; i < countNuclide; i++) {
+			setPanel_NuclieData(i,oldNuclideData, panel_Nuclide_DataAll);
+		}
+	
+	}
+
+
+	private String[][] generateMasiveForNuclideData(String[] infoFromDBase) {
+		String[][] masive = new String[countNuclide][5];
+		
+		for (int i = 0; i < countNuclide; i++) {
+			
+			String[] infoForMeasur = infoFromDBase[4+i].split("#");
+			System.out.println("String[] infoForMeasur --------------------------------------------------");
+			for (String strings : infoForMeasur) {
+				System.out.println(strings);
+			}
+			masive[i][0] = infoForMeasur[0] != null ? infoForMeasur[0]:"";
+			masive[i][1] = "";
+			masive[i][2] = infoForMeasur[1] != null ? infoForMeasur[1]:"";
+			masive[i][3] = infoForMeasur.length > 2 ? infoForMeasur[2]:"";
+			masive[i][4] = "Bq";
+			
+		}
+		return masive;
+	}
+
+	
+	
+	
+
+	private void setPanel_Buttons(String[] infoFromDBase) {
+		
+		
+		JPanel panel_Buttons = new JPanel();
+		panel_Buttons.setLayout(new BoxLayout(panel_Buttons, BoxLayout.Y_AXIS));
+		contentPane.add(panel_Buttons, BorderLayout.SOUTH);
+		
+		JPanel panel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setVgap(1);
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		panel_Buttons.add(panel);
+		lbl_InfoPersonMeasur = new JLabel("");
+		panel.add(lbl_InfoPersonMeasur);
+		
+		panel.setVisible(false);
+		
+		if(infoFromDBase != null) {
+		lbl_InfoPersonMeasur.setText(infoFromDBase[0]);
+		panel.setVisible(true);
+		
+		}
+		
+		panel_Calculate_Buttons(panel_Buttons);
+		
+	}
+
+
+	private void panel_Calculate_Buttons(JPanel panel_Buttons) {
+		
 		
 		JPanel panel_CalculateButtons = new JPanel();
 		FlowLayout fl_panel_CalculateButtons = (FlowLayout) panel_CalculateButtons.getLayout();
 		fl_panel_CalculateButtons.setAlignment(FlowLayout.RIGHT);
-		panel_Nuclide_1.add(panel_CalculateButtons);
+		panel_Buttons.add(panel_CalculateButtons);
 		
 		JLabel lbl_DozeAllLabel = new JLabel("Обща Доза");
 		lbl_DozeAllLabel.setPreferredSize(new Dimension(65, 20));
 		panel_CalculateButtons.add(lbl_DozeAllLabel);
 		
-		JLabel lbl_DozeAll = new JLabel();
+		lbl_DozeAll = new JLabel();
 		lbl_DozeAll.setPreferredSize(new Dimension(85, 20));
 		lbl_DozeAll.setOpaque(true);
 		lbl_DozeAll.setMinimumSize(new Dimension(80, 16));
@@ -208,153 +365,336 @@ public class DozeArtFrame extends JFrame {
 		lbl_DozeAllDimention.setPreferredSize(new Dimension(40, 14));
 		panel_CalculateButtons.add(lbl_DozeAllDimention);
 		
-		JButton btn_Calculation = new JButton("Изчисление");
+		btn_Calculation = new JButton("Изчисление");
 		btn_Calculation.setPreferredSize(new Dimension(80, 20));
 		btn_Calculation.setMargin(new Insets(2, 2, 2, 2));
 		panel_CalculateButtons.add(btn_Calculation);
+		btn_Calculation.setEnabled(false);
+		
+		btn_Report = new JButton("Репорт");
+		btn_Report.setPreferredSize(new Dimension(60, 20));
+		btn_Report.setMargin(new Insets(2, 2, 2, 2));
+		panel_CalculateButtons.add(btn_Report);
+		btn_Report.setEnabled(false);
+		
+		btn_Export = new JButton("Експорт към Измерване");
+		btn_Export.setMargin(new Insets(2, 2, 2, 2));
+		panel_CalculateButtons.add(btn_Export);
+		btn_Export.setEnabled(false);
+		
+		btn_Calculation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DozeArt_Methods.ActionListenerCalculationBTN();
+				if(DozeArt_Methods.getMasiveDataForReport() != null) {
+					btn_Report.setEnabled(true);
+					btn_Export.setEnabled(true);
+				}else {
+					btn_Report.setEnabled(false);
+					btn_Export.setEnabled(false);
+				}
+			}
+		});
+		
+		btn_Report.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				JFrame parent = new JFrame();
+				String report = DozeArt_Methods.createReportDozeArt();
+				int max =  countOccurences(report);
+				int[] sizeInfoFrame = {600, max*21 };
+				int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+				ActionIcone round = new ActionIcone();
+				
+				
+				new DozeArt_ReportFrame(parent, Coord, report, sizeInfoFrame,  round);
+				
+			}
+		});
+		
+		btn_Export.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dataForAutoInsertMeasur = DozeArt_Methods.createExportData();
+//				setVisible(false);
+				dispose();
+			}
+		});
+	}
+	
+	
+	
+
+	protected int countOccurences(String report) {
+		if(report == null || report.isEmpty()){
+			return 0;
+		}
+		return report.split("\n", -1).length-1;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void setPanel_NuclieData(JPanel panel_Nuclide) {
-		JPanel panel_Data_NuclideData = new JPanel();
-		FlowLayout fl_panel_Data_NuclideData = (FlowLayout) panel_Data_NuclideData.getLayout();
-		fl_panel_Data_NuclideData.setHgap(1);
-		fl_panel_Data_NuclideData.setAlignment(FlowLayout.LEFT);
-		panel_Nuclide.add(panel_Data_NuclideData);
 
-		choice_NuclideName = new Choice();
-		choice_NuclideName.setPreferredSize(new Dimension(60, 20));
-		panel_Data_NuclideData.add(choice_NuclideName);
+	public static JButton getBtn_Export() {
+		return btn_Export;
+	}
+
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void setPanel_NuclieData(int index, String[][] oldNuclideData, JPanel panel_Nuclide_DataAll) {
+		JPanel panel_Data_NuclideData = new JPanel();
+		panel_Data_NuclideData.setMaximumSize(new Dimension(32767, 25));
+		FlowLayout fl_panel_Data_NuclideData = (FlowLayout) panel_Data_NuclideData.getLayout();
+		fl_panel_Data_NuclideData.setAlignment(FlowLayout.LEFT);
+		fl_panel_Data_NuclideData.setHgap(1);
+		fl_panel_Data_NuclideData.setVgap(1);
+		panel_Nuclide_DataAll.add(panel_Data_NuclideData);
+
+		choice_NuclideName[index] = new Choice();
+		choice_NuclideName[index].setPreferredSize(new Dimension(60, 20));
+		panel_Data_NuclideData.add(choice_NuclideName[index]);
 		
 		for (String string : listNuclideName) {
-			choice_NuclideName.add(string);
+			choice_NuclideName[index].add(string);
 		}
+		
+		if(oldNuclideData != null) {
+			choice_NuclideName[index].select(oldNuclideData[index][0]);
+		}
+		
+		choice_NuclideName[index].addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				DozeArt_Methods.clearCalculationData();
+			}
+		});
 		
 		
 		JLabel lblDistancia1 = new JLabel("");
 		lblDistancia1.setPreferredSize(new Dimension(5, 0));
 		panel_Data_NuclideData.add(lblDistancia1);
 
-		choice_AMAD = new Choice();
-		choice_AMAD.setPreferredSize(new Dimension(50, 20));
-		panel_Data_NuclideData.add(choice_AMAD);
+		choice_AMAD[index] = new Choice();
+		choice_AMAD[index].setPreferredSize(new Dimension(50, 20));
+		panel_Data_NuclideData.add(choice_AMAD[index]);
 		
+		String nuclideName = choice_NuclideName[index].getSelectedItem();
+		DozeArt_Methods.setItemByNuclideName(nuclideName, choice_AMAD[index]);
+				
+		
+		if(oldNuclideData != null) {
+			choice_AMAD[index].select(oldNuclideData[index][1]);
+		}
+		choice_AMAD[index].addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				DozeArt_Methods.clearCalculationData();
+			}
+		});
 		
 		JLabel lblDistancia1_1 = new JLabel("");
 		lblDistancia1_1.setPreferredSize(new Dimension(5, 0));
 		panel_Data_NuclideData.add(lblDistancia1_1);
 
-		TextField textField_Activity = new TextField();
-		textField_Activity.setPreferredSize(new Dimension(75, 20));
-		panel_Data_NuclideData.add(textField_Activity);
+		textField_Activity[index] = new JTextField();
+		textField_Activity[index].setPreferredSize(new Dimension(75, 20));
+		panel_Data_NuclideData.add(textField_Activity[index]);
+		
+		if(oldNuclideData != null) {
+			textField_Activity[index].setText(oldNuclideData[index][2]);
+		}
+		
+		textField_Activity[index].addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent evt) {
+				DozeArt_Methods.clearCalculationData();
+			}
+
+		});
+		
 		
 		JLabel lblDistancia1_2 = new JLabel("");
 		lblDistancia1_2.setPreferredSize(new Dimension(5, 0));
 		panel_Data_NuclideData.add(lblDistancia1_2);
 
-		TextField textField_PreviosPostaplenie = new TextField();
-		textField_PreviosPostaplenie.setPreferredSize(new Dimension(75, 20));
-		panel_Data_NuclideData.add(textField_PreviosPostaplenie);
+		textField_PreviosPostaplenie[index] = new JTextField();
+		textField_PreviosPostaplenie[index].setPreferredSize(new Dimension(75, 20));
+		panel_Data_NuclideData.add(textField_PreviosPostaplenie[index]);
 		
-		JComboBox cmbBox_ActivityDimencion = new JComboBox(dimentionStr);
-		panel_Data_NuclideData.add(cmbBox_ActivityDimencion);
+		if(oldNuclideData != null) {
+			textField_PreviosPostaplenie[index].setText(oldNuclideData[index][3]);
+		}
+		textField_PreviosPostaplenie[index].addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent evt) {
+				DozeArt_Methods.clearCalculationData();
+			}
+		});
+		
+		
+		
+		cmbBox_ActivityDimencion[index] = new JComboBox(dimentionStr);
+		panel_Data_NuclideData.add(cmbBox_ActivityDimencion[index]);
+		
+		if(oldNuclideData != null) {
+			if(oldNuclideData[index][4] != null) {
+			cmbBox_ActivityDimencion[index].setSelectedItem(oldNuclideData[index][4]);
+			}else {
+				cmbBox_ActivityDimencion[index].setSelectedItem("Bq");
+			}
+		}
+		cmbBox_ActivityDimencion[index].addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				DozeArt_Methods.clearCalculationData();
+			}
+		});
 		
 		JLabel lbl_IconCalc = new JLabel("");
 		lbl_IconCalc.setPreferredSize(new Dimension(20, 14));
 		panel_Data_NuclideData.add(lbl_IconCalc);
 		
-		JLabel lbl_PostaplenieBq = new JLabel();
-		lbl_PostaplenieBq.setPreferredSize(new Dimension(70, 20));
-		lbl_PostaplenieBq.setOpaque(true);
-		lbl_PostaplenieBq.setMinimumSize(new Dimension(80, 16));
-		lbl_PostaplenieBq.setMaximumSize(new Dimension(32767, 16));
-		lbl_PostaplenieBq.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_PostaplenieBq.setBackground(Color.WHITE);
-		lbl_PostaplenieBq.setAlignmentX(2.0f);
-		panel_Data_NuclideData.add(lbl_PostaplenieBq);
+		lbl_PostaplenieBq[index] = new JLabel();
+		lbl_PostaplenieBq[index].setPreferredSize(new Dimension(70, 20));
+		lbl_PostaplenieBq[index].setOpaque(true);
+		lbl_PostaplenieBq[index].setMinimumSize(new Dimension(80, 16));
+		lbl_PostaplenieBq[index].setMaximumSize(new Dimension(32767, 16));
+		lbl_PostaplenieBq[index].setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_PostaplenieBq[index].setBackground(Color.WHITE);
+		lbl_PostaplenieBq[index].setAlignmentX(2.0f);
+		lbl_PostaplenieBq[index].addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				lbl_PostaplenieBq[index].setToolTipText(lbl_PostaplenieBq[index].getText());
+			}
+
+			public void mousePressed(MouseEvent e1) {
+			}
+		});
+		
+		lbl_PostaplenieBq[index].setToolTipText(lbl_PostaplenieBq[index].getText());
+		panel_Data_NuclideData.add(lbl_PostaplenieBq[index]);
 		
 		JLabel lbl_PostaplenieBqDimention = new JLabel("Bq");
 		lbl_PostaplenieBqDimention.setPreferredSize(new Dimension(17, 20));
 		panel_Data_NuclideData.add(lbl_PostaplenieBqDimention);
 		
-		JLabel lbl_PostaplenieMCi = new JLabel();
-		lbl_PostaplenieMCi.setPreferredSize(new Dimension(70, 20));
-		lbl_PostaplenieMCi.setOpaque(true);
-		lbl_PostaplenieMCi.setMinimumSize(new Dimension(80, 16));
-		lbl_PostaplenieMCi.setMaximumSize(new Dimension(32767, 16));
-		lbl_PostaplenieMCi.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_PostaplenieMCi.setBackground(Color.WHITE);
-		lbl_PostaplenieMCi.setAlignmentX(2.0f);
-		panel_Data_NuclideData.add(lbl_PostaplenieMCi);
+		lbl_PostaplenieMCi[index] = new JLabel();
+		lbl_PostaplenieMCi[index].setPreferredSize(new Dimension(70, 20));
+		lbl_PostaplenieMCi[index].setOpaque(true);
+		lbl_PostaplenieMCi[index].setMinimumSize(new Dimension(80, 16));
+		lbl_PostaplenieMCi[index].setMaximumSize(new Dimension(32767, 16));
+		lbl_PostaplenieMCi[index].setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_PostaplenieMCi[index].setBackground(Color.WHITE);
+		lbl_PostaplenieMCi[index].setAlignmentX(2.0f);
+		lbl_PostaplenieMCi[index].addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				lbl_PostaplenieMCi[index].setToolTipText(lbl_PostaplenieMCi[index].getText());
+			}
+
+			public void mousePressed(MouseEvent e1) {
+			}
+		});
+		
+		
+		panel_Data_NuclideData.add(lbl_PostaplenieMCi[index]);
 		
 		JLabel lbl_PostaplenieMCiDimention = new JLabel("µCi");
 		lbl_PostaplenieMCiDimention.setPreferredSize(new Dimension(17, 20));
 		panel_Data_NuclideData.add(lbl_PostaplenieMCiDimention);
 		
-		JLabel lbl_GGPCalc = new JLabel();
-		lbl_GGPCalc.setPreferredSize(new Dimension(35, 16));
-		lbl_GGPCalc.setOpaque(true);
-		lbl_GGPCalc.setMinimumSize(new Dimension(80, 16));
-		lbl_GGPCalc.setMaximumSize(new Dimension(32767, 16));
-		lbl_GGPCalc.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_GGPCalc.setBackground(Color.WHITE);
-		lbl_GGPCalc.setAlignmentX(2.0f);
-		panel_Data_NuclideData.add(lbl_GGPCalc);
+		lbl_GGPCalc[index] = new JLabel();
+		lbl_GGPCalc[index].setPreferredSize(new Dimension(35, 16));
+		lbl_GGPCalc[index].setOpaque(true);
+		lbl_GGPCalc[index].setMinimumSize(new Dimension(80, 16));
+		lbl_GGPCalc[index].setMaximumSize(new Dimension(32767, 16));
+		lbl_GGPCalc[index].setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_GGPCalc[index].setBackground(Color.WHITE);
+		lbl_GGPCalc[index].setAlignmentX(2.0f);
+		lbl_GGPCalc[index].addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				lbl_GGPCalc[index].setToolTipText(lbl_GGPCalc[index].getText());
+			}
+
+			public void mousePressed(MouseEvent e1) {
+			}
+		});
+		
+		
+		panel_Data_NuclideData.add(lbl_GGPCalc[index]);
 		
 		JLabel lbl_GGPDimencions = new JLabel("%");
 		lbl_GGPDimencions.setPreferredSize(new Dimension(17, 14));
 		panel_Data_NuclideData.add(lbl_GGPDimencions);
 		
-		JLabel lbl_DozaNuclide = new JLabel();
-		lbl_DozaNuclide.setPreferredSize(new Dimension(35, 16));
-		lbl_DozaNuclide.setOpaque(true);
-		lbl_DozaNuclide.setMinimumSize(new Dimension(80, 16));
-		lbl_DozaNuclide.setMaximumSize(new Dimension(32767, 16));
-		lbl_DozaNuclide.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_DozaNuclide.setBackground(Color.WHITE);
-		lbl_DozaNuclide.setAlignmentX(2.0f);
-		panel_Data_NuclideData.add(lbl_DozaNuclide);
+		lbl_DozaNuclide[index] = new JLabel();
+		lbl_DozaNuclide[index].setPreferredSize(new Dimension(35, 16));
+		lbl_DozaNuclide[index].setOpaque(true);
+		lbl_DozaNuclide[index].setMinimumSize(new Dimension(80, 16));
+		lbl_DozaNuclide[index].setMaximumSize(new Dimension(32767, 16));
+		lbl_DozaNuclide[index].setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_DozaNuclide[index].setBackground(Color.WHITE);
+		lbl_DozaNuclide[index].setAlignmentX(2.0f);
+		lbl_DozaNuclide[index].addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				lbl_DozaNuclide[index].setToolTipText(lbl_DozaNuclide[index].getText());
+			}
+
+			public void mousePressed(MouseEvent e1) {
+			}
+		});
+		
+		
+		panel_Data_NuclideData.add(lbl_DozaNuclide[index]);
 		
 		JLabel lbl_DozaNuclideDimencion = new JLabel("mSv");
 		lbl_DozaNuclideDimencion.setPreferredSize(new Dimension(25, 14));
 		panel_Data_NuclideData.add(lbl_DozaNuclideDimencion);
 		
-		JButton btn_MinusNuclide = new JButton("-");
-		btn_MinusNuclide.setMargin(new Insets(2, 2, 2, 2));
-		btn_MinusNuclide.setPreferredSize(new Dimension(15, 20));
-		btn_MinusNuclide.setHorizontalAlignment(SwingConstants.CENTER);
+		btn_MinusNuclide[index] = new JButton("-");
+		btn_MinusNuclide[index].setMargin(new Insets(2, 2, 2, 2));
+		btn_MinusNuclide[index].setPreferredSize(new Dimension(15, 20));
+		btn_MinusNuclide[index].setHorizontalAlignment(SwingConstants.CENTER);
 		
-		btn_MinusNuclide.setAlignmentX(1.0f);
-		panel_Data_NuclideData.add(btn_MinusNuclide);
+		btn_MinusNuclide[index].setAlignmentX(1.0f);
+		panel_Data_NuclideData.add(btn_MinusNuclide[index]);
 
-		btn_MinusNuclide.addActionListener(new ActionListener() {
+		if(countNuclide<2) 	btn_MinusNuclide[index].setEnabled(false);
+		btn_MinusNuclide[index].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				ActionListenerMinusBTN();
+				ActionListenerMinusBTN(index);
 			}
 		});
 
-		JButton btn_PlusNuclide = new JButton("+");
-		btn_PlusNuclide.setMargin(new Insets(2, 1, 2, 1));
-		btn_PlusNuclide.setPreferredSize(new Dimension(15, 20));
-		btn_PlusNuclide.setHorizontalAlignment(SwingConstants.CENTER);
+		btn_PlusNuclide[index] = new JButton("+");
+		btn_PlusNuclide[index].setMargin(new Insets(2, 1, 2, 1));
+		btn_PlusNuclide[index].setPreferredSize(new Dimension(15, 20));
+		btn_PlusNuclide[index].setHorizontalAlignment(SwingConstants.CENTER);
 	
-		btn_PlusNuclide.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel_Data_NuclideData.add(btn_PlusNuclide);
-		btn_PlusNuclide.addActionListener(new ActionListener() {
+		btn_PlusNuclide[index].setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel_Data_NuclideData.add(btn_PlusNuclide[index]);
+		btn_PlusNuclide[index].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				ActionListenerPlusBTN(index);
+				ActionListenerPlusBTN();
 			}
 		});
 		
+		if(fromDBase) {
+			btn_PlusNuclide[index].setEnabled(false);
+			btn_MinusNuclide[index].setEnabled(false);
+		}
 		
 		
 		
+		DozeArt_Methods.ActionListenerChoiceNuclide(choice_NuclideName[index],choice_AMAD[index]);
+	
 		
 	}
 
+
+	
 	private void setPanel_NuclideLabel(JPanel panel_Nuclide) {
 		JPanel panel_Label_NuclideData = new JPanel();
+		panel_Label_NuclideData.setMaximumSize(new Dimension(32767, 20));
 		FlowLayout fl_panel_Label_NuclideData = (FlowLayout) panel_Label_NuclideData.getLayout();
+		fl_panel_Label_NuclideData.setVgap(1);
 		fl_panel_Label_NuclideData.setHgap(1);
 		fl_panel_Label_NuclideData.setAlignment(FlowLayout.LEFT);
 		panel_Nuclide.add(panel_Label_NuclideData);
@@ -490,11 +830,11 @@ public class DozeArtFrame extends JFrame {
 		panel_Monitoring.add(rdbtnRutinen);
 		rdbtnRutinen.setSelected(true);
 		
-		rdbtnSecialen = new JRadioButton("Специален");
-		rdbtnSecialen.setEnabled(false);
-		panel_Monitoring.add(rdbtnSecialen);
+		rdbtnSpecialen = new JRadioButton("Специален");
+		rdbtnSpecialen.setEnabled(false);
+		panel_Monitoring.add(rdbtnSpecialen);
 		
-		buttonGroup.add(rdbtnSecialen);
+		buttonGroup.add(rdbtnSpecialen);
 		buttonGroup.add(rdbtnRutinen);
 		
 		return panel_Monitoring;
@@ -726,7 +1066,7 @@ public class DozeArtFrame extends JFrame {
 		panel_rdbtnSrTotchka.add(rdbtnSrTotchka);
 		panel__Rutinen.add(panel_rdbtnSrTotchka);
 		rdbtnSrTotchka.setSelected(true);
-		
+	
 		buttonGroup2.add(rdbtnEdnokratno);
 		buttonGroup2.add(rdbtnMnogokratno);
 		buttonGroup2.add(rdbtnNeprekasnato);
@@ -736,7 +1076,7 @@ public class DozeArtFrame extends JFrame {
 				
 	}
 
-private JPanel setPanel_Postaplenie_Free() {
+	private JPanel setPanel_Postaplenie_Free() {
 		
 		JPanel panel__Postaplenie_Free = new JPanel();
 		layeredPane_Postaplenie.setLayer(panel__Postaplenie_Free, 4);
@@ -753,7 +1093,7 @@ private JPanel setPanel_Postaplenie_Free() {
 	private JPanel setPanel_SpecialMeasur() {
 	
 		JPanel panel_SpecialMeasur = new JPanel();
-		layeredPane_Postaplenie.setLayer(panel_SpecialMeasur, 12);
+		layeredPane_Postaplenie.setLayer(panel_SpecialMeasur, 2);
 		panel_SpecialMeasur.setBorder(new LineBorder(new Color(0, 0, 0)));;
 		panel_SpecialMeasur.setBounds(0, 0, 170, 100);
 		panel_SpecialMeasur.setLayout(new BoxLayout(panel_SpecialMeasur, BoxLayout.Y_AXIS));
@@ -784,7 +1124,26 @@ private JPanel setPanel_Postaplenie_Free() {
 
 	}
 
-	
+	private void viewNewPanel(String[][] oldNuclideData, String[] infoFromDBase) {
+		
+		if(oldNuclideData != null) {
+			countNuclide = oldNuclideData.length;
+		}
+		
+		if(countNuclide > 5) {
+			frameWith = 370 + (countNuclide-5)*30;
+		}
+		
+		System.out.println("countNuclide "+countNuclide);
+		panel_Nuclide_Data.removeAll();
+		
+		SetNuclideDataAll(oldNuclideData, infoFromDBase);
+//		setPanel_Nuclide(oldNuclideData);
+		
+		setSize(700, frameWith);
+		repaint();
+		revalidate();
+	}
 	
 	private void setPanel_SpecialMeasur_dateLabel(JPanel panel) {
 		JPanel panel_Date_Label = new JPanel();
@@ -835,7 +1194,7 @@ private JPanel setPanel_Postaplenie_Free() {
 		panel_Date_MeasurNaw.add(textField_dateMeasur_Start);
 		textField_dateMeasur_Start.setColumns(8);
 		panel_DateMeasur.add(panel_Date_MeasurNaw);
-
+		
 		lbl_Icon_Start = new JLabel(pic);
 		lbl_Icon_Start.setPreferredSize(new Dimension(20, 20));
 		lbl_Icon_Start.setHorizontalAlignment(SwingConstants.CENTER);
@@ -875,7 +1234,7 @@ private JPanel setPanel_Postaplenie_Free() {
 
 	private JPanel setPanel_EdnokratnoMeasur() {
 		JPanel panel__EdnokratnoMeasur = new JPanel();
-		layeredPane_Mnogokratno.setLayer(panel__EdnokratnoMeasur, 2);
+		layeredPane_Mnogokratno.setLayer(panel__EdnokratnoMeasur, 2); //2
 		panel__EdnokratnoMeasur.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel__EdnokratnoMeasur.setAlignmentX(5.0f);
 		panel__EdnokratnoMeasur.setAlignmentY(5.0f);;
@@ -886,28 +1245,22 @@ private JPanel setPanel_Postaplenie_Free() {
 		JLabel lbl_DateMeasur = new JLabel("Еднократно");
 		lbl_DateMeasur.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_DateMeasur.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lbl_DateMeasur.setMaximumSize(new Dimension(32767, 15));
-		lbl_DateMeasur.setPreferredSize(new Dimension(80, 15));
+		lbl_DateMeasur.setMaximumSize(new Dimension(32767, 14));
+		lbl_DateMeasur.setPreferredSize(new Dimension(80, 14));
 		panel__EdnokratnoMeasur.add(lbl_DateMeasur);
 
 		setPanel_EdnokratnoMeasur_dateLabel(panel__EdnokratnoMeasur);
 		
 		setPanel_EdnokratnoMeasur_ToPrevios(panel__EdnokratnoMeasur);
 		
-		scrollBarToPrevios = new JScrollBar();
-		scrollBarToPrevios.setPreferredSize(new Dimension(10, 13));
-		scrollBarToPrevios.setOrientation(JScrollBar.HORIZONTAL);
-		panel__EdnokratnoMeasur.add(scrollBarToPrevios);
+		setPanel_EdnokratnoMeasur_Button_ToPrevios(panel__EdnokratnoMeasur) ;
+
 		
 		setPanel_EdnokratnoMeasur_ToPrePrevios(panel__EdnokratnoMeasur);
 		
-		scrollBarToPrePrevios = new JScrollBar();
-		scrollBarToPrePrevios.setPreferredSize(new Dimension(10, 13));
-		scrollBarToPrePrevios.setOrientation(JScrollBar.HORIZONTAL);
-		panel__EdnokratnoMeasur.add(scrollBarToPrePrevios);
-		
-		
-		
+		setPanel_EdnokratnoMeasur_Button_DateNawToPrePrev(panel__EdnokratnoMeasur) ;
+
+	
 		return panel__EdnokratnoMeasur;
 
 	}
@@ -941,7 +1294,7 @@ private JPanel setPanel_Postaplenie_Free() {
 	
 	private JPanel setPanel_FreePanelMeasur() {
 		JPanel FreePanelMeasur = new JPanel();
-		layeredPane_Mnogokratno.setLayer(FreePanelMeasur, 4);
+		layeredPane_Mnogokratno.setLayer(FreePanelMeasur, 4);  //4
 		FreePanelMeasur.setBorder(new LineBorder(new Color(0, 0, 0)));
 		FreePanelMeasur.setAlignmentX(5.0f);
 		FreePanelMeasur.setAlignmentY(5.0f);;
@@ -986,11 +1339,13 @@ private JPanel setPanel_Postaplenie_Free() {
 	
 	private void setPanel_EdnokratnoMeasur_ToPrePrevios(JPanel panel_DateMeasur) {
 		JPanel panel_DateNawToPrePrev = new JPanel();
+		panel_DateNawToPrePrev.setPreferredSize(new Dimension(10, 18));
+		panel_DateNawToPrePrev.setMinimumSize(new Dimension(10, 18));
 		panel_DateNawToPrePrev.setBorder(new MatteBorder(1, 0, 0, 0, (Color) new Color(0, 0, 0)));
 		
-		panel_DateNawToPrePrev.setMaximumSize(new Dimension(32767, 20));
+		panel_DateNawToPrePrev.setMaximumSize(new Dimension(32767, 18));
 		FlowLayout fl_panel_DateNawToPrePrev = (FlowLayout) panel_DateNawToPrePrev.getLayout();
-		fl_panel_DateNawToPrePrev.setVgap(4);
+		fl_panel_DateNawToPrePrev.setVgap(1);
 		fl_panel_DateNawToPrePrev.setHgap(2);
 		fl_panel_DateNawToPrePrev.setAlignment(FlowLayout.RIGHT);
 		
@@ -1022,21 +1377,23 @@ private JPanel setPanel_Postaplenie_Free() {
 		lbl_Count_DayToPrePrevios.setMaximumSize(new Dimension(32767, 16));
 		lbl_Count_DayToPrePrevios.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_DateNawToPrePrev.add(lbl_Count_DayToPrePrevios);
-		
+	
 		panel_DateMeasur.add(panel_DateNawToPrePrev);
 	}
 	
 	private void setPanel_EdnokratnoMeasur_ToPrevios(JPanel panel_DateMeasur) {
 		JPanel panel_DateNawToPrev = new JPanel();
+		panel_DateNawToPrev.setPreferredSize(new Dimension(10, 18));
+		panel_DateNawToPrev.setMinimumSize(new Dimension(10, 18));
 		
-		panel_DateNawToPrev.setMaximumSize(new Dimension(32767, 16));
+		panel_DateNawToPrev.setMaximumSize(new Dimension(32767, 18));
 		FlowLayout fl_panel_DateNawToPrev = (FlowLayout) panel_DateNawToPrev.getLayout();
 		fl_panel_DateNawToPrev.setAlignOnBaseline(true);
-		fl_panel_DateNawToPrev.setVgap(0);
+		fl_panel_DateNawToPrev.setVgap(1);
 		fl_panel_DateNawToPrev.setHgap(2);
 		fl_panel_DateNawToPrev.setAlignment(FlowLayout.RIGHT);
 		
-		lbl_DateNawToPrevios = new JLabel("");
+		lbl_DateNawToPrevios = new JLabel();
 		lbl_DateNawToPrevios.setPreferredSize(new Dimension(70, 15));
 		lbl_DateNawToPrevios.setMaximumSize(new Dimension(32767, 14));
 		lbl_DateNawToPrevios.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1064,9 +1421,74 @@ private JPanel setPanel_Postaplenie_Free() {
 		lbl_Count_DayToPrevios.setMaximumSize(new Dimension(32767, 16));
 		lbl_Count_DayToPrevios.setAlignmentX(2.0f);
 		panel_DateNawToPrev.add(lbl_Count_DayToPrevios);
-				
+		
 		panel_DateMeasur.add(panel_DateNawToPrev);
 	}
+	
+	private void setPanel_EdnokratnoMeasur_Button_ToPrevios(JPanel panel_DateMeasur) {
+		JPanel panelButton_DateNawToPrev = new JPanel();
+		panelButton_DateNawToPrev.setMinimumSize(new Dimension(10, 16));
+		
+		panelButton_DateNawToPrev.setMaximumSize(new Dimension(32767, 16));
+		FlowLayout fl_panel_DateNawToPrePrev = (FlowLayout) panelButton_DateNawToPrev.getLayout();
+		fl_panel_DateNawToPrePrev.setVgap(1);
+		fl_panel_DateNawToPrePrev.setHgap(2);
+		fl_panel_DateNawToPrePrev.setAlignment(FlowLayout.RIGHT);
+		
+	
+		panel_DateMeasur.add(panelButton_DateNawToPrev);
+		
+		buttonToPreviosMinus = new JButton("-");
+		buttonToPreviosMinus.setMargin(new Insets(2, 2, 2, 2));
+		buttonToPreviosMinus.setPreferredSize(new Dimension(30, 14));
+		buttonToPreviosMinus.setMinimumSize(new Dimension(30, 14));
+		buttonToPreviosMinus.setMaximumSize(new Dimension(30, 14));
+		panelButton_DateNawToPrev.add(buttonToPreviosMinus);
+		
+		buttonToPreviosPlus = new JButton("+");
+		buttonToPreviosPlus.setMargin(new Insets(2, 2, 2, 2));
+		buttonToPreviosPlus.setPreferredSize(new Dimension(30, 14));
+		buttonToPreviosPlus.setMinimumSize(new Dimension(30, 14));
+		buttonToPreviosPlus.setMaximumSize(new Dimension(30, 14));
+		panelButton_DateNawToPrev.add(buttonToPreviosPlus);
+	}
+	
+	
+	
+	public static JButton getButtonToPreviosPlus() {
+		return buttonToPreviosPlus;
+	}
+
+
+	private void setPanel_EdnokratnoMeasur_Button_DateNawToPrePrev(JPanel panel_DateMeasur) {
+		JPanel panel_Button_DateNawToPrePrev = new JPanel();
+		panel_Button_DateNawToPrePrev.setMinimumSize(new Dimension(10, 16));
+		
+		panel_Button_DateNawToPrePrev.setMaximumSize(new Dimension(32767, 16));
+		FlowLayout fl_panel_DateNawToPrePrev = (FlowLayout) panel_Button_DateNawToPrePrev.getLayout();
+		fl_panel_DateNawToPrePrev.setVgap(1);
+		fl_panel_DateNawToPrePrev.setHgap(2);
+		fl_panel_DateNawToPrePrev.setAlignment(FlowLayout.RIGHT);
+		
+	
+		panel_DateMeasur.add(panel_Button_DateNawToPrePrev);
+		
+		buttonToPrePreviosMinus = new JButton("-");
+		buttonToPrePreviosMinus.setMargin(new Insets(2, 2, 2, 2));
+		buttonToPrePreviosMinus.setPreferredSize(new Dimension(30, 14));
+		buttonToPrePreviosMinus.setMinimumSize(new Dimension(30, 14));
+		buttonToPrePreviosMinus.setMaximumSize(new Dimension(30, 14));
+		panel_Button_DateNawToPrePrev.add(buttonToPrePreviosMinus);
+		
+		buttonToPrePreviosPlus = new JButton("+");
+		buttonToPrePreviosPlus.setMargin(new Insets(2, 2, 2, 2));
+		buttonToPrePreviosPlus.setPreferredSize(new Dimension(30, 14));
+		buttonToPrePreviosPlus.setMinimumSize(new Dimension(30, 14));
+		buttonToPrePreviosPlus.setMaximumSize(new Dimension(30, 14));
+		panel_Button_DateNawToPrePrev.add(buttonToPrePreviosPlus);
+	}
+	
+	
 	
 	private void setPanel_MnogokratnoMeasur_dateLabel(JPanel panel) {
 		JPanel panel_Date_Label = new JPanel();
@@ -1109,6 +1531,8 @@ private JPanel setPanel_Postaplenie_Free() {
 		jlist = new JList<>();
 		scrollPane.setViewportView(jlist);
 		
+		
+		
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setVgap(1);
@@ -1149,6 +1573,40 @@ private JPanel setPanel_Postaplenie_Free() {
 	}
 
 
+	private void ActionListenerMinusBTN(int index) {
+		String[][] masiveFromDozeArtFrame = DozeArt_Methods.readMasiveDataFromDozeArtFrame();
+		String[][] masiveMinus = new String[masiveFromDozeArtFrame.length-1][5];
+		int k=0;
+		for (int i = 0; i < masiveFromDozeArtFrame.length; i++) {
+			if(i != index) {
+				masiveMinus[k] = masiveFromDozeArtFrame[i];
+						k++;
+			}
+			
+		}
+		lbl_DozeAll.setText("");
+		viewNewPanel(masiveMinus, null);
+		DozeArt_Methods.clearCalculationData();
+	}
+
+
+	private void ActionListenerPlusBTN() {
+		
+		String[][] masiveFromDozeArtFrame = DozeArt_Methods.readMasiveDataFromDozeArtFrame();
+		String[][] masivePlus = new String[masiveFromDozeArtFrame.length+1][5];	
+		for (int i = 0; i < masiveFromDozeArtFrame.length; i++) {
+			masivePlus[i] = masiveFromDozeArtFrame[i];
+		}
+		lbl_DozeAll.setText("");
+		viewNewPanel(masivePlus, null);
+		DozeArt_Methods.clearCalculationData();
+		
+	}
+
+	
+	
+	
+	
 
 	public static JTextField getTextField_Date_MeasurNaw() {
 		return textField_Date_MeasurNaw;
@@ -1255,8 +1713,8 @@ private JPanel setPanel_Postaplenie_Free() {
 	}
 
 
-	public static JRadioButton getRdbtnSecialen() {
-		return rdbtnSecialen;
+	public static JRadioButton getRdbtnSpecialen() {
+		return rdbtnSpecialen;
 	}
 
 
@@ -1319,15 +1777,7 @@ private JPanel setPanel_Postaplenie_Free() {
 		return lbl_DateToPrevios;
 	}
 
-
-	public static JScrollBar getScrollBarToPrePrevios() {
-		return scrollBarToPrePrevios;
-	}
-
-
-	public static JScrollBar getScrollBarToPrevios() {
-		return scrollBarToPrevios;
-	}
+	
 
 
 	public static JLabel getLbl_Count_DayToPrevios() {
@@ -1354,7 +1804,7 @@ private JPanel setPanel_Postaplenie_Free() {
 	}
 
 
-	public static JList<?> getJlist() {
+	public static JList<String> getJlist() {
 		return jlist;
 	}
 
@@ -1364,17 +1814,98 @@ private JPanel setPanel_Postaplenie_Free() {
 	}
 
 
-	public static Choice getChoice_NuclideName() {
+	public static Choice[] getChoice_NuclideName() {
 		return choice_NuclideName;
 	}
 
 
-	public static Choice getChoice_AMAD() {
+	public static Choice[] getChoice_AMAD() {
 		return choice_AMAD;
 	}
 
 
-	public static void setChoice_AMAD(Choice choice_AMAD) {
-		DozeArtFrame.choice_AMAD = choice_AMAD;
+	public static int getCountNuclide() {
+		return countNuclide;
+	}
+
+
+	public static JTextField[] getTextField_Activity() {
+		return textField_Activity;
+	}
+
+
+	public static JTextField[] getTextField_PreviosPostaplenie() {
+		return textField_PreviosPostaplenie;
+	}
+
+
+	@SuppressWarnings("rawtypes")
+	public static JComboBox[] getCmbBox_ActivityDimencion() {
+		return cmbBox_ActivityDimencion;
+	}
+
+
+	public static JLabel[] getLbl_PostaplenieBq() {
+		return lbl_PostaplenieBq;
+	}
+
+
+	public static JLabel[] getLbl_PostaplenieMCi() {
+		return lbl_PostaplenieMCi;
+	}
+
+
+	public static JLabel[] getLbl_GGPCalc() {
+		return lbl_GGPCalc;
+	}
+
+
+	public static JLabel[] getLbl_DozaNuclide() {
+		return lbl_DozaNuclide;
+	}
+
+
+	public static Object[] getMasive_FromDatePanel() {
+		return masive_FromDatePanel;
+	}
+
+
+	public static JLabel getLbl_DozeAll() {
+		return lbl_DozeAll;
+	}
+
+
+	public static JLabel getLbl_InfoPersonMeasur() {
+		return lbl_InfoPersonMeasur;
+	}
+
+
+	public static JButton getBtn_Calculation() {
+		return btn_Calculation;
+	}
+
+
+	public static JButton getBtn_Report() {
+		return btn_Report;
+	}
+
+
+	public String[][] getDataForAutoInsertMeasur() {
+		return dataForAutoInsertMeasur;
+	}
+
+
+	public static JButton getButtonToPrePreviosMinus() {
+		return buttonToPrePreviosMinus;
+	}
+
+
+	public static JButton getButtonToPrePreviosPlus() {
+		return buttonToPrePreviosPlus;
+	}
+
+
+	public static JButton getButtonToPreviosMinus() {
+		return buttonToPreviosMinus;
 	}
 }

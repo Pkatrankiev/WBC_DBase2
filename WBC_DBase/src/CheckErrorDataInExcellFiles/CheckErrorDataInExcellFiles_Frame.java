@@ -23,9 +23,8 @@ import javax.swing.border.EmptyBorder;
 
 import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
-
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 import javax.swing.JProgressBar;
 
@@ -40,12 +39,14 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	private static JTextArea textArea;
 	private static JButton btn_Search;
 	private static JButton btn_Search_CheckPersonStatus;
+	private static JButton btn_Search_KodeAndNameKD;
 	private static JButton btn_SearchAllColumn;
 	private static JButton btn_CheckDBase;
 	private static JButton btn_CheckDBase_Clear;
 	private static JButton btn_CheckDBaseNameKodeStat;
 	private static JButton btn_CheckDBaseNameKodeStat_Clear;
 	private static JButton btn_CheckCurentDataInExcelFiles;
+	private static List<String> listMoveEGN = null;
 	
 
 
@@ -60,6 +61,7 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	String checkCorrectinDataInExcell_labelCheckDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckDBaseToMouthFile");
 	String checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile");
 	String CheckPersonStatus_labelError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("CheckPersonStatus_labelError");
+	String KodeAndNameKD_labelError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("KodeAndNameKD_labelError");
 	
 	
 	private JProgressBar progressBar;
@@ -100,12 +102,13 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		JScrollPane sp = new JScrollPane(textArea);
 		infoPanel.add(sp, BorderLayout.CENTER);
 		
-		panel_0();
-		panel_1();
-		panel_2();
-		panel_2A();
-		panel_3();
-		panel_4();
+		panel_DataError();
+		panel_ColumnIn5Sheet();
+		panel_MonthError();
+		panel_OtdelPerson();
+		panel_KodeAndNameKD();
+		panel_MeasurDBInMonth();
+		panel_KodeAndNameerror();
 		
 		panel_Button();
 
@@ -121,13 +124,14 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		
 
 		CheckDataBethwinExcelFilesAndMonth.ActionListener_Btn_SearchError(panel_Search, btn_Search, textArea, progressBar);
-		CheckEqualsForFirst5Column.ActionListener_Btn_SearchAllColumn(panel_Search, btn_SearchAllColumn, textArea);
-		CheckMeasurDBaseToMounthFile.ActionListener_Btn_CheckDBaseToMounthFile(panel_Search, btn_CheckDBase, textArea);
+		CheckEqualsForFirst5Column.ActionListener_Btn_SearchAllColumn(progressBar,panel_Search, btn_SearchAllColumn, textArea);
+		CheckMeasurDBaseToMounthFile.ActionListener_Btn_CheckDBaseToMounthFile(progressBar,panel_Search, btn_CheckDBase, textArea);
 		CheckMeasurDBaseToMounthFile.ActionListener_Btn_CheckDBase_Clear(panel_Search, btn_CheckDBase_Clear, textArea);
 		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat(panel_Search, btn_CheckDBaseNameKodeStat, textArea, progressBar);
 		CheckPersonName_KodeStatus_DBseToExcelFiles.ActionListener_Btn_CheckDBaseNameKodeStat_Clear(panel_Search, btn_CheckDBaseNameKodeStat_Clear, textArea);
-		CheckCurentDataInExcelFilesMetod.ActionListener_Btn_CheckCurentDataInExcelFiles(panel_Search, btn_CheckCurentDataInExcelFiles, textArea);
+		CheckCurentDataInExcelFilesMetod.ActionListener_Btn_CheckCurentDataInExcelFilesWithProgresBar(progressBar, panel_Search, btn_CheckCurentDataInExcelFiles, textArea);
 		CheckPersonStatus.ActionListener_Btn_CheckPersonStatus(panel_Search, btn_Search_CheckPersonStatus, textArea, progressBar);
+		CheckDataExcellFilesAndKD.ActionListener_Btn_KodeAndNameKD(panel_Search, btn_Search_KodeAndNameKD, textArea, progressBar);
 		
 		
 		setVisible(true);
@@ -140,13 +144,13 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 	  }
 
 
-	private JPanel panel_0() {
+	private JPanel panel_DataError() {
 		
-		JPanel panel0 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel0.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		flowLayout.setVgap(2);
-		panel_Search.add(panel0);
+		JPanel panelDataError = new JPanel();
+		FlowLayout fl_panelDataError = (FlowLayout) panelDataError.getLayout();
+		fl_panelDataError.setAlignment(FlowLayout.LEFT);
+		fl_panelDataError.setVgap(2);
+		panel_Search.add(panelDataError);
 		
 		JLabel lbl_Year_1 = new JLabel(checkCorrectinDataInExcell_labelCheckCurentDataInExcelFiles);
 		
@@ -154,24 +158,24 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_Year_1.setBorder(null);
 		lbl_Year_1.setAlignmentX(0.5f);
-		panel0.add(lbl_Year_1);
+		panelDataError.add(lbl_Year_1);
 		
 		btn_CheckCurentDataInExcelFiles = new JButton("Search");
-		panel0.add(btn_CheckCurentDataInExcelFiles);
+		panelDataError.add(btn_CheckCurentDataInExcelFiles);
 		btn_CheckCurentDataInExcelFiles.setMargin(new Insets(2, 5, 2, 5));
 		btn_CheckCurentDataInExcelFiles.setPreferredSize(new Dimension(110, 23));
 		
 		
-		return panel0;
+		return panelDataError;
 	}
 
-	private JPanel panel_1() {
+	private JPanel panel_ColumnIn5Sheet() {
 		
-		JPanel panel1 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel1.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		flowLayout.setVgap(2);
-		panel_Search.add(panel1);
+		JPanel panelColumnIn5Sheet = new JPanel();
+		FlowLayout fl_panelColumnIn5Sheet = (FlowLayout) panelColumnIn5Sheet.getLayout();
+		fl_panelColumnIn5Sheet.setAlignment(FlowLayout.LEFT);
+		fl_panelColumnIn5Sheet.setVgap(2);
+		panel_Search.add(panelColumnIn5Sheet);
 		
 		JLabel lbl_Year_1 = new JLabel(checkCorrectinDataInExcell_labelErrorColumn);
 		
@@ -179,24 +183,24 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_Year_1.setBorder(null);
 		lbl_Year_1.setAlignmentX(0.5f);
-		panel1.add(lbl_Year_1);
+		panelColumnIn5Sheet.add(lbl_Year_1);
 		
 		btn_SearchAllColumn = new JButton("Search");
-		panel1.add(btn_SearchAllColumn);
+		panelColumnIn5Sheet.add(btn_SearchAllColumn);
 		btn_SearchAllColumn.setMargin(new Insets(2, 5, 2, 5));
 		btn_SearchAllColumn.setPreferredSize(new Dimension(110, 23));
 		
 		
-		return panel1;
+		return panelColumnIn5Sheet;
 	}
 		
-	private JPanel panel_2() {
+	private JPanel panel_MonthError() {
 			
-		JPanel panel2 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		flowLayout.setVgap(2);
-		panel_Search.add(panel2);
+		JPanel panelMonthError = new JPanel();
+		FlowLayout fl_panelMonthError = (FlowLayout) panelMonthError.getLayout();
+		fl_panelMonthError.setAlignment(FlowLayout.LEFT);
+		fl_panelMonthError.setVgap(2);
+		panel_Search.add(panelMonthError);
 
 		JLabel lbl_Year = new JLabel(checkCorrectinDataInExcell_labelErrorExcell);
 				
@@ -204,24 +208,24 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_Year.setBorder(null);
 		lbl_Year.setAlignmentX(0.5f);
-		panel2.add(lbl_Year);
+		panelMonthError.add(lbl_Year);
 		
 				btn_Search = new JButton("Search");
-				panel2.add(btn_Search);
+				panelMonthError.add(btn_Search);
 				btn_Search.setMargin(new Insets(2, 5, 2, 5));
 				btn_Search.setPreferredSize(new Dimension(110, 23));
 				
 
-		return panel2;
+		return panelMonthError;
 	}
 
-	private JPanel panel_2A() {
+	private JPanel panel_OtdelPerson() {
 		
-		JPanel panel2A = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel2A.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		flowLayout.setVgap(2);
-		panel_Search.add(panel2A);
+		JPanel panelOtdelPerson = new JPanel();
+		FlowLayout fl_panelOtdelPerson = (FlowLayout) panelOtdelPerson.getLayout();
+		fl_panelOtdelPerson.setAlignment(FlowLayout.LEFT);
+		fl_panelOtdelPerson.setVgap(2);
+		panel_Search.add(panelOtdelPerson);
 
 		JLabel lbl_CheckPersonStatus = new JLabel(CheckPersonStatus_labelError);
 				
@@ -229,25 +233,51 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_CheckPersonStatus.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_CheckPersonStatus.setBorder(null);
 		lbl_CheckPersonStatus.setAlignmentX(0.5f);
-		panel2A.add(lbl_CheckPersonStatus);
+		panelOtdelPerson.add(lbl_CheckPersonStatus);
 		
 				btn_Search_CheckPersonStatus = new JButton("Search");
-				panel2A.add(btn_Search_CheckPersonStatus);
+				panelOtdelPerson.add(btn_Search_CheckPersonStatus);
 				btn_Search_CheckPersonStatus.setMargin(new Insets(2, 5, 2, 5));
 				btn_Search_CheckPersonStatus.setPreferredSize(new Dimension(110, 23));
 				
 
-		return panel2A;
+		return panelOtdelPerson;
+	}
+
+	private JPanel panel_KodeAndNameKD() {
+		
+		JPanel panelKodeAndNameKD = new JPanel();
+		FlowLayout fl_panelKodeAndNameKD = (FlowLayout) panelKodeAndNameKD.getLayout();
+		fl_panelKodeAndNameKD.setAlignment(FlowLayout.LEFT);
+		fl_panelKodeAndNameKD.setVgap(2);
+		panel_Search.add(panelKodeAndNameKD);
+
+		JLabel lbl_KodeAndNameKD = new JLabel(KodeAndNameKD_labelError);
+				
+		lbl_KodeAndNameKD.setPreferredSize(new Dimension(550, 15));
+		lbl_KodeAndNameKD.setHorizontalAlignment(SwingConstants.LEFT);
+		lbl_KodeAndNameKD.setBorder(null);
+		lbl_KodeAndNameKD.setAlignmentX(0.5f);
+		panelKodeAndNameKD.add(lbl_KodeAndNameKD);
+		
+				btn_Search_KodeAndNameKD = new JButton("Search");
+				panelKodeAndNameKD.add(btn_Search_KodeAndNameKD);
+				btn_Search_KodeAndNameKD.setMargin(new Insets(2, 5, 2, 5));
+				btn_Search_KodeAndNameKD.setPreferredSize(new Dimension(110, 23));
+				
+
+		return panelKodeAndNameKD;
 	}
 
 	
-	private JPanel panel_3() {
+	
+	private JPanel panel_MeasurDBInMonth() {
 		
-		JPanel panel3 = new JPanel();
-		FlowLayout fl_panel3 = (FlowLayout) panel3.getLayout();
-		fl_panel3.setAlignment(FlowLayout.LEFT);
-		fl_panel3.setVgap(2);
-		panel_Search.add(panel3);
+		JPanel panelMeasurDBInMonth = new JPanel();
+		FlowLayout fl_panelMeasurDBInMonth = (FlowLayout) panelMeasurDBInMonth.getLayout();
+		fl_panelMeasurDBInMonth.setAlignment(FlowLayout.LEFT);
+		fl_panelMeasurDBInMonth.setVgap(2);
+		panel_Search.add(panelMeasurDBInMonth);
 
 		JLabel lbl_Year = new JLabel(checkCorrectinDataInExcell_labelCheckDBaseToMouthFile);
 				
@@ -255,10 +285,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_Year.setBorder(null);
 		lbl_Year.setAlignmentX(0.5f);
-		panel3.add(lbl_Year);
+		panelMeasurDBInMonth.add(lbl_Year);
 		
 		btn_CheckDBase = new JButton("Search");
-		panel3.add(btn_CheckDBase);
+		panelMeasurDBInMonth.add(btn_CheckDBase);
 		btn_CheckDBase.setMargin(new Insets(2, 5, 2, 5));
 		btn_CheckDBase.setPreferredSize(new Dimension(70, 23));
 		
@@ -266,19 +296,19 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		btn_CheckDBase_Clear.setEnabled(false);
 		btn_CheckDBase_Clear.setPreferredSize(new Dimension(70, 23));
 		btn_CheckDBase_Clear.setMargin(new Insets(2, 5, 2, 5));
-		panel3.add(btn_CheckDBase_Clear);
+		panelMeasurDBInMonth.add(btn_CheckDBase_Clear);
 				
 
-		return panel3;
+		return panelMeasurDBInMonth;
 	}
 
-	private JPanel panel_4() {
+	private JPanel panel_KodeAndNameerror() {
 		
-		JPanel panel4 = new JPanel();
-		FlowLayout fl_panel3 = (FlowLayout) panel4.getLayout();
-		fl_panel3.setAlignment(FlowLayout.LEFT);
-		fl_panel3.setVgap(2);
-		panel_Search.add(panel4);
+		JPanel panelKodeAndNameerror = new JPanel();
+		FlowLayout fl_panelKodeAndNameerror = (FlowLayout) panelKodeAndNameerror.getLayout();
+		fl_panelKodeAndNameerror.setAlignment(FlowLayout.LEFT);
+		fl_panelKodeAndNameerror.setVgap(2);
+		panel_Search.add(panelKodeAndNameerror);
 
 		JLabel lbl_Year = new JLabel(checkCorrectinDataInExcell_labelCheckName_KodestatDBaseToMouthFile);
 				
@@ -286,10 +316,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		lbl_Year.setHorizontalAlignment(SwingConstants.LEFT);
 		lbl_Year.setBorder(null);
 		lbl_Year.setAlignmentX(0.5f);
-		panel4.add(lbl_Year);
+		panelKodeAndNameerror.add(lbl_Year);
 		
 		btn_CheckDBaseNameKodeStat = new JButton("Search");
-		panel4.add(btn_CheckDBaseNameKodeStat);
+		panelKodeAndNameerror.add(btn_CheckDBaseNameKodeStat);
 		btn_CheckDBaseNameKodeStat.setMargin(new Insets(2, 5, 2, 5));
 		btn_CheckDBaseNameKodeStat.setPreferredSize(new Dimension(70, 23));
 		
@@ -297,10 +327,10 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 		btn_CheckDBaseNameKodeStat_Clear.setEnabled(false);
 		btn_CheckDBaseNameKodeStat_Clear.setPreferredSize(new Dimension(70, 23));
 		btn_CheckDBaseNameKodeStat_Clear.setMargin(new Insets(2, 5, 2, 5));
-		panel4.add(btn_CheckDBaseNameKodeStat_Clear);
+		panelKodeAndNameerror.add(btn_CheckDBaseNameKodeStat_Clear);
 				
 
-		return panel4;
+		return panelKodeAndNameerror;
 	}
 	
 	private JPanel panel_Button() {
@@ -414,6 +444,14 @@ public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 
 	public static void setBtn_CheckCurentDataInExcelFiles(JButton btn_CheckCurentDataInExcelFiles) {
 		CheckErrorDataInExcellFiles_Frame.btn_CheckCurentDataInExcelFiles = btn_CheckCurentDataInExcelFiles;
+	}
+
+	public static List<String> getListMoveEGN() {
+		return listMoveEGN;
+	}
+
+	public static void setListMoveEGN(List<String> listMoveEGN_In) {
+		listMoveEGN = listMoveEGN_In;
 	}
 
 	

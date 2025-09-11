@@ -12,7 +12,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
+import javax.swing.JProgressBar;
 
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.DimensionWBC;
@@ -945,4 +945,135 @@ int k=0;
 		e.printStackTrace();
 	}
 }
+	
+	public static List<Measuring> getValueMeasuringByStartdate_EndDateWithProgressBar(Date dateStart, Date dateEnd,JProgressBar fProgressBar, double stepForProgressBar) {
+		
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where Date >= ? AND Date <= ? ORDER BY Measuring_ID ASC";
+		double ProgressBarSize = 0;
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setObject(1, dateStart);
+			preparedStatement.setObject(2, dateEnd);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+			
+			int k=0;
+			while (result.next()) {
+			k++;	
+			}
+			stepForProgressBar = stepForProgressBar / k;
+			
+			result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				
+				
+				fProgressBar.setValue((int) ProgressBarSize);
+				
+				ProgressBarSize += stepForProgressBar;
+				
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}	
+	
+public static List<Measuring> getValueMeasuringByStartdate_EndDateWithProgressBar(int personID, Date dateStart, Date dateEnd,JProgressBar fProgressBar, double stepForProgressBar) {
+		
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Measuring  where  Date >= ? AND Date <= ? AND Person_ID = ? ORDER BY Measuring_ID ASC";
+		double ProgressBarSize = 0;
+		List<Measuring> list = new ArrayList<Measuring>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setObject(1, dateStart);
+			preparedStatement.setObject(2, dateEnd);
+			preparedStatement.setObject(3, personID);
+			
+
+			ResultSet result = preparedStatement.executeQuery();
+			
+			int k=0;
+			while (result.next()) {
+			k++;	
+			}
+			stepForProgressBar = stepForProgressBar / k;
+			
+			result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				
+				
+				fProgressBar.setValue((int) ProgressBarSize);
+				
+				ProgressBarSize += stepForProgressBar;
+				
+				Measuring resultObject = new Measuring();
+				resultObject.setMeasuring_ID(result.getInt("Measuring_ID"));
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				resultObject.setPerson(person);
+				resultObject.setDate(result.getDate("Date"));
+				resultObject.setDoze(result.getDouble("Doze"));
+				DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(result.getInt("DozeDimension_ID"));
+				resultObject.setDoseDimension(dim);
+				Laboratory lab = LaboratoryDAO.getValueLaboratoryByID(result.getInt("Lab_ID"));
+				resultObject.setLab(lab);
+				resultObject.setLab(lab);
+				UsersWBC user = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				resultObject.setUser(user);
+				TypeMeasur type = TypeMeasurDAO.getValueTypeMeasurByID(result.getInt("TypeMeasur_ID"));
+				resultObject.setTypeMeasur(type);
+				resultObject.setMeasurKoment(result.getString("MeasurKoment"));
+				resultObject.setReportFileName(result.getString("ReportFileName"));
+				resultObject.setExcelPosition(result.getString("ExcelPosition"));
+
+				list.add(resultObject);
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			ResourceLoader.appendToFile(e);
+		}
+		
+		return list;
+	}	
+	
+	
 }

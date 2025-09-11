@@ -21,7 +21,6 @@ import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
 import Aplication.RemouveDublikateFromList;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
@@ -47,6 +46,7 @@ import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.TypeMeasur;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 
 public class SearchFromExcellFiles {
@@ -860,7 +860,7 @@ public class SearchFromExcellFiles {
 	
 	public static  String[][] generateMasiveMeasurFromExcelFile( String year, Person person) {
 		
-		String[][] masiveMeasur = new String[500][10];
+		String[][] masiveMeasur = new String[500][11];
 		int k=0;
 		int insertYear = Integer.parseInt(year);
 		String[] path = pathToArhiveExcellFiles;
@@ -890,7 +890,8 @@ public class SearchFromExcellFiles {
 			}	
 		}
 		}
-		String[][] newMasiveMeasur = new String[k][10];
+		
+		String[][] newMasiveMeasur = new String[k][11];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			
@@ -900,7 +901,7 @@ public class SearchFromExcellFiles {
 	}
 	
 	private static String[][] generateListFromResultsWBCFromSmalExcelFile(Workbook workbook, Person person, String year) {
-		String[][] masiveMeasur = new String[500][9];
+		String[][] masiveMeasur = new String[500][11];
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
@@ -978,7 +979,7 @@ public class SearchFromExcellFiles {
 						index++;
 									
 					
-					if(k>253) {
+					if(k>252) {
 						k=6;
 						sheet = workbook.getSheetAt(2);
 					}
@@ -990,6 +991,7 @@ public class SearchFromExcellFiles {
 					
 					}
 					}
+					sheet = workbook.getSheetAt(1);
 					}
 				}
 				
@@ -997,7 +999,7 @@ public class SearchFromExcellFiles {
 			}
 
 		}
-		String[][] newMasiveMeasur = new String[index][9];
+		String[][] newMasiveMeasur = new String[index][11];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			
@@ -1007,7 +1009,7 @@ public class SearchFromExcellFiles {
 	}
 
 	public static String[][]  generateListFromResultsWBCFromBigExcelFile(Workbook workbook, Person person , String year) {
-		String[][] masiveMeasur = new String[500][10];
+		String[][] masiveMeasur = new String[500][11];
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		DimensionWBC dim = DimensionWBCDAO.getValueDimensionWBCByID(2);
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);	
@@ -1085,7 +1087,7 @@ public class SearchFromExcellFiles {
 							index++;
 								
 					
-						if(k>253) {
+						if(k>252) {
 							k=6;
 							sheet = workbook.getSheetAt(2);
 						}
@@ -1098,12 +1100,13 @@ public class SearchFromExcellFiles {
 						
 						}
 						}
+						sheet = workbook.getSheetAt(1);
 					}
 				}
 			}
 
 		}
-		String[][] newMasiveMeasur = new String[index][9];
+		String[][] newMasiveMeasur = new String[index][11];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
 			newMasiveMeasur[j] = masiveMeasur[j];
 			

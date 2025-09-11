@@ -1,10 +1,9 @@
 package CheckErrorDataInExcellFiles;
 
-import java.awt.RenderingHints.Key;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
@@ -25,7 +24,7 @@ class MySwingWorker extends SwingWorker<String, Double>{
 
     @Override
     protected String doInBackground() throws Exception {
-    	
+    	System.out.println("888888888888888888888888888888888888 "+fnameMethod);
     	String textForArea = "";
     	switch (fnameMethod) {
 		
@@ -44,6 +43,32 @@ class MySwingWorker extends SwingWorker<String, Double>{
 			
 		}
 			break;
+    	
+		case "checkNonCorectDataInExcelFiles": {
+			textForArea = CheckCurentDataInExcelFilesMetod.checkNonCorectDataInExcelFiles(fProgressBar, fpanel_AllSaerch);
+			
+		}
+			break;
+		case "CheckCorrectionAllRowInSheets": {
+			textForArea = CheckEqualsForFirst5Column.CheckCorrectionAllRowInSheets(fProgressBar, fpanel_AllSaerch);
+			
+		}
+			break;
+    	
+		case "CheckMontToBDate": {
+			textForArea = CheckMeasurDBaseToMounthFile.CheckMontToBDate(fProgressBar, fpanel_AllSaerch);
+			
+		}
+			break;
+			
+		case "CheckDataExcellFilesAndKD": {
+			System.out.println("666666666666666666666666666666");
+			textForArea = CheckDataExcellFilesAndKD.checkPersonNameKodeStatusInKD(fProgressBar, fpanel_AllSaerch);
+			
+		}
+			break;	
+			
+			
     	}	
 			return textForArea;
     }
@@ -61,7 +86,7 @@ class MySwingWorker extends SwingWorker<String, Double>{
 			CheckPersonStatus.setTextToArea(ftextArea,  get());
 			fProgressBar.setValue(100);
 		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
     	

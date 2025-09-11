@@ -85,7 +85,7 @@ public class ReadKodeStatusFromExcelFile {
 						ReadPersonStatusFromExcelFile.MessageDialog(EGN+" - "+FirstName);
 					}
 
-					if(!FirstName.contains("АЕЦ")) {
+					if(person != null && !FirstName.contains("АЕЦ")) {
 					cell = sheet.getRow(row).getCell(0);
 					if (cell != null)
 						kodeKZ1 = cell.getStringCellValue();

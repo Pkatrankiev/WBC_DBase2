@@ -36,7 +36,6 @@ import BasicClassAccessDbase.ActualExcellFiles;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
@@ -89,7 +88,7 @@ public class UpdateBDataFromExcellFiles {
 		String[] excellFiles = AplicationMetods.getDataBaseFilePat_OriginalPersonalAndExternal();
 		System.out.println("tt 2");
 		List<ActualExcellFiles> listActualExcellFiles = ActualExcellFilesDAO.getAllValueActualExcellFiles();
-		List<String> listChengeExcellFilePath = listChengeExcellFile(round, listActualExcellFiles, excellFiles);
+		List<String> listChengeExcellFilePath = listChengeExcellFile(listActualExcellFiles, excellFiles);
 		System.out.println("tt 3");
 		List<String> listPathOldFileFromArhive = getListAllExcelFileFromArhive(new File(destinationPathArhiveNow));
 		System.out.println("tt 4");
@@ -194,7 +193,7 @@ public class UpdateBDataFromExcellFiles {
 		return listExcellFile;
 	}
 	
-	 public static void sortListInt( List<Integer> excelFileArhive)
+	public static void sortListInt( List<Integer> excelFileArhive)
 	    {	    		    	
 
 		Collections.sort(excelFileArhive, new Comparator<Integer>() {
@@ -208,7 +207,7 @@ public class UpdateBDataFromExcellFiles {
 	    }
 	
 	
-	 public static void sortExcellFileFromArhiveByDate( List<File> excelFileArhive)
+	public static void sortExcellFileFromArhiveByDate( List<File> excelFileArhive)
 	    {	    		    	
 
 		Collections.sort(excelFileArhive, new Comparator<File>() {
@@ -397,12 +396,12 @@ public class UpdateBDataFromExcellFiles {
 	}
 
 	
-	private static void generateInfoPanel(String textForInfoFrame) {
+	public static void generateInfoPanel(String textForInfoFrame) {
 
 		JFrame parent = new JFrame();
 		int[] sizeInfoFrame = { 800, 400 };
-	
-				new infoFrame(parent, null, textForInfoFrame, sizeInfoFrame, null);
+		ActionIcone round = new ActionIcone();
+				new infoFrame(parent, null, textForInfoFrame, sizeInfoFrame, round);
 
 	}
 	
@@ -623,7 +622,7 @@ public class UpdateBDataFromExcellFiles {
 					break;
 				case "ObhodenList": {
 					// read and set ObhodenList in PersonStatus
-					if(PerStatNewSet.equals("1")) {
+				
 						List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusNewFromExcelFile(pathFile, firmName,
 								year, round, textIcon);
 						ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
@@ -632,16 +631,8 @@ public class UpdateBDataFromExcellFiles {
 						ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
 						System.out.println("Save "+firmName);
 						}
-					}else {
-					List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
-							year, round, textIcon);
-					ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-					System.out.println(year+ " --> "+list.size());
-					if(save) {
-					ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, round, textIcon);
-					System.out.println("Save "+firmName);
-					}
-					}
+				
+
 				}
 				}
 			}
@@ -667,7 +658,7 @@ public class UpdateBDataFromExcellFiles {
 		round.StopWindow();
 	}
 
-	private static List<String> getListArreaOtdels(String pathFile) {
+	public static List<String> getListArreaOtdels(String pathFile) {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<String> list = new ArrayList<>();
 		if (workbook.getNumberOfSheets() > 2) {
@@ -699,7 +690,7 @@ public class UpdateBDataFromExcellFiles {
 	}
 
 
-	private static List<Integer> revoveAndSortList(List<Integer> list) {
+	public static List<Integer> revoveAndSortList(List<Integer> list) {
 		List<Integer> deDupStringList = new ArrayList<>(new HashSet<>(list));
 		
 		return deDupStringList;
@@ -707,7 +698,7 @@ public class UpdateBDataFromExcellFiles {
 	}
 
 
-	private static List<String> listChengeExcellFile(ActionIcone round, List<ActualExcellFiles> listActualExcellFiles,
+	private static List<String> listChengeExcellFile(List<ActualExcellFiles> listActualExcellFiles,
 			String[] excellFiles) {
 
 		List<String> listChangeFilsPath = new ArrayList<>();

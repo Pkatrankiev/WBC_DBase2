@@ -252,7 +252,7 @@ public class ReadExcelFileWBC {
 		
 		for (int i = 0; i < countNames; i++) {
 			names1[i] = names1[i].trim();
-			System.out.println(names1[i]);
+//			System.out.println(names1[i]);
 			if(!names1[i].isEmpty())
 			names1[i] =names1[i].substring(0, 1).toUpperCase() + names1[i].substring(1).toLowerCase();
 		}
@@ -300,7 +300,7 @@ public class ReadExcelFileWBC {
 		int i =0;
 		for (String string : list) {
 			masive[i] = string;	
-			System.out.println(masive[i]);
+//			System.out.println(masive[i]);
 			i++;
 		}
 		return masive;

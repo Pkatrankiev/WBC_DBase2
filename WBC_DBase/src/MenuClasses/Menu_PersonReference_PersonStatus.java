@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import PersonReference_PersonStatus.PersonReference_PersonStatus_Frame;
+import BasicTable_PersonReference_PersonStatus.PersonReference_PersonStatus_Frame;
 
 public class Menu_PersonReference_PersonStatus extends AbstractMenuAction{
 

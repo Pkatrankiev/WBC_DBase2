@@ -1,5 +1,6 @@
 package CheckErrorDataInExcellFiles;
 
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,7 @@ import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,36 +27,72 @@ import Aplication.ReadKodeStatusFromExcelFile;
 public class CheckCurentDataInExcelFilesMetod {
 
 	
-	public static void ActionListener_Btn_CheckCurentDataInExcelFiles(JPanel panel_AllSaerch,
+//	public static void ActionListener_Btn_CheckCurentDataInExcelFiles(JPanel panel_AllSaerch,
+//			JButton btn_CheckDBaseNameKodeStat, JTextArea textArea) {
+//		btn_CheckDBaseNameKodeStat.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				textArea.setText("");
+//				GeneralMethods.setWaitCursor(panel_AllSaerch);
+//				
+//				String[][] ExtMasive = CheckCurentDataInExcelFiles();
+//				Integer[] columnWith = CheckPersonName_KodeStatus_DBseToExcelFiles.extractColumnWith(ExtMasive);
+//
+//				String textForArea = CheckPersonName_KodeStatus_DBseToExcelFiles.creadStringToInfoText(ExtMasive, columnWith);
+//				
+//				if (textForArea.isEmpty()) {
+//					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
+//					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
+//				} else {
+//					textArea.setText(textForArea);
+//					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(true);
+//				}
+//
+//				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+//			}
+//
+//		});
+//		
+//	}
+	
+	public static void ActionListener_Btn_CheckCurentDataInExcelFilesWithProgresBar(JProgressBar aProgressBar, JPanel panel_AllSaerch,
 			JButton btn_CheckDBaseNameKodeStat, JTextArea textArea) {
 		btn_CheckDBaseNameKodeStat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText("");
-				GeneralMethods.setWaitCursor(panel_AllSaerch);
-				
-				String[][] ExtMasive = CheckCurentDataInExcelFiles();
-				Integer[] columnWith = CheckPersonName_KodeStatus_DBseToExcelFiles.extractColumnWith(ExtMasive);
-
-				String textForArea = CheckPersonName_KodeStatus_DBseToExcelFiles.creadStringToInfoText(ExtMasive, columnWith);
-				
-				if (textForArea.isEmpty()) {
-					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
-				} else {
-					textArea.setText(textForArea);
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(true);
-				}
-
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+				new MySwingWorker(aProgressBar, textArea, panel_AllSaerch, "checkNonCorectDataInExcelFiles").execute();
 			}
+
+			
 
 		});
 		
 	}
 	
 	
+	static String checkNonCorectDataInExcelFiles(JProgressBar aProgressBar, JPanel panel_AllSaerch) {
+		
+		GeneralMethods.setWaitCursor(panel_AllSaerch);
+		
+		double ProgressBarSize = 0;
+		aProgressBar.setValue((int) ProgressBarSize);
+		
+		double stepForProgressBar = 100;
+		String[][] ExtMasive = CheckCurentDataInExcelFiles(aProgressBar, stepForProgressBar);
+		Integer[] columnWith = CheckPersonName_KodeStatus_DBseToExcelFiles.extractColumnWith(ExtMasive);
+
+		String textForArea = CheckPersonName_KodeStatus_DBseToExcelFiles.creadStringToInfoText(ExtMasive, columnWith);
+		
+		GeneralMethods.setDefaultCursor(panel_AllSaerch);
+		
+		return textForArea;
+	}
 	
-	public static String[][] CheckCurentDataInExcelFiles() {
+	
+	
+	
+	public static String[][] CheckCurentDataInExcelFiles(JProgressBar aProgressBar, double stepForProgressBar) {
+		
+		double ProgressBarSize = 0;
+		double NewStepForProgressBar = 0;
 		List<String> list = new ArrayList<>();
 		List<String> listEGN = new ArrayList<>();
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
@@ -70,6 +108,7 @@ public class CheckCurentDataInExcelFilesMetod {
 		Cell cell, cell1;
 		String EGN, FirstName;
 		list.add("Ред#Колона#Текст#Грешка");
+		NewStepForProgressBar = stepForProgressBar / filePath.length;
 		for (int ii = 0; ii < filePath.length; ii++) {
 			if(list.size() == 2) {
 				list = new ArrayList<>();
@@ -82,7 +121,7 @@ public class CheckCurentDataInExcelFilesMetod {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
 
 			Sheet sheet = workbook.getSheetAt(0);
-
+			stepForProgressBar = NewStepForProgressBar / sheet.getLastRowNum();
 			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
 
 				if (sheet.getRow(row) != null) {
@@ -119,6 +158,10 @@ public class CheckCurentDataInExcelFilesMetod {
 
 					}
 				}
+				
+				aProgressBar.setValue((int) ProgressBarSize);
+				System.out.println(ProgressBarSize +"  "+stepForProgressBar);
+				ProgressBarSize += stepForProgressBar;
 
 			}
 			System.out.println("rowSOYAG "+rowSOYAG+" "+list.size());
@@ -134,13 +177,22 @@ public class CheckCurentDataInExcelFilesMetod {
 		i++;
 		}
 		
-		
+		List<String> listMoveEGN = new ArrayList<>();
 		for (String string : listEGN) {
 			masive[i] = string.split("#");
+			if(masive[i][3].contains("преместен")) {
+				listMoveEGN.add(masive[i][2]);
+			}
+			
 			i++;
 			System.out.println(string);
 			
 		}
+		
+		CheckErrorDataInExcellFiles_Frame.setListMoveEGN(listMoveEGN);
+		
+		
+		
 		return masive;
 	}
 	
@@ -306,7 +358,7 @@ public class CheckCurentDataInExcelFilesMetod {
 		k++;
 	}
 	
-	if(k>253) {
+	if(k>252) {
 		k=6;
 		sheet = workbook.getSheetAt(2);
 	}
@@ -317,6 +369,7 @@ public class CheckCurentDataInExcelFilesMetod {
 	cell2 = sheet.getRow(row).getCell(k);
 	
 	}
+	sheet = workbook.getSheetAt(1);
 	return list;
 	}
 
@@ -329,9 +382,9 @@ public class CheckCurentDataInExcelFilesMetod {
 			strDate = strDate.replaceAll("г", "");
 			strDate = strDate.trim();
 			
-			SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(strDate);
+			
 			try {
-				
+				SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(strDate);
 					dd = sdfrmt.parse(strDate);
 					if(!sdfrmt.format(dd).equals(strDate)) {
 						return true;

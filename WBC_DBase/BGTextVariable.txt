@@ -48,6 +48,12 @@ filePathWBC3_KD_orig_test = d:\\0_LB\\month\\wbc3-KD.xls
 destinationDir = DIRECTORY/
 
 databaseOID = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//NewDB.mdb
+dbOID = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\NewDB.mdb
+accessPath = c:\\Program Files (x86)\\Access2003\\OFFICE11\\MSACCESS.EXE
+workgroupFileOID = t:\\Doznar\\Sys\\RZIK2.MDW
+userOID = idk2_3
+passwordOID = qwer1234
+nameMacrosFortransfer = MacroExec
 
 JustKatrankiev = В момента само Катранкиев ползва тази функция.
 
@@ -88,20 +94,33 @@ autoInsertMeasuting_GGP = ГГП
 autoInsertMeasuting_calc = Изчисление
 autoInsertMeasuting_Back = Назад
 
+manualInsertMeasuting = Нанасяне на измерванията
+manualInsertMeasutingTipText = Въвеждане на измерванията по ЕГН
 
 personManagement = Обработка на служители
-personManagementTipText  = въвеждане и промяна на информация за служители
+personManagementTipText  = Въвеждане и промяна на информация за служители
 
+Person_Manegement_Spisaci = Обработка списъци за достъп
+Person_Manegement_SpisaciTipText  = Въвеждане на списъци за достъп
+
+labelReferenceKontrolPersonByPeroid = Справка за контролираните лица
+labelReferenceKontrolPersonByPeroidTipText = Справка за контролираните лица по период
+labelReferenceKontrolPerson_Peroid = Период
 
 reference = Справки
 referenceTipText = извличане на справка
 
 personReference = Справки за служители
 personReference_OID = Справки за служители от ОИД
-personReferenceTipText = извличане на справка по различни показатели
+personReferenceTipText = Извличане на справка по различни показатели
+
+personReferenceInWebKD = Справки на служители в Контрол на Достъпа
+personReferenceInWebKD_TipText = Извличане на справка от WEB страницата
+
+
 
 kodeReference = Справка за свободни кодове
-kodeReferenceTipText = извличане на справка за заети и свободни кодове
+kodeReferenceTipText = Извличане на справка за заети и свободни кодове
 kodeReference_Leter = Буква
 kodeReference_Start = Начало
 kodeReference_End = Край
@@ -130,6 +149,7 @@ referencePerson_Inc = Постъп.[Bq]
 referencePerson_GGP = ГГП[%]
 referencePerson_Koment = Коментар
 referencePerson_Sp_Pr = Сп/Пр
+referencePerson_MeasurKoment = Коментар
 
 
 referencePersonMeasur = Справка по отдели за служителите измерени в СИЧ
@@ -145,6 +165,7 @@ referencePersonMeasur_btn_ZeroMeasur_Export_PersonMeasur = Експорт без
 referencePersonMeasur_btn_Export_PersonMeasur = Експорт на всички
 referencePersonMeasur_Ful_Name = Име презиме фамилия
 referencePersonMeasur_IzmervaneSICh = Измерване в СИЧ
+referencePersonMeasur_NotInBase = Този служител не е записан в базата
 
 referenceMeasuringLab = Справка по дни за измерванията в СИЧ
 referenceMeasuringLabTipText = подробна справка по дни за измерванията в СИЧ за даден период
@@ -206,6 +227,8 @@ svePersonManegement_ChangeOtdel = преместен от
 svePersonManegement_WithPril = С приложение
 svePersonManegement_kodeNotInOtdelArea = Кодът не е в областта на отдела.
 svePersonManegement_CheckOtdelArea = Полето на отдела е празно.
+svePersonManegement_CheckEGNField = Полето на ЕГН е празно.
+svePersonManegement_CheckFirstName = Полето на Първо име е празно.
 svePersonManegement_textOtdelArea = областта на отдела e:
 svePersonManegement_NonKorektFormatKode = Некоректен формат на кода.
 svePersonManegement_NonKorektPrefikceFormuliar = Префикса на формуляра не отговаря на достъпа.
@@ -233,6 +256,7 @@ checkCorrectinDataInExcell_ZaMesec = За месец:
 checkCorrectinDataInExcell_ErrorLab = Грешни маркирания на измервания СИЧ в
 checkCorrectinDataInExcell_IzmerVSICH = Изм в СИЧ
 checkCorrectinDataInExcell_MarkKato = маркирано като
+KodeAndNameKD_labelError = Проверка за несъвпадения на данните за имена и кодове в Excel и КД
 
 editBasicTable = Основни Таблици
 editBasicTable_TipText = Преглед и промяна в основните таблици
@@ -241,3 +265,26 @@ dokumentStatusUser = Документ-Статус на служителите
 dokumentStatusUser_TipText = Преглед и промяна на Документ-Статус на служителите
 
 fileError = файлова грешка
+
+dozeCalculate = Оценка на дозата
+dozeCalculateTipText = Оценка на дозово натоварване от вътрешно облъчване
+DozeArt_ReportFrame_Label = Репорт на данните за оценка на Дозата
+
+deleteDublicateShortEGN = Изтриване на дублираните къси ЕГН
+deleteDublicateShortEGNTipText = Изтриване на дублираните къси ЕГН
+
+deleteDataFromDBaseRemoveInCurenYearFromOldYear = <html>Изтриване на данни от Базата прехвърлени <br>от старата в настоящата година</html>
+CheckInfoDBaseToExcelFiles_deleteSpisak_PrilogeniaFromDBase = Изтриване на записи от Базата на Списък-Приложения прехвърлени от старата в настоящата година
+CheckInfoDBaseToExcelFiles_delete_PersonStatus_FromDBase = Изтриване на записи от Базата на статуса на Служители прехвърлени от старата в настоящата година
+CheckInfoDBaseToExcelFiles_delete_PersonWithoutExcelFile_FromDBase = Изтриване на записи от Базата на Служители изтрити от Ексел Файловете
+ListPersonInfoFrame_Title = Списък служители
+referencePersonMeasur_KodeZone = Код Зона
+labelMeasurInOderLabFrame = Проверка за измервания в лаборатория различна от съхранение на картоните
+labelMeasurInOderLabMenu = Справка измервания - лаборатория
+daSePopylniKartona = Да се попълни картона
+resultFromMeasuringReference_Text = Справка на резултатите от измерванията
+resultFromMeasuringReference_TipText = Справка по период на резултатите от измерванията
+
+resultFromMeasuring = Измервания и резултати
+
+

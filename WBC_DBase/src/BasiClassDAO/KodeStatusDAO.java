@@ -47,8 +47,10 @@ public class KodeStatusDAO {
 			preparedStatement.setInt(7, setData_UsersWBC.getId_Users());
 			preparedStatement.setDate(8, convertDate(dateSet));
 			
-
 			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			connection.close();
 
 		} catch (SQLException e) {
 			if (!e.toString().contains("unique")) {
@@ -78,6 +80,9 @@ public class KodeStatusDAO {
 			
 
 			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			connection.close();
 
 		} catch (SQLException e) {
 			if (e.toString().contains("unique")) {
@@ -106,12 +111,17 @@ public class KodeStatusDAO {
 			preparedStatement.setString(5, kodeStatus.getYear());
 			preparedStatement.setString(6, kodeStatus.getZabelejkaKodeStatus());
 			preparedStatement.setInt(7, kodeStatus.getSetData_UsersWBC().getId_Users());
+//			preparedStatement.setDate(8, (java.sql.Date) kodeStatus.getDateSet());
+			if(kodeStatus.getDateSet() != null) {
 			preparedStatement.setDate(8, convertDate(kodeStatus.getDateSet()));
-			
+			}
 
 			preparedStatement.setInt(9, kodeStatus.getKodeStatus_ID());
 
 			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			connection.close();
 
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
@@ -131,6 +141,9 @@ public class KodeStatusDAO {
 			preparedStatement.setInt(1, id_KodeStatus);
 
 			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			connection.close();
 
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
@@ -230,6 +243,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -267,6 +284,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -295,6 +316,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -327,6 +352,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -360,6 +389,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -390,6 +423,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -420,6 +457,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -450,6 +491,11 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -486,6 +532,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -521,6 +571,10 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -550,6 +604,11 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -585,6 +644,11 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -611,11 +675,15 @@ public class KodeStatusDAO {
 				KodeStatus KodeStatus = setKodeStatus(result);;
 				listKodeStatus.add(KodeStatus);
 			}
+			
+			preparedStatement.close();
+			connection.close();
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
 		}
-		return listKodeStatus.get(0);
+		return listKodeStatus.size()>0?listKodeStatus.get(0):null;
 	}
 	
 	private static KodeStatus setKodeStatus(ResultSet result) throws SQLException {

@@ -44,7 +44,8 @@ public class CarefulCreateCellStyles {
 
    // maybe sone rows need their own default cell style
    CellStyle aRowCellStyle = workbook.createCellStyle();
-   aRowCellStyle.cloneStyleFrom(defaultCellStyle);
+   aRowCellStyle = defaultCellStyle;
+//   aRowCellStyle.cloneStyleFrom(defaultCellStyle);
    aRowCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
    aRowCellStyle.setFillForegroundColor((short)3);
 

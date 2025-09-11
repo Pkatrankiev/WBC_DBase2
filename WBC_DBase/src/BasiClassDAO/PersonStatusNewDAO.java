@@ -943,13 +943,23 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 		return listPersonStatusNew;
 	}
 
-	public static List<PersonStatusNew> getValuePersonStatusNewByYearWithProgressBar(String year, JProgressBar fProgressBar, double stepForProgressBar) {
+	public static List<PersonStatusNew> getValuePersonStatusNewByYearWithProgressBar(String year, Person person, JProgressBar fProgressBar, double stepForProgressBar) {
 		
 
 		double ProgressBarSize = 0;
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM PersonStatusNew where  Year = ? ";
-
+		String sql = "SELECT * FROM PersonStatusNew where  Year = "+ year;
+		if(year.isEmpty()) {
+			sql = "SELECT * FROM PersonStatusNew";
+			}
+		
+		if(person != null && !year.isEmpty()) {
+				sql = "SELECT * FROM PersonStatusNew where  Person_ID = "+person.getId_Person()+"  AND Year = "+ year;
+				}
+			if(person != null && year.isEmpty()) {
+				sql = "SELECT * FROM PersonStatusNew where  Person_ID = "+person.getId_Person();
+				}
+			
 		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
 		
 		
@@ -957,8 +967,8 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 		
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setObject(1, year);
-			
+//			preparedStatement.setObject(1, year);
+//			
 			ResultSet result = preparedStatement.executeQuery();
 			int k=0;
 			while (result.next()) {
@@ -1046,7 +1056,9 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 			return null;
 		
 		if (listPersonStatusNew.size() > 1) {
-			if(listPersonStatusNew.get(0).getPersonStatusNew_ID() > listPersonStatusNew.get(1).getPersonStatusNew_ID()) {
+			
+			if(listPersonStatusNew.get(0).getStartDate().equals(listPersonStatusNew.get(1).getStartDate())) 
+				if(	listPersonStatusNew.get(0).getPersonStatusNew_ID() > listPersonStatusNew.get(1).getPersonStatusNew_ID()) {
 				return listPersonStatusNew.get(0);	
 			}else {
 				return listPersonStatusNew.get(1);	
@@ -1056,5 +1068,52 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 		return listPersonStatusNew.get(0);
 	}
 	
+	public static PersonStatusNew getValuePersonStatusNewByID_New(int id) {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew where PersonStatusNew_ID = ? LIMIT 1";
+
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setObject(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+
+				PersonStatusNew PersonStatusNew = new PersonStatusNew();
+
+				PersonStatusNew.setPersonStatusNew_ID(result.getInt("PersonStatusNew_ID"));
+				
+				Person person = PersonDAO.getValuePersonByID(result.getInt("Person_ID"));
+				PersonStatusNew.setPerson(person);
+				
+				Workplace workplace = WorkplaceDAO.getValueWorkplaceByID(result.getInt("Workplace_ID"));
+				PersonStatusNew.setWorkplace(workplace);
+				
+				PersonStatusNew.setFormulyarName(result.getString("FormulyarName"));
+				PersonStatusNew.setStartDate(result.getDate("StartDate"));
+				PersonStatusNew.setEndDate(result.getDate("EndDate"));
+				PersonStatusNew.setYear(result.getString("Year"));
+				
+				UsersWBC userWBC = UsersWBCDAO.getValueUsersWBCByID(result.getInt("UsersWBC_ID"));
+				PersonStatusNew.setUserWBC(userWBC);
+				
+				PersonStatusNew.setDateSet(result.getDate("DateSet"));
+				PersonStatusNew.setZabelejka(result.getString("Zabelejka"));
+
+			}
+
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+		return listPersonStatusNew.get(0);
+	}
+
 	
 }

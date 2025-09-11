@@ -148,28 +148,9 @@ public class Reference_PersonMeasur_Metods {
 					dateStart = sdf.parse(startDate);
 					dateEnd = sdf.parse(endDate);
 
-//					if(!year.isEmpty()) {
-//					dateStart =  sdf.parse("01.01." + year);
-//					}else {
-//						dateStart =  sdf.parse("01.01." + curentYear);
-//					}
-//					if(!startDate.isEmpty()) {
-//						dateStart =  sdf.parse(startDate);
-//					}
-//					
-//					if(!year.isEmpty()) {
-//					dateEnd =  sdf.parse("31.12." + year);
-//					}else {
-//						dateEnd =  sdf.parse("31.12." + curentYear);
-//					}
-//					if(!endDate.isEmpty()) {
-//						dateEnd =  sdf.parse(endDate);
-//					
-//					}
 				} catch (ParseException e1) {
 					e1.printStackTrace();
 				}
-				System.out.println(sdf.format(dateStart) + "  " + sdf.format(dateEnd));
 				if (!allFieldsEmnty() && !otdel.isEmpty()) {
 
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
@@ -181,7 +162,7 @@ public class Reference_PersonMeasur_Metods {
 					textArea_PersonMeasur.setText("");
 
 					List<Person> listPerson = spisakPersonFromWorkplace(workPlace, year);
-
+				
 					String textForArea = TextInAreaTextPanel_Reference_PersonMeasur.createInfoPanelForPerson(listPerson,
 							textField_Year.getText(), dateStart, dateEnd);
 					if (textForArea.isEmpty()) {

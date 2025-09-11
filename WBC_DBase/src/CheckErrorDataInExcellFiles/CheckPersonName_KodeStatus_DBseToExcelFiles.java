@@ -39,7 +39,8 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				textArea.setText("");
 //				GeneralMethods.setWaitCursor(panel_AllSaerch);
 				listMasiveForClear = new ArrayList<>();
-				
+				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(false);
+				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
 				
 				new MySwingWorker(progressBar, textArea, panel_AllSaerch, "CheckDBaseNameKodeStat").execute();
 				
@@ -160,6 +161,9 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 							if (person != null) {
 							masive[0][0] = EGN;
 							masive[0][1] = FirstName;
+							if(EGN.equals("0051301900")) {
+								System.out.println(FirstName+" *********************");
+							}
 							cell = sheet.getRow(row).getCell(0);
 							if (cell != null)
 								kodeKZ1 = cell.getStringCellValue();
@@ -328,7 +332,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		return columnWith;
 	}
 
-	private static String extracted(String[][] listMasive) {
+	static String extracted(String[][] listMasive) {
 		String sttr0 = "", sttr1 = "";
 		for (int s = 0; s < 8; s++) {
 			sttr0 += listMasive[0][s] + "&";
@@ -343,7 +347,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		return sttr0 = sttr0 + "@" + sttr1;
 	}
 
-	private static String[][] extractedMasive(List<String> listMasive) {
+	static String[][] extractedMasive(List<String> listMasive) {
 		String[][] extrMasive = new String[listMasive.size() * 2][8];
 		
 		extrMasive[0] = new String[]{"ЕГН/IDкод", "Име(1)", "КЗ1(2)", "КЗ2(3)", "ХОГ(4)", "Т1(5)", "Т2(6)", "Опис Разлики"};
@@ -418,10 +422,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 	private static void deleteKode(String kod, Person person, int zoneID) {
 		KodeStatus kodeStat;
 		System.out.println(
-				person.getId_Person() + " - " + person.getEgn() + " - " + zoneID + " - " + "2024" + " - " + kod);
-		kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYaerAndKode(person, zoneID, "2024", kod);
+				person.getId_Person() + " - " + person.getEgn() + " - " + zoneID + " - " + curentYear + " - " + kod);
+		kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYaerAndKode(person, zoneID, curentYear, kod);
 		if (kodeStat != null) {
-			System.out.println(kodeStat.getPerson().getEgn() + " - " + kodeStat.getZone().getId_Zone() + " - " + "2024"
+			System.out.println(kodeStat.getPerson().getEgn() + " - " + kodeStat.getZone().getId_Zone() + " - " + curentYear
 					+ " - " + kodeStat.getKode());
 			KodeStatusDAO.deleteValueKodeStatus(kodeStat.getKodeStatus_ID());
 		}

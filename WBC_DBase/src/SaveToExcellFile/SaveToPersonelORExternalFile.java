@@ -39,7 +39,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
 
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
@@ -61,9 +60,10 @@ public class SaveToPersonelORExternalFile {
 	static int curentYear = Calendar.getInstance().get(Calendar.YEAR);
 	static UsersWBC workingUser;
 	static String commentText;
+	static String defaltAreaName;
 
 	
-	public static void saveInfoFromPersonManegementToExcelFile(JFrame frame, Person person, String firmName, Spisak_Prilogenia spPril,
+	public static void saveInfoFromPersonManegementToExcelFile(Person person, String firmName, Spisak_Prilogenia spPril,
 			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, boolean checkbx_EnterInListChengeKode, boolean obhodenList) {
 	
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
@@ -74,8 +74,10 @@ public class SaveToPersonelORExternalFile {
 		commentText = comment;
 
 		String pathFile = filePath[1];
+		defaltAreaName = "Шаблон";
 		if (firmName.equals("АЕЦ Козлодуй")) {
 			pathFile = filePath[0];
+			defaltAreaName = "Свободен";
 		}
 
 		try {
@@ -83,7 +85,6 @@ public class SaveToPersonelORExternalFile {
 			FileInputStream inputStream = new FileInputStream(pathFile);
 			Workbook workbook = new HSSFWorkbook(inputStream);
 
-			
 			
 			firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
 			
@@ -101,7 +102,8 @@ public class SaveToPersonelORExternalFile {
 			
 			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName, workplace);
 			
-//			reformatSheetSpPr(workbook);
+			reformatSheetSpPr(workbook);
+			reformatSheetIzmervane( workbook);
 			
 			FileOutputStream outputStream = new FileOutputStream(pathFile);
 			workbook.write(outputStream);
@@ -127,9 +129,8 @@ public class SaveToPersonelORExternalFile {
 	
 	
 	
-	
-	@SuppressWarnings("unused")
-	private static void reformatSheetSpPr(Workbook workbook) {
+
+	public 	static void reformatSheetSpPr(Workbook workbook) {
 		
 		
 		Sheet sheetSpPr = workbook.getSheetAt(3);
@@ -165,7 +166,7 @@ public class SaveToPersonelORExternalFile {
 					cellStyle2 = cellStyleYelow2;
 				}
 				
-				System.out.println(row );
+//				System.out.println(row );
 				for (int m = 7; m <= 254; m += 3) {
 					
 						cell = sheetSpPr.getRow(row).getCell(m);
@@ -185,6 +186,48 @@ public class SaveToPersonelORExternalFile {
 		}
 	}
 
+
+	public 	static void reformatSheetIzmervane(Workbook workbook) {
+		
+		for (int k = 1; k <= 2; k++) {
+			
+		
+		Sheet sheetSpPr = workbook.getSheetAt(k);
+		int maxRow = sheetSpPr.getLastRowNum();
+				
+		CellStyle cellStyleDate = sheetSpPr.getRow(5).getCell(7).getCellStyle();
+		CellStyle cellStyleLab = sheetSpPr.getRow(5).getCell(8).getCellStyle();
+		CellStyle cellStyleNumber = sheetSpPr.getRow(5).getCell(9).getCellStyle();
+				
+		
+		int row = 5;
+		Cell cell;
+
+		while (row < maxRow) {
+			if (sheetSpPr.getRow(row) != null) {
+			
+				for (int m = 7; m <= 254; m += 19) {
+					
+						cell = sheetSpPr.getRow(row).getCell(m);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell)) cell.setCellStyle(cellStyleDate);
+						cell = sheetSpPr.getRow(row).getCell(m+1);
+						if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+1);
+						if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyleLab);
+						for (int i = 2; i < 19; i++) {
+							if(m+i < 255) {
+							cell = sheetSpPr.getRow(row).getCell(m+i);
+							if (cell == null) cell = sheetSpPr.getRow(row).createCell(m+i);
+							if (!ReadExcelFileWBC.CellNOEmpty(cell))cell.setCellStyle(cellStyleNumber);	
+							}
+						}
+				}
+				}
+			row++;
+			}
+			
+		}
+		}
 
 
 
@@ -318,7 +361,7 @@ public class SaveToPersonelORExternalFile {
 			Cell cel;
 			
 			String text = commentText;
-			
+			int[] rowByBefautStyle = getAreaOtdelSvoboden(  workbook);
 			int intRrowPerson = searchRowPersonInWorkbook(workbook, person);
 			Sheet sheet4 = workbook.getSheetAt(4);
 			Sheet sheet3 = workbook.getSheetAt(3);
@@ -333,83 +376,87 @@ public class SaveToPersonelORExternalFile {
 				for (int j = 0; j < 4; j++) {
 					for (int i = 0; i < 7; i++) {
 				cel = workbook.getSheetAt(j).getRow(intRrowPerson).getCell(i);
-				setYELLOWandREDCellStyle(cel);
+//				setYELLOWandREDCellStyle(cel); // да се промени
+				System.out.println(rowByBefautStyle[1]+"/////////////////////////////////////////////////////////////");
+				setDefautCellStyle(cel, rowByBefautStyle[1], workbook);
 				}
 			}
-			
-				if (firmName.equals("АЕЦ Козлодуй")) {
-				
 				setInfoToPERSONELSheet4(text, newRow, rowPerson);
-				}else {
-					setInfoToEXTERNALSheet4(text, newRow, rowPerson);
-				}
+//				if (firmName.equals("АЕЦ Козлодуй")) {
+//				
+//				
+//				}else {
+//					setInfoToEXTERNALSheet4(text, newRow, rowPerson);
+//				}
 				
 				
 		}	
 		
 	}
 
-	private static void setYELLOWandREDCellStyle( Cell cel) {
-		CellStyle style;
-		Font font = cel.getSheet().getWorkbook().createFont();
-		font.setColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
-		font.setFontName("Times New Roman");
-		font.setBold(true);
-		font.setCharSet(10);
-		style = cel.getSheet().getWorkbook().createCellStyle();
-		style.cloneStyleFrom(cel.getCellStyle());
-		style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		style.setFont(font);
-		cel.setCellStyle(style);
-	}
+//	private static void setYELLOWandREDCellStyle( Cell cel) {
+//		CellStyle style;
+//		Font font = cel.getSheet().getWorkbook().createFont();
+//		font.setColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
+//		font.setFontName("Times New Roman");
+//		font.setBold(true);
+//		font.setCharSet(10);
+//		style = cel.getSheet().getWorkbook().createCellStyle();
+//		style = cel.getCellStyle();
+////		style.cloneStyleFrom(cel.getCellStyle());
+//		style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+//		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//		style.setFont(font);
+//		cel.setCellStyle(style);
+//	}
 	
-	private static void setWHITEandBLACKCellStyle(Cell cel) {
-		CellStyle style;
-		Font font = cel.getSheet().getWorkbook().createFont();
-		font.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
-		font.setFontName("Times New Roman");
-		font.setBold(true);
-		font.setCharSet(10);
-		style = cel.getSheet().getWorkbook().createCellStyle();
-		style.cloneStyleFrom(cel.getCellStyle());
-		style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		style.setFont(font);
-		cel.setCellStyle(style);
-	}
+//	public static void setWHITEandBLACKCellStyle(Cell cel) {
+//		CellStyle style;
+//		Font font = cel.getSheet().getWorkbook().createFont();
+//		font.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+//		font.setFontName("Times New Roman");
+//		font.setBold(true);
+//		font.setCharSet(10);
+//		style = cel.getSheet().getWorkbook().createCellStyle();
+//		style = cel.getCellStyle();
+////		style.cloneStyleFrom(cel.getCellStyle());
+//		style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+//		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//		style.setFont(font);
+//		cel.setCellStyle(style);
+//	}
 
-	private static void setInfoToEXTERNALSheet4(String text, Row newRow, Row rowPerson) {
-		
-		Cell newCel = newRow.createCell(1);
-		Cell oldCel = rowPerson.getCell(0);
-		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-		setWHITEandBLACKCellStyle(newCel);
-		
-		newCel = newRow.createCell(2);
-		oldCel = rowPerson.getCell(1);
-		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-		setWHITEandBLACKCellStyle(newCel);
-		
-		newCel = newRow.createCell(3);
-		oldCel = rowPerson.getCell(2);
-		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-		setWHITEandBLACKCellStyle(newCel);
-		
-		newCel = newRow.createCell(4);
-		oldCel = rowPerson.getCell(5);
-		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-		setWHITEandBLACKCellStyle(newCel);
-		
-		newCel = newRow.createCell(5);
-		oldCel = rowPerson.getCell(6);
-		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-		setWHITEandBLACKCellStyle(newCel);
-		
-		newCel = newRow.createCell(7);
-		newCel.setCellValue(text);
-	}
-	
+//	private static void setInfoToEXTERNALSheet4(String text, Row newRow, Row rowPerson) {
+//		
+//		Cell newCel = newRow.createCell(1);
+//		Cell oldCel = rowPerson.getCell(0);
+//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+//		
+//		
+//		newCel = newRow.createCell(2);
+//		oldCel = rowPerson.getCell(1);
+//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+//		
+//		
+////		newCel = newRow.createCell(3);
+////		oldCel = rowPerson.getCell(2);
+////		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+//		
+//		
+//		newCel = newRow.createCell(3);
+//		oldCel = rowPerson.getCell(5);
+//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+//		
+//		
+//		newCel = newRow.createCell(4);
+//		oldCel = rowPerson.getCell(6);
+//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
+//		
+//		
+//		newCel = newRow.createCell(6);
+//		newCel.setCellValue(text);
+//	}
+//	
 	private static void setInfoToPERSONELSheet4(String text, Row newRow, Row rowPerson) {
 		
 		Cell oldCel = rowPerson.getCell(0);
@@ -592,6 +639,7 @@ public class SaveToPersonelORExternalFile {
 
 		System.out.println(person.getEgn());
 		String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
+		int[] rowByBefautStyle = getAreaOtdelSvoboden(  workbook);
 
 		for (int i = 0; i < 4; i++) {
 			Sheet worksheet = workbook.getSheetAt(i);
@@ -601,17 +649,18 @@ public class SaveToPersonelORExternalFile {
 			worksheet.createRow(endRowOtdel);
 
 			Row sourceRow = worksheet.getRow(row);
-
+			if(sourceRow == null) sourceRow = worksheet.createRow(row);
 			Row newRow = worksheet.getRow(endRowOtdel);
 
 			boolean withValues = false;
 			if (isNewData) {
 				sourceRow = worksheet.getRow(endRowOtdel - 1);
+				if(sourceRow == null) sourceRow = worksheet.createRow(endRowOtdel - 1);
 
 			} else {
 				withValues = true;
 			}
-			CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
+			CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues, rowByBefautStyle); //да се промени
 			newRow.getCell(0).setCellValue(kode[0]);
 			newRow.getCell(1).setCellValue(kode[1]);
 			newRow.getCell(2).setCellValue(kode[2]);
@@ -626,7 +675,7 @@ public class SaveToPersonelORExternalFile {
 
 	
 	public static void CopyValueFromSourseRowToNewRow(Sheet worksheet, Row sourceRow, Row newRow,
-			boolean withValues) {
+			boolean withValues, int[] rowByBefautStyle) {
 
 		Cell newCell;
 		for (int m = 0; m < sourceRow.getLastCellNum(); m++) {
@@ -641,23 +690,26 @@ public class SaveToPersonelORExternalFile {
 			}
 			
 			CopyValueFromOldCellToNewcell(oldCell,  newCell, withValues);
+			System.out.println(rowByBefautStyle[1]+"/////////////////////////////////////////////////////////////");
 			if(newCell.getColumnIndex()<7) {
-				setWHITEandBLACKCellStyle(newCell);
+				setDefautCellStyle(newCell,rowByBefautStyle[0], worksheet.getWorkbook());
 			}
 			}
 		
 
 	}
 
-	private static void CopyValueFromOldCellToNewcell(Cell oldCell, Cell newCell, boolean withValues) {
+	public static void CopyValueFromOldCellToNewcell(Cell oldCell, Cell newCell, boolean withValues) {
 
 			
 			Sheet worksheet = newCell.getSheet();
 			System.out.println("Copy style from");
 			// Copy style from old cell and apply to new cell
-			CellStyle style = worksheet.getWorkbook().createCellStyle();
-			style.cloneStyleFrom(oldCell.getCellStyle());
-			newCell.setCellStyle(style);
+//			CellStyle style = worksheet.getWorkbook().createCellStyle();
+//			style = oldCell.getCellStyle();
+//			style.cloneStyleFrom(oldCell.getCellStyle());
+			
+			newCell.setCellStyle(oldCell.getCellStyle());
 
 			// If there is a cell comment, copy
 			if (oldCell.getCellComment() != null) {
@@ -716,7 +768,7 @@ public class SaveToPersonelORExternalFile {
 	}
 
 	
-	private static void copyCommentFromOldCellToNewcell(Cell oldCell, Cell newCell) {
+	public static void copyCommentFromOldCellToNewcell(Cell oldCell, Cell newCell) {
 		
 		if(oldCell.getSheet().equals(newCell.getSheet())) {		
 		newCell.setCellComment(oldCell.getCellComment());
@@ -728,7 +780,7 @@ public class SaveToPersonelORExternalFile {
 		
 	}
 
-	private static String copyFormula(Sheet sheet, String formula, int coldiff, int rowdiff) {
+	public static String copyFormula(Sheet sheet, String formula, int coldiff, int rowdiff) {
 
 		Workbook workbook = sheet.getWorkbook();
 		HSSFEvaluationWorkbook evaluationWorkbook = null;
@@ -1065,4 +1117,47 @@ public class SaveToPersonelORExternalFile {
 		return filePath;
 	}
 
+	
+	private static int[] getAreaOtdelSvoboden( Workbook workbook) {
+		
+		
+		Sheet sheetSpPr = workbook.getSheetAt(0);
+		int maxRow = sheetSpPr.getLastRowNum();
+		int row = 5;
+		int masiveRowOtdel[] = new int[2];
+		boolean fl = false;
+		Cell cell;
+		String str_cell = "";
+		while (row < maxRow) {
+
+			if (sheetSpPr.getRow(row) != null) {
+
+				cell = sheetSpPr.getRow(row).getCell(6);
+
+				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+					str_cell = ReadExcelFileWBC.getStringfromCell(cell);
+
+					if (str_cell.equals(defaltAreaName)) {
+						masiveRowOtdel[0] = row+2;
+						fl = true;
+					}
+
+					if (fl && str_cell.equals("край")) {
+						masiveRowOtdel[1] = row-1;
+						row = maxRow;
+					}
+				}
+			}
+			row++;
+		}
+		return masiveRowOtdel;
+	}
+	
+	 private static void setDefautCellStyle(Cell newCell, int rowByBefautBWStyle, Workbook workbook) {
+		 int column = newCell.getColumnIndex();
+		 CellStyle style = workbook.getSheetAt(0).getRow(rowByBefautBWStyle).getCell(column).getCellStyle();
+		 newCell.setCellStyle(style);
+	}
+	
+	
 }

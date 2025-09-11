@@ -66,7 +66,6 @@ public class PersonelManegementFrame extends JFrame {
 	private static JTextField textField_LName;
 
 	private static JButton btn_SearchPerson;
-	private static JButton btn_ReadFileListPerson;
 	private static JButton btn_Clear;
 	private static JButton btn_savePerson_Insert;
 	private static JButton btn_savePerson_FromOiD;
@@ -116,7 +115,6 @@ public class PersonelManegementFrame extends JFrame {
 	
 	private static JLabel lbl_svePerson_Text_Check_EnterInZone;
 	private JPanel personSave_Panel;
-	private JTextField textField;
 	private static JLabel lbl_svePerson_isEnterInZone;
 	private static JLabel lbl_svePerson_EnterInListChengeKode;
 	
@@ -192,15 +190,18 @@ public class PersonelManegementFrame extends JFrame {
 
 		PersonelManegementMethods.ActionListener_ComboBox_savePerson_Otdel(comboBox_savePerson_Otdel);
 	
+		PersonelManegementMethods.ActionListener_Btn_SearchPerson(btn_SearchPerson, panel_AllSaerch, 
+				textArea, btn_savePerson_Insert, infoPanel, tablePane, scrollPane, 
+				textField_svePerson_Year, textField_EGN, btnBackToTable, btn_SaveToExcelFile);
+		
 		PersonelManegementMethods.ActionListenerBtnBackToTable(btnBackToTable, textArea,  tablePane,
 				 panel_AllSaerch,  scrollPane,  textField_svePerson_Year);
+		
+		
 		
 		PersonelManegementMethods.ActionListener_Btn_Clear(btn_savePerson_Insert, btn_Clear, textArea);
 
 		PersonelManegementMethods.ActionListener_TextArea(btn_savePerson_Insert, textArea, panel_AllSaerch);
-
-		PersonelManegementMethods.ActionListener_Btn_SearchPerson(btn_SearchPerson, panel_AllSaerch, textArea, btn_savePerson_Insert,
-				infoPanel, tablePane, scrollPane, textField_svePerson_Year, textField, btnBackToTable);
 
 		PersonelManegementMethods.ActionListener_Btn_savePerson_Insert(btn_savePerson_Insert, panel_AllSaerch, textArea);
 		PersonelManegementMethods.ActionListener_Btn_savePerson_FromOiD(btn_savePerson_FromOiD, panel_AllSaerch);
@@ -213,8 +214,11 @@ public class PersonelManegementFrame extends JFrame {
 		
 		PersonelManegementMethods.ActionListener_chckbx_svePerson__isEnterInZone(chckbx_svePerson__isEnterInZone);
 
-		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
-		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
+//		PersonelManegementMethods.checkorektDate(textField_savePerson_StartDate);
+//		PersonelManegementMethods.checkorektDate(textField_savePerson_EndDate);
+		
+		PersonelManegementMethods.ActionListenerSetDateByDatePicker(textField_savePerson_StartDate, btn_SaveToExcelFile);
+		PersonelManegementMethods.ActionListenerSetDateByDatePicker(textField_savePerson_EndDate, btn_SaveToExcelFile);
 		
 		PersonelManegementMethods.ActionListener_JTextFieldEGN(textField_svePerson_EGN, 0, btn_savePerson_FromOiD);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_FName, 0);
@@ -235,10 +239,9 @@ public class PersonelManegementFrame extends JFrame {
 		
 		PersonelManegementMethods.ActionListener_textField_svePerson_Year(textField_svePerson_Year, btn_SaveToExcelFile);
 		
-		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(this, btn_SaveToExcelFile);
+		PersonelManegementMethods.ActionListener_Btn_SaveToExcelFile(this, btn_SaveToExcelFile, contentPane);
 		
-		PersonelManegementMethods.ActionListener_Btn_ReadFileListPerson( btn_ReadFileListPerson,  textArea,  
-				 infoPanel, tablePane,  panel_AllSaerch,  scrollPane, textField_svePerson_Year, textField, btnBackToTable );
+		PersonelManegementMethods.NullTableData();
 		
 		PersonReferenceFrame.TextFieldJustNumbers(textField_svePerson_Year);
 		
@@ -513,27 +516,13 @@ public class PersonelManegementFrame extends JFrame {
 		panel_4.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel_4);
 		
-		textField = new JTextField();
-		panel_4.add(textField);
-		textField.setColumns(41);
-
-//		ActionListenerComboBox_Results();
-
-		btn_ReadFileListPerson = new JButton("Select File");
-		btn_ReadFileListPerson.setMargin(new Insets(2, 2, 2, 2));
-		btn_ReadFileListPerson.setPreferredSize(new Dimension(90, 20));
-		panel_4.add(btn_ReadFileListPerson);
-		
-		JLabel lblNewLabel = new JLabel("Select List Person from File ");
-		panel_4.add(lblNewLabel);
-		
 		JLabel lbl_distance = new JLabel("");
-		lbl_distance.setPreferredSize(new Dimension(30, 14));
+		lbl_distance.setPreferredSize(new Dimension(590, 14));
 		panel_4.add(lbl_distance);
 		
 		btnBackToTable = new JButton("BackToTable");
 		panel_4.add(btnBackToTable);
-
+		btnBackToTable.setEnabled(false);
 		
 
 		return panel_4;
@@ -1054,7 +1043,7 @@ public class PersonelManegementFrame extends JFrame {
 		cancelButton.setPreferredSize(new Dimension(65, 23));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PersonelManegementMethods.setChoisePerson("");
+//				PersonelManegementMethods.setChoisePerson("");
 				dispose(); // Destroy the JFrame object
 			}
 		});
@@ -1067,6 +1056,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_SaveToExcelFile.setPreferredSize(new Dimension(65, 23));
 		btn_SaveToExcelFile.setMargin(new Insets(2, 5, 2, 5));
 		btn_SaveToExcelFile.setIconTextGap(1);
+		btn_SaveToExcelFile.setEnabled(false);
 	
 		
 		btn_Export = new JButton("Export");
@@ -1408,6 +1398,10 @@ public class PersonelManegementFrame extends JFrame {
 
 	public static JButton getBtnBackToTable() {
 		return btnBackToTable;
+	}
+
+	public static JButton getBtn_savePerson_Insert() {
+		return btn_savePerson_Insert;
 	}
 	
 	

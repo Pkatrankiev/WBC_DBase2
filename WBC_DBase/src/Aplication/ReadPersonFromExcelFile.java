@@ -5,6 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -77,10 +81,55 @@ public class ReadPersonFromExcelFile {
 		int k=0;
 		int l=listPerson.size();
 		for (Person person : listPerson) {
+			if( ActualiztionENGORNewPerson(person)) {
 			PersonDAO.setObjectPersonToTable(person);
+			}
 			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 			k++;
 			}
 		}
+
+
+
+	private static boolean ActualiztionENGORNewPerson(Person person) {
+		String egn = person.getEgn();
+		if(egn.length()>5) {
+		String egnShort = egn.substring(0,6);
+			for (Person personEGN : PersonDAO.getListValuePersonByEGN(egnShort)) {
+				if(person.getFirstName().equals(personEGN.getFirstName())
+					&& person.getSecondName().equals(personEGN.getSecondName())
+					&& person.getLastName().equals(personEGN.getLastName())) {
+					String personNew =person.getEgn() +" " + person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName();
+					String personOld =personEGN.getEgn() +" " + personEGN.getFirstName() + " " + personEGN.getSecondName() + " " + personEGN.getLastName();
+					String dialogString = "<html>"+ personNew + "<br>" +" да замени <br>" + personOld;
+					if(OptionDialog(dialogString + "</html>", "Смяна на ЕГН")) {
+						personEGN.setEgn(egn);
+						PersonDAO.updateValuePerson(personEGN);
+						return false;
+					}
+				}
+			}
+	}else {
+		OptionDialog(egn , "ЕГН");
+	}
+		
+		return true;
+	}
+	
+	public static boolean OptionDialog(String mesage, String textOptionDialogFrame) {
+
+		String[] options = { "Не", "Да" };
+		JFrame frame = new JFrame();
+		frame.setAlwaysOnTop(true);
+		
+		int x = JOptionPane.showOptionDialog(frame, mesage, textOptionDialogFrame, JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		System.out.println(x + " -----------------");
+		if (x > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 }

@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
@@ -42,8 +44,12 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -61,6 +67,7 @@ import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
+import Aplication.ReadPersonFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
 
@@ -161,6 +168,23 @@ public class TestClasess {
 			}
 		}
 
+	}
+
+	public static void testlastStatus() {
+		String[] listEGN = { "	6402102007	", "	0043251884	", "	0252161862	", "	8306011902	",
+				"	9211083309	", "	9904211865	", "	9209283245	", "	7207301979	", "	7302051926	",
+				"	8403131889	", "	0048101887	", "	7607201906	", "	9410263983	", "	6412166380	",
+				"	7411113201	", "	7312291890	", "	6203071958	"
+
+		};
+		for (String egn : listEGN) {
+			PersonStatusNew preSt = PersonStatusNewDAO
+					.getLastValuePersonStatusNewByPerson(PersonDAO.getListValuePersonByEGN(egn.trim()).get(0));
+			if (!preSt.getFormulyarName().equals("Обходен лист"))
+				System.out.println(preSt.getPerson().getEgn() + " " + preSt.getWorkplace().getOtdel());
+		}
+
+		System.out.println("////////////////////////////////////");
 	}
 
 	static List<List<String>> checkTwoExcelFiles(String PathToOldFile, String PathToNewFile) {
@@ -327,7 +351,7 @@ public class TestClasess {
 				} else {
 					withValues = true;
 				}
-				SaveToPersonelORExternalFile.CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
+//				SaveToPersonelORExternalFile.CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
 				newRow.getCell(0).setCellValue(kode[0]);
 				newRow.getCell(1).setCellValue(kode[1]);
 				newRow.getCell(2).setCellValue(kode[2]);
@@ -732,7 +756,7 @@ public class TestClasess {
 							System.out.println(fileName[i] + " : " + row + " - " + doze0 + " - " + doze + " - " + mont);
 							fl = false;
 						}
-						if (k > 253) {
+						if (k > 252) {
 							k = 6;
 							sheet = workbook.getSheetAt(2);
 						}
@@ -743,6 +767,7 @@ public class TestClasess {
 						cell_Lab = sheet.getRow(row).getCell(k);
 
 					}
+					sheet = workbook.getSheetAt(1);
 
 				}
 
@@ -2099,7 +2124,6 @@ public class TestClasess {
 		try {
 			inputStream = new FileInputStream(filePathPersonel);
 
-			@SuppressWarnings("resource")
 			Workbook workbook = new HSSFWorkbook(inputStream);
 
 			Sheet sheetSpPr = workbook.getSheetAt(3);
@@ -2171,11 +2195,11 @@ public class TestClasess {
 			outputStream.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
@@ -2210,7 +2234,6 @@ public class TestClasess {
 
 		String year = "2024";
 
-		
 		List<String> listOtdelKz = PersonelManegementMethods.getStringListFromActualWorkplaceByFirmname("АЕЦ Козлодуй");
 		String code = "";
 		for (String otdel : listOtdelKz) {
@@ -2295,5 +2318,218 @@ public class TestClasess {
 
 		return listPerson;
 	}
+
+//  ******************************************************************************************************************
+
+	static void addNewRowInFile() {
+
+		String excelFilePath = "D:\\PERSONNEL.xls"; // Път към твоя Excel файл
+
+		try (FileInputStream fis = new FileInputStream(excelFilePath); Workbook workbook = new HSSFWorkbook(fis)) {
+
+			int endRowOtdel = 126;
+			int row = 0;
+			boolean isNewData = true;
+			Person person = PersonDAO.getValuePersonByEGN("6902121962");
+			System.out.println(person.getEgn());
+			String[] kode = PersonelManegementMethods.getKodeStatusByPersonFromDBase(person);
+			int[] rowByBefautStyle = getAreaOtdelSvoboden(workbook);
+
+			for (int i = 0; i < 4; i++) {
+				Sheet worksheet = workbook.getSheetAt(i);
+
+				int lastRow = worksheet.getLastRowNum();
+				worksheet.shiftRows(endRowOtdel, lastRow, 1);
+				worksheet.createRow(endRowOtdel);
+
+				Row sourceRow = worksheet.getRow(row);
+
+				Row newRow = worksheet.getRow(endRowOtdel);
+
+				boolean withValues = false;
+				if (isNewData) {
+					sourceRow = worksheet.getRow(endRowOtdel - 1);
+
+				} else {
+					withValues = true;
+				}
+
+//						************************************************************
+				Cell newCell;
+				for (int m = 0; m < sourceRow.getLastCellNum(); m++) {
+					// Grab a copy of the old/new cell
+					Cell oldCell = sourceRow.getCell(m);
+
+					// If the old cell is null jump to next cell
+					if (oldCell == null) {
+						continue;
+					} else {
+						newCell = newRow.createCell(m);
+					}
+
+					CopyValueFromOldCellToNewcell(oldCell, newCell, withValues);
+					if (newCell.getColumnIndex() < 7) {
+						setDefautCellStyle(newCell, rowByBefautStyle[1], workbook);
+
+					}
+				}
+//						***************************************************************
+//						SaveToPersonelORExternalFile.CopyValueFromSourseRowToNewRow(worksheet, sourceRow, newRow, withValues);
+				newRow.getCell(0).setCellValue(kode[0]);
+				newRow.getCell(1).setCellValue(kode[1]);
+				newRow.getCell(2).setCellValue(kode[2]);
+				newRow.getCell(3).setCellValue(kode[4]);
+				newRow.getCell(4).setCellValue(kode[3]);
+				newRow.getCell(5).setCellValue(person.getEgn());
+				newRow.getCell(6).setCellValue(
+						person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName());
+			}
+
+			SaveToPersonelORExternalFile.reformatSheetSpPr(workbook);
+
+			FileOutputStream outputStream;
+			try {
+				outputStream = new FileOutputStream(excelFilePath);
+				try {
+					workbook.write(outputStream);
+					workbook.close();
+
+					outputStream.flush();
+					outputStream.close();
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
+
+			} catch (FileNotFoundException e) {
+
+				e.printStackTrace();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private static void setDefautCellStyle(Cell newCell, int rowByBefautBWStyle, Workbook workbook) {
+		int column = newCell.getColumnIndex();
+		CellStyle style = workbook.getSheetAt(0).getRow(rowByBefautBWStyle).getCell(column).getCellStyle();
+		newCell.setCellStyle(style);
+	}
+
+	public static void CopyValueFromOldCellToNewcell(Cell oldCell, Cell newCell, boolean withValues) {
+
+		Sheet worksheet = newCell.getSheet();
+		System.out.println("Copy style from");
+		// Copy style from old cell and apply to new cell
+
+//			CellStyle style = worksheet.getWorkbook().createCellStyle();
+//			style.cloneStyleFrom();
+
+		newCell.setCellStyle(oldCell.getCellStyle());
+
+		// If there is a cell comment, copy
+		if (oldCell.getCellComment() != null) {
+			if (withValues)
+				SaveToPersonelORExternalFile.copyCommentFromOldCellToNewcell(oldCell, newCell);
+
+		}
+
+		// If there is a cell hyperlink, copy
+		if (oldCell.getHyperlink() != null) {
+			if (withValues)
+				newCell.setHyperlink(oldCell.getHyperlink());
+		}
+
+		// Set the cell data type
+//			        newCell.setCellType(oldCell.getCellType());
+
+		// Set the cell data value
+		switch (oldCell.getCellType().toString()) {
+		case "BLANK":
+			break;
+		case "BOOLEAN":
+			if (withValues)
+				newCell.setCellValue(oldCell.getBooleanCellValue());
+			break;
+		case "ERROR":
+			if (withValues)
+				newCell.setCellErrorValue(oldCell.getErrorCellValue());
+			break;
+		case "FORMULA":
+
+			int columnOfNewFormulaCell = newCell.getColumnIndex();
+			int columnOfOldFormulaCell = oldCell.getColumnIndex();
+			int rowOfNewFormulaCell = newCell.getRowIndex();
+			int rowOfOldFormulaCell = oldCell.getRowIndex();
+
+			int coldiff = columnOfNewFormulaCell - columnOfOldFormulaCell;
+			int rowdiff = rowOfNewFormulaCell - rowOfOldFormulaCell;
+
+			newCell.setCellFormula(
+					SaveToPersonelORExternalFile.copyFormula(worksheet, oldCell.getCellFormula(), coldiff, rowdiff));
+
+			break;
+		case "NUMERIC":
+			if (withValues)
+				newCell.setCellValue(oldCell.getNumericCellValue());
+			break;
+		case "STRING":
+			if (withValues)
+				newCell.setCellValue(oldCell.getRichStringCellValue());
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	private static int[] getAreaOtdelSvoboden(Workbook workbook) {
+
+		Sheet sheetSpPr = workbook.getSheetAt(0);
+		int maxRow = sheetSpPr.getLastRowNum();
+		int row = 5;
+		int masiveRowOtdel[] = new int[2];
+		boolean fl = false;
+		Cell cell;
+		String str_cell = "";
+		while (row < maxRow) {
+
+			if (sheetSpPr.getRow(row) != null) {
+
+				cell = sheetSpPr.getRow(row).getCell(6);
+
+				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
+					str_cell = ReadExcelFileWBC.getStringfromCell(cell);
+
+					if (str_cell.equals("Свободен")) {
+						masiveRowOtdel[0] = row + 2;
+						fl = true;
+					}
+
+					if (fl && str_cell.equals("край")) {
+						masiveRowOtdel[1] = row;
+						row = maxRow;
+					}
+				}
+			}
+			row++;
+		}
+		return masiveRowOtdel;
+	}
+
+	public static void checkKodeStatusByMisingPerson() {
+		List<Measuring> listKodeStat = MeasuringDAO.getAllValueMeasuring();
+		System.out.println(listKodeStat.size());
+		for (Measuring kodeStatus : listKodeStat) {
+			if (kodeStatus.getDoze() > 1) {
+				System.out.println(kodeStatus.getPerson().getEgn());
+			}
+
+		}
+	}
+
+	
 
 }

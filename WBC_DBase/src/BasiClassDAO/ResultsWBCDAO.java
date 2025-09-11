@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
@@ -344,5 +346,7 @@ public class ResultsWBCDAO {
 		}
 	}
 
+	
+	
 	
 }

@@ -30,14 +30,14 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasicClassAccessDbase.Person;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class PersonReferenceExportToExcell {
 
 	public static String fileError = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileError");
 	
-	public static void btnExportTableToExcell(Object[][] dataTable, String[] columnNames, JPanel panel_Btn) {
+	public static void btnExportTableToExcell(Object[][] dataTable, String[] columnNames, JPanel panel_Btn, String sheetName) {
 
 		GeneralMethods.setWaitCursor(panel_Btn);
 				
@@ -47,7 +47,7 @@ public class PersonReferenceExportToExcell {
 			if (dataTable.length * dataTable[0].length < 4000) {
 
 				Workbook workbook = new HSSFWorkbook();
-				Sheet sheet = workbook.createSheet("PersonReference");
+				Sheet sheet = workbook.createSheet(sheetName);
 
 				Cell cell = null;
 

@@ -5,6 +5,7 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -36,7 +37,6 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -83,7 +83,8 @@ import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
-
+import DatePicker.DatePicker;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
@@ -93,7 +94,6 @@ import PersonReference_OID.OID_Person_WBCDAO;
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import SearchFreeKode.SearchFreeKodeFrame;
 import WBCUsersLogin.WBCUsersLogin;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class PersonelManegementMethods {
 
@@ -118,7 +118,7 @@ public class PersonelManegementMethods {
 	static String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
 	static List<String> listFirm = Arrays.asList("", AEC, VO);
 	static Person selectionPerson;
-	static String choisePerson;
+//	static String choisePerson;
 	static boolean flOtdel;
 	static Border defoutBorder = PersonelManegementFrame.getDefoutBorder();
 	static Border redBorder = new SoftBevelBorder(BevelBorder.LOWERED, Color.RED, null, Color.RED, null);
@@ -128,7 +128,7 @@ public class PersonelManegementMethods {
 	static List<String> listOtdelAll;
 	static List<String> listOtdelKz;
 	static List<String> listOtdelVO;
-	static Object[][] dataTable;
+	static Object[][] dataTable = null;
 
 //	static List<String> listZvenaFromDBase = SearchFreeKodeMethods.generateListZvenaFromDBase();
 //	static List<List<String>> ListZvenaFromExcellFiles = SearchFreeKodeMethods.generateListZvenaFromExcellFiles();
@@ -152,7 +152,7 @@ public class PersonelManegementMethods {
 	static void ActionListener_Btn_Clear(JButton btn_savePerson_Insert, JButton btn_Clear_1, JTextArea textArea) {
 		btn_Clear_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				btn_savePerson_Insert.setEnabled(false);
+				DisableButtons();
 
 				textArea.setText("");
 				PersonelManegementFrame.setTextField_EGN(PersonelManegementFrame.getTextField_EGN(), "");
@@ -174,7 +174,7 @@ public class PersonelManegementMethods {
 
 	static void ActionListener_Btn_SearchPerson(JButton btn_SearchPerson, JPanel panel_AllSaerch, JTextArea textArea,
 			JButton btn_savePerson_Insert, JPanel infoPanel, JPanel tablePane, JScrollPane scrollPane,
-			JTextField textField_svePerson_Year, JTextField textField, JButton btnBackToTable) {
+			JTextField textField_svePerson_Year, JTextField textField, JButton btnBackToTable, JButton btn_SaveToExcelFile) {
 
 		btn_SearchPerson.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -185,8 +185,7 @@ public class PersonelManegementMethods {
 				JTextField textField_LName = PersonelManegementFrame.getTextField_LName();
 
 				Choice otdel = PersonelManegementFrame.getComboBox_Otdel();
-				btn_savePerson_Insert.setEnabled(false);
-
+				DisableButtons();
 				if (!allFieldsEmnty(textField_EGN, textField_FName, textField_SName, textField_LName, otdel)) {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					multytextInTextArea = false;
@@ -203,6 +202,7 @@ public class PersonelManegementMethods {
 
 					if (listSelectionPerson.size() == 1) {
 						btn_savePerson_Insert.setEnabled(true);
+						btn_SaveToExcelFile.setEnabled(true);
 						selectionPerson = listSelectionPerson.get(0);
 						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson("", selectionPerson, false, 0));
 
@@ -230,7 +230,6 @@ public class PersonelManegementMethods {
 								kod = PersonReferenceFrame.getLastKodeByPersonAndZone(person, zona);
 								listPersonManegement.add(new PersonManegement(person, kod));
 							}
-							updateSectionPersonSave_Panel(listPersonManegement);
 							dataTable = TableManagement.addListStringSelectionPersonToComboBox(listPersonManegement);
 							panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
 									textField_svePerson_Year, btnBackToTable);
@@ -274,18 +273,7 @@ public class PersonelManegementMethods {
 
 	}
 
-	static void ActionListener_Btn_ReadFileListPerson(JButton btn_ReadFileListPerson, JTextArea textArea,
-			JPanel infoPanel, JPanel tablePane, JPanel panel_AllSaerch, JScrollPane scrollPane,
-			JTextField textField_svePerson_Year, JTextField textField, JButton btnBackToTable) {
-		btn_ReadFileListPerson.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				getListPersonFromFile(textArea, infoPanel, tablePane, panel_AllSaerch, scrollPane,
-						textField_svePerson_Year, textField, btnBackToTable);
-			}
-		});
-	}
-
+	
 	static void ActionListenerBtnBackToTable(JButton btnBackToTable, JTextArea textArea, JPanel tablePane,
 			JPanel panel_AllSaerch, JScrollPane scrollPane, JTextField textField_svePerson_Year) {
 
@@ -296,7 +284,7 @@ public class PersonelManegementMethods {
 					panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
 							textField_svePerson_Year, btnBackToTable);
 					PersonelManegementFrame.viewTablePanel();
-					btnBackToTable.setEnabled(false);
+					DisableButtons();
 				}
 			}
 
@@ -618,10 +606,12 @@ public class PersonelManegementMethods {
 
 	}
 
-	static void ActionListener_Btn_SaveToExcelFile(JFrame frame, JButton btn_SaveToExcelFile) {
+	static void ActionListener_Btn_SaveToExcelFile(JFrame frame, JButton btn_SaveToExcelFile, JPanel contentPane) {
 		btn_SaveToExcelFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				GeneralMethods.setWaitCursor(contentPane);
+				
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
 
 				JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
@@ -656,7 +646,7 @@ public class PersonelManegementMethods {
 
 				if (PersonelManegementMethods.checkIsClosedPersonAndExternalFile()) {
 
-					if (checkInfoOtdel(comboBox_svePerson_Otdel)) {
+					if (checkInfoPerson() && checkInfoOtdel(comboBox_svePerson_Otdel)) {
 
 						String comment = textField_svePerson_Coment.getText().trim();
 
@@ -668,23 +658,14 @@ public class PersonelManegementMethods {
 								textField_svePerson_FName.getText().trim(), textField_svePerson_SName.getText().trim(),
 								textField_svePerson_LName.getText().trim() };
 
-						int lastrekord = 1;
 
-						if (fromListPersonManegement) {
-							lastrekord = dataTable.length;
-						}
-
-						for (int i = 0; i < lastrekord; i++) {
 
 //			************** set PERSON
 
 							String egn = textField_svePerson_EGN.getText();
+							if (!egn.isEmpty()) {
+							
 							boolean saveToExcel = checkbx_SaveToExcel;
-							if (fromListPersonManegement) {
-								lastrekord = dataTable.length;
-								egn = (String) dataTable[i][1];
-								saveToExcel = (boolean) dataTable[i][9];
-							}
 
 							Person person = PersonDAO.getValuePersonByEGN(egn);
 
@@ -696,22 +677,8 @@ public class PersonelManegementMethods {
 							person = PersonDAO.getValuePersonByEGN(egn);
 							System.out.println("person " + person.getFirstName());
 
+
 //					************** set KodeStatus				
-							if (fromListPersonManegement) {
-								String[] kode = getKodeStatusByPersonFromDBase(person);
-								for (int j = 0; j < kode.length; j++) {
-									infoForPersonFromFrame[j] = kode[j];
-								}
-								checkbx_EnterInZone = true;
-								int zona = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
-								System.out.println(zona + " " + dataTable[i][8]);
-
-								infoForPersonFromFrame[zona - 1] = (String) dataTable[i][8];
-								infoForPersonFromFrame[5] = (String) dataTable[i][2];
-								infoForPersonFromFrame[6] = (String) dataTable[i][3];
-								infoForPersonFromFrame[7] = (String) dataTable[i][4];
-							}
-
 							if (checkInfoPersonAndKodeStatus(infoForPersonFromFrame, person, checkbx_EnterInZone)) {
 
 								Workplace workplace = WorkplaceDAO
@@ -730,7 +697,7 @@ public class PersonelManegementMethods {
 								Spisak_Prilogenia spisPril = null;
 
 								String formuliarName = textField_svePerson_Spisak.getText().trim();
-
+								System.out.println("formuliarName "+formuliarName);
 								if (!formuliarName.isEmpty()) {
 
 									Date sDate = null, eDate = null;
@@ -761,6 +728,8 @@ public class PersonelManegementMethods {
 
 									if (PerStatNewSet.equals("1")) {
 										UsersWBC user = WBCUsersLogin.getCurentUser();
+										System.out.println("PersonStatusNewDAO------------------ ");
+										System.out.println("spisPrilID "+spisPril.getSpisak_Prilogenia_ID());
 										PersonStatusNewDAO.setValuePersonStatusNew(person, workplace,
 												spisPril.getFormulyarName(), spisPril.getStartDate(),
 												spisPril.getEndDate(), spisPril.getYear(), user, curentDate, comment);
@@ -780,7 +749,7 @@ public class PersonelManegementMethods {
 								if (saveToExcel) {
 									System.out.println("**********************************");
 									UsersWBC user = WBCUsersLogin.getCurentUser();
-									SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(frame, person,
+									SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
 											comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment,
 											workplace, oldOtdelPerson, checkbx_EnterInZone,
 											checkbx_EnterInListChengeKode, obhodenList);
@@ -788,11 +757,13 @@ public class PersonelManegementMethods {
 								}
 							}
 
-						}
 					}
 				}
 
 			}
+				GeneralMethods.setDefaultCursor(contentPane);
+			
+				}
 
 		});
 	}
@@ -809,7 +780,7 @@ public class PersonelManegementMethods {
 							TextInAreaTextPanel.getMasiveMeasur(), save_Panel);
 				} else {
 					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,
-							PersonelManegementMethods.getTabHeader(), button_Panel);
+							PersonelManegementMethods.getTabHeader(), button_Panel, "PersonReference");
 
 				}
 			}
@@ -1270,6 +1241,24 @@ public class PersonelManegementMethods {
 		return true;
 	}
 
+	private static boolean checkInfoPerson() {
+		JTextField textField_svePerson_EGN = PersonelManegementFrame.getTextField_svePerson_EGN();
+		JTextField textField_svePerson_FName = PersonelManegementFrame.getTextField_svePerson_FName();
+		if (textField_svePerson_EGN.getText().isEmpty()) {
+			String svePersonManegement_CheckEGNField = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("svePersonManegement_CheckEGNField");
+			AplicationMetods.MessageDialog(svePersonManegement_CheckEGNField);
+			return false;
+		}
+		if (textField_svePerson_FName.getText().isEmpty()) {
+			String svePersonManegement_CheckFirstName = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("svePersonManegement_CheckFirstName");
+			AplicationMetods.MessageDialog(svePersonManegement_CheckFirstName);
+			return false;
+		}
+		return true;
+	}
+	
 	private static boolean checkInfoPersonAndKodeStatus(String[] infoForPersonFromFrame, Person person,
 			boolean checkbx_EnterInZone) {
 
@@ -1659,19 +1648,13 @@ public class PersonelManegementMethods {
 
 	private static List<Spisak_Prilogenia> getSisPril(String curentYear2, Workplace workPl) {
 		List<Integer> listSpInt = new ArrayList<>();
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if (PerStatNewSet.equals("1")) {
+		
 			List<Spisak_Prilogenia> list = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByYear_Workplace(curentYear,
 					workPl.getId_Workplace());
 			for (Spisak_Prilogenia spPr : list) {
 				listSpInt.add(spPr.getSpisak_Prilogenia_ID());
 			}
-		} else {
-			List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workPl, curentYear);
-			for (PersonStatus personStatus : list) {
-				listSpInt.add(personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
-			}
-		}
+		
 		List<Integer> listSp2 = removeDuplicatess(listSpInt);
 		List<Spisak_Prilogenia> listSp = new ArrayList<>();
 		for (Integer personStatusInt : listSp2) {
@@ -1799,7 +1782,7 @@ public class PersonelManegementMethods {
 		return "";
 	}
 
-	public static void checkorektDate(JTextField textFieldDate) {
+	public static void checkorektDate(JTextField textFieldDate, JButton btn_SaveToExcelFile) {
 		textFieldDate.addKeyListener(new KeyListener() {
 
 			@Override
@@ -1812,9 +1795,11 @@ public class PersonelManegementMethods {
 
 				if (AplicationMetods.incorrectDate(textFieldDate.getText())) {
 					textFieldDate.setForeground(Color.RED);
+					btn_SaveToExcelFile.setEnabled(false);
 				} else {
 					textFieldDate.setForeground(Color.BLACK);
 					setComentGetTexTFromOtdelAndStartDate();
+					btn_SaveToExcelFile.setEnabled(true);
 				}
 			}
 
@@ -1825,6 +1810,40 @@ public class PersonelManegementMethods {
 		});
 	}
 
+	public static void ActionListenerSetDateByDatePicker(JTextField textField_StartDate2, JButton btn_SaveToExcelFile) {
+
+		textField_StartDate2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e1) {
+				if (e1.getClickCount() == 2) {
+				Point pointFrame = textField_StartDate2.getLocationOnScreen();
+				final JFrame f = new JFrame();
+				DatePicker dPicer = new DatePicker(f, false, textField_StartDate2.getText(), pointFrame);
+				String str = dPicer.setPickedDate(false);
+
+				textField_StartDate2.setText(str);
+				checkorektDate(textField_StartDate2, btn_SaveToExcelFile);
+				}
+			}
+		});
+
+		textField_StartDate2.addKeyListener(new KeyAdapter() {
+
+			public void keyReleased(KeyEvent evt) {
+
+				checkorektDate(textField_StartDate2, btn_SaveToExcelFile);
+				
+			}
+
+		});
+
+	}
+	
+	
+	
 	public static String checInsertNewPerson() {
 
 		String svePersonManegement_newKode = ReadFileBGTextVariable.getGlobalTextVariableMap()
@@ -2318,8 +2337,10 @@ public class PersonelManegementMethods {
 						if (!kode.isEmpty() && !kode.equals("н")) {
 							String textKodKZ_2 = PersonelManegementFrame.getTextField_svePersonKodKZ_2().getText();
 							if (textKodKZ_2.isEmpty() || !(textKodKZ_2 + "Т").equals(kode)) {
+								if(!(textKodKZ_2 + "ЯГ").equals(kode)) {
 								textCheck = svePersonManegement_NonKorektFormatKode + " - " + textKodKZ_2 + "T";
 								fl = false;
+								}
 							}
 						}
 					}
@@ -2359,194 +2380,6 @@ public class PersonelManegementMethods {
 		return (!kod.equals("ЕП-2") && !kod.trim().equals("") && !kod.equals("н") && !inCodeNotNumber(kod));
 	}
 
-	public static List<PersonManegement> getListPersonFromFile(JTextArea textArea, JPanel infoPanel, JPanel tablePane,
-			JPanel panel_AllSaerch, JScrollPane scrollPane, JTextField textField_svePerson_Year, JTextField textField,
-			JButton btnBackToTable) {
-		File file;
-		String filePath = textField.getText();
-		if (filePath.isEmpty()) {
-			JFileChooser chooiser = new JFileChooser(ExcelFileBAK_Path);
-			chooiser.setMultiSelectionEnabled(false);
-			chooiser.showOpenDialog(null);
-			file = chooiser.getSelectedFile();
-		} else {
-			file = new File(filePath);
-		}
-
-//		///////////////////////////////////////////////////////////////////////////////////////////////////////////
-		List<PersonManegement> listPersonFromFile = readListPersonFromFile(file, textField);
-
-		if (listPersonFromFile.size() == 0) {
-			textArea.setText(notResults);
-			PersonelManegementFrame.viewInfoPanel();
-			if (dataTable != null) {
-				btnBackToTable.setEnabled(true);
-			}
-
-		}
-
-		if (listPersonFromFile.size() == 1) {
-			textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_svePerson_Year.getText(),
-					listPersonFromFile.get(0).getPerson(), false, 0));
-			PersonelManegementFrame.viewInfoPanel();
-			if (dataTable != null) {
-				btnBackToTable.setEnabled(true);
-			}
-		}
-
-		if (listPersonFromFile.size() > 1) {
-			fromListPersonManegement = true;
-			System.out.println("***** " + listPersonFromFile.size());
-			updateSectionPersonSave_Panel(listPersonFromFile);
-			dataTable = TableManagement.addListStringSelectionPersonToComboBox(listPersonFromFile);
-			panel_infoPanelTablePanel(dataTable, textArea, panel_AllSaerch, tablePane, scrollPane,
-					textField_svePerson_Year, btnBackToTable);
-			PersonelManegementFrame.viewTablePanel();
-			btnBackToTable.setEnabled(false);
-
-		}
-
-		return listPersonFromFile;
-	}
-
-	private static void updateSectionPersonSave_Panel(List<PersonManegement> listPersonFromFile) {
-		String otdel = PersonReferenceFrame.getLastWorkplaceByPerson(listPersonFromFile.get(0).getPerson());
-		String firm = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdel).getFirmName();
-
-		PersonelManegementFrame.getTextField_svePerson_EGN().setText("");
-		PersonelManegementFrame.getTextField_svePerson_FName().setText("");
-		PersonelManegementFrame.getTextField_svePerson_SName().setText("");
-		PersonelManegementFrame.getTextField_svePerson_LName().setText("");
-		PersonelManegementFrame.getTextField_svePerson_KodKZ_1().setText("");
-		PersonelManegementFrame.getTextField_svePersonKodKZ_2().setText("");
-		PersonelManegementFrame.getTextField_svePersonKodKZ_HOG().setText("");
-		PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_1().setText("");
-		PersonelManegementFrame.getTextField_svePersonKodKZ_Terit_2().setText("");
-
-		PersonelManegementFrame.getComboBox_savePerson_Firm().select(firm);
-		PersonelManegementFrame.getComboBox_savePerson_Otdel().select(otdel);
-
-	}
-
-	private static List<PersonManegement> readListPersonFromFile(File file, JTextField textField) {
-		ExcelFileBAK_Path = file.getPath();
-		textField.setText(ExcelFileBAK_Path);
-		Workbook workbook = ReadExcelFileWBC.openExcelFile(file.getPath());
-		String name = "", kod = "", FirstName = "", SecondName = "", LastName = "";
-		Sheet sheet = workbook.getSheetAt(0);
-		Cell cell, cell1;
-		List<PersonManegement> listPersonManegement = new ArrayList<>();
-		Person person = null;
-		for (int row = 0; row <= sheet.getLastRowNum(); row += 1) {
-
-			if (sheet.getRow(row) != null) {
-				cell = sheet.getRow(row).getCell(0);
-				cell1 = sheet.getRow(row).getCell(1);
-
-				if (ReadExcelFileWBC.CellNOEmpty(cell)) {
-
-					name = ReadExcelFileWBC.getStringfromCell(cell);
-					kod = ReadExcelFileWBC.getStringfromCell(cell1);
-
-					String[] names = ReadExcelFileWBC.splitAllName(name);
-					FirstName = names[0];
-					SecondName = names[1];
-					LastName = names[2];
-
-					List<Person> listPerson = PersonDAO.getValuePersonByAllName(FirstName, SecondName, LastName);
-					if (listPerson.size() > 0) {
-						person = listPerson.get(0);
-					} else {
-						listPerson = PersonDAO.getValuePersonByObject("FirstName", FirstName);
-					}
-					if (listPerson.size() > 1) {
-						person = choisePerson(listPerson, name);
-					}
-					if (person == null) {
-						listPerson = PersonDAO.getValuePersonByObject("SecondName", SecondName);
-						if (listPerson.size() > 0) {
-							person = choisePerson(listPerson, name);
-						}
-					}
-					if (person == null) {
-						listPerson = PersonDAO.getValuePersonByObject("LastName", LastName);
-						if (listPerson.size() > 0) {
-							person = choisePerson(listPerson, name);
-						}
-					}
-					if (person != null) {
-						listPersonManegement.add(new PersonManegement(person, kod));
-					}
-				}
-			}
-
-		}
-		return listPersonManegement;
-
-	}
-
-	private static Person choisePerson(List<Person> listPerson, String choicePerson) {
-
-		String[] listChoisePerson = generateListChoisePerson(listPerson);
-
-		new choiseDialogFrame(new JFrame(), listChoisePerson, choicePerson);
-
-		String str = choisePerson;
-
-		if (str != null && str.length() > 0) {
-			String[] masiveStr = str.split(" ");
-			return PersonDAO.getValuePersonByEGN(masiveStr[0]);
-		}
-		return null;
-	}
-
-	private static String[] generateListChoisePerson(List<Person> listPerson) {
-
-		int maxEGN = 10;
-		int maxPerson = 10;
-
-		String[] listStringPerson = new String[listPerson.size()];
-		String[] listStringWorkplace = new String[listPerson.size()];
-		String[] listStringEGN = new String[listPerson.size()];
-		int i = 0;
-		for (Person person : listPerson) {
-			listStringEGN[i] = "";
-			listStringPerson[i] = "";
-
-			String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-			if (PerStatNewSet.equals("1")) {
-				PersonStatusNew personStat = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
-				if (personStat != null) {
-					listStringWorkplace[i] = personStat.getWorkplace().getOtdel();
-
-				}
-			} else {
-				PersonStatus personStat = PersonStatusDAO.getLastValuePersonStatusByPerson(person);
-				if (personStat != null) {
-					listStringWorkplace[i] = personStat.getWorkplace().getOtdel();
-
-				}
-			}
-			listStringEGN[i] = person.getEgn();
-			listStringPerson[i] = person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName();
-
-			if (maxPerson < listStringPerson[i].length()) {
-				maxPerson = listStringPerson[i].length();
-			}
-
-			i++;
-		}
-
-		for (int j = 0; j < listStringEGN.length; j++) {
-			System.out.println(j + " - " + listStringEGN[j]);
-			listStringPerson[j] = listStringEGN[j] + TextInAreaTextPanel.getAddSpace(maxEGN, listStringEGN[j])
-					+ listStringPerson[j] + TextInAreaTextPanel.getAddSpace(maxPerson + 2, listStringPerson[j])
-					+ listStringWorkplace[j];
-
-		}
-
-		return listStringPerson;
-	}
 
 	private static void panel_infoPanelTablePanel(Object[][] dataTable, JTextArea textArea, JPanel panel_AllSaerch,
 			JPanel tablePane, JScrollPane scrollPane, JTextField textField_svePerson_Year, JButton btnBackToTable) {
@@ -2739,13 +2572,13 @@ public class PersonelManegementMethods {
 		return col;
 	}
 
-	public static String getChoisePerson() {
-		return choisePerson;
-	}
-
-	public static void setChoisePerson(String NewChoisePerson) {
-		choisePerson = NewChoisePerson;
-	}
+//	public static String getChoisePerson() {
+//		return choisePerson;
+//	}
+//
+//	public static void setChoisePerson(String NewChoisePerson) {
+//		choisePerson = NewChoisePerson;
+//	}
 
 	public static boolean fileIsOpened(String excelFilePath) {
 		File file = new File(excelFilePath);
@@ -2968,4 +2801,17 @@ public class PersonelManegementMethods {
 
 	}
 
+	
+	public static void NullTableData() {
+		dataTable = null;
+	}
+
+	public static void DisableButtons() {
+		PersonelManegementFrame.getBtnBackToTable().setEnabled(false);
+		PersonelManegementFrame.getBtn_SaveToExcelFile().setEnabled(false);
+		PersonelManegementFrame.getBtn_savePerson_Insert().setEnabled(false);
+	}
+	
+	
+	
 }

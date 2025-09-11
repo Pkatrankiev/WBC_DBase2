@@ -29,6 +29,7 @@ public class DatePicker {
 	static int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 	final Calendar cal_time = Calendar.getInstance();
 	private Font font = new Font("Tahoma", Font.PLAIN, 14);
+	private Font fontButt = new Font("Tahoma", Font.PLAIN, 12);
 
 	private static String FORMAT_DATE = "dd.MM.yyyy";
 	private static String FORMAT_DATE_TIME = "dd.MM.yyyy HH:mm";
@@ -115,33 +116,79 @@ public class DatePicker {
 		// create JPanel object with grid layout
 		JPanel p2 = new JPanel(new GridLayout(1, 3));
 
-		// create object of button for previous month
-		JButton data_previous = new JButton("<< Назад");
-		data_previous.setFont(font);
+		
+		// create object of button for previous Year --------------------------------------------
+		JButton data_previousYear = new JButton("<< Год.");
+		data_previousYear.setFont(fontButt);
 		// add action command
-		data_previous.addActionListener(new ActionListener() {
+		data_previousYear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				// decrement month by 1
-				month--;
+				
+				year--;
+
 				// call method
 				displayDate();
 			}
 		});
-		p2.add(data_previous);// add button
-		p2.add(l);// add label
-		// create object of button for next month
-		JButton data_next = new JButton("Напред >>");
-		data_next.setFont(font);
-		// add action command
-		data_next.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				// increment month by 1
-				month++;
-				// call method
-				displayDate();
-			}
-		});
-		p2.add(data_next);// add next button
+		p2.add(data_previousYear);// add button
+		// create object of button for previous Year --------------------------------------------	
+		
+		
+		// create object of button for previous month --------------------------------------------
+				JButton data_previous = new JButton("<< Мес.");
+				data_previous.setFont(fontButt);
+				// add action command
+				data_previous.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ae) {
+						// decrement month by 1
+						
+						
+						month--;
+						// call method
+						displayDate();
+					}
+				});
+				p2.add(data_previous);// add button
+				p2.add(l);// add label
+				// create object of button for previous month --------------------------------------------	
+				
+				
+		// create object of button for next month +++++++++++++++++++++++++++++++
+				JButton data_next = new JButton("Мес. >>");
+				data_next.setFont(fontButt);
+				// add action command
+				data_next.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ae) {
+						// increment month by 1
+						
+						month++;
+						// call method
+						displayDate();
+					}
+				});
+				p2.add(data_next);// add next button
+				// create object of button for next month +++++++++++++++++++++++++++++++
+				
+				// create object of button for next  +++++++++++++++++++++++++++++++
+				JButton data_nextYear = new JButton("Год. >>");
+				data_nextYear.setFont(fontButt);
+				// add action command
+				data_nextYear.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ae) {
+						// increment month by 1
+						
+						year++;
+
+						// call method
+						displayDate();
+					}
+				});
+				p2.add(data_nextYear);// add next button
+				// create object of button for next Year +++++++++++++++++++++++++++++++
+						
+				
+				
 
 		JPanel panel = new JPanel();
 		d.getContentPane().add(panel, BorderLayout.NORTH);
@@ -248,7 +295,7 @@ public class DatePicker {
 		});
 
 		JButton previous_time_btn = new JButton("<< T Назад");
-		previous_time_btn.setFont(font);
+		previous_time_btn.setFont(fontButt);
 		previous_time_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				// decrement time by 10
@@ -266,7 +313,7 @@ public class DatePicker {
 		panel.add(label);
 
 		JButton next_time_btn = new JButton("Напред T >>");
-		next_time_btn.setFont(font);
+		next_time_btn.setFont(fontButt);
 		next_time_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				// increment time by 10

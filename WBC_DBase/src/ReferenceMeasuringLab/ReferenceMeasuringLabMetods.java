@@ -43,6 +43,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
+import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
@@ -65,9 +66,17 @@ public class ReferenceMeasuringLabMetods {
 	private static List<Laboratory> listLab = LaboratoryDAO.getAllValueLaboratory();
 	private static Font fontBold;
 
-	public static void addItemMounth(Choice comboBox_Firm) {
+	public static void addItemMounth(Choice comboBox_Mount) {
 		String[] listMounths = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" };
-		addItem(comboBox_Firm, listMounths);
+		addItem(comboBox_Mount, listMounths);
+		System.out.println(Calendar.getInstance().get(Calendar.MONTH) + "");
+		int month = Calendar.getInstance().get(Calendar.MONTH)+1;
+		String strmonth = month+"";
+		if(month < 10) {
+			strmonth = "0"+month;
+		}
+		comboBox_Mount.select(strmonth);
+		changeDateByMonth(comboBox_Mount);
 	}
 
 	private static void addItem(Choice comboBox, String[] list) {
@@ -122,30 +131,38 @@ public class ReferenceMeasuringLabMetods {
 
 	public static void ActionListenerComboBox_Mounth(Choice comboBox_Mount) {
 
-		JTextField textField_Year = ReferenceMeasuringLabFrame.getTextField_Year();
-		JTextField textField_StartDate = ReferenceMeasuringLabFrame.getTextField_StartDate();
-		JTextField textField_EndDate = ReferenceMeasuringLabFrame.getTextField_EndDate();
+		
 		comboBox_Mount.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					String mounth = comboBox_Mount.getSelectedItem();
-					String startdate = "01." + mounth + "." + textField_Year.getText();
-					textField_StartDate.setText(startdate);
-					String endDate = getLastDAte(mounth + "." + textField_Year.getText());
-					textField_EndDate.setText(endDate);
+					changeDateByMonth(comboBox_Mount);
 				}
 			}
+
+		
 		});
 
 	}
 
+	private static void changeDateByMonth(Choice comboBox_Mount) {
+		JTextField textField_Year = ReferenceMeasuringLabFrame.getTextField_Year();
+		JTextField textField_StartDate = ReferenceMeasuringLabFrame.getTextField_StartDate();
+		JTextField textField_EndDate = ReferenceMeasuringLabFrame.getTextField_EndDate();
+		String mounth = comboBox_Mount.getSelectedItem();
+		String startdate = "01." + mounth + "." + textField_Year.getText();
+		textField_StartDate.setText(startdate);
+		String endDate = getLastDAte(mounth + "." + textField_Year.getText());
+		textField_EndDate.setText(endDate);
+	}
+	
+	
 	public static void ActionListenerBtnExportToExcell(JPanel panel_Search) {
 		JButton btn_Export = ReferenceMeasuringLabFrame.getBtn_Export();
 		btn_Export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PersonReferenceExportToExcell.btnExportTableToExcell(dataTable,
-						getTabHeaderForExcelFile(getTabHeader()), panel_Search);
+						getTabHeaderForExcelFile(getTabHeader()), panel_Search, "MeasuringReference");
 
 			}
 
@@ -696,7 +713,7 @@ public class ReferenceMeasuringLabMetods {
 				textForInfoFrame = generateTextForInfoFrame( i, dateStr);
 		}
 				System.out.println(textForInfoFrame);
-				new infoFrame(parent, Coord, textForInfoFrame, sizeInfoFrame, null);
+				new infoFrame(parent, Coord, textForInfoFrame, sizeInfoFrame, new ActionIcone());
 
 		
 	}

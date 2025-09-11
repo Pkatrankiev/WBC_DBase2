@@ -27,8 +27,6 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-
 import BasiClassDAO.KodeStatusDAO;
 
 import BasiClassDAO.PersonStatusNewDAO;
@@ -37,7 +35,7 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
-
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.SearchFromExcellFiles;
 
@@ -50,6 +48,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -104,7 +104,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 		
 	static String curentYear = AplicationMetods.getCurentYear();
 	public OID_PersonReferenceFrame(ActionIcone round, String title) {
-		setTitle(title);
+		setTitle(title+ " Последна актуализация на базата:   "+getDateNewDBAccsess());
 		setMinimumSize(new Dimension(740, 900));
 
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
@@ -393,10 +393,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 		String secontName = "";
 		String lastName = "";
 		
-			egn = OID_PersonReferenceFrame.getTextField_EGN().getText();
-			firstName = OID_PersonReferenceFrame.getTextField_FName().getText();
-			secontName = OID_PersonReferenceFrame.getTextField_SName().getText();
-			lastName = OID_PersonReferenceFrame.getTextField_LName().getText();
+			
 		
 
 		if (!egn.trim().isEmpty()) {
@@ -595,7 +592,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 //							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
 //							TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
 				} else {
-					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel);
+					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel, "PersonReference");
 
 				}
 			}
@@ -733,8 +730,15 @@ public class OID_PersonReferenceFrame extends JFrame {
 		return list;
 	}
 
+	public static String getDateNewDBAccsess() {
+		
+	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	File fis = new File("k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\NewDB.mdb");
+	long lastModifiedFile = fis.lastModified();
+	String stringday = sdf.format(lastModifiedFile);
 	
-	
+	return stringday;
+	}
 
 	public static void MessageDialog(String textInFrame, String textFrame) {
 		Icon otherIcon = null;
@@ -775,6 +779,9 @@ public class OID_PersonReferenceFrame extends JFrame {
 		return comboBox_Results;
 	}
 
+	
+	
+	
 }
 	
 

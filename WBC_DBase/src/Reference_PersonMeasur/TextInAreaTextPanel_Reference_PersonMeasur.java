@@ -52,7 +52,6 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 					masiveKode[index][0] = (index + 1)+"";
 				masiveKode[index][1] = person.getFirstName()+" "+person.getSecondName()+ " " +person.getLastName();
 			
-			
 				switch (kodeStat.getZone().getId_Zone()) {
 				case 1: {
 					masiveKode[index][2] =  kodeStat.getKode();
@@ -77,6 +76,7 @@ public class TextInAreaTextPanel_Reference_PersonMeasur {
 				break;
 				
 				}	
+				
 				
 				measur = "-";
 				

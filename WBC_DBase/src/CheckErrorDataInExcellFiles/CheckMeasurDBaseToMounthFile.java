@@ -13,17 +13,20 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import BasiClassDAO.MeasuringDAO;
+import BasiClassDAO.TypeMeasurDAO;
 import BasicClassAccessDbase.Measuring;
 import ReferenceMeasuringLab.ReferenceMeasuringLabMetods;
 
@@ -31,39 +34,37 @@ public class CheckMeasurDBaseToMounthFile {
 
 	private static List<Measuring> listMeasuringForClear;
 
-	static void ActionListener_Btn_CheckDBaseToMounthFile(JPanel panel_AllSaerch, JButton btn_CheckDBase,
+	static void ActionListener_Btn_CheckDBaseToMounthFile(JProgressBar progressBar, JPanel panel_AllSaerch, JButton btn_CheckDBase,
 			JTextArea textArea) {
 
 		btn_CheckDBase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textArea.setText("");
-				GeneralMethods.setWaitCursor(panel_AllSaerch);
-				listMeasuringForClear = new ArrayList<Measuring>();
-				String textForArea = CheckMontToBDate();
+				listMeasuringForClear = new ArrayList<>();
+				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(false);
+				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
+				
+				new MySwingWorker(progressBar, textArea, panel_AllSaerch, "CheckMontToBDate").execute();
 
-				if (textForArea.isEmpty()) {
-					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(false);
-				} else {
-					textArea.setText(textForArea);
-					CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(true);
-				}
-
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+				
 			}
 
 		});
 
 	}
 
-	public static String CheckMontToBDate() {
+	public static String CheckMontToBDate(JProgressBar fProgressBar, JPanel panel_AllSaerch) {
 
+		GeneralMethods.setWaitCursor(panel_AllSaerch);
 		String curentYear = Calendar.getInstance().get(Calendar.YEAR) + "";
 		String ImaGoV = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ImaGoV");
 		String NoGoNiamaV = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("checkCorrectinDataInExcell_NoGoNiamaV");
 		String ZaMesec = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ZaMesec");
 
+		double ProgressBarSize = 0;
+		double NewStepForProgressBar = 0;
+		
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		String infotext = "";
 		String infotextMounth = "";
@@ -71,6 +72,9 @@ public class CheckMeasurDBaseToMounthFile {
 		String mounth = "";
 
 		boolean flendIteration = true;
+		
+		NewStepForProgressBar = 100 / 12;
+		
 		for (int mont = 0; mont < 12; mont++) {
 			mesec = "\n" + "\n" + ZaMesec + " " + (mont + 1);
 			infotextMounth = "";
@@ -108,21 +112,18 @@ public class CheckMeasurDBaseToMounthFile {
 							kk++;
 							while (itr.hasNext() && flendIteration) {
 								Measuring measur = itr.next();
-//									System.out.println("measur "+measur.getPerson().getEgn()+" <-> " + masiveStrMonth[i][m][0]);
-//									System.out.println("date "+sdfrmt.format(measur.getDate())+" <-> " + masiveStrMonth[i][m][2]);
-//									System.out.println(masiveStrMonth[i][m][3]+" <-> " +measur.getLab().getLab().toLowerCase());
-								String dozeString = convertDozeToString(measur);
-//								System.out.println(masiveStrMonth[i][m][1] + " <-> " + dozeString);
-								if (masiveStrMonth[i][m][0].equals(measur.getPerson().getEgn())
+ 								String dozeString = convertDozeToString(measur);
+ 						
+ 								if ((masiveStrMonth[i][m][0].equals(measur.getPerson().getEgn())
 										&& masiveStrMonth[i][m][1].equals(dozeString)
 										&& masiveStrMonth[i][m][2].equals(sdfrmt.format(measur.getDate()))
-										&& masiveStrMonth[i][m][3].equals(measur.getLab().getLab().toLowerCase())) {
+										&& masiveStrMonth[i][m][3].equals(measur.getLab().getLab().toLowerCase()))) {
 									itr.remove();
 
 									flendIteration = false;
 									ff--;
 								}
-							}
+ 							}
 
 						}
 
@@ -136,12 +137,14 @@ public class CheckMeasurDBaseToMounthFile {
 				String measurMounthText = "";
 
 				for (Measuring measur : listMeasyrByMounth) {
+					if(	!measur.getExcelPosition().contains("NotSaveInExcel")) {
 					listMeasuringForClear.add(measur);
 					measurMounthText = generateMounthtext(measur, masiveStrMonth);
 					measurText = measur.getPerson().getEgn() + " " + sdfrmt.format(measur.getDate()) + " "
 							+ convertDozeToString(measur) + " " + measur.getLab().getLab();
 
 					infotextMounth += measurText + " <-> " + measurMounthText + "\n";
+					}
 				}
 				if (!infotextMounth.isEmpty()) {
 					infotext += mesec + "\n" + infotextMounth;
@@ -151,7 +154,14 @@ public class CheckMeasurDBaseToMounthFile {
 				e.printStackTrace();
 			}
 
+			fProgressBar.setValue((int) ProgressBarSize);
+			ProgressBarSize += NewStepForProgressBar;
 		}
+		
+		if(listMeasuringForClear.size() >0) {
+			CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(true);
+		}
+		GeneralMethods.setDefaultCursor(panel_AllSaerch);
 		return infotext;
 
 	}
@@ -375,7 +385,7 @@ public class CheckMeasurDBaseToMounthFile {
 		for (int i = 0; i < 2; i++) {
 			Date date;
 			Double dDoze;
-			String EGN = "", strDate = "", doze = "", lab = "", reportFile = "";
+			String EGN = "", strDate = "", lab = "", reportFile = "";
 
 			Cell cell_EGN, cell_date, cell_Doze, cell_Lab;
 
@@ -405,9 +415,8 @@ public class CheckMeasurDBaseToMounthFile {
 
 								k = k + 17;
 								cell_Doze = sheet1.getRow(row0).getCell(k);
-								doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
-
-								dDoze = Double.valueOf(doze);
+								
+								dDoze = getDozeFromCell(cell_Doze);;
 								reportFile = "Excel-" + EGN + "/" + k;
 								masiveStr0[l][0] = EGN;
 								masiveStr0[l][1] = String.format("0.0", dDoze);
@@ -416,7 +425,7 @@ public class CheckMeasurDBaseToMounthFile {
 								masiveStr0[l][4] = reportFile;
 								l++;
 
-								if (k > 253) {
+								if (k > 252) {
 									k = 6;
 									sheet1 = workbook[i].getSheetAt(2);
 								}
@@ -427,6 +436,7 @@ public class CheckMeasurDBaseToMounthFile {
 								cell_Lab = sheet1.getRow(row0).getCell(k);
 
 							}
+							sheet1 = workbook[i].getSheetAt(1);
 							row0 = sheet1.getLastRowNum();
 							i = 2;
 
@@ -445,4 +455,49 @@ public class CheckMeasurDBaseToMounthFile {
 		return masiveStr;
 	}
 
+	
+	private static double getDozeFromCell(Cell cell) {
+		double doze = 0.0;
+	if(cell!=null) {				
+String type = cell.getCellType().toString();
+switch (type) {
+case "STRING": {
+	
+	String str = cell.getStringCellValue();
+//	System.out.println(str+" -> row "+row+" col "+k);
+	if(str.contains("<")) {
+		doze = 0.05;
+	}else {
+	
+	if( TypeMeasurDAO.getValueTypeMeasurByObject("KodeType", str).size()>0) {
+		doze = 0.0;
+	}
+	
+	try {
+		doze = Double.parseDouble(str);
+	} catch (Exception e) {
+		doze = -1;
+	}
+	
+	if(doze==-1) {
+		str = cell.getStringCellValue();
+		str = AplicationMetods.transliterate(str).toUpperCase();
+//		tipeM = TypeMeasurDAO.getValueTypeMeasurByObject("KodeType", str).get(0);
+		doze = 0.0;
+	}
+	}
+}
+	break;
+case "NUMERIC": {
+	doze = cell.getNumericCellValue();
+}
+	break;
+}
+}
+	return doze;
+	
+	}	
+	
+	
+	
 }

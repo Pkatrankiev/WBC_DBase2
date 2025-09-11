@@ -163,11 +163,16 @@ public class WBC_MainWindowFrame extends JFrame {
 		
 		personReferenceMenu.add(new Menu_Reference_Person());
 		personReferenceMenu.add(new Menu_OID_Reference_Person());
+		personReferenceMenu.add(new Menu_PersonReferenceInWebKD());
 		personReferenceMenu.add(new Menu_PersonReference_Dokument());
 		personReferenceMenu.add(new Menu_Reference_Kode());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_Reference_PersonMeasur());
 		personReferenceMenu.add(new Menu_ReferenceMeasuringLab());
+		personReferenceMenu.add(new Menu_MeasurInOderLab());
+		personReferenceMenu.add(new Menu_ResultFromMeasuringReference());
+		personReferenceMenu.addSeparator();
+		personReferenceMenu.add(new Menu_ReferenceKontrolPerson());
 		
 		return personReferenceMenu;
 	}
@@ -182,7 +187,10 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.setMnemonic(KeyEvent.VK_B);
 		
 		personReferenceMenu.add(new Menu_PersonReference_PersonStatus());
-		
+		personReferenceMenu.add(new Menu_Measuring_Results());
+		personReferenceMenu.add(new Menu_DeleteDublicateShortEGN());
+		personReferenceMenu.addSeparator();
+		personReferenceMenu.add(new Menu_DeleteDataFromDBaseRemoveInCurenFromOldYear());
 		
 		return personReferenceMenu;
 	}
@@ -252,7 +260,9 @@ public class WBC_MainWindowFrame extends JFrame {
 		measuringMenu.setMnemonic(KeyEvent.VK_I);
 		
 		measuringMenu.add(new Menu_AutoInsertMeasuting());
+		measuringMenu.add(new Menu_ManualInsertMeasuting());
 		measuringMenu.addSeparator();
+		measuringMenu.add(new Menu_DozeArt());
 		
 		return measuringMenu;
 	}
@@ -265,6 +275,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.setMnemonic(KeyEvent.VK_M);
 		
 		personReferenceMenu.add(new Menu_PersonManagement());
+		personReferenceMenu.add(new Menu_SpisakPersonManagement());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_CustomUpDate());
 		

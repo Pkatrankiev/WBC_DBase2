@@ -7,11 +7,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -19,10 +21,13 @@ import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
@@ -39,13 +44,17 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.DocumentFilter.FilterBypass;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.RemouveDublikateFromList;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -54,6 +63,8 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
+import DatePicker.DatePicker;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonExcellClass;
 import PersonReference.PersonReferenceExportToExcell;
@@ -73,7 +84,6 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	private JScrollPane scrollPane;
 	private Choice comboBox_Firm;
 	private static Choice comboBox_Otdel;
-	private static Choice comboBox_Results;
 
 	private static JTextArea textArea;
 	private static JTextField txtDokument;
@@ -83,7 +93,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	private static JButton btn_SearchDBase;
 	private static JButton btn_SearchFromExcel;
 	private static JButton btnBackToTable;
-
+	private int minYeare;
 	private String notResults;
 
 	ArrayList<String> listOtdelKz;
@@ -91,7 +101,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	List<String> listOtdelAll;
 	List<String> listAdd;
 	List<String> listFirm;
-	String[][] dataTable;
+	Object[][] dataTable;
 	
 	
 	private static String referencePerson_EGN = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_EGN");
@@ -103,10 +113,17 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	private static String referencePersonMeasur_endDate = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_endDate");
 	private static String referencePerson_ID_KZ_HOG = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_HOG");
 	private static String referencePerson_ID_KZ_2 = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_2");
+	private static String referencePerson_ID_KZ_1 = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_ID_KZ_1");
 	private static String referencePersonMeasur_firm = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_firm");
 	private static String referencePersonMeasur_otdel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_otdel");
 	
 	static String curentYear = AplicationMetods.getCurentYear();
+	private static JTextField textField_Year;
+	private JLabel lbl_Year;
+	private JLabel lblNewLabel;
+	
+	
+	
 	
 	public PersonReference_Dokument_Frame(ActionIcone round, String title) {
 		setTitle(title);
@@ -115,11 +132,20 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
 		
+		
+		
 		notResults = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults");
 		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
 		String VO = ReadFileBGTextVariable.getGlobalTextVariableMap().get("VO");
+		String minYearInDbase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("minYearInDbase");
 
-
+		try {
+			minYeare = Integer.parseInt(minYearInDbase);
+		} catch (Exception e) {
+			MessageDialog("Year not korekt in BGTextVariable", "Error");
+			System.exit(0);
+		}
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -178,6 +204,10 @@ public class PersonReference_Dokument_Frame extends JFrame {
 
 		panel_Button();
 
+		ActionListenerSetDateByDatePicker(txtStartDate);
+		ActionListenerSetDateByDatePicker(txtEndDate);
+		
+		
 		setSize(780, 900);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -189,17 +219,27 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		
 		String referencePerson_SearchFromDBase = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_SearchFromDBase");
 
-		
+		String referencePersonMeasur_year = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePersonMeasur_year");
 		
 		JPanel panel2 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel2.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		flowLayout.setVgap(2);
 		panel_Search.add(panel2);
+		
+		lbl_Year = new JLabel(referencePersonMeasur_year);
+		lbl_Year.setToolTipText("");
+		lbl_Year.setSize(new Dimension(80, 20));
+		lbl_Year.setPreferredSize(new Dimension(40, 15));
+		lbl_Year.setMinimumSize(new Dimension(80, 20));
+		lbl_Year.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_Year.setBorder(null);
+		lbl_Year.setAlignmentX(0.5f);
+		panel2.add(lbl_Year);
 
 		JLabel lbl_Dokument = new JLabel(referencePersonDokument);
 		lbl_Dokument.setSize(new Dimension(120, 20));
-		lbl_Dokument.setPreferredSize(new Dimension(102, 15));
+		lbl_Dokument.setPreferredSize(new Dimension(68, 15));
 		lbl_Dokument.setMinimumSize(new Dimension(120, 20));
 		lbl_Dokument.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Dokument.setBorder(null);
@@ -270,22 +310,31 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		panel2A.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel2A);
-		ActionListenertextField_Year();
+		
+		textField_Year = new JTextField();
+		textField_Year.setText(curentYear);
+		textField_Year.setPreferredSize(new Dimension(5, 20));
+		textField_Year.setMinimumSize(new Dimension(5, 20));
+		textField_Year.setColumns(4);
+		panel2A.add(textField_Year);
 
+		TextFieldJustNumbers(textField_Year);
+		ActionListenertextField_Year();
+		
 		txtDokument = new JTextField();
 		txtDokument.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		txtDokument.setPreferredSize(new Dimension(5, 20));
 		txtDokument.setMinimumSize(new Dimension(5, 20));
-		txtDokument.setColumns(12);
+		txtDokument.setColumns(8);
 		panel2A.add(txtDokument);
 
-		txtStartDate = new JTextField();
+		txtStartDate = new JTextField("01.01."+curentYear);
 		txtStartDate.setPreferredSize(new Dimension(8, 20));
 		txtStartDate.setMinimumSize(new Dimension(5, 20));
 		txtStartDate.setColumns(8);
 		panel2A.add(txtStartDate);
 
-		txtEndDate = new JTextField();
+		txtEndDate = new JTextField("31.12."+curentYear);
 		txtEndDate.setPreferredSize(new Dimension(5, 20));
 		txtEndDate.setMinimumSize(new Dimension(5, 20));
 		txtEndDate.setColumns(8);
@@ -331,13 +380,12 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel3.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel3);
+		
+		lblNewLabel = new JLabel("");
+		lblNewLabel.setPreferredSize(new Dimension(637, 14));
+		panel3.add(lblNewLabel);
 
-		comboBox_Results = new Choice();
-		comboBox_Results.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		comboBox_Results.setPreferredSize(new Dimension(590, 20));
-		panel3.add(comboBox_Results);
-
-		ActionListenerComboBox_Results();
+//		ActionListenerComboBox_Results();
 
 		btnBackToTable = new JButton(referencePerson_BackToTable);
 		btnBackToTable.setEnabled(false);
@@ -408,9 +456,9 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		});
 	}
 	
-	protected static String[][] addListStringSelectionPersonToComboBox(List<Person> listSelectionPerson) {
+	protected static Object[][] createDataTableFromListPerson(List<Person> listSelectionPerson) {
 
-		String[][] dataTable = new String[listSelectionPerson.size()][8];
+		Object[][] dataTable = new Object[listSelectionPerson.size()][9];
 
 //				"EGN", 	"FirstName","SecondName","LastName","Otdel",
 //				"Kod KZ-1",	"Kod KZ-2",	"Kod Hog"	
@@ -418,14 +466,15 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		int k = 0;
 		for (Person person : listSelectionPerson) {
 			System.out.println("egn " + person.getEgn());
-			dataTable[k][0] = person.getEgn();
-			dataTable[k][1] = person.getFirstName();
-			dataTable[k][2] = person.getSecondName();
-			dataTable[k][3] = person.getLastName();
-			dataTable[k][4] = getLastWorkplaceByPerson(person);
-			dataTable[k][5] = getLastKodeByPersonAndZone(person, 1);
-			dataTable[k][6] = getLastKodeByPersonAndZone(person, 2);
-			dataTable[k][7] = getLastKodeByPersonAndZone(person, 3);
+			dataTable[k][0] = k+1;
+			dataTable[k][1] = person.getEgn();
+			dataTable[k][2] = person.getFirstName();
+			dataTable[k][3] = person.getSecondName();
+			dataTable[k][4] = person.getLastName();
+			dataTable[k][5] = getLastWorkplaceByPerson(person);
+			dataTable[k][6] = getLastKodeByPersonAndZone(person, 1);
+			dataTable[k][7] = getLastKodeByPersonAndZone(person, 2);
+			dataTable[k][8] = getLastKodeByPersonAndZone(person, 3);
 
 			k++;
 		}
@@ -434,6 +483,34 @@ public class PersonReference_Dokument_Frame extends JFrame {
 
 	}
 
+public static Object[][] createDataTableFromPersonExcellClass(List<PersonExcellClass> listSelectionPerson) {
+		
+	Object[][] dataTable = new Object[listSelectionPerson.size()][9];
+	
+//				"EGN", 	"FirstName","SecondName","LastName","Otdel",
+//				"Kod KZ-1",	"Kod KZ-2",	"Kod Hog"	
+				
+		int k = 0;	
+		for (PersonExcellClass person : listSelectionPerson) {
+			dataTable[k][0] = k+1;
+			dataTable[k][1] = person.getPerson().getEgn() ;
+			dataTable[k][2] = person.getPerson().getFirstName();
+			dataTable[k][3] = person.getPerson().getSecondName();
+			dataTable[k][4] = person.getPerson().getLastName();
+			dataTable[k][5] = person.getOtdel();
+			dataTable[k][6] = person.getKz1();
+			dataTable[k][7] = person.getKz2();
+			dataTable[k][8] = person.getHog();
+			
+			k++;
+		}
+		
+		return dataTable;
+
+	}
+	
+	
+	
 	public static String getLastWorkplaceByPerson(Person person) {
 				
 		PersonStatusNew per = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
@@ -479,7 +556,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		String otdel = PersonReference_Dokument_Frame.getComboBox_Otdel().getSelectedItem();
 		
 		
-		List<PersonStatusNew> listAllPerson = PersonStatusNewDAO.getValuePersonStatusNewByYear(curentYear);
+		List<PersonStatusNew> listAllPerson = PersonStatusNewDAO.getValuePersonStatusNewByYear(textField_Year.getText());
 		
 		List<Person> listSelectionPerson = new ArrayList<>();
 
@@ -568,10 +645,10 @@ public class PersonReference_Dokument_Frame extends JFrame {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					dataTable = null;
 					textArea.setText("");
-					comboBox_Results.removeAll();
+//					comboBox_Results.removeAll();
 				
 					List<Person> listSelectionPerson = getListSearchingPerson();
-					addListStringSelectionPersonToComboBoxPerson(listSelectionPerson, comboBox_Results);
+//					addListStringSelectionPersonToComboBoxPerson(listSelectionPerson, comboBox_Results);
 
 					if (listSelectionPerson.size() == 0) {
 						textArea.setText(notResults);
@@ -580,14 +657,14 @@ public class PersonReference_Dokument_Frame extends JFrame {
 					}
 
 					if (listSelectionPerson.size() == 1) {
-						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(curentYear,
+						textArea.setText(TextInAreaTextPanel.createInfoPanelForPerson(textField_Year.getText(),
 								listSelectionPerson.get(0), false, 0));
 						viewInfoPanel();
 					}
 
 					if (listSelectionPerson.size() > 1) {
 						System.out.println("***** " + listSelectionPerson.size());
-						dataTable = addListStringSelectionPersonToComboBox(listSelectionPerson);
+						dataTable = createDataTableFromListPerson(listSelectionPerson);
 						panel_infoPanelTablePanel(dataTable);
 						viewTablePanel();
 					}
@@ -610,12 +687,12 @@ public class PersonReference_Dokument_Frame extends JFrame {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					dataTable = null;
 					textArea.setText("");
-					comboBox_Results.removeAll();
+//					comboBox_Results.removeAll();
 					List<PersonExcellClass> listSelectionPerson = SearchInExcellFilesByDokument.getListSearchingPerson();
 					
 					System.out.println("listSelectionPerson " + listSelectionPerson.size());
 					
-					addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
+//					addListStringSelectionPersonToComboBox(listSelectionPerson, comboBox_Results);
 
 					if (listSelectionPerson.size() == 0) {
 						textArea.setText(notResults);
@@ -631,8 +708,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 
 					if (listSelectionPerson.size() > 1) {
 						System.out.println("***** " + listSelectionPerson.size());
-						dataTable = SearchFromExcellFiles
-								.addListStringSelectionPersonExcellClassToComboBox(listSelectionPerson);
+						dataTable = createDataTableFromPersonExcellClass(listSelectionPerson);
 						panel_infoPanelTablePanel(dataTable);
 						viewTablePanel();
 					}
@@ -644,32 +720,65 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		});
 
 	}
-	
-	
-	private void ActionListenerComboBox_Results() {
 
-		comboBox_Results.addItemListener(new ItemListener() {
+	
+	public static void ActionListenerSetDateByDatePicker(JTextField textField_StartDate2) {
+
+		textField_StartDate2.addMouseListener(new MouseAdapter() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					textArea.setText("");
-					repaint();
-					GeneralMethods.setWaitCursor(panel_AllSaerch);
-					String str = comboBox_Results.getSelectedItem();
-					int index = str.indexOf(" ");
-					System.out.println("--->> " + str.substring(0, index));
-					Person person = PersonDAO.getValuePersonByEGN(str.substring(0, index));
-					textArea.setText(
-							TextInAreaTextPanel.createInfoPanelForPerson(curentYear, person, false, 0));
-					viewInfoPanel();
-					GeneralMethods.setDefaultCursor(panel_AllSaerch);
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e1) {
+				if (e1.getClickCount() == 2) {
+				Point pointFrame = textField_StartDate2.getLocationOnScreen();
+				final JFrame f = new JFrame();
+				DatePicker dPicer = new DatePicker(f, false, textField_StartDate2.getText(), pointFrame);
+				String str = dPicer.setPickedDate(false);
+
+				textField_StartDate2.setText(str);
+				checkorektDate(textField_StartDate2);
 				}
 			}
 		});
 
+		textField_StartDate2.addKeyListener(new KeyAdapter() {
+
+			public void keyReleased(KeyEvent evt) {
+
+				checkorektDate(textField_StartDate2);
+				
+			}
+
+		});
+
 	}
+	
+	
 
 	private void ActionListenertextField_Year() {
+		textField_Year.addKeyListener(new KeyAdapter() {
+
+			public void keyReleased(KeyEvent evt) {
+				textField_Year.setForeground(Color.BLACK);
+				btn_SearchFromExcel.setEnabled(true);
+				btn_SearchDBase.setEnabled(true);
+				if (!textField_Year.getText().isEmpty()) {
+					try {
+						long number = Long.parseLong(textField_Year.getText());
+						if (number < minYeare || number > Calendar.getInstance().get(Calendar.YEAR)+1) {
+							textField_Year.setForeground(Color.RED);
+							btn_SearchFromExcel.setEnabled(false);
+							btn_SearchDBase.setEnabled(false);
+						}
+					} catch (Exception e) {
+						textField_Year.setForeground(Color.RED);
+						btn_SearchFromExcel.setEnabled(false);
+						btn_SearchDBase.setEnabled(false);
+					}
+				}
+			}
+		});
 
 	}
 
@@ -693,6 +802,19 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	}
 
 	public static void TextFieldJustNumbers(JTextField field) {
+		((AbstractDocument) field.getDocument()).setDocumentFilter(new DocumentFilter() {
+			Pattern regEx = Pattern.compile("\\d*");
+
+			@Override
+			public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+					throws BadLocationException {
+				Matcher matcher = regEx.matcher(text);
+				if (!matcher.matches()) {
+					return;
+				}
+				super.replace(fb, offset, length, text, attrs);
+			}
+		});
 	}
 
 	private JPanel panel_Button() {
@@ -715,7 +837,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
 							TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
 				} else {
-					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel);
+					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel, "PersonReference");
 
 				}
 			}
@@ -750,9 +872,11 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		revalidate();
 	}
 
-	private void panel_infoPanelTablePanel(String[][] dataTable) {
+	private void panel_infoPanelTablePanel(Object[][] dataTable) {
 		String[] columnNames = getTabHeader();
-		int egn_code_Colum = 0;
+		@SuppressWarnings("rawtypes")
+		Class[] types = getCulumnClass();
+		int egn_code_Colum = 1;
 
 		DefaultTableModel dtm = new DefaultTableModel();
 		final JTable table = new JTable(dtm);
@@ -760,7 +884,13 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		dtm = new DefaultTableModel(dataTable, columnNames) {
 
 			private static final long serialVersionUID = 1L;
+			@SuppressWarnings("rawtypes")
+			private Class[] types2 = types;
 
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return this.types2[columnIndex];
+			}
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -772,7 +902,7 @@ public class PersonReference_Dokument_Frame extends JFrame {
 			}
 
 			@SuppressWarnings("unused")
-			public void setValueAt(String value, int row, int col) {
+			public void setValueAt(Object value, int row, int col) {
 
 				if (!dataTable[row][col].equals(value)) {
 					dataTable[row][col] = value;
@@ -843,11 +973,18 @@ public class PersonReference_Dokument_Frame extends JFrame {
 	}
 
 	private String[] getTabHeader() {
-		String[] tableHeader = { referencePerson_EGN, referencePerson_FirstName, referencePerson_SecondName, referencePerson_LastName,
-				referencePersonMeasur_otdel, referencePersonMeasur_startDate, referencePerson_ID_KZ_2, referencePerson_ID_KZ_HOG };
+		String[] tableHeader = {"№", referencePerson_EGN, referencePerson_FirstName, referencePerson_SecondName, referencePerson_LastName,
+				referencePersonMeasur_otdel, referencePerson_ID_KZ_1, referencePerson_ID_KZ_2, referencePerson_ID_KZ_HOG };
 		return tableHeader;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static Class[] getCulumnClass() {
+		Class[] types = { Integer.class, String.class, String.class, String.class, String.class, String.class,
+				String.class, String.class, String.class};
+		return types;
+	}
+	
 	public static ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
 		ArrayList<String> list = new ArrayList<String>();
 		for (Workplace workplace : valueWorkplaceByObject) {
@@ -910,8 +1047,6 @@ public class PersonReference_Dokument_Frame extends JFrame {
 		return btn_SearchFromExcel;
 	}
 
-	public static Choice getComboBox_Results() {
-		return comboBox_Results;
-	}
+	
 
 }

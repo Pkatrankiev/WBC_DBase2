@@ -28,8 +28,6 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import AutoInsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -38,6 +36,7 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonManagement.PersonelManegementFrame;
 
 import javax.swing.SwingConstants;
@@ -994,7 +993,7 @@ public class PersonReferenceFrame extends JFrame {
 							TextInAreaTextPanel.getMasiveKode(), TextInAreaTextPanel.getMasiveMeasurName(),
 							TextInAreaTextPanel.getMasiveMeasur(), buttonPanel);
 				} else {
-					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel);
+					PersonReferenceExportToExcell.btnExportTableToExcell(dataTable, getTabHeader(), buttonPanel, "PersonReference");
 
 				}
 			}

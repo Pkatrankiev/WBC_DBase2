@@ -146,8 +146,7 @@ public class ReadMeasuringFromExcelFile {
 						Measuring meas = createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
 						
 						listMeasuring.add(meas);
-								
-						if(k>253) {
+						if(k>252) {
 							k=6;
 							sheet = workbook.getSheetAt(2);
 						}
@@ -159,6 +158,7 @@ public class ReadMeasuringFromExcelFile {
 						
 						
 						}
+						sheet = workbook.getSheetAt(1);
 					}
 				}
 			}

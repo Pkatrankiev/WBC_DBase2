@@ -325,7 +325,7 @@ public class ReadResultFromReport {
 		
 		return false;
 	}
-
+	
 
 	private static UsersWBC getUserByOperatorName(String operatorName, List<String> listLastName_EG_Users) {
 		 for (String lastName_EG : listLastName_EG_Users) {

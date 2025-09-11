@@ -359,7 +359,8 @@ public class SaveToPersonelORExternalFile12 {
 		font.setFontHeightInPoints((short)10);
 		font.setBold(true);
 		
-		style.cloneStyleFrom(cel.getCellStyle());
+		style = cel.getCellStyle();
+//		style.cloneStyleFrom(cel.getCellStyle());
 		style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
 		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		style.setFont(font);
@@ -375,7 +376,8 @@ public class SaveToPersonelORExternalFile12 {
 		font.setFontHeightInPoints((short)10);
 		font.setBold(true);
 		
-		style.cloneStyleFrom(cel.getCellStyle());
+		style = cel.getCellStyle();
+//		style.cloneStyleFrom(cel.getCellStyle());
 		style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
 		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		style.setFont(font);
@@ -659,7 +661,8 @@ public class SaveToPersonelORExternalFile12 {
 			System.out.println("Copy style from");
 			// Copy style from old cell and apply to new cell
 			
-			style.cloneStyleFrom(oldCell.getCellStyle());
+			style = oldCell.getCellStyle();
+//			style.cloneStyleFrom(oldCell.getCellStyle());
 			newCell.setCellStyle(style);
 
 			// If there is a cell comment, copy

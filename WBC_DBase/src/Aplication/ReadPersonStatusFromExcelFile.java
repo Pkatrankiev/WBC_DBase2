@@ -434,33 +434,32 @@ public class ReadPersonStatusFromExcelFile {
 		
 		List<PersonStatusNew> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateSet = null, dateObhList = null;
+		Date dateSet = null, dateObhList = null, dateObhList0 = null;
 		
 
 		Person person;
 		UsersWBC userSet = UsersWBCDAO.getValueUsersWBCByID(1);
-		String FirstName = "", zab = "", dataObhodelistExt = "", dataObhodelist = "";
+		String FirstName = "", zab = "", dataObhodelist = "";
 		Workplace workplace = new Workplace();
 		Sheet sheet = workbook.getSheetAt(4);
 		Cell cell, cell0, cell1;
 		System.out.println(sheet.getLastRowNum());
-		for (int row = 0; row <= sheet.getLastRowNum(); row += 1) {
+		boolean startReadRows = false;
+		for (int row = 1; row <= sheet.getLastRowNum(); row += 1) {
 			zab = "";
 			if (sheet.getRow(row) != null) {
 				
+				if (startReadRows || ReadExcelFileWBC.CellNOEmpty(sheet.getRow(row).getCell(0)) ) {
+					startReadRows = true;
 				cell = sheet.getRow(row).getCell(3);
 				cell1 = sheet.getRow(row).getCell(4);
 				
-				if (pathFile.contains("EXTERNAL")) {
+				String dataObhodelistExt;
 					cell0 = sheet.getRow(row).getCell(0);
-					if (ReadExcelFileWBC.CellNOEmpty(cell0) && ReadExcelFileWBC.CellNOEmpty(cell0)) {
-						dataObhodelistExt = ReadExcelFileWBC.getStringfromCell(cell0);
-						
+					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell0)) {
+						dateObhList0 = ReadExcelFileWBC.readCellToDate(cell0);
 					}
-					cell = sheet.getRow(row).getCell(4);
-					cell1 = sheet.getRow(row).getCell(5);
-					
-				}
+
 				
 				
 
@@ -474,24 +473,22 @@ public class ReadPersonStatusFromExcelFile {
 					
 					
 					try {
-						if (pathFile.contains("EXTERNAL")) {
-							cell = sheet.getRow(row).getCell(7);
-							dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
-							zab = dataObhodelist;
-							dateObhList = sdfrmt.parse(dataObhodelistExt);
-						}else {
+						
 							cell = sheet.getRow(row).getCell(6);
 							dataObhodelist = ReadExcelFileWBC.getStringfromCell(cell);
 							zab = dataObhodelist;
-						int index = dataObhodelist.indexOf("от")+2;
-							dataObhodelist = dataObhodelist.substring(index,index+11).trim();
-						dateObhList = sdfrmt.parse(dataObhodelist);
-						}
+							dateObhList = dateObhList0;
+							dataObhodelistExt = searchDateInZab(zab);
+							if(dataObhodelistExt != null) {
+							dateObhList = sdfrmt.parse(dataObhodelistExt);
+							}
 						dateSet = sdfrmt.parse("31.12." + year);
-					} catch (ParseException e) {
+						System.out.println("егн "+person.getEgn()+"  "+ sdfrmt.format(dateObhList));
+					} catch (ParseException | NullPointerException e) {
+						MessageDialog("Проблем с датата при: егн "+person.getEgn()+" ред "+row+1);
 						e.printStackTrace();
 					}
-					System.out.println("егн "+person.getEgn()+"  "+ sdfrmt.format(dateObhList));
+					
 					
 //					if(!PersonStatusDAO.PersonWithObhodenList(person)) {
 					
@@ -506,12 +503,15 @@ public class ReadPersonStatusFromExcelFile {
 					Spisak_PrilogeniaDAO.setObjectSpisak_PrilogeniaToTable(spPrObhodList);
 					Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, dateObhList, workplace.getId_Workplace());
 					if(spisPril!=null) {
+						if(isRecordWithoutObhodenListByYear(person,year)) {
 					listPerStat.add(new PersonStatusNew(person, workplace, spisPril.getFormulyarName(),  spisPril.getStartDate(), spisPril.getEndDate(), spisPril.getYear(), userSet,  dateSet, zab));
-					}else {
+					
+						}}else {
 						spPrObhodList.getFormulyarName() ;
 					}
 //					}	
 				}
+			}
 			}
 			ActionIcone.roundWithText(round, textIcon, "Read", row, sheet.getLastRowNum());
 		}
@@ -522,6 +522,34 @@ public class ReadPersonStatusFromExcelFile {
 	
 	
 	
+	private static String searchDateInZab(String zab) {
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		Date dateSet = null;
+		if(zab.length() > 12) {
+		for (int i = 0; i < zab.length()-9; i++) {
+			try {
+				if(zab.substring(i, i+10).trim().length()==10) {
+				dateSet = sdfrmt.parse(zab.substring(i, i+10));
+				return sdfrmt.format(dateSet);
+				}
+			} catch (ParseException e) {
+				
+			}
+			
+		}
+		}
+		return null;
+	}
+
+	private static boolean isRecordWithoutObhodenListByYear(Person person, String year) {
+		for (PersonStatusNew perStat : PersonStatusNewDAO.getValuePersonStatusNewByPerson_Year(person, year)) {
+			if(perStat.getFormulyarName().equals("Обходен лист")) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static void ListPersonStatus(List<PersonStatus> list) {
 		System.out.println(list.size());
 		for (PersonStatus personStatus : list) {

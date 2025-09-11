@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,34 +18,54 @@ import Aplication.ReadFileBGTextVariable;
 
 public class CheckEqualsForFirst5Column {
 
-	static void ActionListener_Btn_SearchAllColumn(JPanel panel_AllSaerch, JButton btn_SearchAllColumn, JTextArea textArea) {
+	static void ActionListener_Btn_SearchAllColumn5(JProgressBar aProgressBar, JPanel panel_AllSaerch, JButton btn_SearchAllColumn, JTextArea textArea) {
 
 		btn_SearchAllColumn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textArea.setText("");
-				GeneralMethods.setWaitCursor(panel_AllSaerch);
-
-				String textForArea = CheckCorrectionAllRowInSheets();
-
-				if (textForArea.isEmpty()) {
-					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
-
-				} else {
-					textArea.setText(textForArea);
-
-				}
-
-				GeneralMethods.setDefaultCursor(panel_AllSaerch);
+				
+				new MySwingWorker(aProgressBar, textArea, panel_AllSaerch, "CheckCorrectionAllRowInSheets").execute();
+				
+				
+				
+//				
+//				GeneralMethods.setWaitCursor(panel_AllSaerch);
+//
+//				String textForArea = CheckCorrectionAllRowInSheets();
+//
+//				if (textForArea.isEmpty()) {
+//					textArea.setText(ReadFileBGTextVariable.getGlobalTextVariableMap().get("notResults"));
+//
+//				} else {
+//					textArea.setText(textForArea);
+//
+//				}
+//
+//				GeneralMethods.setDefaultCursor(panel_AllSaerch);
 			}
 
 		});
 
 	}
 	
-	public static String CheckCorrectionAllRowInSheets() {
+	
+	public static void ActionListener_Btn_SearchAllColumn(JProgressBar progressBar, JPanel panel_Search,
+			JButton btn_SearchAllColumn, JTextArea textArea) {
+		
+		btn_SearchAllColumn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea.setText("");
+		new MySwingWorker(progressBar, textArea, panel_Search, "CheckCorrectionAllRowInSheets").execute();
+			}
+
+		});
+	}	
+	
+	
+	public static String CheckCorrectionAllRowInSheets(JProgressBar aProgressBar, JPanel panel_AllSaerch) {
 		String infotext = "";
 		
-
+		GeneralMethods.setWaitCursor(panel_AllSaerch);
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
 		String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
 		
@@ -55,10 +76,17 @@ public class CheckEqualsForFirst5Column {
 		filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		}
 		
+		double ProgressBarSize = 0;
+		double NewStepForProgressBar = 0;
+		aProgressBar.setValue((int) ProgressBarSize);
+		double stepForProgressBar = 100;
+		
 		String filePath[] = {filePathPersonel, filePathExternal };
 		
 		String fileName[] = { "Personel", "External" };
-
+		
+		NewStepForProgressBar = stepForProgressBar / filePath.length;
+		
 		for (int i = 0; i < filePath.length; i++) {
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[i]);
 			String str1 = "", str2 = "", str3 = "", str4 = "";
@@ -68,6 +96,9 @@ public class CheckEqualsForFirst5Column {
 			Sheet sheet4 = workbook.getSheetAt(3);
 
 			Cell cell1, cell2, cell3, cell4;
+			
+			stepForProgressBar = NewStepForProgressBar / sheet1.getLastRowNum();
+			
 			for (int row = 5; row <= sheet1.getLastRowNum(); row += 1) {
 
 				if (sheet1.getRow(row) != null) {
@@ -102,11 +133,21 @@ public class CheckEqualsForFirst5Column {
 						}
 					}
 				}
+				
+				aProgressBar.setValue((int) ProgressBarSize);
+				ProgressBarSize += stepForProgressBar;
+
+				
 			}
 		}
+		
+		GeneralMethods.setDefaultCursor(panel_AllSaerch);
+		
 		return infotext;
 
 	}
+
+	
 
 	
 }
