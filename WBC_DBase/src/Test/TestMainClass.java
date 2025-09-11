@@ -201,7 +201,7 @@ public class TestMainClass {
 				     @Override
 				     public void run() {
 //				    	new Measuring_Results_Frame(round);
-//				    	new PersonReference_PersonStatus_Frame("", round);
+				    	new PersonReference_PersonStatus_Frame("", round);
 				    	
 //				    	round.StopWindow();
 				     }
