@@ -136,6 +136,7 @@ referencePerson_Export = Експорт към Excel
 referencePerson_SearchFromExcel = Търсене в Excel
 referencePerson_SearchFromDBase = Търсене в Базата
 referencePerson_BackToTable = Назад в Таблицата
+referencePerson_UpDataBD = UpData BD
 referencePerson_ID_KZ_1 = ИД КЗ-1
 referencePerson_ID_KZ_2 = ИД КЗ-2
 referencePerson_ID_KZ_HOG = ИД КЗ-ХОГ
@@ -287,4 +288,6 @@ resultFromMeasuringReference_TipText = Справка по период на р�
 
 resultFromMeasuring = Измервания и резултати
 
-
+changeKodeInKD = Коригиране на кодовете в КД
+changeKodeInKDTipText = Използвайки logKD.xls, коригираме кодовете в КД
+changeKodeInKD_NOTviewBrauser = 1

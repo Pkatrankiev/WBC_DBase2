@@ -12,6 +12,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -54,6 +56,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
+import PersonReference.InsertFulName_FrameDialog;
 
 
 public class PersonReferenceInWebKD_Frame extends JFrame {
@@ -86,14 +89,18 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 	private static String referencePerson_FirstName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_FirstName");
 	private static String referencePerson_SecondName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_SecondName");
 	private static String referencePerson_LastName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_LastName");
-
+	private static String changeKodeInKD_NOTviewBrauser = ReadFileBGTextVariable.getGlobalTextVariableMap().get("changeKodeInKD_NOTviewBrauser");
+	
 	static String curentYear = AplicationMetods.getCurentYear();
 
 	public PersonReferenceInWebKD_Frame(ActionIcone round, String title) {
 
 	
-
-		ChromeDriver driver = PersonReferenceInWebKD_Methods.openChromeDriver();
+		boolean NOTviewBrauser = false;
+		if(changeKodeInKD_NOTviewBrauser.equals("1")) {
+			NOTviewBrauser = true;
+		}
+		ChromeDriver driver = PersonReferenceInWebKD_Methods.openChromeDriver(NOTviewBrauser);
 
 			if(PersonReferenceInWebKD_Methods.logInToWebSheet( round, driver)) {
 						
@@ -243,6 +250,8 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 		textField_FName.setMinimumSize(new Dimension(5, 20));
 		textField_FName.setColumns(15);
 		panel1A.add(textField_FName);
+		
+		ActionListenerbInsertFullName();
 
 		textField_SName = new JTextField();
 		textField_SName.setPreferredSize(new Dimension(5, 20));
@@ -314,10 +323,10 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 					String lastName = getTextField_LName().getText();
 
 					String[] masiveData =PersonReferenceInWebKD_Methods.extractedMasiveInfoPerson(driver, firstName, secontName, lastName, egn);
-					
+					System.out.println("masiveData[0] "+masiveData[0]);
 					if (masiveData[0] == null) {
 						textArea.setText("Няма намерени резултати");
-						textArea.setText(notResults);
+//						textArea.setText(notResults);
 						
 						viewInfoPanel();
 
@@ -334,6 +343,35 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 
 		});
 
+	}
+	
+	private void ActionListenerbInsertFullName() {
+		textField_FName.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						int[] sizeInfoFrame = { 450, 140 };
+						int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+						 new InsertFulName_FrameDialog(new JFrame(), Coord);	
+						 String[] names = InsertFulName_FrameDialog.getNames();
+						 for (int i = 0; i < names.length; i++) {
+							  System.out.println("kk "+ names[i]);
+						}
+						 if(names[0] != null) {
+							 textField_FName.setText(names[0]);
+							 textField_SName.setText(names[1]);
+							 textField_LName.setText(names[2]);
+							 repaint();
+							 revalidate();
+						 }
+					}
+				
+				}
+
+			});
 	}
 	
 	void viewInfoPanel() {
@@ -405,18 +443,18 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 		panel_NamePerson.setLayout(new BoxLayout(panel_NamePerson, BoxLayout.Y_AXIS));
 
 		JTextField lblNamePerson = new JTextField("Име:   " + dataInfoPerson[0].replace("&&", ""));
-		lblNamePerson.setEditable(false);
+		lblNamePerson.setEditable(true);
 		lblNamePerson.setBorder(null);
 		lblNamePerson.setBackground(null);
-		lblNamePerson.setFocusable(false);
+		lblNamePerson.setFocusable(true);
 		lblNamePerson.setMaximumSize(new Dimension(32767, 32767));
 		panel_NamePerson.add(lblNamePerson);
 
 		JTextField lblEGNPerson = new JTextField("ЕГН:   " + dataInfoPerson[1]);
-		lblEGNPerson.setEditable(false);
+		lblEGNPerson.setEditable(true);
 		lblEGNPerson.setBorder(null);
 		lblEGNPerson.setBackground(null);
-		lblEGNPerson.setFocusable(false);
+		lblEGNPerson.setFocusable(true);
 		lblEGNPerson.setMaximumSize(new Dimension(32767, 32767));
 		panel_NamePerson.add(lblEGNPerson);
 
@@ -455,7 +493,11 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 		lblZveno.setPreferredSize(new Dimension(130, 15));
 		panel_Zveno.add(lblZveno);
 
-		JLabel lblZvenoInfo = new JLabel(dataInfoPerson[3]);
+		JTextField  lblZvenoInfo = new JTextField (dataInfoPerson[3]);
+		lblZvenoInfo.setEditable(true);
+		lblZvenoInfo.setBorder(null);
+		lblZvenoInfo.setBackground(null);
+		lblZvenoInfo.setFocusable(true);
 		lblZvenoInfo.setPreferredSize(new Dimension(320, 20));
 		panel_Zveno.add(lblZvenoInfo);
 
@@ -513,7 +555,11 @@ public class PersonReferenceInWebKD_Frame extends JFrame {
 
 		String[] kode = dataInfoPerson[6].split("@2#");
 		for (int i = 0; i < kode.length; i++) {
-			JLabel lblIDKodeInfo = new JLabel(kode[i].replace("@#", ""));
+			JTextField lblIDKodeInfo = new JTextField(kode[i].replace("@#", ""));
+			lblIDKodeInfo.setEditable(true);
+			lblIDKodeInfo.setBorder(null);
+			lblIDKodeInfo.setBackground(null);
+			lblIDKodeInfo.setFocusable(true);
 			lblIDKodeInfo.setPreferredSize(new Dimension(190, 15));
 			lblIDKodeInfo.setMaximumSize(new Dimension(190, 15));
 			panel_Kods.add(lblIDKodeInfo);

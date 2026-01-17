@@ -54,6 +54,7 @@ import MenuClasses.Menu_SpisakPersonManagement;
 import MenuClasses.WBC_MainWindowFrame;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
+import PersonReferenceInWebKD.ChangeKodeInKDByExcelLog;
 import PersonReference_OID.OID_Metods;
 import PersonReference_OID.OID_PersonReferenceFrame;
 import PersonReference_OID.OID_Person_AEC;
@@ -196,14 +197,10 @@ public class TestMainClass {
 			 
 //	-----------------------------------------------------------------------------------------
 			
-				ActionIcone round = new ActionIcone("tesst", "");
 				 final Thread thread = new Thread(new Runnable() {
 				     @Override
 				     public void run() {
-//				    	new Measuring_Results_Frame(round);
-				    	new PersonReference_PersonStatus_Frame("", round);
-				    	
-//				    	round.StopWindow();
+				    	 ChangeKodeInKDByExcelLog. ChangeKodeInKD();
 				     }
 				    });
 				    thread.start();	

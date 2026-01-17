@@ -2,7 +2,11 @@ package CheckErrorDataInExcellFiles;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +27,7 @@ import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
+import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
 import PersonReferenceInWebKD.PersonReferenceInWebKD_Methods;
 import PersonReference_OID.OID_PersonReferenceFrame;
@@ -37,7 +42,11 @@ public class CheckDataExcellFilesAndKD {
 			public void actionPerformed(ActionEvent e) {
 
 							textArea.setText("");
-							driver = PersonReferenceInWebKD_Methods.openChromeDriver();
+							boolean NOTviewBrauser = false;
+							if(ReadFileBGTextVariable.getGlobalTextVariableMap().get("changeKodeInKD_NOTviewBrauser").equals("1")) {
+								NOTviewBrauser = true;
+							}
+							driver = PersonReferenceInWebKD_Methods.openChromeDriver(NOTviewBrauser);
 							if (PersonReferenceInWebKD_Methods.logInToWebSheet(null, driver)) {
 								System.out.println("--------------------------------");
 								new MySwingWorker(progressBar, textArea, panel_AllSaerch, "CheckDataExcellFilesAndKD").execute();;
@@ -70,6 +79,7 @@ public class CheckDataExcellFilesAndKD {
 		double ProgressBarSize = 1;
 
 		String filePath[] = { filePathPersonel, filePathExternal };
+//		String filePath[] = { filePathExternal };
 
 		Person person;
 
@@ -97,7 +107,7 @@ public class CheckDataExcellFilesAndKD {
 			stepForProgressBar = stepForProgressBar / sheet.getLastRowNum();
 //			System.out.println(stepForProgressBar+"*******************************************");  
 //			System.out.println(sheet.getLastRowNum());
-			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
+			for (int row = 240; row <= sheet.getLastRowNum(); row += 1) {
 				aProgressBar.setValue((int) ProgressBarSize);
 //				 System.out.println(ProgressBarSize+"  -------------------------------------------------------");
 				ProgressBarSize += stepForProgressBar;
@@ -180,7 +190,8 @@ public class CheckDataExcellFilesAndKD {
 				if (setinMasive) {
 					System.out.println(EGN+" /////////////////////////////");
 					String[] masivePerson = PersonReferenceInWebKD_Methods.extractedMasiveInfoPerson(driver, "", "",	"", EGN);
-					if (masivePerson != null) {
+//					if (masivePerson != null) {
+						if (masivePerson[0] != null) {
 						System.out.println("masivePerson[0] "+masivePerson[0]);
 						String[] namestr = masivePerson[0].split("&&");
 						for (int i = 0; i < namestr.length; i++) {
@@ -259,7 +270,7 @@ public class CheckDataExcellFilesAndKD {
 //						System.out.println(strText);
 						listMasive.add(strText);
 						notEquals = false;
-
+						appendToFile(strText);
 					}
 
 				}
@@ -285,6 +296,27 @@ public class CheckDataExcellFilesAndKD {
 		return infoStrText;
 	}
 
+	public static void appendToFile(String text) {
+        try {
+        	
+            FileWriter New_File = new FileWriter("logKD.txt", true);
+            BufferedWriter Buff_File = new BufferedWriter(New_File);
+            try (PrintWriter Print_File = new PrintWriter(Buff_File, true)) {
+//				Print_File.println("");
+				 Print_File.println(text);
+			}
+
+        }
+        catch (Exception e) {
+        
+            throw new RuntimeException("Cannot write the Exception to file", e);
+        }
+   }
+	
+	
+	
+	
+	
 	static String extracted(String[][] listMasive) {
 		String sttr0 = "", sttr1 = "";
 		for (int s = 0; s < 6; s++) {

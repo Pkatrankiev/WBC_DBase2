@@ -10,6 +10,7 @@ import java.awt.Color;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import java.awt.Dimension;
@@ -27,6 +28,7 @@ import javax.swing.text.DocumentFilter;
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
+
 import Aplication.ReadFileBGTextVariable;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
@@ -36,10 +38,13 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
+
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonManagement.PersonelManegementFrame;
 
+
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import java.awt.Component;
 import javax.swing.JTextArea;
@@ -50,6 +55,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -286,6 +292,8 @@ public class PersonReferenceFrame extends JFrame {
 		textField_FName.setColumns(15);
 		panel1A.add(textField_FName);
 
+		ActionListenerbInsertFullName();
+		
 		textField_SName = new JTextField();
 		textField_SName.setPreferredSize(new Dimension(5, 20));
 		textField_SName.setMinimumSize(new Dimension(5, 20));
@@ -846,6 +854,36 @@ public class PersonReferenceFrame extends JFrame {
 
 		});
 
+	}
+	
+	
+	private void ActionListenerbInsertFullName() {
+		textField_FName.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						int[] sizeInfoFrame = { 450, 140 };
+						int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+						 new InsertFulName_FrameDialog(new JFrame(), Coord);	
+						 String[] names = InsertFulName_FrameDialog.getNames();
+						 for (int i = 0; i < names.length; i++) {
+							  System.out.println("kk "+ names[i]);
+						}
+						 if(names[0] != null) {
+							 textField_FName.setText(names[0]);
+							 textField_SName.setText(names[1]);
+							 textField_LName.setText(names[2]);
+							 repaint();
+							 revalidate();
+						 }
+					}
+				
+				}
+
+			});
 	}
 
 	private void ActionListenerbBtn_SearchFromExcel() {

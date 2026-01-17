@@ -477,17 +477,11 @@ public class PersonelManegementMethods {
 		});
 	}
 
-	static void ActionListener_JTextFieldEGN(JTextField fild, int zoneID, JButton btn_savePerson_FromOiD) {
-		String svePersonManegement_newPerson = ReadFileBGTextVariable.getGlobalTextVariableMap()
-				.get("svePersonManegement_newPerson");
-		fild.addKeyListener(new KeyAdapter() {
+	static void ActionListener_JTextFieldEGN(JTextField fild, int zoneID) {
+			fild.addKeyListener(new KeyAdapter() {
 
 			public void keyReleased(KeyEvent evt) {
-				btn_savePerson_FromOiD.setEnabled(false);
-				if (checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID)
-						.contains(svePersonManegement_newPerson)) {
-					btn_savePerson_FromOiD.setEnabled(true);
-				}
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 			}
 
 		});
@@ -499,11 +493,7 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				btn_savePerson_FromOiD.setEnabled(false);
-				if (checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID)
-						.contains(svePersonManegement_newPerson)) {
-					btn_savePerson_FromOiD.setEnabled(true);
-				}
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 			}
 
 			@Override
@@ -513,11 +503,7 @@ public class PersonelManegementMethods {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				btn_savePerson_FromOiD.setEnabled(false);
-				if (checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID)
-						.contains(svePersonManegement_newPerson)) {
-					btn_savePerson_FromOiD.setEnabled(true);
-				}
+				checkKorectionSetInfoToFieldsInSavePersonPanel(fild, zoneID);
 			}
 
 			@Override

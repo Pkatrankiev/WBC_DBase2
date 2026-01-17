@@ -707,6 +707,40 @@ public class KodeStatusDAO {
 		return KodeStatus;
 	}
 	
+	public static List<KodeStatus> getKodeStatusByYear(String year) {
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+
+			sql = "SELECT * FROM KodeStatus where Year = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, year);
+			
+			result = preparedStatement.executeQuery();
+		
+		
+
+			while (result.next()) {
+				KodeStatus KodeStatus = setKodeStatus(result);
+				listKodeStatus.add(KodeStatus);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		
+		return listKodeStatus;
+		
+	}
+	
 	
 
 	public static java.sql.Date convertDate(Date data) {

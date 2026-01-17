@@ -553,7 +553,8 @@ public class UpdateBDataFromExcellFiles {
 //							ReadPersonStatusFromExcelFile.ListPersonStatus(list);
 							System.out.println("PersonStatus --> " + list.size());
 						} catch (Exception e) {
-							save = OptionDialog("PersonStatus"+errorText);
+							e.printStackTrace();
+							save = OptionDialog("PersonStatus "+errorText);
 							
 						}
 						if (save && list != null) {
@@ -673,7 +674,7 @@ public class UpdateBDataFromExcellFiles {
 					cell = sheet.getRow(row).getCell(5);
 					cell1 = sheet.getRow(row).getCell(6);
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
-						
+						if (ReadSpisak_PrilogeniaFromExcelFile.allColum0to5isEmpty(pathFile, sheet, row)) {
 						if (cell1.getStringCellValue().equals("край")) {
 							list.add(start+"#"+row+"#"+otdelName);
 							start = row+1;
@@ -681,7 +682,9 @@ public class UpdateBDataFromExcellFiles {
 							otdelName = cell1.getStringCellValue();
 						}
 					
-							}
+						
+						}
+						}
 						}
 
 					}

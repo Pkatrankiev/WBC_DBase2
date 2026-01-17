@@ -49,7 +49,7 @@ public class ManualInsertMeasutingMethods {
 		final Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				AutoInsertMeasutingMethods.insertMeasur(manualInsertMeasur, files, round);
+				AutoInsertMeasutingMethods.insertMeasur(manualInsertMeasur, files, round, false);
 			}
 
 		

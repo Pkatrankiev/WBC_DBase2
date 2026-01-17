@@ -22,22 +22,13 @@ public class Menu_OID_Reference_Person extends AbstractMenuAction{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		 ActionIcone round = new ActionIcone("Чета данни от ОиД", "");
+		ActionIcone round = new ActionIcone();
 		 final Thread thread = new Thread(new Runnable() {
 		     @Override
 		     public void run() {
-		    	 ProcessBuilder pb;
-		    	 try {
-		 			pb = AccessRunner.runWithWorkgroup();
-		 			 Process proc = pb.start();
-		 			System.out.println("Access стартиран. Изчакване да приключи...");
-
-		 	        int exitCode = proc.waitFor();  // Тук Java блокира докато Access процеса приключи
-		 	        System.out.println("Access приключи с код: " + exitCode);
-		 	        new OID_PersonReferenceFrame(round, personReference_OID);
-		 		} catch (IOException | InterruptedException e1) {
-		 			e1.printStackTrace();
-		 		}		
+		    	 
+		    	 new OID_PersonReferenceFrame(round, personReference_OID);
+		    	     	
 		     }
 		    });
 		    thread.start();
@@ -45,3 +36,4 @@ public class Menu_OID_Reference_Person extends AbstractMenuAction{
 	}
 	
 }
+

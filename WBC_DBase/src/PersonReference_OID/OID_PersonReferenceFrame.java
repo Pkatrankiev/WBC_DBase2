@@ -36,10 +36,12 @@ import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
+import PersonReference.InsertFulName_FrameDialog;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.SearchFromExcellFiles;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import java.awt.Component;
 import javax.swing.JTextArea;
@@ -49,6 +51,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +79,6 @@ public class OID_PersonReferenceFrame extends JFrame {
 	private JPanel infoPanel;
 	private JPanel tablePane;
 	private JScrollPane scrollPane;
-	private static Choice comboBox_Results;
 
 	private static JTextArea textArea;
 	private static JTextField textField_EGN;
@@ -103,6 +105,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 	private static String referencePerson_LastName = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_LastName");
 		
 	static String curentYear = AplicationMetods.getCurentYear();
+	private JButton btnUpDataBD;
 	public OID_PersonReferenceFrame(ActionIcone round, String title) {
 		setTitle(title+ " Последна актуализация на базата:   "+getDateNewDBAccsess());
 		setMinimumSize(new Dimension(740, 900));
@@ -261,6 +264,8 @@ public class OID_PersonReferenceFrame extends JFrame {
 		textField_FName.setColumns(15);
 		panel1A.add(textField_FName);
 
+		ActionListenerbInsertFullName();
+		
 		textField_SName = new JTextField();
 		textField_SName.setPreferredSize(new Dimension(5, 20));
 		textField_SName.setMinimumSize(new Dimension(5, 20));
@@ -293,17 +298,13 @@ public class OID_PersonReferenceFrame extends JFrame {
 	private JPanel panel_3() {
 
 		String referencePerson_BackToTable = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_BackToTable");
+		String referencePerson_UpDataBD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_UpDataBD");
 		
 		JPanel panel3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel3.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
+		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panel3.setPreferredSize(new Dimension(10, 30));
 		panel_Search.add(panel3);
-
-		comboBox_Results = new Choice();
-		comboBox_Results.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		comboBox_Results.setPreferredSize(new Dimension(590, 20));
-		panel3.add(comboBox_Results);
 
 		ActionListenerComboBox_Results();
 
@@ -312,8 +313,15 @@ public class OID_PersonReferenceFrame extends JFrame {
 		btnBackToTable.setMargin(new Insets(2, 2, 2, 2));
 		btnBackToTable.setPreferredSize(new Dimension(105, 20));
 		panel3.add(btnBackToTable);
-
+		
 		ActionListenerBtnBackToTable();
+		
+		btnUpDataBD = new JButton(referencePerson_UpDataBD);
+		btnUpDataBD.setPreferredSize(new Dimension(105, 20));
+		btnUpDataBD.setMargin(new Insets(2, 2, 2, 2));
+		panel3.add(btnUpDataBD);
+
+		ActionListenerBtnUpDataBD();
 
 		return panel3;
 	}
@@ -393,7 +401,10 @@ public class OID_PersonReferenceFrame extends JFrame {
 		String secontName = "";
 		String lastName = "";
 		
-			
+		egn = OID_PersonReferenceFrame.getTextField_EGN().getText();
+		firstName = OID_PersonReferenceFrame.getTextField_FName().getText();
+		secontName = OID_PersonReferenceFrame.getTextField_SName().getText();
+		lastName = OID_PersonReferenceFrame.getTextField_LName().getText();	
 		
 
 		if (!egn.trim().isEmpty()) {
@@ -456,7 +467,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 					GeneralMethods.setWaitCursor(panel_AllSaerch);
 					dataTable = null;
 					textArea.setText("");
-					comboBox_Results.removeAll();
+				
 					TreeSet<Object> set = new TreeSet<>();
 					List<Person> listSelectionPersonAEC = getListSearchingPerson(OID_Person_AECDAO.getAllOID_Person_AEC());
 					System.out.println("listSelectionPersonAEC "+listSelectionPersonAEC.size());
@@ -484,7 +495,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 						}
 					
 					
-					addListStringSelectionPersonToComboBox(listSelectionPersonLast, comboBox_Results);
+				
 
 					if (listSelectionPersonLast.size() == 0) {
 						textArea.setText(notResults);
@@ -516,23 +527,6 @@ public class OID_PersonReferenceFrame extends JFrame {
 
 	private void ActionListenerComboBox_Results() {
 
-		comboBox_Results.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					textArea.setText("");
-					repaint();
-					GeneralMethods.setWaitCursor(panel_AllSaerch);
-					String str = comboBox_Results.getSelectedItem();
-					int index = str.indexOf(" ");
-					System.out.println("--->> " + str.substring(0, index));
-					textArea.setText(OID_Metods.getInfoByEGN(str.substring(0, index)));
-					viewInfoPanel();
-					GeneralMethods.setDefaultCursor(panel_AllSaerch);
-				}
-			}
-		});
-
 	}
 
 	
@@ -551,6 +545,66 @@ public class OID_PersonReferenceFrame extends JFrame {
 
 	}
 
+	private void ActionListenerBtnUpDataBD() {
+
+		btnUpDataBD.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String personReference_OID = ReadFileBGTextVariable.getGlobalTextVariableMap().get("personReference_OID");
+				 ActionIcone round = new ActionIcone("Чета данни от ОиД", "");
+				 final Thread thread = new Thread(new Runnable() {
+				     @Override
+				     public void run() {
+				    	 ProcessBuilder pb;
+				    	 try {
+				 			pb = AccessRunner.runWithWorkgroup();
+				 			 Process proc = pb.start();
+				 			System.out.println("Access стартиран. Изчакване да приключи...");
+
+				 	        int exitCode = proc.waitFor();  // Тук Java блокира докато Access процеса приключи
+				 	        System.out.println("Access приключи с код: " + exitCode);
+				 	        dispose(); // Destroy the JFrame object
+				 	        new OID_PersonReferenceFrame(round, personReference_OID);
+				 		} catch (IOException | InterruptedException e1) {
+				 			e1.printStackTrace();
+				 		}		
+				     }
+				    });
+				    thread.start();	
+			}
+
+		});
+
+	}
+	
+	private void ActionListenerbInsertFullName() {
+		textField_FName.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						int[] sizeInfoFrame = { 450, 140 };
+						int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+						 new InsertFulName_FrameDialog(new JFrame(), Coord);	
+						 String[] names = InsertFulName_FrameDialog.getNames();
+						 for (int i = 0; i < names.length; i++) {
+							  System.out.println("kk "+ names[i]);
+						}
+						 if(names[0] != null) {
+							 textField_FName.setText(names[0]);
+							 textField_SName.setText(names[1]);
+							 textField_LName.setText(names[2]);
+							 repaint();
+							 revalidate();
+						 }
+					}
+				
+				}
+
+			});
+	}
+	
 	protected static boolean allFieldsEmnty() {
 		return (textField_EGN.getText().trim().isEmpty() && textField_FName.getText().trim().isEmpty()
 				&& textField_SName.getText().trim().isEmpty() && textField_LName.getText().trim().isEmpty());
@@ -775,9 +829,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 
 	
 
-	public static Choice getComboBox_Results() {
-		return comboBox_Results;
-	}
+	
 
 	
 	

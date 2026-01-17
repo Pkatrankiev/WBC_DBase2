@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +24,10 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
+import BasiClassDAO.PersonStatusNewDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
+import BasicClassAccessDbase.PersonStatusNew;
 import PersonReference.TextInAreaTextPanel;
 
 public class CheckPersonName_KodeStatus_DBseToExcelFiles {
@@ -88,6 +91,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		GeneralMethods.setWaitCursor(panel_AllSaerch);
 		String[][] masive = new String[2][8];
 
+		String ImaGoV = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ImaGoV");
+		String NoGoNiamaV = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("checkCorrectinDataInExcell_NoGoNiamaV");
+		
 		List<String> listMasive = new ArrayList<String>();
 
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
@@ -115,8 +122,26 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		boolean notEquals = false;
 		boolean setinMasive = false;
 
-	
-
+		List<String> listMasiveNotInDB = new ArrayList<String>();
+		List<String> listAllEgnInExcelFiles = new ArrayList<String>();
+		HashSet<String> listAllPersonInCurentYear =  new HashSet<String>();
+		List<Person> listMasiveNotInExcel = new ArrayList<>();
+		System.out.println("*******************************************");
+		
+//		List<PersonStatusNew> listpersonStatusNew = PersonStatusNewDAO.getValuePersonStatusNewByYear(curentYear);
+		double stepForProgressBar = 20;
+		List<PersonStatusNew> listpersonStatusNew = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, null, aProgressBar, stepForProgressBar);
+		
+		System.out.println("listpersonStatusNew.size() "+listpersonStatusNew.size());
+		
+		for (PersonStatusNew personStatusNew : listpersonStatusNew) {
+			
+			listAllPersonInCurentYear.add(personStatusNew.getPerson().getEgn());
+		}
+		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
+		System.out.println("//////////////////////////////"); 
+		
+		ProgressBarSize = 20;
 		for (int ii = 0; ii < filePath.length; ii++) {
 
 			if (filePath[ii].contains("EXTERNAL")) {
@@ -125,7 +150,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				listMasive.add("IN PERSONEL FILE");
 			}
 
-			double stepForProgressBar = 50;
+			stepForProgressBar = 40;
 			
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
 			Sheet sheet = workbook.getSheetAt(0);
@@ -153,17 +178,17 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 						person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
 						if (mySet.add(EGN)) {
+							
 							for (int j = 0; j < 8; j++) {
 								masive[0][j] = "";
 								masive[1][j] = "";
 							}
 							FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
+							listAllEgnInExcelFiles.add(EGN+" - "+FirstName);
 							if (person != null) {
 							masive[0][0] = EGN;
 							masive[0][1] = FirstName;
-							if(EGN.equals("0051301900")) {
-								System.out.println(FirstName+" *********************");
-							}
+							
 							cell = sheet.getRow(row).getCell(0);
 							if (cell != null)
 								kodeKZ1 = cell.getStringCellValue();
@@ -282,7 +307,32 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				listMasive = new ArrayList<String>();
 			}
 		}
-
+		
+		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
+		System.out.println("listAllEgnInExcelFiles.size() "+listAllEgnInExcelFiles.size());
+		Iterator<String> itrPerson = listAllPersonInCurentYear.iterator();
+		
+		while (itrPerson.hasNext()) {
+			String personEGN = itrPerson.next();
+			
+			Iterator<String> itrEGNExcel = listAllEgnInExcelFiles.iterator();
+			while (itrEGNExcel.hasNext()) {
+				String egn = itrEGNExcel.next();
+				egn = egn.split("-")[0].trim();
+				if(egn.equals(personEGN)) {
+					itrPerson.remove();
+					itrEGNExcel.remove();
+				}
+			}
+		}
+		
+		
+		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
+		System.out.println("listAllEgnInExcelFiles.size() "+listAllEgnInExcelFiles.size());
+		
+		
+		
+		
 		String infoStrText ="";
 		if(listMasive.size() > 0) {
 		String[][] ExtMasive = extractedMasive(listMasive);
@@ -291,6 +341,23 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		listMasiveForClear = listMasive;
 		
 		infoStrText = creadStringToInfoText(ExtMasive, columnWith);
+		}
+		
+		int k=0;
+		infoStrText += "\n" + ImaGoV + " DBase " + NoGoNiamaV + " Excel Files" + "\n";
+		for (String personEGN : listAllPersonInCurentYear) {
+			Person person2 = PersonDAO.getValuePersonByEGN(personEGN);
+			if(!PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person2).getFormulyarName().equals("Обходен лист")) {
+				infoStrText += k+" "+person2.getEgn()+" - "+person2.getFirstName()+" "+person2.getSecondName()+" "+person2.getLastName()+ "\n";
+			}
+		k++;
+		}
+		infoStrText += "\n" + ImaGoV + " Excel Files " + NoGoNiamaV + "  DBase" + "\n";
+		k=0;
+		
+		for (String egn : listAllEgnInExcelFiles) {
+			infoStrText +=k+" "+egn+ "\n";
+			k++;
 		}
 		
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);

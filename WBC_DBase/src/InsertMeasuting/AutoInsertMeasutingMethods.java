@@ -2,6 +2,11 @@ package InsertMeasuting;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -34,11 +39,13 @@ import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.UsersWBC;
 import PersonManagement.PersonelManegementMethods;
+import WBCUsersLogin.WBCUsersLogin;
+
 
 public class AutoInsertMeasutingMethods {
-
+	
 	public static void AutoInsertMeasutingStartFrame(UsersWBC loginDlg) {
-
+		
 		boolean manualInsertMeasur = false;
 
 		String nameLastOpenFolder = LastOpenFolderDAO.getNameOpenFolderByActionUser("AutoInsertMeasuting", loginDlg);
@@ -71,7 +78,7 @@ public class AutoInsertMeasutingMethods {
 				final Thread thread = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						insertMeasur(manualInsertMeasur, files, round);
+						insertMeasur(manualInsertMeasur, files, round, true);
 					}
 
 				});
@@ -89,7 +96,9 @@ public class AutoInsertMeasutingMethods {
 		return nameOpenFolder;
 	}
 
-	public static void insertMeasur(boolean manualInsertMeasur, File[] files, ActionIcone round) {
+	public static void insertMeasur(boolean manualInsertMeasur, File[] files, ActionIcone round,
+			boolean autoInsertMeasur) {
+
 		List<ReportMeasurClass> list = ReadResultFromReport.getListReadGamaFiles(files);
 		String[] listSimbolNuclide = NuclideWBCDAO.getMasiveSimbolNuclide();
 		String[] listLaboratory = LaboratoryDAO.getMasiveLaboratory();
@@ -98,12 +107,12 @@ public class AutoInsertMeasutingMethods {
 		String[] listTypeNameMeasur = TypeMeasurDAO.getMasiveNameTypeMeasur();
 		List<Person> listAllPerson = PersonDAO.getAllValuePerson();
 		new AutoInsertMeasutingFrame(round, new JFrame(), list, listSimbolNuclide, listLaboratory, listUserWBC,
-				listTypeMeasur, listTypeNameMeasur, null, listAllPerson, manualInsertMeasur);
+				listTypeMeasur, listTypeNameMeasur, null, listAllPerson, manualInsertMeasur, autoInsertMeasur);
 	}
 
 	public static void SaveMesuring(List<ReportMeasurClass> listReportMeasurClassToSave, ActionIcone round) {
-		SaveReportMeasurTo_PersonelORExternalExcelFile
-				.SaveListReportMeasurClassToExcellFile(round, listReportMeasurClassToSave, false);
+		SaveReportMeasurTo_PersonelORExternalExcelFile.SaveListReportMeasurClassToExcellFile(round,
+				listReportMeasurClassToSave, false);
 		List<ReportMeasurClass> listReportMeasurClass = SaveReportMeasurTo_PersonelORExternalExcelFile
 				.getListReportMeasurClass();
 		SaveListReportMeasurClassToDBase(round, listReportMeasurClass);
@@ -115,9 +124,9 @@ public class AutoInsertMeasutingMethods {
 		int index = 0;
 		for (ReportMeasurClass reportMeasur : listReportMeasurClassToSave) {
 			Person person = reportMeasur.getMeasur().getPerson();
-			String namePerson = person.getFirstName()+" "+person.getSecondName()+" "+person.getLastName();
-			roundWithText(round, namePerson , index);
-			
+			String namePerson = person.getFirstName() + " " + person.getSecondName() + " " + person.getLastName();
+			roundWithText(round, namePerson, index);
+
 			MeasuringDAO.setObjectMeasuringToTable(reportMeasur.getMeasur());
 			lastMeasur = MeasuringDAO.getLastMeasuring();
 			if (!reportMeasur.getListNuclideData().isEmpty()) {
@@ -148,8 +157,61 @@ public class AutoInsertMeasutingMethods {
 		String textIcon2 = count + " " + newText;
 		round.setTextToImage(textIcon2);
 	}
+
+	public static void AutoManualInsertMeasutingStartFrame() {
+
+		boolean manualInsertMeasur = false;
+		ActionIcone round = new ActionIcone();
+		File[] files = new File[0];
+		final Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				AutoInsertMeasutingMethods.insertMeasur(manualInsertMeasur, files, round, true);
+			}
+
+		});
+		thread.start();
+
+	}
+
 	
-	
+	public static void DrobInsertMeasutingStartFrame(File[] files) {
+
+		boolean manualInsertMeasur = false;
+		UsersWBC loginDlg = WBCUsersLogin.getCurentUser();
+		String nameLastOpenFolder = LastOpenFolderDAO.getNameOpenFolderByActionUser("AutoInsertMeasuting", loginDlg);
+
+		if (files.length > 0) {
+			String nameOpenFolder = files[0].getAbsolutePath();
+
+			nameOpenFolder = nameOpenFolder.replace(files[0].getName(), "");
+			nameOpenFolder = revoveLastFolder(nameOpenFolder);
+			nameOpenFolder = revoveLastFolder(nameOpenFolder);
+
+			if (nameLastOpenFolder.isEmpty()) {
+
+				LastOpenFolderDAO.setLastOpenFolder("AutoInsertMeasuting", loginDlg, nameOpenFolder);
+			} else {
+				LastOpenFolder lastfolder = LastOpenFolderDAO.getLastOpenFolderByAction_User("AutoInsertMeasuting",
+						loginDlg);
+				lastfolder.setNameOpenFolder(nameOpenFolder);
+				LastOpenFolderDAO.updateValueLastOpenFolder(lastfolder);
+			}
+			if (files.length > 0) {
+				ActionIcone round = new ActionIcone();
+				final Thread thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						insertMeasur(manualInsertMeasur, files, round, false);
+					}
+
+				});
+				thread.start();
+
+			}
+		}
+	}
+
 	public static void btnSave_AutoInsertMeasuting_ActionListener(AutoInsertMeasutingFrame autoInsertMeasutingFrame) {
 		JButton btnSave = AutoInsertMeasutingFrame.getBtnSave();
 		List<ReportMeasurClass> listReportMeasurClass = AutoInsertMeasutingFrame.getListReportMeasurClass();
@@ -160,8 +222,8 @@ public class AutoInsertMeasutingMethods {
 						&& PersonelManegementMethods.checkIsClosedMonthPersonAndExternalFile()) {
 
 //					ActionIcone round = new ActionIcone();
-					ActionIcone round2 = new ActionIcone("                                "
-							+ "                                              ","");
+					ActionIcone round2 = new ActionIcone(
+							"                                " + "                                              ", "");
 					final Thread thread = new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -366,5 +428,7 @@ public class AutoInsertMeasutingMethods {
 
 		return false;
 	}
+
+ 
 
 }

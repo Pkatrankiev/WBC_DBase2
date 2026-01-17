@@ -188,6 +188,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		
 		personReferenceMenu.add(new Menu_PersonReference_PersonStatus());
 		personReferenceMenu.add(new Menu_Measuring_Results());
+		personReferenceMenu.add(new Menu_ChangeKodeInKD());
 		personReferenceMenu.add(new Menu_DeleteDublicateShortEGN());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_DeleteDataFromDBaseRemoveInCurenFromOldYear());

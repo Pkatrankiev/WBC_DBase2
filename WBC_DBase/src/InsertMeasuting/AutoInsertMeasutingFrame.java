@@ -3,6 +3,14 @@ package InsertMeasuting;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -37,6 +45,7 @@ import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.UsersWBC;
 import DozeArt.DozeArtFrame;
+import WBCUsersLogin.WBCUsersLogin;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
@@ -60,11 +69,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("rawtypes")
-public class AutoInsertMeasutingFrame extends JFrame {
+public class AutoInsertMeasutingFrame extends JFrame implements DropTargetListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -77,7 +87,10 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	static JButton btnSave;
 	Color panelColor;
 	private JButton btn_addMeasur;
+	private JButton btn_addFiles;
+	private boolean autoInsertMeasur;
 	private static boolean manualInsertMeasur;
+	
 	private static List<Person> listAllPerson;
 	static String[] listSimbolNuclide;
 	static String[] listLaboratiry;
@@ -115,7 +128,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	public AutoInsertMeasutingFrame(ActionIcone round, Frame f, List<ReportMeasurClass> listReportMeasur,
 			String[] listSimbolNuclideIN, String[] listLaboratiryIN, String[] listUserWBCIN, String[] listTypeMeasurIN,
-			String[] listNameTypeMeasurIN, Point pointFrame, List<Person> listAllPersonIN, boolean manualInsertMeasurIN) {
+			String[] listNameTypeMeasurIN, Point pointFrame, List<Person> listAllPersonIN, boolean manualInsertMeasurIN, boolean autoInsertMeasurIN) {
 		setTitle(autoInsertMeasuting);
 
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
@@ -127,6 +140,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		int numberMeasuring = 1;
 		String lastDate = "";
 		manualInsertMeasur = manualInsertMeasurIN;
+		autoInsertMeasur = autoInsertMeasurIN;
 		listAllPerson = listAllPersonIN;
 		listUsersWBC = UsersWBCDAO.getAllValueUsersWBC();
 		dozeDimension = DimensionWBCDAO.getValueDimensionWBCByID(2);
@@ -300,11 +314,37 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panel, BorderLayout.SOUTH);
 
+		new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this, true);
+
+//		if (file != null) {
+//			setHeatPanel();
+//
+//			setScrollPanel(listDate);
+//
+//			setChocePanel(panel_1);
+//			setLabelChocePanel(panel_1);
+//
+//			
+//			Point newPoint = point;
+//			System.out.println(newPoint.x+" + "+newPoint.y);
+//			setLocation(newPoint);
+//			
+//		} else 
+//		{
+//
+//			setInfoPanel2();
+//			setLocationRelativeTo(null);
+//		}
+		
+		
+		
+		
 		JPanel panelButtons = new JPanel();
 		panelButtons.setAlignmentX(0.0f);
 		panel.add(panelButtons);
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
+		
 		if(manualInsertMeasur) {
 		btn_addMeasur = new JButton("Добави измерване");
 		btn_addMeasur.setEnabled(true);
@@ -313,8 +353,16 @@ public class AutoInsertMeasutingFrame extends JFrame {
 		panelButtons.add(btn_addMeasur);
 		btn_addMeasur.setFocusable(true);
 	
+		}else {
+			if(autoInsertMeasur) {
+			btn_addFiles = new JButton("Избери Файловете");
+			btn_addFiles.setEnabled(true);
+			btn_addFile_ActionListener(btn_addFiles, this, listAllPerson);
+			btn_addFiles.setAlignmentX(1.0f);
+			panelButtons.add(btn_addFiles);
+			
+			}
 		}
-		
 		
 		JButton btnCancel = new JButton(autoInsertMeasuting_cancel);
 		btnCancel.addActionListener(new ActionListener() {
@@ -1270,7 +1318,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 			public void run() {
 
 				new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide, listLaboratiry,
-						listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson,manualInsertMeasur);
+						listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson, manualInsertMeasur, autoInsertMeasur);
 			}
 		});
 		thread.start();
@@ -1297,7 +1345,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					public void run() {
 
 						new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide,
-								listLaboratiry, listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson,manualInsertMeasur);
+								listLaboratiry, listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson,manualInsertMeasur, autoInsertMeasur);
 					}
 				});
 				thread.start();
@@ -1306,6 +1354,23 @@ public class AutoInsertMeasutingFrame extends JFrame {
 
 	}
 
+protected void btn_addFile_ActionListener(JButton btn_addFiles, AutoInsertMeasutingFrame autoInsertMeasutingFrame, List<Person> listAllPersonIN) {
+		
+	btn_addFiles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				autoInsertMeasutingFrame.dispose();
+				AutoInsertMeasutingMethods.AutoInsertMeasutingStartFrame(WBCUsersLogin.getCurentUser());
+		
+			}
+		});
+		
+	}
+	
+	
+	
+	
+	
+	
 	protected void btn_addMeasur_ManualInsertMeasuting_ActionListener(JButton btn_addMeasur, AutoInsertMeasutingFrame autoInsertMeasutingFrame, List<Person> listAllPersonIN) {
 		
 		btn_addMeasur.addActionListener(new ActionListener() {
@@ -1340,7 +1405,7 @@ public class AutoInsertMeasutingFrame extends JFrame {
 					public void run() {
 
 						new AutoInsertMeasutingFrame(round, frame, listReportMeasurClass, listSimbolNuclide,
-								listLaboratiry, listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson, manualInsertMeasur);
+								listLaboratiry, listUserWBC, listTypeMeasur, listNameTypeMeasur, pointFrame, listAllPerson, manualInsertMeasur, autoInsertMeasur);
 						
 						
 					}
@@ -1462,5 +1527,77 @@ public class AutoInsertMeasutingFrame extends JFrame {
 	public static void setChckbxSetToExcel(JCheckBox[] chckbxSetToExcel) {
 		AutoInsertMeasutingFrame.chckbxSetToExcel = chckbxSetToExcel;
 	}
+
+	@Override
+	public void dragEnter(DropTargetDragEvent dtde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragOver(DropTargetDragEvent dtde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dropActionChanged(DropTargetDragEvent dtde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragExit(DropTargetEvent dte) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void drop(DropTargetDropEvent event) {
+
+		// Accept copy drops
+		event.acceptDrop(DnDConstants.ACTION_COPY);
+
+		// Get the transfer which can provide the dropped item data
+		Transferable transferable = event.getTransferable();
+
+		// Get the data formats of the dropped item
+		DataFlavor[] flavors = transferable.getTransferDataFlavors();
+
+		// Loop through the flavors
+		for (DataFlavor flavor : flavors) {
+
+			try {
+
+				// If the drop items are files
+				if (flavor.isFlavorJavaFileListType()) {
+
+					// Get all of the dropped files
+					@SuppressWarnings("rawtypes")
+					List files = (List) transferable.getTransferData(flavor);
+					File[] masivFiles = new File[files.size()];
+					// Loop them through
+					int k = 0;
+					for (Object file : files) {
+
+						// Print out the file path
+						System.out.println("File path is '" + ((File) file).getPath() + "'.");
+						masivFiles[k] = (File) file;
+						k++;
+					}
+					this.dispose();
+					AutoInsertMeasutingMethods.DrobInsertMeasutingStartFrame(masivFiles);
+				}
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		// Inform that the drop is complete
+		event.dropComplete(true);
+
+	}
+
 
 }

@@ -43,7 +43,7 @@ public class ReadPersonStatusFromExcelFile {
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
 		List<PersonStatusNew> listPerStat = new ArrayList<>();
 		
-			listPerStat = getListPersonStatusNewFromBigExcelFile(workbook, firmName, year, round, textIcon, listDiferentRow, arreaOtdels); 
+			listPerStat = getListPersonStatusNewFromBigExcelFile(pathFile, workbook, firmName, year, round, textIcon, listDiferentRow, arreaOtdels); 
 		
 		return listPerStat;
 	}
@@ -201,7 +201,7 @@ public class ReadPersonStatusFromExcelFile {
 	
 
 	
-	public static List<PersonStatusNew> getListPersonStatusNewFromBigExcelFile(Workbook workbook, String firmName,
+	public static List<PersonStatusNew> getListPersonStatusNewFromBigExcelFile(String pathFile, Workbook workbook, String firmName,
 			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
 
 		Set<String> mySet = new HashSet<String>();
@@ -264,10 +264,12 @@ public class ReadPersonStatusFromExcelFile {
 				cell1 = sheet.getRow(row).getCell(6);
 
 				if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+					if (ReadSpisak_PrilogeniaFromExcelFile.allColum0to5isEmpty(pathFile, sheet, row)) {
 					otdelName = cell1.getStringCellValue().trim();
 					if (!otdelName.contains("край") && !otdelName.contains("КРАЙ")) {
 						workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
 								listAllWorkplaceBiFirmName);
+					}
 					}
 				}
 
@@ -334,12 +336,55 @@ public class ReadPersonStatusFromExcelFile {
 			ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 		}
 
-		return listPerStatNew;
+		System.out.println(listPerStatNew.size()+"   ----------------------------------");
+		System.out.println(listPerStatNew.size());
+		List<PersonStatusNew> newListPerStat =	findFormuyarNameIsCurentYearAndChangePersonStatusNew(listPerStatNew);
+		
+		return newListPerStat;
 
 	}
 
 	
 	
+	private static List<PersonStatusNew> findFormuyarNameIsCurentYearAndChangePersonStatusNew(List<PersonStatusNew> listPerStat) {
+		
+		System.out.println(listPerStat.size()+"   ********************************************");
+		System.out.println();
+		
+		String formName;
+		int positionSP, index;
+		List<PersonStatusNew> listPerStatNew = new ArrayList<>();
+		
+		for (PersonStatusNew personStatusNew : listPerStat) {
+			index = 2;
+			formName = personStatusNew.getFormulyarName();
+			System.out.println(formName+" "+personStatusNew.getYear()+"   ******************************************************************");
+			positionSP = formName.indexOf("СП");
+			
+			if(positionSP > 0) {
+				if(formName.indexOf("СП.")>0) {
+					index = 3;
+				}
+				System.out.println(personStatusNew.getYear().substring(2)+" - "+(formName.substring(positionSP+index, positionSP+index+2)));
+				if(!personStatusNew.getYear().substring(2).equals(formName.substring(positionSP+index, positionSP+index+2))) {
+					System.out.println(personStatusNew.getPerson().getLastName()+" - "+  formName+" "+personStatusNew.getYear());
+					try {
+						Integer.parseInt("20"+formName.substring(positionSP+2, positionSP+4));
+						personStatusNew.setYear("20"+formName.substring(positionSP+2, positionSP+4));
+					}catch (Exception e) {
+						System.out.println(formName+" "+personStatusNew.getYear()+" NOOOOOOOOOOOOOOOOOOOOOO");
+					}
+						System.out.println(formName+" "+personStatusNew.getYear());
+					System.out.println();
+				}
+					}
+			listPerStatNew.add(personStatusNew);
+		}
+		
+		return listPerStatNew;
+		
+	}
+
 	public static List<PersonStatus> getObhodenList_PersonStatusFromBigExcelFile(String pathFile, Workbook workbook,	String firmName, String year, ActionIcone round,  String textIcon) {
 				
 		List<PersonStatus> listPerStat = new ArrayList<>();

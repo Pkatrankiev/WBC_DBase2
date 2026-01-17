@@ -95,5 +95,48 @@ public class OID_Person_WBCDAO {
 		}
 	}
 	
+	public static List<OID_Person_WBC> getlist_All_OID_Person_WBC() {
+		List<OID_Person_WBC> listKodeStatus = new ArrayList<>();
+		
+		Connection connection = conectToAccessDB.conectionBDtoAccessOID();
+		System.out.println("conectionBDtoAccessOID "+ connection.TRANSACTION_READ_COMMITTED);
+		String sql;
+		try {
+			
+		
+			sql = "SELECT * FROM tblMain";	
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			ResultSet result = preparedStatement.executeQuery();
+			
+			
+			while (result.next()) {
+				OID_Person_WBC peson = new OID_Person_WBC();
+				
+				peson.setEgn (result.getString("ЕГН"));
+				peson.setFirstName(result.getString("name"));
+				peson.setSecondName(result.getString("surname"));
+				peson.setLastName(result.getString("lastname"));
+				peson.setZsr1(result.getString("zsr1"));
+				peson.setZsr1n(result.getInt("zsr1n"));
+				peson.setZsr1b(result.getString("zsr1b"));
+				peson.setZsr2(result.getString("zsr2"));
+				peson.setZsr2n(result.getInt("zsr2n"));
+				peson.setZsr2b(result.getString("zsr2b"));
+				peson.setDateSet(result.getDate("moment"));
+				
+				listKodeStatus.add(peson);
+				
+			}
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		if(listKodeStatus.size()>0) {
+		return listKodeStatus;
+		}else {
+			return null;
+		}
+	}
 	
 }

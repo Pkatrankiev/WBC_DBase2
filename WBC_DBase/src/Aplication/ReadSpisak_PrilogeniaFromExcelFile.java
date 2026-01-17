@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,7 +25,6 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 	public static List<Spisak_Prilogenia> getSpisak_Prilogenia_ListFromExcelFile(String FILE_PATH, String firmName,
 			String year, ActionIcone round,  String textIcon, List<Integer> listDiferentRow, List<String> arreaOtdels) {
 		
-
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(FILE_PATH);
 		List<Spisak_Prilogenia> spisak_Prilogenia_List = new ArrayList<Spisak_Prilogenia>();
 
@@ -64,6 +65,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 					cell = sheet.getRow(row).getCell(5);
 					cell1 = sheet.getRow(row).getCell(6);
 					if (!ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1)) {
+						if (allColum0to5isEmpty(FILE_PATH,sheet, row)) {
 						otdelName = cell1.getStringCellValue();
 						if (!otdelName.equals("край")) {
 							workplace = ReadExcelFileWBC.selectWorkplace(firmName, masiveWorkplace, otdelName,
@@ -90,6 +92,7 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 
 					}
 				}
+				}
 				ActionIcone.roundWithText(round, textIcon, "Read", index, endRow);
 			}
 		}
@@ -98,6 +101,23 @@ public class ReadSpisak_PrilogeniaFromExcelFile {
 
 
 	
+
+
+	public static boolean allColum0to5isEmpty(String FILE_PATH, Sheet sheet, int row) {
+		for (int i = 0; i < 5; i++) {
+			if(ReadExcelFileWBC.CellNOEmpty(sheet.getRow(row).getCell(i))) {
+				String str = "<html>Лицето: "+sheet.getRow(row).getCell(6)+" няма ЕГН<br>";
+				str +=FILE_PATH+" sheet:"+sheet.getSheetName()+", row:"+(row+1)+"</html>";
+				JOptionPane.showMessageDialog(null,str , "Error Data", JOptionPane.ERROR_MESSAGE);
+				
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+
 
 
 	public static Spisak_Prilogenia getOrCreateSisak_Prilogenie(int k, int row,  Sheet sheet, Date startDate, Date endDate, String formulyarName, Workplace workplace, String year) {

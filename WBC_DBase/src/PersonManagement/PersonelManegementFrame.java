@@ -28,14 +28,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
 
 import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.UsersWBC;
+import PersonReference.InsertFulName_FrameDialog;
 import PersonReference.PersonReferenceFrame;
 import WBCUsersLogin.WBCUsersLogin;
 
@@ -220,7 +223,7 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementMethods.ActionListenerSetDateByDatePicker(textField_savePerson_StartDate, btn_SaveToExcelFile);
 		PersonelManegementMethods.ActionListenerSetDateByDatePicker(textField_savePerson_EndDate, btn_SaveToExcelFile);
 		
-		PersonelManegementMethods.ActionListener_JTextFieldEGN(textField_svePerson_EGN, 0, btn_savePerson_FromOiD);
+		PersonelManegementMethods.ActionListener_JTextFieldEGN(textField_svePerson_EGN, 0);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_FName, 0);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_SName, 0);
 		PersonelManegementMethods.ActionListener_JTextField(textField_svePerson_LName, 0);
@@ -321,6 +324,8 @@ public class PersonelManegementFrame extends JFrame {
 		textField_FName.setPreferredSize(new Dimension(5, 20));
 		textField_FName.setColumns(15);
 		personField_Panel_1A.add(textField_FName);
+		
+		ActionListenerbInsertFullName();
 
 		textField_SName = new JTextField();
 		textField_SName.setPreferredSize(new Dimension(5, 20));
@@ -672,7 +677,7 @@ public class PersonelManegementFrame extends JFrame {
 		btn_savePerson_FromOiD.setPreferredSize(new Dimension(52, 23));
 		btn_savePerson_FromOiD.setMargin(new Insets(2, 1, 2, 1));
 		personSave_Personel_2_FildPanel.add(btn_savePerson_FromOiD);
-		btn_savePerson_FromOiD.setEnabled(false);
+//		btn_savePerson_FromOiD.setEnabled(false);
 				
 		textField_svePerson_Year = new JTextField(curentYear);
 		textField_svePerson_Year.setColumns(6);
@@ -1338,6 +1343,34 @@ public class PersonelManegementFrame extends JFrame {
 		PersonelManegementFrame.btn_SaveToExcelFile = btn_SaveToExcelFile;
 	}
 
+	private void ActionListenerbInsertFullName() {
+		textField_FName.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						int[] sizeInfoFrame = { 450, 140 };
+						int[] Coord = AplicationMetods.getCurentKoordinates(sizeInfoFrame);
+						 new InsertFulName_FrameDialog(new JFrame(), Coord);	
+						 String[] names = InsertFulName_FrameDialog.getNames();
+						 for (int i = 0; i < names.length; i++) {
+							  System.out.println("kk "+ names[i]);
+						}
+						 if(names[0] != null) {
+							 textField_FName.setText(names[0]);
+							 textField_SName.setText(names[1]);
+							 textField_LName.setText(names[2]);
+							 repaint();
+							 revalidate();
+						 }
+					}
+				
+				}
+
+			});
+	}
 	
 	public static JTextField getTextField_svePerson_Coment() {
 		return textField_svePerson_Coment;
