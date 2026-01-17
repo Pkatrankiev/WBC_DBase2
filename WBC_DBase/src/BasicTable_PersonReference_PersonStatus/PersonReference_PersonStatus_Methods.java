@@ -751,7 +751,7 @@ public class PersonReference_PersonStatus_Methods {
 		if (selectedRow > 0) {
 			newDataTable = new Object[dataTable.length - 1][11];
 			int k = 0;
-			for (int i = 0; i < dataTable.length; i++) {
+			for (int i = 0; i < dataTable.length-1; i++) {
 				if (i == selectedRow) {
 					i++;
 				}

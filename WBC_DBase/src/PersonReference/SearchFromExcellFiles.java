@@ -874,7 +874,6 @@ public class SearchFromExcellFiles {
 				pathFile = pathFile+year+".xls";
 			}		
 		Workbook workbook = ReadExcelFileWBC.openExcelFile(pathFile);
-		
 		if(workbook.getNumberOfSheets()>2) {
 			String[][] measur = generateListFromResultsWBCFromBigExcelFile(workbook, person, year);
 			for (String[] personMeasur : measur) {
@@ -893,7 +892,7 @@ public class SearchFromExcellFiles {
 		
 		String[][] newMasiveMeasur = new String[k][11];
 		for (int j = 0; j < newMasiveMeasur.length; j++) {
-			newMasiveMeasur[j] = masiveMeasur[j];
+				newMasiveMeasur[j] = masiveMeasur[j];
 			
 		}
 		
@@ -1040,9 +1039,11 @@ public class SearchFromExcellFiles {
 						cell2 = sheet.getRow(row).getCell(k);
 						while (ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell2)) {
 							int countNuclide = 0;
+					
 						date = ReadExcelFileWBC.readCellToDate(cell1);
 						lab = ReadExcelFileWBC.getStringfromCell(cell2).trim();
 						String yearData = sdf.format(date).substring(6);
+						
 						if (year.trim().isEmpty() || yearData.equals(year)) {
 						fl = false;						
 						k++;
@@ -1092,13 +1093,12 @@ public class SearchFromExcellFiles {
 							sheet = workbook.getSheetAt(2);
 						}
 						
-						
+						}
 						k++;
 						cell1 = sheet.getRow(row).getCell(k);
 						k++;
 						cell2 = sheet.getRow(row).getCell(k);
-						
-						}
+
 						}
 						sheet = workbook.getSheetAt(1);
 					}

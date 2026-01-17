@@ -3,6 +3,7 @@ package CheckErrorDataInExcellFiles;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -320,12 +321,12 @@ public class CheckCurentDataInExcelFilesMetod {
 	}
 	
 	k++;
-	
+	int l = k-2;
 	for (int i = 0; i < 17; i++) {
 		cell = sheet.getRow(row).getCell(k);
+		
 		if(cell!=null) {
 			nuclideVal = ReadExcelFileWBC.getStringEGNfromCell(cell);
-//			System.out.println(mont + " " + maxindexMonth[mont] + " " + EGN);
 			if (!nuclideVal.isEmpty()) {
 			
 			try {
@@ -341,17 +342,29 @@ public class CheckCurentDataInExcelFilesMetod {
 			
 }else {
 	if(i==16) {
-		str = row+"#"+k+"#"+ "#" + "липсва стойност";
-		list.add(str);
-		System.out.println(str);
+		try {
+			if(!ReadExcelFileWBC.getStringEGNfromCell(cell).isEmpty() && checkDateInKurentYeare(new SimpleDateFormat("dd.MM.yyyy").parse(ReadExcelFileWBC.getStringEGNfromCell(cell)))) {
+			str = row+"#"+k+"#"+ "#" + "липсва стойност";
+			list.add(str);
+			System.out.println(str);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 }
 
 			}else {
 				if(i==16) {
-					str = row+"#"+k+"#"+ "#" + "липсва стойност";
-					list.add(str);
-					System.out.println(str);
+					try {
+						if(!ReadExcelFileWBC.getStringEGNfromCell(cell).isEmpty() && checkDateInKurentYeare(new SimpleDateFormat("dd.MM.yyyy").parse(ReadExcelFileWBC.getStringEGNfromCell(cell)))) {
+						str = row+"#"+k+"#"+ "#" + "липсва стойност";
+						list.add(str);
+						System.out.println(str);
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		
@@ -374,6 +387,29 @@ public class CheckCurentDataInExcelFilesMetod {
 	}
 
 	
+	static boolean checkDateInKurentYeare(Date dateMeasur ) {
+		
+		String updateInLastDateInYeare = ReadFileBGTextVariable.getGlobalTextVariableMap().get("updateInLastDateInYeare");
+		String year = AplicationMetods.getCurentYear(); 
+		if(!updateInLastDateInYeare.isEmpty()) {
+		year = updateInLastDateInYeare.substring(6);
+		}
+		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
+		Date firstDate = null;
+		
+		try {
+			firstDate = sdfrmt.parse("01.01." + year);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return dateMeasur.after(firstDate);
+	}
+
+
 	public static boolean isNotLegalDate(String strDate, Cell cell) {
 		
 		Date dd;

@@ -436,8 +436,12 @@ public class UpdateBDataFromExcellFiles {
 		if(keyInsert != null) {
 			key = keyInsert;
 		}
-		
-		String year = AplicationMetods.getCurentYear();
+		String updateInLastDateInYeare = ReadFileBGTextVariable.getGlobalTextVariableMap().get("updateInLastDateInYeare");
+		String year = AplicationMetods.getCurentYear(); 
+		if(!updateInLastDateInYeare.isEmpty()) {
+		year = updateInLastDateInYeare.substring(6);
+		}
+		System.out.println(year);
 		String textIcon;
 		String errorText = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorText");
 		boolean save = true;

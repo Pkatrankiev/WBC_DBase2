@@ -143,9 +143,10 @@ public class ReadMeasuringFromExcelFile {
 							
 						}
 						k = k+17;
+						if(!ReadExcelFileWBC.getStringEGNfromCell(sheet.getRow(row).getCell(k)).isEmpty()) {
 						Measuring meas = createMeasur( person, dim, userSet, sheet,row, k, tipeM_R, date, lab);
-						
 						listMeasuring.add(meas);
+						}
 						if(k>252) {
 							k=6;
 							sheet = workbook.getSheetAt(2);

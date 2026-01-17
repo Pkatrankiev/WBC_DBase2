@@ -420,7 +420,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 
 		if (!firstName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonEGN) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getFirstName(), firstName)) {
+				if (person.getFirstName() != null && SearchFromExcellFiles.checkContainsStrings(person.getFirstName(), firstName)) {
 					listSelectionPersonFName.add(person);
 				}
 			}
@@ -430,7 +430,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 		System.out.println("listSelectionPersonFName = " + listSelectionPersonFName.size());
 		if (!secontName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonFName) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getSecondName(), secontName)) {
+				if (person.getSecondName() != null && SearchFromExcellFiles.checkContainsStrings(person.getSecondName(), secontName)) {
 					listSelectionPersonSName.add(person);
 				}
 			}
@@ -441,7 +441,7 @@ public class OID_PersonReferenceFrame extends JFrame {
 
 		if (!lastName.trim().isEmpty()) {
 			for (Person person : listSelectionPersonSName) {
-				if (SearchFromExcellFiles.checkContainsStrings(person.getLastName(), lastName)) {
+				if (person.getLastName() != null && SearchFromExcellFiles.checkContainsStrings(person.getLastName(), lastName)) {
 					listSelectionPersonLName.add(person);
 				}
 			}

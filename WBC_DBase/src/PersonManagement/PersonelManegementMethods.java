@@ -709,21 +709,30 @@ public class PersonelManegementMethods {
 
 									}
 
-									String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap()
-											.get("PerStatNewSet");
-
-									if (PerStatNewSet.equals("1")) {
+									
 										UsersWBC user = WBCUsersLogin.getCurentUser();
 										System.out.println("PersonStatusNewDAO------------------ ");
 										System.out.println("spisPrilID "+spisPril.getSpisak_Prilogenia_ID());
+										
+										PersonStatusNew personStatusLast  = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
+										if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")) {
+											personStatusLast.setWorkplace(workplace);
+											personStatusLast.setFormulyarName(spisPril.getFormulyarName());
+											personStatusLast.setStartDate(spisPril.getStartDate());
+											personStatusLast.setEndDate(spisPril.getEndDate());
+											personStatusLast.setYear(spisPril.getYear());
+											personStatusLast.setUserWBC(user);
+											personStatusLast.setDateSet(curentDate);
+											personStatusLast.setZabelejka(comment);
+											
+											PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);	
+										}else {
+										
+										
 										PersonStatusNewDAO.setValuePersonStatusNew(person, workplace,
 												spisPril.getFormulyarName(), spisPril.getStartDate(),
 												spisPril.getEndDate(), spisPril.getYear(), user, curentDate, comment);
-									} else {
-										UsersWBC user = WBCUsersLogin.getCurentUser();
-										PersonStatusDAO.setValuePersonStatus(person, workplace, spisPril, user,
-												curentDate, comment);
-									}
+										}
 
 								}
 

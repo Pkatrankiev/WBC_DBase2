@@ -91,19 +91,16 @@ public class TextInAreaTextPanel {
 		}
 					
 			masiveKode = generateMasiveKodeStatusNew(year, listKodeStatus, listPersonstatusNew,  personInport, fromExcell);
-		
-		String textKode ="";
+			String textKode ="";
 		if(masiveKode.length>0) {
 		textKode = setTextInfoKode(masiveKode, masiveZoneName);
 		}
-		
 		if(fromExcell) {
 			masiveMeasur = SearchFromExcellFiles.generateMasiveMeasurFromExcelFile( year, person);
 		}else{
 		listMeasuring = MeasuringDAO.getValueMeasuringByObjectSortByColumnName("Person_ID", person, "Date");
 		masiveMeasur = generateMasiveMeasur(year, listMeasuring);
 		}
-		
 		String textMeasur ="";
 		if(masiveMeasur.length>0) {
 		textMeasur = setTextInfoMeasur(masiveMeasur, masiveMeasurName);
@@ -401,7 +398,7 @@ public class TextInAreaTextPanel {
 					if(perStat != null) {
 					otdell = perStat.getWorkplace().getOtdel();
 					}
-					System.out.println(listP.size()+" "+yearKode+" /*/*/ "+otdell);
+					System.out.println(listP.size()+" "+yearKode+" /*/*/ "+otdell+" - "+countIteration);
 					if(otdell.isEmpty() && countIteration < 2) {
 						isNewPersonStatusNewOject = true;
 						countIteration++;

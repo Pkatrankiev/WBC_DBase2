@@ -211,8 +211,13 @@ public class ReadPersonStatusFromExcelFile {
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
 		Date dateSet = null,nulldate= null, nulldateEnd= null;
 		try {
-//			dateSet = sdfrmt.parse("31.12." + year);
-			dateSet = new Date();
+			
+			String updateInLastDateInYeare = ReadFileBGTextVariable.getGlobalTextVariableMap().get("updateInLastDateInYeare");
+			dateSet = new Date(); 
+			if(!updateInLastDateInYeare.isEmpty()) {
+				dateSet = sdfrmt.parse(updateInLastDateInYeare);
+			}
+			System.out.println(dateSet);
 			nulldate = sdfrmt.parse("01.01." + year);
 			nulldateEnd = sdfrmt.parse("31.12." + year);
 		} catch (ParseException e) {
@@ -479,7 +484,7 @@ public class ReadPersonStatusFromExcelFile {
 		
 		List<PersonStatusNew> listPerStat = new ArrayList<>();
 		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		Date dateSet = null, dateObhList = null, dateObhList0 = null;
+		Date dateSet = null, dateObhList = null, dateObhList0 = null, firstDate = null;
 		
 
 		Person person;
@@ -527,7 +532,14 @@ public class ReadPersonStatusFromExcelFile {
 							if(dataObhodelistExt != null) {
 							dateObhList = sdfrmt.parse(dataObhodelistExt);
 							}
-						dateSet = sdfrmt.parse("31.12." + year);
+							
+							String updateInLastDateInYeare = ReadFileBGTextVariable.getGlobalTextVariableMap().get("updateInLastDateInYeare");
+							dateSet = new Date(); 
+							if(!updateInLastDateInYeare.isEmpty()) {
+								dateSet = sdfrmt.parse(updateInLastDateInYeare);
+							}
+							
+							firstDate = sdfrmt.parse("01.01." + year);
 						System.out.println("егн "+person.getEgn()+"  "+ sdfrmt.format(dateObhList));
 					} catch (ParseException | NullPointerException e) {
 						MessageDialog("Проблем с датата при: егн "+person.getEgn()+" ред "+row+1);
@@ -548,7 +560,7 @@ public class ReadPersonStatusFromExcelFile {
 					Spisak_PrilogeniaDAO.setObjectSpisak_PrilogeniaToTable(spPrObhodList);
 					Spisak_Prilogenia spisPril = Spisak_PrilogeniaDAO.getLastSaveObjectFromValueSpisak_PrilogeniaByYear_Workplace_StartDate(year, dateObhList, workplace.getId_Workplace());
 					if(spisPril!=null) {
-						if(isRecordWithoutObhodenListByYear(person,year)) {
+						if(isRecordWithoutObhodenListByYear(person,year) && dateObhList.after(firstDate)) {
 					listPerStat.add(new PersonStatusNew(person, workplace, spisPril.getFormulyarName(),  spisPril.getStartDate(), spisPril.getEndDate(), spisPril.getYear(), userSet,  dateSet, zab));
 					
 						}}else {
@@ -638,7 +650,21 @@ public class ReadPersonStatusFromExcelFile {
 		int k=0;
 		int l=list.size();
 		for (PersonStatusNew personStatus : list) {
+			PersonStatusNew personStatusLast  = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(personStatus.getPerson());
+			if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")) {
+				personStatusLast.setWorkplace(personStatus.getWorkplace());
+				personStatusLast.setFormulyarName(personStatus.getFormulyarName());
+				personStatusLast.setStartDate(personStatus.getStartDate());
+				personStatusLast.setEndDate(personStatus.getEndDate());
+				personStatusLast.setYear(personStatus.getYear());
+				personStatusLast.setUserWBC(personStatus.getUserWBC());
+				personStatusLast.setDateSet(personStatus.getDateSet());
+				personStatusLast.setZabelejka(personStatus.getZabelejka());
+				
+				PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);	
+			}else {
 			PersonStatusNewDAO.setObjectPersonStatusNewToTable(personStatus);
+			}
 			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 			k++;
 

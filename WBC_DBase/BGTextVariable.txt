@@ -16,6 +16,7 @@ PerStatNewSet = 1
 --------------------------------------------------------------------------
 testFilesToD = 0
 
+updateInLastDateInYeare = 
 
 ###############   originale File  #####################################
 databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
