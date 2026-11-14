@@ -12,11 +12,15 @@ databaseEncriptOID = qwer1234
 databaseEncript = password
 
 
-PerStatNewSet = 1
 --------------------------------------------------------------------------
-testFilesToD = 0
+## маркер за стартиране в тестов режим от локалния компютър
+testFilesToD = 1
 
-updateInLastDateInYeare = 
+## маркер за стартиране браузера в невидим режим
+changeKodeInKD_NOTviewBrauser = 1
+ 
+## слагаме дата която да замени актуалната дата или година във формат dd.MM.yyyy
+updateInLastDateInYeare =
 
 ###############   originale File  #####################################
 databaseURL = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//WBC_DBase.mdb
@@ -30,6 +34,7 @@ filePathMonthPersonel_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\mo
 filePathWBC1_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc1-KD.xls
 filePathWBC2_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc2-KD.xls
 filePathWBC3_KD_orig = k:\\Docs\\Д-я БиК\\КЦ ПД\\ОБД\\0_LB\\month\\wbc3-KD.xls
+
 
 ###############   test File  #####################################
 databaseURL_test = jdbc:ucanaccess://D://WBC_DBase.mdb
@@ -50,11 +55,19 @@ destinationDir = DIRECTORY/
 
 databaseOID = jdbc:ucanaccess://k://Docs//Д-я БиК//КЦ ПД//Обща//04 Поща//Петър//DBaseApp//NewDB.mdb
 dbOID = k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\NewDB.mdb
-accessPath = c:\\Program Files (x86)\\Access2003\\OFFICE11\\MSACCESS.EXE
 workgroupFileOID = t:\\Doznar\\Sys\\RZIK2.MDW
 userOID = idk2_3
 passwordOID = qwer1234
 nameMacrosFortransfer = MacroExec
+
+accessPath = c:\\Program Files (x86)\\Access2003\\OFFICE11\\MSACCESS.EXE
+
+chromedriver = D:\\chromedriver-109\\chromedriver.exe
+chromeApp = d:\\PKatrankiev\\GoogleChromePortable\\App\\Chrome-bin\\chrome.exe
+
+chromeUser = PVKatrankiev
+chromePas = 2027@zxcv
+
 
 JustKatrankiev = В момента само Катранкиев ползва тази функция.
 
@@ -260,6 +273,9 @@ checkCorrectinDataInExcell_IzmerVSICH = Изм в СИЧ
 checkCorrectinDataInExcell_MarkKato = маркирано като
 KodeAndNameKD_labelError = Проверка за несъвпадения на данните за имена и кодове в Excel и КД
 
+Menu_CheckKodeInExcellFilesAndOID_Title = Проверка съвпадението на кодове м/у базата и ОИД
+Menu_CheckKodeInExcellFilesAndOID_TipText = Проверка съвпадението на кодове м/у базата и ОИД
+
 editBasicTable = Основни Таблици
 editBasicTable_TipText = Преглед и промяна в основните таблици
 
@@ -291,4 +307,13 @@ resultFromMeasuring = Измервания и резултати
 
 changeKodeInKD = Коригиране на кодовете в КД
 changeKodeInKDTipText = Използвайки logKD.xls, коригираме кодовете в КД
-changeKodeInKD_NOTviewBrauser = 1
+
+
+instanceMenagementTitle = Списък на промените в базата
+instanceMenagementTitle_TipText = Преглед на промените в базата
+
+labelReferenceQueryExecutor = Справка по генерирана заявка
+labelReferenceQueryExecutorTipText = Справка по предварително генерирана SQL заявка
+
+
+
