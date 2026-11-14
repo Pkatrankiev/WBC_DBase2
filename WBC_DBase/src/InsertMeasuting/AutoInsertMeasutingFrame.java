@@ -1,5 +1,10 @@
 package InsertMeasuting;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -11,15 +16,33 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,32 +69,6 @@ import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.UsersWBC;
 import DozeArt.DozeArtFrame;
 import WBCUsersLogin.WBCUsersLogin;
-
-import java.awt.FlowLayout;
-import java.awt.Component;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.BoxLayout;
-
-import java.awt.Dimension;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import javax.swing.border.LineBorder;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.JScrollPane;
-import javax.swing.JCheckBox;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.awt.event.ActionEvent;
 
 @SuppressWarnings("rawtypes")
 public class AutoInsertMeasutingFrame extends JFrame implements DropTargetListener{

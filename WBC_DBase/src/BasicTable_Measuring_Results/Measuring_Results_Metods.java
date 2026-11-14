@@ -51,7 +51,6 @@ import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.TypeMeasurDAO;
-import BasiClassDAO.UsersWBCDAO;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.NuclideWBC;
 import BasicClassAccessDbase.Person;

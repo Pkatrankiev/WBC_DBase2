@@ -1,9 +1,10 @@
 package SpisakPersonManagement;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,10 +43,6 @@ import BasicClassAccessDbase.PersonStatusNew;
 import PersonReference.PersonReferenceFrame;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import java.awt.Font;
-import java.awt.Insets;
 
 public class choisePersonByKodeFrame extends JDialog {
 

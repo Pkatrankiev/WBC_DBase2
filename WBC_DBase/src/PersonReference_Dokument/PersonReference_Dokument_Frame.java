@@ -48,7 +48,6 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.DocumentFilter.FilterBypass;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
@@ -65,10 +64,8 @@ import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
 import DatePicker.DatePicker;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonExcellClass;
 import PersonReference.PersonReferenceExportToExcell;
-import PersonReference.SearchFromExcellFiles;
 import PersonReference.TextInAreaTextPanel;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;

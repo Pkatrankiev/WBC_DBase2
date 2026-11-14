@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import Aplication.AplicationMetods;
 import Aplication.ReadExcelFileWBC;
-import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
@@ -119,8 +118,6 @@ public class SearchFromExcellFiles {
 		str = str + "\n";
 		str = str + "Заповеди \n";
 		
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if(PerStatNewSet.equals("1")) {
 		
 			List<PersonStatusNew> listP = PersonStatusNewDAO.getValuePersonStatusNewByObject("Person_ID", excellPerson.getPerson());
 			if(!year.trim().isEmpty()) {
@@ -136,24 +133,7 @@ public class SearchFromExcellFiles {
 					str = str +TextInAreaTextPanel.generateRowByMasive( perStat);
 					}
 				}
-		}else {
-		
-		List<PersonStatus> listP = PersonStatusDAO.getValuePersonStatusByObject("Person_ID", excellPerson.getPerson());
-		if(!year.trim().isEmpty()) {
-			for (PersonStatus perStat : listP) {
-				List<Spisak_Prilogenia> listS =	Spisak_PrilogeniaDAO.getValueSpisak_PrilogeniaByObject("Year", year);
-				for (Spisak_Prilogenia spPr : listS) {
-				if (perStat.getSpisak_prilogenia().getSpisak_Prilogenia_ID() == spPr.getSpisak_Prilogenia_ID()) {
-					str = str +TextInAreaTextPanel.generateRowByMasive( perStat);
-				}
-			}
-				}
-		}else {
-			for (PersonStatus perStat : listP) {
-				str = str +TextInAreaTextPanel.generateRowByMasive( perStat);
-				}
-			}
-		}
+	
 				
 		str = str + "\n";
 		str = str + "Измервания СИЧ \n";
@@ -1292,7 +1272,13 @@ public class SearchFromExcellFiles {
 						
 					
 					Person newPerson = PersonDAO.getValuePersonByEGN(EGN);
-					System.out.println(newPerson.getId_Person()+" "+ workplace.getId_Workplace()+" "+ year);
+					if(newPerson == null) {
+						newPerson = new Person(person.getEgn(), person.getFirstName(), person.getSecondName(), person.getLastName()+" - не е намерен в базата");
+						
+					}
+					
+					
+//					System.out.println(newPerson.getId_Person()+" "+ workplace.getId_Workplace()+" "+ year);
 //					List<PersonStatusNew> ListPrStatNew = PersonStatusNewDAO.getValuePersonStatusNewByPerson_Workplace_DateSetInYear(newPerson, workplace, year);
 //					
 //					if(ListPrStatNew.size()==1 && ListPrStatNew.get(0).getFormulyarName().equals("NotInList")) {

@@ -1,10 +1,10 @@
 package Aplication;
 
-import java.util.Date;
-import java.util.HashSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -28,6 +29,7 @@ import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 import WBCUsersLogin.WBCUsersLogin;
 
@@ -314,7 +316,12 @@ public class ReadPersonStatusFromExcelFile {
 								personStatusNew_NotInList.setYear(spPr.getYear());
 								personStatusNew_NotInList.setUserWBC(userSet);
 								personStatusNew_NotInList.setDateSet(dateSet);
+								String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByIDPersonStatusNew(personStatusNew_NotInList.getPersonStatusNew_ID());
 								PersonStatusNewDAO.updateValuePersonStatusNew(personStatusNew_NotInList);
+								textInstance += "!#!"+PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStatusNew_NotInList);
+								System.out.println("textInstance.length() "+textInstance.length());
+								InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Edit", textInstance, userSet);
+								
 								personStatusNew_NotInList = null;
 							}else {
 								if(workplace.getOtdel().equals(spPr.getWorkplace().getOtdel())) {
@@ -506,7 +513,7 @@ public class ReadPersonStatusFromExcelFile {
 				
 				String dataObhodelistExt;
 					cell0 = sheet.getRow(row).getCell(0);
-					if (ReadExcelFileWBC.CellNOEmpty(cell) && ReadExcelFileWBC.CellNOEmpty(cell1) && ReadExcelFileWBC.CellNOEmpty(cell0)) {
+					if (ReadExcelFileWBC.CellNOEmpty(cell0)) {
 						dateObhList0 = ReadExcelFileWBC.readCellToDate(cell0);
 					}
 
@@ -529,7 +536,9 @@ public class ReadPersonStatusFromExcelFile {
 							zab = dataObhodelist;
 							dateObhList = dateObhList0;
 							dataObhodelistExt = searchDateInZab(zab);
+							System.out.println(dateObhList+" "+dataObhodelistExt);
 							if(dataObhodelistExt != null) {
+								
 							dateObhList = sdfrmt.parse(dataObhodelistExt);
 							}
 							
@@ -542,7 +551,7 @@ public class ReadPersonStatusFromExcelFile {
 							firstDate = sdfrmt.parse("01.01." + year);
 						System.out.println("егн "+person.getEgn()+"  "+ sdfrmt.format(dateObhList));
 					} catch (ParseException | NullPointerException e) {
-						MessageDialog("Проблем с датата при: егн "+person.getEgn()+" ред "+row+1);
+						MessageDialog("Проблем с датата при: егн "+person.getEgn()+" ред "+(row+1));
 						e.printStackTrace();
 					}
 					
@@ -651,7 +660,7 @@ public class ReadPersonStatusFromExcelFile {
 		int l=list.size();
 		for (PersonStatusNew personStatus : list) {
 			PersonStatusNew personStatusLast  = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(personStatus.getPerson());
-			if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")) {
+			if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")&& !personStatus.getFormulyarName().equals("NotInList")) {
 				personStatusLast.setWorkplace(personStatus.getWorkplace());
 				personStatusLast.setFormulyarName(personStatus.getFormulyarName());
 				personStatusLast.setStartDate(personStatus.getStartDate());
@@ -661,9 +670,16 @@ public class ReadPersonStatusFromExcelFile {
 				personStatusLast.setDateSet(personStatus.getDateSet());
 				personStatusLast.setZabelejka(personStatus.getZabelejka());
 				
-				PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);	
+				String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByIDPersonStatusNew(personStatusLast.getPersonStatusNew_ID());
+				PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);
+				textInstance += "!#!"+PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStatusLast);
+				System.out.println("textInstance.length() "+textInstance.length());
+				InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Edit", textInstance, WBCUsersLogin.getCurentUser());
+				
 			}else {
 			PersonStatusNewDAO.setObjectPersonStatusNewToTable(personStatus);
+			String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByLastPersonStatusNew();
+			InstanceDAO.setValueInstance("PersonStatusNew", "PersonManagement", "Insert", textInstance, WBCUsersLogin.getCurentUser());
 			}
 			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 			k++;

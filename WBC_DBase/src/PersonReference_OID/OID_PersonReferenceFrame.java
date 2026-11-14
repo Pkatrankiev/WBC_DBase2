@@ -1,53 +1,15 @@
 package PersonReference_OID;
 
-import javax.swing.JFrame;
-
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Choice;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-
-import Aplication.ActionIcone;
-import Aplication.AplicationMetods;
-import Aplication.GeneralMethods;
-import Aplication.ReadFileBGTextVariable;
-import BasiClassDAO.KodeStatusDAO;
-
-import BasiClassDAO.PersonStatusNewDAO;
-import BasiClassDAO.WorkplaceDAO;
-import BasicClassAccessDbase.KodeStatus;
-import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatusNew;
-import BasicClassAccessDbase.Workplace;
-import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-import PersonReference.InsertFulName_FrameDialog;
-import PersonReference.PersonReferenceExportToExcell;
-import PersonReference.SearchFromExcellFiles;
-
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import java.awt.Component;
-import javax.swing.JTextArea;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -61,12 +23,42 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Toolkit;
 
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+
+import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
+import Aplication.GeneralMethods;
+import Aplication.ReadFileBGTextVariable;
+import BasiClassDAO.KodeStatusDAO;
+import BasiClassDAO.PersonStatusNewDAO;
+import BasiClassDAO.WorkplaceDAO;
+import BasicClassAccessDbase.KodeStatus;
+import BasicClassAccessDbase.Person;
+import BasicClassAccessDbase.PersonStatusNew;
+import BasicClassAccessDbase.Workplace;
+import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
+import PersonReference.InsertFulName_FrameDialog;
+import PersonReference.PersonReferenceExportToExcell;
+import PersonReference.SearchFromExcellFiles;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
 

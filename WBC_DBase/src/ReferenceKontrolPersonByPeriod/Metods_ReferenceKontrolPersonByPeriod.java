@@ -1,6 +1,5 @@
 package ReferenceKontrolPersonByPeriod;
 
-import java.awt.Choice;
 import java.awt.Component;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -8,14 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -29,14 +25,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
-import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
-import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.RemouveDublikateFromList;
 import BasiClassDAO.DimensionWBCDAO;
 import BasiClassDAO.KodeStatusDAO;

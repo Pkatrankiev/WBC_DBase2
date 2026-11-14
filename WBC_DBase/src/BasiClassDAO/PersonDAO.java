@@ -1,5 +1,6 @@
 package BasiClassDAO;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,48 +8,28 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import Aplication.AplicationMetods;
-import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.conectToAccessDB;
-
-import java.sql.Connection;
+import InstanceMenagement.Person_InstanceFrom;
+import WBCUsersLogin.WBCUsersLogin;
 
 public class PersonDAO {
 
-	public static void setValuePerson(String egn, String firstName, String secondName, String lastName) {
+	public static void setValuePerson(String egn, String firstName, String secondName, String lastName, String sourceClassPackage) {
 
-		Connection connection = conectToAccessDB.conectionBDtoAccess();
-
-		String sql = "INSERT INTO Person (EGN, FirstName, SecondName, LastName) VALUES (?, ?, ?, ?)";
-
-		PreparedStatement preparedStatement;
-		try {
-			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, egn);
-			preparedStatement.setString(2, firstName);
-			preparedStatement.setString(3, secondName);
-			preparedStatement.setString(4, lastName);
-
-			preparedStatement.executeUpdate();
-			
-			preparedStatement.close();
-			connection.close();
-
-		} catch (SQLException e) {
-			if (e.toString().contains("unique")) {
-				String str = ReadFileBGTextVariable.getGlobalTextVariableMap().get("errorDialogTextDublicateFields");
-				AplicationMetods.MessageDialog(str);
-			}
-			e.printStackTrace();
-			ResourceLoader.appendToFile( e);
-		}
+		Person person = new Person();
+		person.setEgn(egn);
+		person.setFirstName(firstName);
+		person.setSecondName(secondName);
+		person.setLastName(lastName);
+		
+		setObjectPersonToTable(person, sourceClassPackage);
+		
 	}
 
-	public static void setObjectPersonToTable(Person person) {
-
+	public static void setObjectPersonToTable(Person person, String sourceClassPackage) {
+		
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sql = "INSERT INTO Person (EGN, FirstName, SecondName, LastName) VALUES (?, ?, ?, ?)";
@@ -65,20 +46,24 @@ public class PersonDAO {
 			
 			preparedStatement.close();
 			connection.close();
-
+			
+			String textInstance = Person_InstanceFrom.getInstanceTetxByLastPerson();
+			InstanceDAO.setValueInstance("Person", sourceClassPackage, "Insert", textInstance, WBCUsersLogin.getCurentUser());
+			
 		} catch (SQLException e) {
 			System.out.println("Съдържа повтарящи се полета");
-//			if (e.toString().contains("unique")) {
-//				String str = "Съдържа повтарящи се полета";
-//				MessageDialog(str);
-//			}
-//			e.printStackTrace();
-//			ResourceLoader.appendToFile( e);
 		}
+		
+		
+		
+		
 	}
 
-	public static void updateValuePerson(Person person) {
+	public static void updateValuePerson(Person person, String sourceClassPackage) {
 
+		String textInstance = Person_InstanceFrom.getInstanceTetxByIDPerson(person.getId_Person());
+		
+		
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sqlUpdate = "Update Person SET EGN = ?, FirstName = ?, SecondName = ?, LastName = ?  where Person_ID = ? ";
@@ -98,14 +83,21 @@ public class PersonDAO {
 			preparedStatement.close();
 			connection.close();
 
+			textInstance += "!#!"+Person_InstanceFrom.getInstanceTetxByPerson(person);
+			System.out.println("textInstance.length() "+textInstance.length());
+			InstanceDAO.setValueInstance("Person", sourceClassPackage, "Edit", textInstance, WBCUsersLogin.getCurentUser());
+				
+			
+			
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
 		}
 	}
 
-	public static void deleteValuePerson(Person person) {
-
+	public static void deleteValuePerson(Person person, String sourceClassPackage) {
+		String textInstance = Person_InstanceFrom.getInstanceTetxByPerson(person);
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 
 		String sqlUpdate = "delete from Person where Person_ID = ? ";
@@ -119,7 +111,8 @@ public class PersonDAO {
 			
 			preparedStatement.close();
 			connection.close();
-
+			InstanceDAO.setValueInstance("Person", sourceClassPackage, "Delete", textInstance, WBCUsersLogin.getCurentUser());
+			
 		} catch (SQLException e) {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
@@ -446,5 +439,39 @@ public class PersonDAO {
 		return  listPerson; 
 		
 	}
+	
+	public static Person  getLastPerson() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM Person ORDER BY Person_ID DESC LIMIT 1";
+
+		List<Person> listPerson = new ArrayList<Person>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				Person person = new Person();
+				person.setId_Person(result.getInt("Person_ID"));
+				person.setEgn(result.getString("EGN"));
+				person.setFirstName(result.getString("FirstName"));
+				person.setSecondName(result.getString("SecondName"));
+				person.setLastName(result.getString("LastName"));
+				listPerson.add(person);
+			}
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		
+		
+		return  listPerson.get(0);
+		
+	}
+	
 	
 }

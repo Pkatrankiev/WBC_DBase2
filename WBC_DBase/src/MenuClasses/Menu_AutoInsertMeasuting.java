@@ -8,7 +8,6 @@ import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.UsersWBC;
 import InsertMeasuting.AutoInsertMeasutingMethods;
-import InsertMeasuting.ManualInsertMeasutingMethods;
 import PersonManagement.PersonelManegementMethods;
 import WBCUsersLogin.WBCUsersLogin;
 

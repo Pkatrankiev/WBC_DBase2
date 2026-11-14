@@ -16,7 +16,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,7 +49,9 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.BadLocationException;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -64,27 +64,27 @@ import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ResourceLoader;
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
-
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
 import DatePicker.DatePicker;
+import InsertMeasuting.LockedExcelFileWriter;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;
@@ -631,7 +631,21 @@ public class PersonelManegementMethods {
 				boolean checkbx_SaveToExcel = checkbx_svePerson__SaveToExcel.isSelected();
 
 				if (PersonelManegementMethods.checkIsClosedPersonAndExternalFile()) {
-
+					
+					try {
+						
+						
+						
+						String filePath[] = SaveToPersonelORExternalFile.getmasivePathToPersonalORExternalExcelFile();
+						String pathFile = filePath[1];
+						String firmName = comboBox_savePerson_Firm.getSelectedItem();
+						if (firmName.equals("АЕЦ Козлодуй")) {
+							pathFile = filePath[0];
+							
+						}
+						LockedExcelFileWriter.modifyWorkbookFileWithLock(pathFile, workbook -> {
+													
+							
 					if (checkInfoPerson() && checkInfoOtdel(comboBox_svePerson_Otdel)) {
 
 						String comment = textField_svePerson_Coment.getText().trim();
@@ -657,7 +671,7 @@ public class PersonelManegementMethods {
 
 							if (person == null) {
 								PersonDAO.setValuePerson(egn, textField_svePerson_FName.getText(),
-										textField_svePerson_SName.getText(), textField_svePerson_LName.getText());
+										textField_svePerson_SName.getText(), textField_svePerson_LName.getText(), "PersonManagement");
 							}
 							System.out.println("egn " + egn);
 							person = PersonDAO.getValuePersonByEGN(egn);
@@ -715,7 +729,7 @@ public class PersonelManegementMethods {
 										System.out.println("spisPrilID "+spisPril.getSpisak_Prilogenia_ID());
 										
 										PersonStatusNew personStatusLast  = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
-										if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")) {
+										if(personStatusLast != null && personStatusLast.getFormulyarName().equals("NotInList")&& !spisPril.getFormulyarName().equals("NotInList")) {
 											personStatusLast.setWorkplace(workplace);
 											personStatusLast.setFormulyarName(spisPril.getFormulyarName());
 											personStatusLast.setStartDate(spisPril.getStartDate());
@@ -725,13 +739,22 @@ public class PersonelManegementMethods {
 											personStatusLast.setDateSet(curentDate);
 											personStatusLast.setZabelejka(comment);
 											
-											PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);	
+											String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByIDPersonStatusNew(personStatusLast.getPersonStatusNew_ID());
+											PersonStatusNewDAO.updateValuePersonStatusNew(personStatusLast);
+											textInstance += "!#!"+PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStatusLast);
+											System.out.println("textInstance.length() "+textInstance.length());
+											InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Edit", textInstance, user);
+											
 										}else {
 										
 										
 										PersonStatusNewDAO.setValuePersonStatusNew(person, workplace,
 												spisPril.getFormulyarName(), spisPril.getStartDate(),
 												spisPril.getEndDate(), spisPril.getYear(), user, curentDate, comment);
+										String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByLastPersonStatusNew();
+										InstanceDAO.setValueInstance("PersonStatusNew", "PersonManagement", "Insert", textInstance, user);
+										
+										
 										}
 
 								}
@@ -744,18 +767,41 @@ public class PersonelManegementMethods {
 								if (saveToExcel) {
 									System.out.println("**********************************");
 									UsersWBC user = WBCUsersLogin.getCurentUser();
+									
+									
+									
+									
 									SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
 											comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment,
 											workplace, oldOtdelPerson, checkbx_EnterInZone,
-											checkbx_EnterInListChengeKode, obhodenList);
-
+											checkbx_EnterInListChengeKode, obhodenList, workbook);
+									
 								}
 							}
 
 					}
 				}
 
-			}
+			
+						return null;
+					});
+		
+				} catch (FileNotFoundException | OldExcelFormatException | LockedExcelFileWriter.FileLockTimeoutException ee) {
+					String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
+					String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
+					ResourceLoader.appendToFile(ee);
+					ee.printStackTrace();
+					JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);
+					
+				} catch (IOException ee) {
+					String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
+					String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
+					ResourceLoader.appendToFile(ee);
+					ee.printStackTrace();
+					JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
+				}
+					
+				}
 				GeneralMethods.setDefaultCursor(contentPane);
 			
 				}
@@ -1322,7 +1368,7 @@ public class PersonelManegementMethods {
 					person.setFirstName(infoForPersonFromFrame[5]);
 					person.setSecondName(infoForPersonFromFrame[6]);
 					person.setLastName(infoForPersonFromFrame[7]);
-					PersonDAO.updateValuePerson(person);
+					PersonDAO.updateValuePerson(person, "PersonManagement");
 				}
 				if (fromListPersonManegement) {
 					return true;
@@ -2152,13 +2198,21 @@ public class PersonelManegementMethods {
 
 			for (int zoneID = 1; zoneID <= 2; zoneID++) {
 
-				KodeGenerate kodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(workPl.getId_Workplace(),
+				List<KodeGenerate> listKodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(workPl.getId_Workplace(),
 						zoneID);
-				if (kodeGen != null) {
-					String leterL = kodeGen.getLetter_L();
-					String leterR = kodeGen.getLetter_R();
-					int startCount = kodeGen.getStartCount();
-					int endCount = kodeGen.getEndCount();
+				System.out.println(listKodeGen.size());
+				if (listKodeGen.size() >0) {
+					String[] leterL = new String[listKodeGen.size()];
+					String[] leterR = new String[listKodeGen.size()];
+					int[] startCount = new int[listKodeGen.size()];
+					int[] endCount =  new int[listKodeGen.size()];
+					for (int i = 0; i < listKodeGen.size(); i++) {
+						leterL[i] = listKodeGen.get(i).getLetter_L();
+						leterR[i] = listKodeGen.get(i).getLetter_R();
+						startCount[i] = listKodeGen.get(i).getStartCount();
+						endCount[i] = listKodeGen.get(i).getEndCount();
+					}
+					
 
 					String kode = textField[zoneID - 1].getText();
 					int sizeKode = kode.length();
@@ -2169,8 +2223,13 @@ public class PersonelManegementMethods {
 							if (!kode.isEmpty() && !kode.equals("ЕП-2") && !kode.equals("н")) {
 								leter = kode.substring(sizeKode - 1, sizeKode);
 								String strNum = kode.substring(0, sizeKode - 1);
-								textToolTipText = svePersonManegement_textOtdelArea + " " + startCount + "÷" + endCount
-										+ "|" + leterR;
+								textToolTipText = svePersonManegement_textOtdelArea;
+								for (int i = 0; i < listKodeGen.size(); i++) {
+									textToolTipText += " " + startCount[i] + "÷" + endCount[i]
+											+ "|" + leterR[i];	
+								}
+								System.out.println(textToolTipText);
+								
 								fl = checkLeterAndAreaNumber(leterR, startCount, endCount, leter, strNum);
 							}
 						}
@@ -2179,8 +2238,12 @@ public class PersonelManegementMethods {
 							if (!kode.isEmpty() && !kode.equals("н")) {
 								leter = kode.substring(0, 1);
 								String strNum = kode.substring(1, sizeKode);
-								textToolTipText = svePersonManegement_textOtdelArea + " " + leterL + "|" + startCount
-										+ "÷" + endCount;
+								textToolTipText = svePersonManegement_textOtdelArea;
+								for (int i = 0; i < listKodeGen.size(); i++) {
+									textToolTipText += " " + leterL[i] + "|" + startCount[i]
+											+ "÷" + endCount[i];	
+								}
+								System.out.println(textToolTipText);
 								fl = checkLeterAndAreaNumber(leterL, startCount, endCount, leter, strNum);
 
 							}
@@ -2204,19 +2267,18 @@ public class PersonelManegementMethods {
 		return textCheck;
 	}
 
-	private static boolean checkLeterAndAreaNumber(String leterR, int startCount, int endCount, String leter,
+	private static boolean checkLeterAndAreaNumber(String[] leterR, int[] startCount, int[] endCount, String leter,
 			String strNum) {
 
-		boolean fl;
+		boolean fl = false;
 		try {
 			int numKode = Integer.parseInt(strNum);
-
-			if (leter.equals(leterR) && numKode >= startCount && numKode <= endCount) {
+			for (int i = 0; i < leterR.length; i++) {
+				if (leter.equals(leterR[i]) && numKode >= startCount[i] && numKode <= endCount[i]) {
 				fl = true;
-			} else {
-				fl = false;
-			}
-
+				return fl;
+			} 
+		}
 		} catch (Exception e) {
 			fl = false;
 		}
@@ -2636,16 +2698,30 @@ public class PersonelManegementMethods {
 				.get("filePathMonthExternal_orig");
 		String filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("filePathMonthPersonel_orig");
-
+		
+		String filePathWBC1_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("filePathWBC1_KD_orig");
+		String filePathWBC2_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("filePathWBC2_KD_orig");
+		String filePathWBC3_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+				.get("filePathWBC3_KD_orig");
+		
 		String testFilesToD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("testFilesToD");
 		if (testFilesToD.equals("1")) {
 			filePathMonthExternal = ReadFileBGTextVariable.getGlobalTextVariableMap()
 					.get("filePathMonthExternal_orig_test");
 			filePathMonthPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap()
 					.get("filePathMonthPersonel_orig_test");
+			
+			filePathWBC1_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("filePathWBC1_KD_orig_test");
+			filePathWBC2_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("filePathWBC2_KD_orig_test");
+			filePathWBC3_KD = ReadFileBGTextVariable.getGlobalTextVariableMap()
+					.get("filePathWBC3_KD_orig_test");
 		}
 
-		String filePath[] = { filePathMonthPersonel, filePathMonthExternal };
+		String filePath[] = { filePathMonthPersonel, filePathMonthExternal, filePathWBC1_KD, filePathWBC2_KD, filePathWBC3_KD};
 
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
 		String dialogString = "<html>";

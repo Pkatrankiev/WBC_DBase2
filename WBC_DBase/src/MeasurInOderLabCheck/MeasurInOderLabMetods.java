@@ -11,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +41,6 @@ import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
-
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
 import PersonReference.TextInAreaTextPanel;

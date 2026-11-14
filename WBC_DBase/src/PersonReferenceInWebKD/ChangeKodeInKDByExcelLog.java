@@ -1,8 +1,10 @@
 package PersonReferenceInWebKD;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -20,12 +22,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
 import Aplication.ReadExcelFileWBC;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.time.Duration;
 
 
 public class ChangeKodeInKDByExcelLog {

@@ -162,7 +162,7 @@ public class CheckPersonStatus {
 		List<Workplace> listWorkpl = new ArrayList<>();
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		double stepForProgressBar = 30;
-		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, null, progressBar, stepForProgressBar);
+		List<PersonStatusNew> list = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, null, progressBar, stepForProgressBar, 0);
 		System.out.println("----------------------------------------------------------");
 		for (PersonStatusNew personStatusNew : list) {
 

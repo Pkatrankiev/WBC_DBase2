@@ -176,9 +176,12 @@ public class SearchFreeKodeMethods {
 		return year;
 	}
 
-	static String[][] createDataTableMasive(String leter, int start, int end, int zone_ID, String[] year,
+	static String[][] createDataTableMasive(String leter, List<KodeGenerate> listKodeGen, int zone_ID, String[] year,
 			List<String> masiveUsedKode) {
-		List<String> listKode = generateListKode(leter, start, end, zone_ID);
+		List<String> listKode = generateListKode(listKodeGen, zone_ID);
+		for (String string : listKode) {
+			System.out.println(string);
+		}
 		String[][] masiveFreeKode = creatyEmptyMasive(new String[listKode.size()][4]);
 		for (int i = 1; i <= year.length; i++) {
 			System.out.println(year[i - 1]);
@@ -455,40 +458,56 @@ System.out.println(masiveUsedKode.size()+"  -  "+k+ " + " +newMasive.length);
 		return listStringKode;
 	}
 
-	private static List<String> generateListKode(String leter, int start, int end, int zone_ID) {
+	private static List<String> generateListKode(List<KodeGenerate> listKodeGen, int zone_ID) {
 		List<String> listKode = new ArrayList<>();
+		System.out.println(listKodeGen.size());
+		if (listKodeGen.size() >0) {
+			String leterL = "";
+			String leterR = "";
+			int start ;
+			int end   ;
+			for (KodeGenerate kodeGen : listKodeGen) {
+				leterL = kodeGen.getLetter_L();
+				leterR = kodeGen.getLetter_R();
+				start = kodeGen.getStartCount();
+				end = kodeGen.getEndCount();
+				System.out.println("-------------------- "+leterL+" "+leterR+" "+start+" "+end);
 		switch (zone_ID) {
 		case 1: {
+			
 			for (int i = start; i < end; i++) {
-				listKode.add(i + leter);
+				listKode.add(i + leterR);
 			}
 		}
 			break;
 		case 2: {
 			for (int i = start; i < end; i++) {
-				listKode.add(leter + i);
+				listKode.add(leterL + i);
 			}
 		}
 			break;
 		case 3: {
 			for (int i = start; i < end; i++) {
-				listKode.add("Н" + i + leter);
+				listKode.add("Н" + i + leterR);
 			}
 		}
 			break;
 		case 4: {
 			for (int i = start; i < end; i++) {
-				listKode.add("Т" + i + leter);
+				listKode.add("Т" + i + leterR);
 			}
 		}
 			break;
 		case 5: {
 			for (int i = start; i < end; i++) {
-				listKode.add(leter + i + "Т");
+				listKode.add(leterL + i + "Т");
 			}
 		}
-			break;
+		break;
 		}
+			
+		}
+	}
 		return listKode;
 	}
 

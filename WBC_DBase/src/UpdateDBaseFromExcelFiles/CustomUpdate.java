@@ -1,23 +1,9 @@
 package UpdateDBaseFromExcelFiles;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.BoxLayout;
 import java.awt.Dimension;
-import javax.swing.SwingConstants;
-
-import Aplication.ActionIcone;
-import Aplication.AplicationMetods;
-import Aplication.ReadFileBGTextVariable;
-
+import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -26,7 +12,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
+import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
+import Aplication.ReadFileBGTextVariable;
 
 public class CustomUpdate extends JFrame {
 	

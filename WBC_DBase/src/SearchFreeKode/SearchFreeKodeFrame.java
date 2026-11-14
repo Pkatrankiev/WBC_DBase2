@@ -1,13 +1,34 @@
 package SearchFreeKode;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
@@ -17,28 +38,9 @@ import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasiClassDAO.ZoneDAO;
 import BasicClassAccessDbase.KodeGenerate;
+import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
 import PersonReference.PersonReferenceFrame;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import java.awt.Choice;
-import java.awt.Color;
-import java.awt.Dimension;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import java.awt.Button;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 
 public class SearchFreeKodeFrame extends JFrame {
 
@@ -439,16 +441,17 @@ public class SearchFreeKodeFrame extends JFrame {
 		     public void run() {
 		    	 int zone_ID = choiceZona.getSelectedIndex()+1;
 		    	 String zveno = choiceWorkplace.getSelectedItem();
+		    	 Workplace workPl = WorkplaceDAO.getActualValueWorkplaceByOtdel(zveno);
+		    	 if(workPl != null) {
+		    	 List<KodeGenerate> listKodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(workPl.getId_Workplace(),zone_ID);
+		    	 
 		    	 List<String>  masiveUsedKode = ReadKodeStatusFromExcelFile.getUsedKodeFromExcelFileByZoneAndZveno(zveno, zone_ID);
 		    	 String freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("nofreeKodeComent");
 		    	 if(masiveUsedKode!= null) {
 		    	  	String leter = textField_Leter.getText();
-					int start = Integer.parseInt(textField_Start.getText());
-					int end = Integer.parseInt(textField_End.getText())+1;
-					 
 					String[] year = SearchFreeKodeMethods.getHeader();
 					
-					String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, start, end, zone_ID,  year, masiveUsedKode);
+					String[][] dataTable = SearchFreeKodeMethods.createDataTableMasive(leter, listKodeGen, zone_ID,  year, masiveUsedKode);
 					table = SearchFreeKodeMethods.panel_infoPanelTablePanel(dataTable, year, zveno);
 					scrollPane.setViewportView(table);
 					freeKodeComent = ReadFileBGTextVariable.getGlobalTextVariableMap().get("freeKodeComent");
@@ -458,10 +461,23 @@ public class SearchFreeKodeFrame extends JFrame {
 					round.StopWindow();
 					table.repaint();
 		    	     	
+		     }else {
+		    	 MessageDialog("Звеното не е актуално");
 		     }
+		 }
 		    });
 		    thread.start();	
 		}
+	}
+	
+	public static void MessageDialog(String name) {
+		Icon otherIcon = null;
+		JFrame jf = new JFrame();
+		jf.setAlwaysOnTop(true);
+
+		JOptionPane.showMessageDialog(jf, name, "Грешка", JOptionPane.PLAIN_MESSAGE,
+				otherIcon);
+
 	}
 	
 	private void changeTextFild(Choice choiceWorkplace, Choice choiceZona) {
@@ -470,21 +486,25 @@ public class SearchFreeKodeFrame extends JFrame {
 		textField_End.setText("");
 		int Work_ID = WorkplaceDAO.getValueWorkplaceByObject("Otdel", choiceWorkplace.getSelectedItem()).get(0).getId_Workplace();	
 		int zone_ID = choiceZona.getSelectedIndex()+1;
-		KodeGenerate kodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(Work_ID, zone_ID);
+		List<KodeGenerate> listKodeGen = KodeGenerateDAO.getValueKodeGenerateByWorkplaceAndZone(Work_ID, zone_ID);
 		System.out.println(Work_ID+" "+zone_ID);
-		if(kodeGen!=null) {
-			String let = kodeGen.getLetter_R();
+		if (listKodeGen.size() >0){
+			String[] let = new String[listKodeGen.size()];
+			for (int i = 0; i < listKodeGen.size(); i++) {
+					
+			let[i] = listKodeGen.get(i).getLetter_R();
 			if(zone_ID == 2 || zone_ID == 5) {
-				let = kodeGen.getLetter_L();
+				let[i] = listKodeGen.get(i).getLetter_L();
 			}
-		textField_Leter.setText(let);
+		textField_Leter.setText(let[i]);
 		textField_Leter.setBackground(Color.WHITE);
 		
-		textField_Start.setText(kodeGen.getStartCount()+"");
+		textField_Start.setText(listKodeGen.get(i).getStartCount()+"");
 		textField_Start.setBackground(Color.WHITE);
 		
-		textField_End.setText(kodeGen.getEndCount()+"");
+		textField_End.setText(listKodeGen.get(i).getEndCount()+"");
 		textField_End.setBackground(Color.WHITE);
+		}
 		}
 	}	
 }

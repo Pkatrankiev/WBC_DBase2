@@ -1,18 +1,13 @@
 package InsertMeasuting;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -25,11 +20,9 @@ import Aplication.ReadFileBGTextVariable;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
 import BasiClassDAO.KodeStatusDAO;
-import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 
 public class SaveReportMeasurTo_MonthExcellFile {
@@ -72,24 +65,20 @@ public class SaveReportMeasurTo_MonthExcellFile {
 		try {
 			if(list.size()>0) {
 //			System.out.println("pathFile " + pathFile);
+				LockedExcelFileWriter.modifyWorkbookFileWithLock(pathFile, workbook -> {
 			for (ReportMeasurClass reportMeasur : list) {
-			FileInputStream inputStream = new FileInputStream(pathFile);
-			Workbook workbook = new HSSFWorkbook(inputStream);
 
-			
 				if (reportMeasur.getToExcell()) {
 //					System.out.println("EGN " + reportMeasur.getMeasur().getPerson().getEgn());
-					SaveMeasurToMonthExcel(reportMeasur, workbook);
+					
+						SaveMeasurToMonthExcel(reportMeasur, workbook);
+						
 				}
-			
-
-			FileOutputStream fileOut = new FileOutputStream(pathFile);
-			workbook.write(fileOut);
-			fileOut.close();
 			}
-			
+				return null;
+			});
 			int NumLab = list.get(0).getMeasur().getLab().getLab_ID();
-			
+
 			switch (NumLab) {
 			case 1:
 				pathFile = filePathWBC1_KD;
@@ -98,32 +87,27 @@ public class SaveReportMeasurTo_MonthExcellFile {
 			case 2:
 				pathFile = filePathWBC2_KD;
 				break;
-				
+
 			case 3:
 				pathFile = filePathWBC3_KD;
 				break;
 			}
-			
+			LockedExcelFileWriter.modifyWorkbookFileWithLock(pathFile, workbook -> {
 			for (ReportMeasurClass reportMeasur : list) {
-				FileInputStream inputStream = new FileInputStream(pathFile);
-				Workbook workbook = new HSSFWorkbook(inputStream);
 
-				
-					if (reportMeasur.getToExcell()) {
-//						System.out.println("EGN " + reportMeasur.getMeasur().getPerson().getEgn());
+				if (reportMeasur.getToExcell()) {
+//					System.out.println("EGN " + reportMeasur.getMeasur().getPerson().getEgn());
+					
 						saveDataToKDExcelFile(reportMeasur, workbook);
-					}
-				
-
-				FileOutputStream fileOut = new FileOutputStream(pathFile);
-				workbook.write(fileOut);
-				fileOut.close();
+						
 				}
-			
-			
-			
 			}
-		} catch (FileNotFoundException | OldExcelFormatException e) {
+			return null;
+			});
+
+
+			}
+		} catch (FileNotFoundException | OldExcelFormatException | LockedExcelFileWriter.FileLockTimeoutException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);
@@ -315,6 +299,5 @@ public class SaveReportMeasurTo_MonthExcellFile {
 		PersonStatusNew personStatus = PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person);
 	return personStatus.getWorkplace().getOtdel()+"#"+personStatus.getWorkplace().getLab().getLab_ID();
 	}
-	
 
 }

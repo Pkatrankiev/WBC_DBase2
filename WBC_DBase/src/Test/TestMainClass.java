@@ -1,72 +1,11 @@
 package Test;
 
-import java.awt.Desktop;
-import java.awt.Frame;
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
-import Aplication.ActionIcone;
-import Aplication.AplicationMetods;
-import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-import Aplication.ReadResultFromReport;
-import Aplication.RemouveDublikateFromList;
-import Aplication.ReportMeasurClass;
-import BasiClassDAO.LaboratoryDAO;
-import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.NuclideWBCDAO;
-import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusNewDAO;
-import BasiClassDAO.Spisak_PrilogeniaDAO;
-import BasiClassDAO.TypeMeasurDAO;
-import BasiClassDAO.UsersWBCDAO;
-import BasiClassDAO.WorkplaceDAO;
-import BasicClassAccessDbase.DiferentLabInMeasur;
-import BasicClassAccessDbase.Measuring;
-import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatusNew;
-import BasicClassAccessDbase.Spisak_Prilogenia;
-import BasicClassAccessDbase.UsersWBC;
-import BasicClassAccessDbase.Workplace;
-import BasicClassAccessDbase.conectToAccessDB;
-import BasicTable_Measuring_Results.Edit_Measuring_Results_Frame;
-import BasicTable_Measuring_Results.Measuring_Results_Frame;
-import BasicTable_Measuring_Results.Measuring_Results_Metods;
-import BasicTable_PersonReference_PersonStatus.PersonReference_PersonStatus_Frame;
-import BasicTable_PersonReference_PersonStatus.PersonReference_PersonStatus_Methods;
-import CheckErrorDataInExcellFiles.CheckErrorDataInExcellFiles_Frame;
-import CheckErrorDataInExcellFiles.CheckPersonStatus;
-import DeleteDataFromDBaseRemoveInCurenFromOldYear.DeleteDataFromDBaseRemoveInCurenFromOldYear_Frame;
-import DeleteDataFromDBaseRemoveInCurenFromOldYear.getMasiveFromOriginalExcelFile;
-import DozeArt.DozeArtFrame;
-import DozeArt.DozeArt_Methods;
-import InsertMeasuting.AutoInsertMeasutingFrame;
-import InsertMeasuting.AutoInsertMeasutingMethods;
-import MeasurInOderLabCheck.MeasurInOderLabFrame;
-import MeasurInOderLabCheck.MeasurInOderLabMetods;
-import MenuClasses.Menu_SpisakPersonManagement;
 import MenuClasses.WBC_MainWindowFrame;
-import PersonManagement.PersonelManegementMethods;
-import PersonReference.PersonReferenceFrame;
-import PersonReferenceInWebKD.ChangeKodeInKDByExcelLog;
-import PersonReference_OID.OID_Metods;
-import PersonReference_OID.OID_PersonReferenceFrame;
-import PersonReference_OID.OID_Person_AEC;
-import PersonReference_OID.OID_Person_AECDAO;
-import PersonReference_OID.OID_Person_WBC;
-import PersonReference_OID.OID_Person_WBCDAO;
-import ReferenceKontrolPersonByPeriod.ReferenceKontrolPersonByPeroid_Frame;
-import ResultFromMeasuringReference.ResultFromMeasuringReferenceFrame;
-import SpisakPersonManagement.SpisakPersonelManegementFrame;
-import TestDatePicker.DatePickerController;
-import TestDatePicker.DatePickerFrame;
-import WBCUsersLogin.WBCUsersLogin;
+import QueryExecutor.QueryExecutorWindow;
 
 
 public class TestMainClass {
@@ -90,8 +29,10 @@ public class TestMainClass {
 //			 new DozeArtFrame(ff,null, null);
 			
 					
-			 
-			 
+			 SwingUtilities.invokeLater(() -> {
+		            QueryExecutorWindow window = new QueryExecutorWindow();
+		            window.setVisible(true);
+			 });
 			 
 //			 ****************************************************************************
 //				
@@ -101,14 +42,14 @@ public class TestMainClass {
 //				     @Override
 //				     public void run() {
 //				    	 System.out.println("33333333333333333333333333333333333333");
-//				    	 String labelReferenceKontrolPersonByPeroid = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelReferenceKontrolPersonByPeroid");
-//				    	new ReferenceKontrolPersonByPeroid_Frame(round, labelReferenceKontrolPersonByPeroid);
+////				    	 String labelReferenceKontrolPersonByPeroid = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelReferenceKontrolPersonByPeroid");
+//				    	new CheckCodeByExcelFileAndOID_Frame("test", round);
 //				    	
-//				    	round.StopWindow();
+////				    	round.StopWindow();
 //				     }
 //				    });
 //				    thread.start();	
-//					
+////					
 //		**************************************************************************************	
 			 
 			
@@ -197,20 +138,20 @@ public class TestMainClass {
 			 
 //	-----------------------------------------------------------------------------------------
 			
-				 final Thread thread = new Thread(new Runnable() {
-				     @Override
-				     public void run() {
-				    	 ChangeKodeInKDByExcelLog. ChangeKodeInKD();
-				     }
-				    });
-				    thread.start();	
+//				 final Thread thread = new Thread(new Runnable() {
+//				     @Override
+//				     public void run() {
+//				    	 ChangeKodeInKDByExcelLog. ChangeKodeInKD();
+//				     }
+//				    });
+//				    thread.start();	
 			 
 			 
 //			 ---------------------------------------------------------------------------------
-//				        
+				        
 //			 String MeasuringID = "109078";
-////			 String MeasuringID = "108743";
-//				  
+//			 String MeasuringID = "108743";
+				  
 //					Measuring measur = MeasuringDAO.getValueMeasuringByID(Integer.parseInt(MeasuringID));
 //					
 //					String[] masiveData = Measuring_Results_Metods.getTextInfoPerson( measur);
@@ -220,9 +161,37 @@ public class TestMainClass {
 
 					
 			 
+//			List< Instance > listInst = InstanceDAO.getValueInstanceByYear("2026");
+//			System.out.println(listInst.size());
+//			System.out.println(listInst.get(9).getTextInstance());
+//			 String[] masive = listInst.get(9).getTextInstance().split("#!");
+//			 for (String string : masive) {
+//				System.out.println(string);
+//			}
+//			new InfoFrame_PersonStatus(masive, "");
 			 
 			 
 			 
+//			 System.out.println("2222222222222222222222222222222");
+//			 String packageName = TestMainClass.class.getPackage().getName();
+//			 System.out.println(packageName);
+
+			
+//			 System.out.println(packageName);
+//			ActionIcone round = new ActionIcone();
+//			 final Thread thread = new Thread(new Runnable() {
+//			     @Override
+//			     public void run() {
+//			    	 System.out.println("33333333333333333333333333333333333333");
+////			    	 String labelReferenceKontrolPersonByPeroid = ReadFileBGTextVariable.getGlobalTextVariableMap().get("labelReferenceKontrolPersonByPeroid");
+//			    	new InstanceMenagement_Frame("test", round);
+//			    	
+//			    	round.StopWindow();
+//			     }
+//			    });
+//			    thread.start();	
+			
+			
 			 
 		}
 	}

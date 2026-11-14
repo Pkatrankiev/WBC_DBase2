@@ -2,22 +2,33 @@ package BasicTable_PersonReference_PersonStatus;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,20 +46,6 @@ import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import WBCUsersLogin.WBCUsersLogin;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.JCheckBox;
-
-import java.awt.Label;
-import java.awt.Component;
-import javax.swing.JProgressBar;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 
 
 public class PersonReference_PersonStatus_Frame extends JFrame {

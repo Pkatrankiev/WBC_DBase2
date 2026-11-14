@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -121,10 +120,10 @@ public class ManualInsertMeasutingMethods {
 				
 				System.out.println("Jlist.getComponentCount() "+Jlist.getComponentCount());
 				
-				if(evt.getKeyCode() == evt.VK_DOWN || evt.getKeyCode() == evt.VK_UP) {
+				if(evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_UP) {
 					
-					if(evt.getKeyCode() == evt.VK_DOWN && keyIndex < maxIndex-1) keyIndex++;
-					if( evt.getKeyCode() == evt.VK_UP && keyIndex > 0) keyIndex--;
+					if(evt.getKeyCode() == KeyEvent.VK_DOWN && keyIndex < maxIndex-1) keyIndex++;
+					if( evt.getKeyCode() == KeyEvent.VK_UP && keyIndex > 0) keyIndex--;
 
 					System.out.println("keyIndex "+keyIndex);
 					

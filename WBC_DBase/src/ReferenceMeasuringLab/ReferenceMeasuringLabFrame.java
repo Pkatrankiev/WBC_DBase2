@@ -2,6 +2,7 @@ package ReferenceMeasuringLab;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -22,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
@@ -30,11 +32,8 @@ import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.Person;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-import PersonManagement.PersonelManegementMethods;
 import PersonReference.PersonReferenceFrame;
 import Reference_PersonMeasur.Reference_PersonMeasur_Metods;
-import java.awt.Component;
-import javax.swing.UIManager;
 
 public class ReferenceMeasuringLabFrame extends JFrame {
 

@@ -1,30 +1,20 @@
 package BasicTable_Measuring_Results;
 
-import java.awt.Choice;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
-import javax.swing.text.JTextComponent;
 
 import Aplication.GeneralMethods;
-import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusNewDAO;
-import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatusNew;
-import BasicClassAccessDbase.Workplace;
 
 
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.KodeStatus;
@@ -741,6 +742,48 @@ public class KodeStatusDAO {
 		
 	}
 	
+	public static List<KodeStatus> getKodeStatusByYearWithProgressBar(String year, JProgressBar fProgressBar, double progressBarSize, double startValue) {
+		
+		double progressBarVolume = startValue;
+		
+		List<KodeStatus> listKodeStatus = new ArrayList<KodeStatus>();
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		ResultSet result;
+		String sql;
+		try {
+
+			sql = "SELECT * FROM KodeStatus where Year = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, year);
+			
+			result = preparedStatement.executeQuery();
+		
+			int k=0;
+			while (result.next()) {
+			k++;	
+			}
+			double stepForProgressBar = progressBarSize / k;
+			result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+				fProgressBar.setValue((int) progressBarVolume);
+				listKodeStatus.add(setKodeStatus(result));
+				progressBarVolume += stepForProgressBar;
+			}
+			
+			preparedStatement.close();
+			connection.close();
+			
+			
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile( e);
+			e.printStackTrace();
+		}
+		fProgressBar.setValue((int)progressBarSize);
+		return listKodeStatus;
+		
+	}
 	
 
 	public static java.sql.Date convertDate(Date data) {

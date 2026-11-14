@@ -1,8 +1,5 @@
 package Test;
 
-import java.awt.Choice;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,18 +18,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -44,12 +35,8 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -57,29 +44,23 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
-import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
 import Aplication.ReadMeasuringFromExcelFile;
-import Aplication.ReadPersonFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultFromReport;
-
 import Aplication.RemouveDublikateFromList;
 import Aplication.ReportMeasurClass;
 import Aplication.ResourceLoader;
-
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
-
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -88,26 +69,21 @@ import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
 import BasiClassDAO.WorkplaceDAO;
-
 import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
-
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
-
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.conectToAccessDB;
 import PersonManagement.PersonelManegementMethods;
 import PersonReference_OID.OID_Person_AEC;
 import PersonReference_OID.OID_Person_AECDAO;
-import Reference_PersonMeasur.Reference_PersonMeasur_Frame;
-import Reference_PersonMeasur.TextInAreaTextPanel_Reference_PersonMeasur;
 import SaveToExcellFile.SaveToPersonelORExternalFile;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 
@@ -1569,135 +1545,10 @@ public class TestClasess {
 
 	}
 
-	public static void PersonStatusToPersonStatusNew(String year1) {
 
-		List<PersonStatusNew> list = new ArrayList<>();
+	
 
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		System.out.println("*****************************");
-		List<PersonStatus> listPersonStatus = PersonStatusDAO.getValuePersonStatusByWorkplace_Year_Spis(year1);
-		System.out.println("++++++++++++++++++++++++++++++++++" + listPersonStatus.size());
-		int k = 0;
-		int m = 0;
-		for (PersonStatus personStatus : listPersonStatus) {
 
-			Spisak_Prilogenia spPr = personStatus.getSpisak_prilogenia();
-//			if(spPr.getWorkplace().getId_Workplace()==personStatus.getWorkplace().getId_Workplace()) {
-			Date stDate = spPr.getStartDate();
-			String year = sdfrmt.format(stDate).substring(6);
-			if (year.equals("2000")) {
-				year = year1;
-			}
-			PersonStatusNew perStNew = new PersonStatusNew();
-			perStNew.setPerson(personStatus.getPerson());
-			perStNew.setWorkplace(personStatus.getWorkplace());
-			perStNew.setFormulyarName(spPr.getFormulyarName());
-			perStNew.setStartDate(stDate);
-			perStNew.setEndDate(spPr.getEndDate());
-			perStNew.setYear(year);
-			perStNew.setUserWBC(personStatus.getUserWBC());
-			perStNew.setDateSet(personStatus.getDateSet());
-			perStNew.setZabelejka(personStatus.getZabelejka());
-			if (k == 1000) {
-				k = 0;
-				System.out.println(m);
-			}
-
-			if (setPersonStatusNew(perStNew)) {
-				list.add(perStNew);
-			}
-//			}
-			k++;
-			m++;
-		}
-		System.out.println("list.size " + list.size());
-		for (PersonStatusNew perStatusNew : list) {
-			if (!perStatusNew.getZabelejka().trim().isEmpty()) {
-				PersonStatusNew perStat = PersonStatusNewDAO
-						.getPersonStatusNewByPerson_Workplace_DateStart_DateEnd_Year(perStatusNew.getPerson(),
-								perStatusNew.getWorkplace(), perStatusNew.getStartDate(), perStatusNew.getEndDate(),
-								perStatusNew.getYear());
-				perStat.setZabelejka(perStatusNew.getZabelejka());
-				PersonStatusNewDAO.updateValuePersonStatusNew(perStat);
-			}
-		}
-
-	}
-
-	public static void DeleteEpmtyFormuliarNameINPersonStatusNew() {
-		List<PersonStatusNew> ListPerStatNew = PersonStatusNewDAO.getValuePersonStatusNewByObject("FormulyarName", "");
-		System.out.println("size " + ListPerStatNew.size());
-		int k = 0;
-		for (PersonStatusNew personStatusNew : ListPerStatNew) {
-			System.out.println(k);
-			PersonStatusNewDAO.deleteValuePersonStatusNew(personStatusNew);
-			k++;
-		}
-	}
-
-	public static void PersonStatusNewCheckDublicate() {
-
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		System.out.println("*****************************");
-		List<PersonStatusNew> listPersonStatus = PersonStatusNewDAO.getValuePersonStatusNewByYear("2023");
-		System.out.println("listPersonStatus " + listPersonStatus.size());
-
-		ArrayList<Person> listPerson = new ArrayList<>();
-		for (PersonStatusNew personStatus : listPersonStatus) {
-
-			listPerson.add(personStatus.getPerson());
-		}
-		System.out.println("listPerson " + listPerson.size());
-		ArrayList<Person> listPersonNew = RemouveDublikateFromList.removeDuplicates(listPerson);
-		System.out.println("listPersonNew " + listPersonNew.size());
-		for (Person person : listPersonNew) {
-
-			List<PersonStatusNew> listPersonStatusPerson = PersonStatusNewDAO
-					.getValuePersonStatusNewByPerson_Year(person, "2023");
-//			System.out.println("listPersonStatusPerson "+listPersonStatusPerson.size());
-			ArrayList<String> listFormName = new ArrayList<>();
-			for (PersonStatusNew personStatus : listPersonStatusPerson) {
-				listFormName.add(personStatus.getFormulyarName());
-			}
-//			System.out.println("listFormName "+listFormName.size());
-			ArrayList<String> listFormNameNew = RemouveDublikateFromList.removeDuplicates(listFormName);
-//			System.out.println("listFormNameNew "+listFormNameNew.size());
-			for (String formName : listFormNameNew) {
-				List<PersonStatusNew> listPersonStatusPersonFormName = PersonStatusNewDAO
-						.getValuePersonStatusNewByPerson_FormuliarName_DateSetInYear(person, formName, "2023");
-//				System.out.println("listPersonStatusPersonFormName "+listPersonStatusPersonFormName.size());
-
-				Workplace work = null;
-				if (listPersonStatusPersonFormName.size() > 1) {
-					Workplace[] masive = getPersonStatFromExcel(person.getEgn());
-					String str = "";
-					for (PersonStatusNew prStNew : listPersonStatusPersonFormName) {
-						str += prStNew.getPerson().getEgn() + " " + prStNew.getFormulyarName() + " "
-								+ prStNew.getWorkplace().getOtdel() + " " + sdfrmt.format(prStNew.getStartDate()) + " "
-								+ sdfrmt.format(prStNew.getEndDate()) + " " + prStNew.getZabelejka() + "\n";
-						if (!prStNew.getWorkplace().getOtdel().equals(masive[1].getOtdel())) {
-							work = prStNew.getWorkplace();
-						}
-					}
-//					System.out.println(str);
-//					System.out.println("/////////////////////////////////////////////");
-					if (work != null) {
-
-						List<PersonStatusNew> listPersonStatusPersonWork = PersonStatusNewDAO
-								.getValuePersonStatusNewByPerson_Workplace_DateSetInYear(person, work, "2023");
-//						System.out.println(
-//								"------------------ " + work.getOtdel() + "  " + listPersonStatusPersonWork.size());
-						for (PersonStatusNew personStat : listPersonStatusPersonWork) {
-							PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
-						}
-					}
-				}
-
-			}
-
-		}
-
-	}
 
 	public static Workplace[] getPersonStatFromExcel(String egn) {
 		// read and set PersonStatus
@@ -2024,30 +1875,7 @@ public class TestClasess {
 
 //  ******************************************************************************************************************
 
-	public static void chengeStartDateInPresonStatusNewWithYear() {
-
-		List<PersonStatusNew> listPersonSatus = PersonStatusNewDAO.getValuePersonStatusNewByObject("FormulyarName",
-				"NotInformation");
-		System.out.println(listPersonSatus.size());
-		SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yyyy");
-		String date = "";
-		int k = 0, l = 0;
-		for (PersonStatusNew personStat : listPersonSatus) {
-			date = "01.01." + personStat.getYear();
-			try {
-				personStat.setStartDate(sdfrmt.parse(date));
-				PersonStatusNewDAO.updateValuePersonStatusNew(personStat);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			if (l == 100) {
-				System.out.println(k);
-				l = 0;
-			}
-			k++;
-			l++;
-		}
-	}
+	
 
 	public static void PresonStatusNewWithYear() {
 
@@ -2099,22 +1927,7 @@ public class TestClasess {
 		}
 	}
 
-//  ******************************************************************************************************************
 
-	public static void deletePersonStatusNewInYere(String year) {
-		List<PersonStatusNew> listPersonSatus = PersonStatusNewDAO.getValuePersonStatusNewByYear(year);
-		System.out.println(listPersonSatus.size());
-		int k = 0, l = 0;
-		for (PersonStatusNew personStat : listPersonSatus) {
-			PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
-			if (l == 100) {
-				System.out.println(k);
-				l = 0;
-			}
-			k++;
-			l++;
-		}
-	}
 
 //  ******************************************************************************************************************
 

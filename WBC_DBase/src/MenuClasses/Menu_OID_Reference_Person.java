@@ -1,11 +1,9 @@
 package MenuClasses;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-import PersonReference_OID.AccessRunner;
 import PersonReference_OID.OID_PersonReferenceFrame;
 
 public class Menu_OID_Reference_Person extends AbstractMenuAction{

@@ -1,23 +1,26 @@
 package Reference_PersonMeasur;
 
-import javax.swing.JFrame;
-
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Choice;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.SwingConstants;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
@@ -26,15 +29,6 @@ import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.Person;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 import PersonReference.PersonReferenceFrame;
-
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Toolkit;
 
 public class Reference_PersonMeasur_Frame extends JFrame {
 

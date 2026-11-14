@@ -2,8 +2,6 @@ package DozeArt;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 
 public class ScrollBar_Methods {
@@ -188,7 +185,7 @@ public class ScrollBar_Methods {
 	
 	
 	
-	private static String setNewDate( int value)
+	static String setNewDate( int value)
 			throws ParseException {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");

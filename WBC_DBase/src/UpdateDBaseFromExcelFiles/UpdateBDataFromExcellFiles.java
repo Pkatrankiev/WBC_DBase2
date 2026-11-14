@@ -3,13 +3,13 @@ package UpdateDBaseFromExcelFiles;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -421,7 +421,6 @@ public class UpdateBDataFromExcellFiles {
 
 	static void extracted(ActionIcone round, List<String> listChengeExcellFilePath, List<List<List<String>>> listStringForDiferentRow, String[] keyInsert) {
 		
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		
 		String[] key = { 
 				"Person", 
@@ -548,7 +547,7 @@ public class UpdateBDataFromExcellFiles {
 
 				case "PersonStatus": {
 					// read and set PersonStatus
-					if(PerStatNewSet.equals("1")) {
+					
 						List<PersonStatusNew> list = null;
 						try {
 							list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile,
@@ -565,7 +564,7 @@ public class UpdateBDataFromExcellFiles {
 							ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, round, textIcon);
 							System.out.println("Save set PersonStatus " + firmName);
 						}
-					}
+			
 				}
 					break;
 

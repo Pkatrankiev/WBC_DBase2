@@ -5,11 +5,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,7 +18,6 @@ import javax.swing.JOptionPane;
 
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusDAO;
-
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
@@ -34,7 +31,6 @@ public class AplicationMetods {
 
 	public static void readInfoFromGodExcelFile(String year, String key, boolean save) {
 	
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
 		String[] excellFiles = getDataBaseFilePat_ArhivePersonalAndExternal();	
 		 
 		for (String pathFile : excellFiles) {
@@ -73,7 +69,6 @@ public class AplicationMetods {
 		
 		case "PersonStatus": {
 			// read and set PersonStatus
-			if(PerStatNewSet.equals("1")) {
 				List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getListPersonStatusNewFromExcelFile(pathFile, firmName,
 						year, null, "", null, null);
 				ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
@@ -82,8 +77,7 @@ public class AplicationMetods {
 				ReadPersonStatusFromExcelFile.setToBDateListPersonStatusNew(list, null, "");
 				System.out.println("Save "+firmName);
 				}	
-			}
-		}
+	}
 		break;
 		
 		case "KodeStatus": {
@@ -125,8 +119,7 @@ public class AplicationMetods {
 		case "ObhodenList": {
 			// read and set ObhodenList in PersonStatus
 			
-			if(PerStatNewSet.equals("1")) {
-				List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusNewFromExcelFile(pathFile, firmName,
+			List<PersonStatusNew> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusNewFromExcelFile(pathFile, firmName,
 						year, null, "");
 				ReadPersonStatusFromExcelFile.ListPersonStatusNew(list);
 				System.out.println(year+ " --> "+list.size());
@@ -136,18 +129,7 @@ public class AplicationMetods {
 				}	
 				
 				
-			}else {
-			List<PersonStatus> list = ReadPersonStatusFromExcelFile.getObhodenListPersonStatusFromExcelFile(pathFile, firmName,
-					year, null, "");
-			ReadPersonStatusFromExcelFile.ListPersonStatus(list);
-			System.out.println(year+ " --> "+list.size());
-			if(save) {
-			ReadPersonStatusFromExcelFile.setToBDateListPersonStatus(list, null, "");
-			System.out.println("Save "+firmName);
-			}
 		
-			
-		}
 		}
 		}
 		}
@@ -289,22 +271,30 @@ public class AplicationMetods {
 	  }
 	
 	public static SimpleDateFormat extractedSimleDateFormatFromDate(String strDate) {
-		String strD = strDate.replace(".", ":");
+		String strD = strDate.replace(".", ":").replace("/", ":");
 		
 		String[] val = strD.split(":");
 		
 		String sdfrmtSTR="";
+		if(val.length >0) {
 		for (int i = 0; i < val[0].length(); i++) {
 			sdfrmtSTR += "d";
 		}
 		sdfrmtSTR += ".";
+		}
+		if(val.length >1) {
 		for (int i = 0; i < val[1].length(); i++) {
 			sdfrmtSTR += "M";
 		}
 		sdfrmtSTR += ".";
+		}
+		if(val.length >1) {
 		for (int i = 0; i < val[2].length(); i++) {
 			sdfrmtSTR += "y";
 		}
+		}
+		
+		System.out.println(sdfrmtSTR+" ///////////////////");
 		SimpleDateFormat sdfrmt = new SimpleDateFormat(sdfrmtSTR);
 		return sdfrmt;
 	}

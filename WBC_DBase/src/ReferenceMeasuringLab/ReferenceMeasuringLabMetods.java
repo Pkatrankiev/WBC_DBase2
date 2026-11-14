@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,13 +46,10 @@ import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
-
 import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
-
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
-
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.TextInAreaTextPanel;
 import SearchFreeKode.infoFrame;

@@ -1,12 +1,26 @@
 package SpisakPersonManagement;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,21 +34,6 @@ import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
-
-import java.awt.Dimension;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import java.awt.Component;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 
 public class choisePersonByNameFrame extends JDialog {

@@ -23,26 +23,21 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
 import javax.swing.JPanel;
-
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReportMeasurClass;
 import BasiClassDAO.LaboratoryDAO;
-
 import BasiClassDAO.TypeMeasurDAO;
 import BasicClassAccessDbase.Measuring;
-
-import javax.swing.JCheckBox;
 
 
 public class Edit_Measuring_Results_Frame extends JDialog {

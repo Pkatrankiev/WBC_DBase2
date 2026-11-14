@@ -34,7 +34,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 	private static List<String> listMasiveForClear;
 	static String curentYear = AplicationMetods.getCurentYear();
-	
+
 	public static void ActionListener_Btn_CheckDBaseNameKodeStat(JPanel panel_AllSaerch,
 			JButton btn_CheckDBaseNameKodeStat, JTextArea textArea, JProgressBar progressBar) {
 		btn_CheckDBaseNameKodeStat.addActionListener(new ActionListener() {
@@ -44,11 +44,9 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				listMasiveForClear = new ArrayList<>();
 				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBase_Clear().setEnabled(false);
 				CheckErrorDataInExcellFiles_Frame.getBtn_CheckDBaseNameKodeStat_Clear().setEnabled(false);
-				
+
 				new MySwingWorker(progressBar, textArea, panel_AllSaerch, "CheckDBaseNameKodeStat").execute();
-				
-				
-				
+
 //				String textForArea = checkPersonNameKodeStatus();
 //
 //				if (textForArea.isEmpty()) {
@@ -63,7 +61,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 			}
 
 		});
-		
+
 	}
 
 	public static void ActionListener_Btn_CheckDBaseNameKodeStat_Clear(JPanel panel_AllSaerch,
@@ -84,8 +82,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 		});
 	}
-	
-	
+
 	public static String checkPersonNameKodeStatus(JProgressBar aProgressBar, JPanel panel_AllSaerch) {
 
 		GeneralMethods.setWaitCursor(panel_AllSaerch);
@@ -94,7 +91,7 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		String ImaGoV = ReadFileBGTextVariable.getGlobalTextVariableMap().get("checkCorrectinDataInExcell_ImaGoV");
 		String NoGoNiamaV = ReadFileBGTextVariable.getGlobalTextVariableMap()
 				.get("checkCorrectinDataInExcell_NoGoNiamaV");
-		
+
 		List<String> listMasive = new ArrayList<String>();
 
 		String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
@@ -106,10 +103,6 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 			filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig_test");
 		}
 
-		
-
-		double ProgressBarSize = 1;
-		
 		String filePath[] = { filePathPersonel, filePathExternal };
 
 		Person person;
@@ -119,48 +112,76 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 		String strKods, strId, strText;
 		Cell cell, cell1;
 		Set<String> mySet = new HashSet<String>();
+		Set<String> mySetKode = new HashSet<String>();
+		List<String> listAllKodeEGN = new ArrayList<String>();
+		String checkKodeDuplikate = "";
 		boolean notEquals = false;
 		boolean setinMasive = false;
 
-		List<String> listMasiveNotInDB = new ArrayList<String>();
+//		List<String> listMasiveNotInDB = new ArrayList<String>();
 		List<String> listAllEgnInExcelFiles = new ArrayList<String>();
-		HashSet<String> listAllPersonInCurentYear =  new HashSet<String>();
-		List<Person> listMasiveNotInExcel = new ArrayList<>();
+		HashSet<String> listAllPersonInCurentYear = new HashSet<String>();
+//		List<Person> listMasiveNotInExcel = new ArrayList<>();
 		System.out.println("*******************************************");
-		
+
 //		List<PersonStatusNew> listpersonStatusNew = PersonStatusNewDAO.getValuePersonStatusNewByYear(curentYear);
-		double stepForProgressBar = 20;
-		List<PersonStatusNew> listpersonStatusNew = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(curentYear, null, aProgressBar, stepForProgressBar);
-		
-		System.out.println("listpersonStatusNew.size() "+listpersonStatusNew.size());
-		
+//---------------------------------------------------------------------------------------		
+		double startProgressBar = 0;
+		double progressBarSize = 20;
+		List<PersonStatusNew> listpersonStatusNew = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(
+				curentYear, null, aProgressBar, progressBarSize, startProgressBar);
+
+		System.out.println("listpersonStatusNew.size() " + listpersonStatusNew.size());
+
 		for (PersonStatusNew personStatusNew : listpersonStatusNew) {
-			
+			if(personStatusNew.getPerson() != null) {
 			listAllPersonInCurentYear.add(personStatusNew.getPerson().getEgn());
+			}
 		}
-		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
-		System.out.println("//////////////////////////////"); 
-		
-		ProgressBarSize = 20;
+		System.out.println("listAllPersonInCurentYear.size() " + listAllPersonInCurentYear.size());
+		System.out.println("//////////////////////////////");
+//---------------------------------------------------------------------------------------
+
+		startProgressBar = aProgressBar.getValue();
+		progressBarSize = 20;
+		System.out.println("1 startProgressBar " + startProgressBar+"progressBarSize  "+progressBarSize);
+		List<KodeStatus> listKodeStatus = KodeStatusDAO.getKodeStatusByYearWithProgressBar(curentYear, aProgressBar,
+				progressBarSize, startProgressBar);
+
+		System.out.println("listKodeStatus.size() " + listKodeStatus.size());
+
+		for (KodeStatus kodeStat : listKodeStatus) {
+
+			listAllPersonInCurentYear.add(kodeStat.getPerson().getEgn());
+		}
+		System.out.println("listAllPersonInCurentYear.size() " + listAllPersonInCurentYear.size());
+		System.out.println("//////////////////////////////");
+
+//-----------------------------------------------------------------------------------------		
+		System.out.println("2 startProgressBar " + startProgressBar+"progressBarSize  "+progressBarSize);
+		startProgressBar += progressBarSize;
+		progressBarSize = 60;
+		System.out.println("3 startProgressBar " + startProgressBar+"progressBarSize  "+progressBarSize);
+		double ProgressBarVolume = startProgressBar;
 		for (int ii = 0; ii < filePath.length; ii++) {
 
 			if (filePath[ii].contains("EXTERNAL")) {
 				listMasive.add("IN EXTERNAL FILE");
+				checkKodeDuplikate += "IN EXTERNAL FILE \n";
 			} else {
 				listMasive.add("IN PERSONEL FILE");
+				checkKodeDuplikate += "IN PERSONEL FILE \n";
 			}
 
-			stepForProgressBar = 40;
-			
 			Workbook workbook = ReadExcelFileWBC.openExcelFile(filePath[ii]);
 			Sheet sheet = workbook.getSheetAt(0);
-			stepForProgressBar = stepForProgressBar / sheet.getLastRowNum();
+			double stepForProgressBar = progressBarSize / (2 * sheet.getLastRowNum());
 //			System.out.println(stepForProgressBar+"*******************************************");  
 //			System.out.println(sheet.getLastRowNum());
 			for (int row = 5; row <= sheet.getLastRowNum(); row += 1) {
-				aProgressBar.setValue((int) ProgressBarSize);
+				aProgressBar.setValue((int) ProgressBarVolume);
 //				 System.out.println(ProgressBarSize+"  -------------------------------------------------------");
-				ProgressBarSize += stepForProgressBar;
+				ProgressBarVolume += stepForProgressBar;
 //				System.out.println(row);
 				notEquals = false;
 				setinMasive = false;
@@ -177,66 +198,68 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 						person = ReadKodeStatusFromExcelFile.getPersonFromEGNCell(cell);
 						EGN = ReadKodeStatusFromExcelFile.getEGNFromENGCell(cell);
+						checkKodeDuplikate = checkDuplikateKode(mySetKode, sheet, row, checkKodeDuplikate, EGN,
+								listAllKodeEGN);
 						if (mySet.add(EGN)) {
-							
+
 							for (int j = 0; j < 8; j++) {
 								masive[0][j] = "";
 								masive[1][j] = "";
 							}
 							FirstName = ReadExcelFileWBC.getStringEGNfromCell(cell1);
-							listAllEgnInExcelFiles.add(EGN+" - "+FirstName);
+							listAllEgnInExcelFiles.add(EGN + " - " + FirstName);
 							if (person != null) {
-							masive[0][0] = EGN;
-							masive[0][1] = FirstName;
-							
-							cell = sheet.getRow(row).getCell(0);
-							if (cell != null)
-								kodeKZ1 = cell.getStringCellValue();
+								masive[0][0] = EGN;
+								masive[0][1] = FirstName;
 
-							cell = sheet.getRow(row).getCell(1);
-							if (cell != null)
-								kodeKZ2 = cell.getStringCellValue();
+								cell = sheet.getRow(row).getCell(0);
+								if (cell != null)
+									kodeKZ1 = cell.getStringCellValue();
 
-							cell = sheet.getRow(row).getCell(2);
-							if (cell != null)
-								kodeHOG = cell.getStringCellValue();
+								cell = sheet.getRow(row).getCell(1);
+								if (cell != null)
+									kodeKZ2 = cell.getStringCellValue();
 
-							cell = sheet.getRow(row).getCell(3);
-							if (cell != null)
-								kodeT2 = cell.getStringCellValue();
+								cell = sheet.getRow(row).getCell(2);
+								if (cell != null)
+									kodeHOG = cell.getStringCellValue();
 
-							cell = sheet.getRow(row).getCell(4);
-							if (cell != null)
-								kodeT1 = cell.getStringCellValue();
+								cell = sheet.getRow(row).getCell(3);
+								if (cell != null)
+									kodeT2 = cell.getStringCellValue();
 
-							if (filePath[ii].contains("EXTERNAL")) {
-								kodeT1 = kodeT2;
-								kodeT2 = "";
-							}
+								cell = sheet.getRow(row).getCell(4);
+								if (cell != null)
+									kodeT1 = cell.getStringCellValue();
 
-							if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("н")
-									&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeKZ1)) {
-								masive[0][2] = kodeKZ1;
+								if (filePath[ii].contains("EXTERNAL")) {
+									kodeT1 = kodeT2;
+									kodeT2 = "";
+								}
+
+								if (!kodeKZ1.equals("ЕП-2") && !kodeKZ1.trim().equals("") && !kodeKZ1.equals("н")
+										&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeKZ1)) {
+									masive[0][2] = kodeKZ1;
+								}
+								if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("")
+										&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeKZ2)) {
+									masive[0][3] = kodeKZ2;
+								}
+								if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("")
+										&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeHOG)) {
+									masive[0][4] = kodeHOG;
+								}
+								if (!kodeT1.equals("н") && !kodeT1.trim().equals("") && kodeT1.indexOf("ЯГ") < 0
+										&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeT1)) {
+									masive[0][5] = kodeT1;
+								}
+								if (!kodeT2.equals("н") && !kodeT2.trim().equals("") && kodeT2.indexOf("ЯГ") < 0
+										&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeT2)) {
+									masive[0][6] = kodeT2;
+								}
+								setinMasive = true;
 							}
-							if (!kodeKZ2.equals("н") && !kodeKZ2.trim().equals("")
-									&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeKZ2)) {
-								masive[0][3] = kodeKZ2;
-							}
-							if (!kodeHOG.equals("н") && !kodeHOG.trim().equals("")
-									&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeHOG)) {
-								masive[0][4] = kodeHOG;
-							}
-							if (!kodeT1.equals("н") && !kodeT1.trim().equals("") && kodeT1.indexOf("ЯГ") < 0
-									&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeT1)) {
-								masive[0][5] = kodeT1;
-							}
-							if (!kodeT2.equals("н") && !kodeT2.trim().equals("") && kodeT2.indexOf("ЯГ") < 0
-									&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kodeT2)) {
-								masive[0][6] = kodeT2;
-							}
-							setinMasive = true;
 						}
-					}
 					}
 				}
 
@@ -252,7 +275,8 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 						strId = "";
 						for (int k = 1; k < 6; k++) {
 							strKods = "";
-							List<KodeStatus> list = KodeStatusDAO.getListKodeStatusByPersonZoneYear(personBD, k, curentYear);
+							List<KodeStatus> list = KodeStatusDAO.getListKodeStatusByPersonZoneYear(personBD, k,
+									curentYear);
 							for (int l = 0; l < list.size(); l++) {
 								if (list.get(l).getKode().indexOf("ЯГ") < 0) {
 									if (!list.get(l).getisFreeKode()) {
@@ -273,24 +297,24 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 					}
 
 					for (int s = 1; s < 7; s++) {
-						if(s==1) {
+						if (s == 1) {
 							if (!masive[1][s].replace("*", "").contains(masive[0][s])) {
 								masive[1][7] += s + ";";
 //								System.out.println(masive[0][s]+" <-> "+masive[1][s]);
 								notEquals = true;
 							}
-						}else {
-						if (!masive[0][s].equals(masive[1][s].replace("*", ""))) {
-							masive[1][7] += s + ";";
+						} else {
+							if (!masive[0][s].equals(masive[1][s].replace("*", ""))) {
+								masive[1][7] += s + ";";
 //							System.out.println(masive[0][s]+" <-> "+masive[1][s]);
-							notEquals = true;
+								notEquals = true;
+							}
 						}
-					}
 					}
 					if (masive[1][7].length() > 0) {
 						masive[1][7] = masive[1][7].substring(0, masive[1][7].length() - 1);
 					}
-					
+
 					if (notEquals) {
 //						System.out.println("Save in list");
 						strText = extracted(masive);
@@ -303,66 +327,101 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				}
 			}
 
-			if(listMasive.size()==1) {
+			if (listMasive.size() == 1) {
 				listMasive = new ArrayList<String>();
 			}
 		}
-		
-		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
-		System.out.println("listAllEgnInExcelFiles.size() "+listAllEgnInExcelFiles.size());
+
+		System.out.println("listAllPersonInCurentYear.size() " + listAllPersonInCurentYear.size());
+		System.out.println("listAllEgnInExcelFiles.size() " + listAllEgnInExcelFiles.size());
 		Iterator<String> itrPerson = listAllPersonInCurentYear.iterator();
-		
+
 		while (itrPerson.hasNext()) {
 			String personEGN = itrPerson.next();
-			
+
 			Iterator<String> itrEGNExcel = listAllEgnInExcelFiles.iterator();
 			while (itrEGNExcel.hasNext()) {
 				String egn = itrEGNExcel.next();
 				egn = egn.split("-")[0].trim();
-				if(egn.equals(personEGN)) {
+				if (egn.equals(personEGN)) {
 					itrPerson.remove();
 					itrEGNExcel.remove();
 				}
 			}
 		}
-		
-		
-		System.out.println("listAllPersonInCurentYear.size() "+listAllPersonInCurentYear.size());
-		System.out.println("listAllEgnInExcelFiles.size() "+listAllEgnInExcelFiles.size());
-		
-		
-		
-		
-		String infoStrText ="";
-		if(listMasive.size() > 0) {
-		String[][] ExtMasive = extractedMasive(listMasive);
-		Integer[] columnWith = extractColumnWith(ExtMasive);
 
-		listMasiveForClear = listMasive;
-		
-		infoStrText = creadStringToInfoText(ExtMasive, columnWith);
+		System.out.println("listAllPersonInCurentYear.size() " + listAllPersonInCurentYear.size());
+		System.out.println("listAllEgnInExcelFiles.size() " + listAllEgnInExcelFiles.size());
+
+		String infoStrText = "";
+		if (listMasive.size() > 0) {
+			String[][] ExtMasive = extractedMasive(listMasive);
+			Integer[] columnWith = extractColumnWith(ExtMasive);
+
+			listMasiveForClear = listMasive;
+
+			infoStrText = creadStringToInfoText(ExtMasive, columnWith);
 		}
-		
-		int k=0;
-		infoStrText += "\n" + ImaGoV + " DBase " + NoGoNiamaV + " Excel Files" + "\n";
-		for (String personEGN : listAllPersonInCurentYear) {
-			Person person2 = PersonDAO.getValuePersonByEGN(personEGN);
-			if(!PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person2).getFormulyarName().equals("Обходен лист")) {
-				infoStrText += k+" "+person2.getEgn()+" - "+person2.getFirstName()+" "+person2.getSecondName()+" "+person2.getLastName()+ "\n";
+		int k = 0;
+		if (listAllPersonInCurentYear.size() > 0) {
+			infoStrText += "\n" + ImaGoV + " DBase " + NoGoNiamaV + " Excel Files" + "\n";
+			for (String personEGN : listAllPersonInCurentYear) {
+				Person person2 = PersonDAO.getValuePersonByEGN(personEGN);
+				if (!PersonStatusNewDAO.getLastValuePersonStatusNewByPerson(person2).getFormulyarName()
+						.equals("Обходен лист")) {
+					infoStrText += k + " " + person2.getEgn() + " - " + person2.getFirstName() + " "
+							+ person2.getSecondName() + " " + person2.getLastName() + "\n";
+				}
+				k++;
 			}
-		k++;
 		}
-		infoStrText += "\n" + ImaGoV + " Excel Files " + NoGoNiamaV + "  DBase" + "\n";
-		k=0;
-		
-		for (String egn : listAllEgnInExcelFiles) {
-			infoStrText +=k+" "+egn+ "\n";
-			k++;
+		if (listAllEgnInExcelFiles.size() > 0) {
+			infoStrText += "\n" + ImaGoV + " Excel Files " + NoGoNiamaV + "  DBase" + "\n";
+			k = 0;
+			for (String egn : listAllEgnInExcelFiles) {
+				infoStrText += k + " " + egn + "\n";
+				k++;
+			}
 		}
-		
-		GeneralMethods.setDefaultCursor(panel_AllSaerch);
-		
+		String str = checkKodeDuplikate.replaceAll("IN EXTERNAL FILE \n", "").replaceAll("IN PERSONEL FILE \n", "")
+				.trim();
+		if (!str.isEmpty()) {
+			infoStrText += "\n Повтарящи се кодове: \n" + checkKodeDuplikate;
+			GeneralMethods.setDefaultCursor(panel_AllSaerch);
+		}
 		return infoStrText;
+	}
+
+	private static String checkDuplikateKode(Set<String> mySetKode, Sheet sheet, int row, String checkKodeDuplikate,
+			String egn, List<String> listAllKodeEGN) {
+		Cell cell;
+		String kode;
+		for (int s = 0; s < 5; s++) {
+			cell = sheet.getRow(row).getCell(s);
+			if (cell != null) {
+				kode = cell.getStringCellValue();
+				if (!kode.equals("ЕП-2") && !kode.equals("н") && !kode.trim().equals("")
+						&& !ReadKodeStatusFromExcelFile.inCodeNotNumber(kode)) {
+
+					if (!mySetKode.add(kode)) {
+						for (String string : listAllKodeEGN) {
+							String[] masive = string.split("-");
+							if (masive[0].equals(kode)) {
+								if (!masive[1].equals(egn)) {
+									checkKodeDuplikate += kode + " на ЕГН:" + egn + "\n";
+									checkKodeDuplikate += masive[0] + " на ЕГН:" + masive[1] + "\n";
+									break;
+								}
+							}
+						}
+
+					} else {
+						listAllKodeEGN.add(kode + "-" + egn);
+					}
+				}
+			}
+		}
+		return checkKodeDuplikate;
 	}
 
 	public static String creadStringToInfoText(String[][] ExtMasive, Integer[] columnWith) {
@@ -416,9 +475,10 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 
 	static String[][] extractedMasive(List<String> listMasive) {
 		String[][] extrMasive = new String[listMasive.size() * 2][8];
-		
-		extrMasive[0] = new String[]{"ЕГН/IDкод", "Име(1)", "КЗ1(2)", "КЗ2(3)", "ХОГ(4)", "Т1(5)", "Т2(6)", "Опис Разлики"};
-		 
+
+		extrMasive[0] = new String[] { "ЕГН/IDкод", "Име(1)", "КЗ1(2)", "КЗ2(3)", "ХОГ(4)", "Т1(5)", "Т2(6)",
+				"Опис Разлики" };
+
 		int i = 1;
 		for (String str : listMasive) {
 			if (str.endsWith("FILE")) {
@@ -492,8 +552,8 @@ public class CheckPersonName_KodeStatus_DBseToExcelFiles {
 				person.getId_Person() + " - " + person.getEgn() + " - " + zoneID + " - " + curentYear + " - " + kod);
 		kodeStat = KodeStatusDAO.getKodeStatusByPersonZoneYaerAndKode(person, zoneID, curentYear, kod);
 		if (kodeStat != null) {
-			System.out.println(kodeStat.getPerson().getEgn() + " - " + kodeStat.getZone().getId_Zone() + " - " + curentYear
-					+ " - " + kodeStat.getKode());
+			System.out.println(kodeStat.getPerson().getEgn() + " - " + kodeStat.getZone().getId_Zone() + " - "
+					+ curentYear + " - " + kodeStat.getKode());
 			KodeStatusDAO.deleteValueKodeStatus(kodeStat.getKodeStatus_ID());
 		}
 	}

@@ -1,14 +1,14 @@
 package Aplication;
 
 import java.awt.Color;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Font;
 
 
 

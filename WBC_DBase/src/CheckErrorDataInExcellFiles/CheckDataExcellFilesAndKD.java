@@ -6,7 +6,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,16 +20,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
-import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
 import PersonReferenceInWebKD.PersonReferenceInWebKD_Methods;
-import PersonReference_OID.OID_PersonReferenceFrame;
 
 public class CheckDataExcellFilesAndKD {
 	static ChromeDriver driver;

@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -25,8 +26,6 @@ import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.Person;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
-
-import javax.swing.JProgressBar;
 
 public class CheckErrorDataInExcellFiles_Frame extends JFrame {
 

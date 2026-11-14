@@ -1,15 +1,16 @@
 package Test;
 
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
 
 public class SwingWorkerExample {
   private static JProgressBar PROGRESS_BAR;

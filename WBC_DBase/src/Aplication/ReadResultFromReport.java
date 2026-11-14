@@ -104,8 +104,8 @@ public class ReadResultFromReport {
 		String[] stringArray = CreadMasiveFromReadFile(file);
 		
 		ReportMeasurClass reportMeasurClass = new ReportMeasurClass();
-		
-		if(stringArray[0].contains("WBC2")) {
+		System.out.println("stringArray[0] "+stringArray[0]);
+		if(stringArray[0].contains("WBC2")|| stringArray[0].contains("ORTEC")) {
 			reportMeasurClass = extractedReportMeasurFromFileRENAISANCE(file,  dozeDim, type, stringArray, listLastName_EG_Users);	
 		}else {
 		 reportMeasurClass = extractedReportMeasurFromFileABACOSS(file,  dozeDim, type, stringArray);
@@ -391,9 +391,9 @@ public class ReadResultFromReport {
 
 		SimpleDateFormat sdfrmt = AplicationMetods.extractedSimleDateFormatFromDate(origin_date);
 		Date date = new Date();
-
+System.out.println(" ****************************** "+origin_date.replace("/", "."));
 		try {
-			date = sdfrmt.parse(origin_date);
+			date = sdfrmt.parse(origin_date.replace("/", "."));
 			
 			System.out.println("origin_date.length() "+origin_date.length()+" "+date);
 		} catch (ParseException e) {

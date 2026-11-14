@@ -2,12 +2,9 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JFrame;
-
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import BasicTable_Measuring_Results.Measuring_Results_Frame;
-import DozeArt.DozeArtFrame;
 
 public class Menu_Measuring_Results extends AbstractMenuAction{
 

@@ -14,13 +14,10 @@ import BasiClassDAO.LaboratoryDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.TypeMeasurDAO;
 import BasiClassDAO.UsersWBCDAO;
-
 import BasicClassAccessDbase.DimensionWBC;
 import BasicClassAccessDbase.Laboratory;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
-
-
 import BasicClassAccessDbase.TypeMeasur;
 import BasicClassAccessDbase.UsersWBC;
 

@@ -3,7 +3,6 @@ package BasicTable_PersonReference_PersonStatus;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -40,12 +39,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import Aplication.GeneralMethods;
 import Aplication.ReadFileBGTextVariable;
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.WorkplaceDAO;
@@ -54,6 +53,7 @@ import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import DatePicker.DatePicker;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
 import PersonReference.PersonReferenceExportToExcell;
 import net.coderazzi.filters.gui.AutoChoices;
 import net.coderazzi.filters.gui.TableFilterHeader;
@@ -141,9 +141,11 @@ public class PersonReference_PersonStatus_Methods {
 					if (OptionDialog(text)) {
 						GeneralMethods.setWaitCursor(tablePane);
 						if (PersonStatusNewDAO.setObjectPersonStatusNewToTable(newPersonStat)) {
+							String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByLastPersonStatusNew();
+							InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Insert", textInstance, user);
 							dataTable = addNewRowInTable(newPersonStat);
 							PersonReference_PersonStatus_Methods.setDataTable(dataTable);
-							PersonReference_PersonStatus_Methods.panel_infoPanelTablePanel(panel_AllSaerch, tablePane,
+				 			PersonReference_PersonStatus_Methods.panel_infoPanelTablePanel(panel_AllSaerch, tablePane,
 									sp, checkBoxEditing);
 							PersonReference_PersonStatus_Frame.viewTablePanel();
 							clearTextFields();
@@ -176,7 +178,12 @@ public class PersonReference_PersonStatus_Methods {
 
 						JCheckBox checkBoxEditing = PersonReference_PersonStatus_Frame.getChckbx_Editing();
 						newPersonStat.setPersonStatusNew_ID(selectPersonStat.getPersonStatusNew_ID());
+						String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByIDPersonStatusNew(newPersonStat.getPersonStatusNew_ID());
 						if (PersonStatusNewDAO.updateValuePersonStatusNew(newPersonStat)) {
+							textInstance += "!#!"+PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(newPersonStat);
+							System.out.println("textInstance.length() "+textInstance.length());
+							InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Edit", textInstance, user);
+							
 							dataTable = editSelectionRowInTable(newPersonStat);
 							PersonReference_PersonStatus_Methods.setDataTable(dataTable);
 							PersonReference_PersonStatus_Methods.panel_infoPanelTablePanel(panel_AllSaerch, tablePane,
@@ -210,7 +217,10 @@ public class PersonReference_PersonStatus_Methods {
 						GeneralMethods.setWaitCursor(tablePane);
 
 						JCheckBox checkBoxEditing = PersonReference_PersonStatus_Frame.getChckbx_Editing();
+						String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(selectPersonStat);
 						if (PersonStatusNewDAO.deleteValuePersonStatusNew(selectPersonStat)) {
+							InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Delete", textInstance, user);
+							
 							dataTable = deleteSelectedRowInTable(selectRow);
 							PersonReference_PersonStatus_Methods.setDataTable(dataTable);
 							PersonReference_PersonStatus_Methods.panel_infoPanelTablePanel(panel_AllSaerch, tablePane,
@@ -396,7 +406,7 @@ public class PersonReference_PersonStatus_Methods {
 
 	}
 
-	private static Object[][] extractedVolumeTable(JTable table) {
+	public static Object[][] extractedVolumeTable(JTable table) {
 		TableColumnModel tcm = table.getColumnModel();
 //		get how column with Width > 0  -> k
 		int k = 0;

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -26,7 +25,7 @@ public class DateLabelFormatterUser extends AbstractFormatter  {
     //In the initialize method you can use the following code:
 
     public void initialize(URL location, ResourceBundle resources) {
-        date.setOnShowing(e -> Locale.setDefault(Locale.Category.FORMAT, Locale.UK));
+//        date.setOnShowing(e -> Locale.setDefault(Locale.Category.FORMAT, Locale.UK));
         //...
     }
     

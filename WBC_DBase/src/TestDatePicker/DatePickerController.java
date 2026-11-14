@@ -1,13 +1,10 @@
 package TestDatePicker;
 
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
-import javax.swing.JPanel;
-
 
 import javafx.scene.control.DatePicker;
 import net.sourceforge.jdatepicker.JDatePanel;

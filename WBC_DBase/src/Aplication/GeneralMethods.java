@@ -3,7 +3,6 @@ package Aplication;
 import java.awt.Cursor;
 import java.io.File;
 
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.RootPaneContainer;
 

@@ -3,8 +3,6 @@ package PersonReference_OID;
 import java.io.File;
 import java.io.IOException;
 
-import Aplication.ReadFileBGTextVariable;
-
 public class AccessLauncher {
 
     // Стандартни пътища до Access

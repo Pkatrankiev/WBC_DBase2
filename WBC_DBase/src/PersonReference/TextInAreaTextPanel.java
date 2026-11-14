@@ -13,7 +13,6 @@ import java.util.Set;
 import Aplication.ReadFileBGTextVariable;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
-import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.ResultsWBCDAO;
 import BasiClassDAO.ZoneDAO;
@@ -61,7 +60,7 @@ public class TextInAreaTextPanel {
 		
 		countIteration = inputCountIteration;
 		
-		person = PersonDAO.getValuePersonByEGN(personInport.getEgn());
+		person = personInport;
 		String str = "";
 		if(person != null) {
 			

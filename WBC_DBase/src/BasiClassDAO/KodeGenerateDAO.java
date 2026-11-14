@@ -185,7 +185,7 @@ public class KodeGenerateDAO {
 		return listKodeGenerate;
 	}
 
-	public static void MessageDialog(String text) {
+	public static void MessageDialog1(String text) {
 		JFrame jf = new JFrame();
 		jf.setAlwaysOnTop(true);
 		JOptionPane.showMessageDialog(jf, text, "Грешка", JOptionPane.ERROR_MESSAGE);
@@ -270,10 +270,10 @@ public class KodeGenerateDAO {
 		return listKodeGenerate.get(0);
 	}
 
-	public static KodeGenerate getValueKodeGenerateByWorkplaceAndZone(int workplace_ID, int zone_ID) {
+	public static List<KodeGenerate> getValueKodeGenerateByWorkplaceAndZone(int workplace_ID, int zone_ID) {
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
-		String sql = "SELECT * FROM KodeGenerate where Workplace_ID = ? and Zone_ID = ? LIMIT 1";
+		String sql = "SELECT * FROM KodeGenerate where Workplace_ID = ? and Zone_ID = ? ORDER BY StartCount ASC";
 
 		List<KodeGenerate> listKodeGenerate = new ArrayList<KodeGenerate>();
 
@@ -300,7 +300,7 @@ public class KodeGenerateDAO {
 			ResourceLoader.appendToFile( e);
 			e.printStackTrace();
 		}
-		return listKodeGenerate.size()>0 ? listKodeGenerate.get(0) : null;
+		return listKodeGenerate;
 	}
 
 	

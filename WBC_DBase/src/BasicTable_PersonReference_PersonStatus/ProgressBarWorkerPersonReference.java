@@ -13,7 +13,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.JTextComponent;
 
-import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.WorkplaceDAO;
 import BasicClassAccessDbase.Person;
@@ -47,7 +46,7 @@ public class ProgressBarWorkerPersonReference extends SwingWorker<List<PersonSta
     	double stepForProgressBar = 100;
     	List<PersonStatusNew> listPersonStat2 = new ArrayList<>();
     	
-    		listPersonStat2 = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(textField_Year.getText(), person, progressBar, stepForProgressBar);	
+    		listPersonStat2 = PersonStatusNewDAO.getValuePersonStatusNewByYearWithProgressBar(textField_Year.getText(), person, progressBar, stepForProgressBar, 0);	
     
 		System.out.println("listPersonStat2.size() "+listPersonStat2.size());
     	return listPersonStat2;

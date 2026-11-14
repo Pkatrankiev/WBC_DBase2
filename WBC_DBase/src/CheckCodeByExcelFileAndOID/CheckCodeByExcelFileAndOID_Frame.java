@@ -1,18 +1,16 @@
 package CheckCodeByExcelFileAndOID;
+
 import java.awt.BorderLayout;
-import java.awt.Choice;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -21,9 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,16 +34,14 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.DocumentFilter.FilterBypass;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
 import BasiClassDAO.WorkplaceDAO;
-import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
-import BasicTable_PersonReference_PersonStatus.PersonReference_PersonStatus_Frame;
-import BasicTable_PersonReference_PersonStatus.PersonReference_PersonStatus_Methods;
-import WBCUsersLogin.WBCUsersLogin;
+import PersonReference_OID.AccessRunner;
+
+
 
 public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 
@@ -71,23 +65,21 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 	private static JTextField textField_Year;
 
 	private JButton btn_StartGenerateTable;
-
-	private static Choice choice_Firm;
+	private static JButton btnBackToTable;
+	
 
 	List<String> listOtdelKz;
 	List<String> listOtdelVO;
 	List<String> listAdd;
 	List<String> listFirm;
 	private JLabel lblNewLabel;
-	private JLabel lbl_EGN;
-	private static JTextField textEGN;
+	private JButton btnUpDataBD;
 
-	public CheckCodeByExcelFileAndOID_Frame(String dokumentStatusUser, ActionIcone round) {
+	public CheckCodeByExcelFileAndOID_Frame(String frameTitle, ActionIcone round) {
 
 		String iconn = ReadFileBGTextVariable.getGlobalTextVariableMap().get("main_Icon");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource(iconn)));
-		setTitle(dokumentStatusUser);
-
+		setTitle(frameTitle+ " Последна актуализация на базата:   "+getDateNewDBAccsess());
 		setMinimumSize(new Dimension(1120, 900));
 
 		String AEC = ReadFileBGTextVariable.getGlobalTextVariableMap().get("AEC");
@@ -151,10 +143,11 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 		setSize(1120, 900);
 		setLocationRelativeTo(null);
 
-		CheckCodeByExcelFileAndOID_Methods.ActionListenertextField_Year(textField_Year, btn_StartGenerateTable);
-		CheckCodeByExcelFileAndOID_Methods.ActionListener_Btn_StartGenerateTable_PersonStatus(btn_StartGenerateTable, panel_AllSaerch, tablePane, sp, progressBarA);
+		CheckCodeByExcelFileAndOID_Methods.ActionListenerBtnBackToTable(btnBackToTable, textArea, tablePane,
+				panel_AllSaerch, scrollPane);
+		CheckCodeByExcelFileAndOID_Methods.ActionListener_Btn_StartGenerateTable_DataOID(textArea, btn_StartGenerateTable, panel_AllSaerch, tablePane, sp, progressBarA);
 		
-		PersonReference_PersonStatus_Methods.ActionListener_Btn_ExportToExcel(btn_Export, tablePane);
+		CheckCodeByExcelFileAndOID_Methods.ActionListener_Btn_ExportToExcel(btn_Export, tablePane);
 		
 		setVisible(true);
 		round.StopWindow();
@@ -162,6 +155,9 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 	}
 
 	private JPanel InsertStartPanel() {
+		
+		String referencePerson_UpDataBD = ReadFileBGTextVariable.getGlobalTextVariableMap().get("referencePerson_UpDataBD");
+		
 		JPanel panel_4 = new JPanel();
 		FlowLayout fl_panel_4 = (FlowLayout) panel_4.getLayout();
 		fl_panel_4.setAlignment(FlowLayout.LEFT);
@@ -176,36 +172,11 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 		panel_4.add(lbl_textField_Year);
 
 		textField_Year = new JTextField(curentYear);
+		textField_Year.setEditable(false);
 		panel_4.add(textField_Year);
 		textField_Year.setColumns(4);
 
 		TextFieldJustNumbers(textField_Year);
-		
-		lbl_EGN = new JLabel("ЕГН");
-		lbl_EGN.setPreferredSize(new Dimension(50, 20));
-		lbl_EGN.setHorizontalAlignment(SwingConstants.RIGHT);
-		lbl_EGN.setBorder(null);
-		lbl_EGN.setAlignmentX(0.5f);
-		panel_4.add(lbl_EGN);
-		
-		textEGN = new JTextField();
-		textEGN.setColumns(8);
-		panel_4.add(textEGN);
-		TextFieldJustNumbers(textEGN);
-		
-		
-		JLabel lblNewLabel_3 = new JLabel("Фирма");
-		lblNewLabel_3.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_3.setPreferredSize(new Dimension(100, 20));
-		panel_4.add(lblNewLabel_3);
-
-		choice_Firm = new Choice();
-		choice_Firm.setPreferredSize(new Dimension(150, 20));
-		choice_Firm.add("АЕЦ Козлодуй");
-		choice_Firm.add("Външни организации");
-		panel_4.add(choice_Firm);
-
-		addItem(choice_Firm, listFirm);
 		
 		JLabel lblNewLabel_6 = new JLabel("");
 		lblNewLabel_6.setPreferredSize(new Dimension(45, 10));
@@ -216,7 +187,20 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 		btn_StartGenerateTable.setPreferredSize(new Dimension(80, 20));
 		btn_StartGenerateTable.setMargin(new Insets(2, 2, 2, 2));
 	
+		btnBackToTable = new JButton("Към таблицата");
+		panel_4.add(btnBackToTable);
+		btnBackToTable.setMargin(new Insets(2, 5, 2, 5));
+		btnBackToTable.setPreferredSize(new Dimension(125, 23));
+		btnBackToTable.setEnabled(false);
+		
+		btnUpDataBD = new JButton(referencePerson_UpDataBD);
+		btnUpDataBD.setPreferredSize(new Dimension(105, 20));
+		btnUpDataBD.setMargin(new Insets(2, 2, 2, 2));
+		panel_4.add(btnUpDataBD);
 
+		ActionListenerBtnUpDataBD();
+		
+		
 		return panel_4;
 	}
 
@@ -327,16 +311,39 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 		});
 	}
 
-	
-	
-	
+	private void ActionListenerBtnUpDataBD() {
 
-	private void addItem(Choice comboBox, List<String> list) {
-		comboBox.removeAll();
-		for (String otdel : list) {
-			comboBox.add(otdel);
-		}
+		btnUpDataBD.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String Menu_CheckKodeInExcellFilesAndOID_Title = ReadFileBGTextVariable.getGlobalTextVariableMap().get("Menu_CheckKodeInExcellFilesAndOID_Title");
+				 ActionIcone round = new ActionIcone("Синхронизирам данните на ОиД", "");
+				 final Thread thread = new Thread(new Runnable() {
+				     @Override
+				     public void run() {
+				    	 ProcessBuilder pb;
+				    	 try {
+				 			pb = AccessRunner.runWithWorkgroup();
+				 			 Process proc = pb.start();
+				 			System.out.println("Access стартиран. Изчакване да приключи...");
+
+				 	        int exitCode = proc.waitFor();  // Тук Java блокира докато Access процеса приключи
+				 	        System.out.println("Access приключи с код: " + exitCode);
+				 	        dispose(); // Destroy the JFrame object
+				 	        
+				 	       new CheckCodeByExcelFileAndOID_Frame(Menu_CheckKodeInExcellFilesAndOID_Title, round);
+				 	       
+				 		} catch (IOException | InterruptedException e1) {
+				 			e1.printStackTrace();
+				 		}		
+				     }
+				    });
+				    thread.start();	
+			}
+
+		});
+
 	}
+	
 
 	public static ArrayList<String> getListStringOtdel(List<Workplace> valueWorkplaceByObject) {
 		ArrayList<String> list = new ArrayList<String>();
@@ -345,20 +352,20 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 		}
 		return list;
 	}
-
+	
+	public static String getDateNewDBAccsess() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		File fis = new File("k:\\Docs\\Д-я БиК\\КЦ ПД\\Обща\\04 Поща\\Петър\\DBaseApp\\NewDB.mdb");
+		long lastModifiedFile = fis.lastModified();
+		String stringday = sdf.format(lastModifiedFile);
+		
+		return stringday;
+		}
 	
 	public static JTextField getTextField_Year() {
 		return textField_Year;
 	}
-
-	
-	public static Choice getChoice_Firm() {
-		return choice_Firm;
-	}
-
-
-
-	
 
 	public static JProgressBar getProgressBar() {
 		return progressBarA;
@@ -367,13 +374,12 @@ public class CheckCodeByExcelFileAndOID_Frame extends JFrame {
 	public static void setProgressBar(JProgressBar progressBar) {
 		progressBarA = progressBar;
 	}
-
 	
 	public static JButton getBtn_Export() {
 		return btn_Export;
 	}
-
-	public static JTextField getTextEGN() {
-		return textEGN;
+	
+	public static JButton getBtnBackToTable() {
+		return btnBackToTable;
 	}
 }

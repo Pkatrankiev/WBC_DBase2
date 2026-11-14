@@ -163,6 +163,7 @@ public class PersonStatusNewDAO {
 		return true;
 	}
 
+	
 	private static PersonStatusNew setPersonStatusNew(ResultSet result) throws SQLException {
 		PersonStatusNew PersonStatusNew = new PersonStatusNew();
 
@@ -912,7 +913,7 @@ public class PersonStatusNewDAO {
 	}
 	
 	
-public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, JProgressBar progressBar) {
+	public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, JProgressBar progressBar) {
 		
 
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
@@ -943,10 +944,10 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 		return listPersonStatusNew;
 	}
 
-	public static List<PersonStatusNew> getValuePersonStatusNewByYearWithProgressBar(String year, Person person, JProgressBar fProgressBar, double stepForProgressBar) {
+	public static List<PersonStatusNew> getValuePersonStatusNewByYearWithProgressBar(String year, Person person, JProgressBar fProgressBar, double stepForProgressBar, double startProgressBar) {
 		
 
-		double ProgressBarSize = 0;
+		double ProgressBarSize = startProgressBar;
 		Connection connection = conectToAccessDB.conectionBDtoAccess();
 		String sql = "SELECT * FROM PersonStatusNew where  Year = "+ year;
 		if(year.isEmpty()) {
@@ -1115,5 +1116,38 @@ public static List<PersonStatusNew> getValuePersonStatusNewByYear(String year, J
 		return listPersonStatusNew.get(0);
 	}
 
+	public static PersonStatusNew getLastValuePersonStatusNew() {
+
+		Connection connection = conectToAccessDB.conectionBDtoAccess();
+		String sql = "SELECT * FROM PersonStatusNew ORDER BY personStatusNew_ID DESC LIMIT 1";
+		List<PersonStatusNew> listPersonStatusNew = new ArrayList<PersonStatusNew>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet result = preparedStatement.executeQuery();
+
+			while (result.next()) {
+
+				listPersonStatusNew.add(setPersonStatusNew(result));
+
+			}
+			preparedStatement.close();
+			connection.close();
+
+		} catch (SQLException e) {
+			ResourceLoader.appendToFile(e);
+			e.printStackTrace();
+		}
+
+		if (listPersonStatusNew.size() == 0)
+			return null;
+
+		return listPersonStatusNew.get(0);
+	}
+
+
+	
+	
+	
 	
 }

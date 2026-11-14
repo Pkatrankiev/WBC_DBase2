@@ -1,28 +1,17 @@
 package DozeArt;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import Aplication.ActionIcone;
-import Aplication.AplicationMetods;
-import Aplication.ReadFileBGTextVariable;
-import PersonManagement.SelectSpisPrilFrame;
-
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-
-import java.awt.FlowLayout;
 import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -31,25 +20,32 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
 import java.util.List;
 
-import javax.swing.JRadioButton;
-import java.awt.Component;
-import javax.swing.JTextField;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import java.awt.ComponentOrientation;
-import javax.swing.JScrollBar;
-import java.awt.Color;
-import javax.swing.border.LineBorder;
-import java.awt.Insets;
-import javax.swing.border.MatteBorder;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-
-import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+
+import Aplication.ActionIcone;
+import Aplication.AplicationMetods;
+import Aplication.ReadFileBGTextVariable;
+import InsertMeasuting.HoldButton;
 
 @SuppressWarnings("serial")
 public class DozeArtFrame extends JDialog {
@@ -115,11 +111,11 @@ public class DozeArtFrame extends JDialog {
 	
 	private static String[] dimentionStr = {"Bq","µCi"};
 
-	private static JButton buttonToPreviosMinus;
-	private static JButton buttonToPreviosPlus;
+	private static HoldButton buttonToPreviosMinus;
+	private static HoldButton buttonToPreviosPlus;
 	
-	private static JButton buttonToPrePreviosMinus;
-	private static JButton buttonToPrePreviosPlus;
+	private static HoldButton buttonToPrePreviosMinus;
+	private static HoldButton buttonToPrePreviosPlus;
 	
 	private static JLabel lbl_DozeAll;
 	
@@ -189,9 +185,9 @@ public class DozeArtFrame extends JDialog {
 		DozeArt_Methods.ActionListenerSetDateByDatePicker(lbl_Icon_Pred, textField_dateMeasurPrev);
 		DozeArt_Methods.ActionListenerSetDateByDatePicker(lbl_Icon_PrePred, textField_dateMeasurPrePrev);
 		boolean toPrevios = true;
-		ScrollBar_Methods.scrollBarToPreviosListener(buttonToPreviosMinus, buttonToPreviosPlus, lbl_DateToPrevios, lbl_Count_DayToPrevios, toPrevios);
+//		ScrollBar_Methods.HoldButtonscrollBarToPreviosListener(buttonToPreviosMinus, buttonToPreviosPlus, lbl_DateToPrevios, lbl_Count_DayToPrevios, toPrevios);
 		toPrevios = false;
-		ScrollBar_Methods.scrollBarToPreviosListener(buttonToPrePreviosMinus, buttonToPrePreviosPlus, lbl_DateToPrePrevios, lbl_Count_DayToPrePrevios, toPrevios);
+//		ScrollBar_Methods.HoldButtonscrollBarToPreviosListener(buttonToPrePreviosMinus, buttonToPrePreviosPlus, lbl_DateToPrePrevios, lbl_Count_DayToPrePrevios, toPrevios);
 		
 		DozeArt_Methods.ActionListenerSetDateByDatePicker_Spetial(lbl_Icon_Start, textField_dateMeasur_Start);
 		DozeArt_Methods.ActionListenerSetDateByDatePicker_Spetial(lbl_Icon_End, textField_dateMeasur_End);
@@ -1438,14 +1434,58 @@ public class DozeArtFrame extends JDialog {
 	
 		panel_DateMeasur.add(panelButton_DateNawToPrev);
 		
-		buttonToPreviosMinus = new JButton("-");
+		
+		HoldButton buttonToPreviosMinus = new HoldButton("-", () -> {
+			
+			int min = ScrollBar_Methods.getMax_scrollBarToPrevios();
+    		min = 0; 
+    		
+			int count = Integer.parseInt(lbl_Count_DayToPrevios.getText());
+			if(count > min) {
+				count-=1;
+				try {
+					String output = ScrollBar_Methods.setNewDate(count);
+					lbl_DateToPrevios.setText(output);
+					lbl_Count_DayToPrevios.setText(count+"");
+					 
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}	
+			}
+				
+        });
+		
+		
+		
+		
 		buttonToPreviosMinus.setMargin(new Insets(2, 2, 2, 2));
 		buttonToPreviosMinus.setPreferredSize(new Dimension(30, 14));
 		buttonToPreviosMinus.setMinimumSize(new Dimension(30, 14));
 		buttonToPreviosMinus.setMaximumSize(new Dimension(30, 14));
 		panelButton_DateNawToPrev.add(buttonToPreviosMinus);
 		
-		buttonToPreviosPlus = new JButton("+");
+		buttonToPreviosPlus = new HoldButton("+", () -> {
+			
+			
+				 int max = ScrollBar_Methods.getMax_scrollBarToPrevios();
+			
+			int count = Integer.parseInt(lbl_Count_DayToPrevios.getText());
+			if(count < max) {
+				count++;
+				try {
+					String output = ScrollBar_Methods.setNewDate(count);
+					lbl_DateToPrevios.setText(output);
+					lbl_Count_DayToPrevios.setText(count+"");
+					 
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}	
+			}
+				
+        });
+		
+	
+		
 		buttonToPreviosPlus.setMargin(new Insets(2, 2, 2, 2));
 		buttonToPreviosPlus.setPreferredSize(new Dimension(30, 14));
 		buttonToPreviosPlus.setMinimumSize(new Dimension(30, 14));
@@ -1473,14 +1513,51 @@ public class DozeArtFrame extends JDialog {
 	
 		panel_DateMeasur.add(panel_Button_DateNawToPrePrev);
 		
-		buttonToPrePreviosMinus = new JButton("-");
+		buttonToPrePreviosMinus = new HoldButton("-", () -> {
+			
+			int min = ScrollBar_Methods.getMax_scrollBarToPrevios();
+    		int count = Integer.parseInt(lbl_Count_DayToPrePrevios.getText());
+			if(count > min) {
+				count-=1;
+				try {
+					String output = ScrollBar_Methods.setNewDate(count);
+					lbl_DateToPrePrevios.setText(output);
+					lbl_Count_DayToPrePrevios.setText(count+"");
+					 
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}	
+			}
+				
+        });
+		
+	
 		buttonToPrePreviosMinus.setMargin(new Insets(2, 2, 2, 2));
 		buttonToPrePreviosMinus.setPreferredSize(new Dimension(30, 14));
 		buttonToPrePreviosMinus.setMinimumSize(new Dimension(30, 14));
 		buttonToPrePreviosMinus.setMaximumSize(new Dimension(30, 14));
 		panel_Button_DateNawToPrePrev.add(buttonToPrePreviosMinus);
 		
-		buttonToPrePreviosPlus = new JButton("+");
+		buttonToPrePreviosPlus = new HoldButton("+", () -> {
+					
+			 int max = ScrollBar_Methods.getMax_scrollBarToPrePrevios();
+		
+		int count = Integer.parseInt(lbl_Count_DayToPrePrevios.getText());
+		if(count < max) {
+			count++;
+			try {
+				String output = ScrollBar_Methods.setNewDate(count);
+				lbl_DateToPrePrevios.setText(output);
+				lbl_Count_DayToPrePrevios.setText(count+"");
+				 
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}	
+		}
+			
+  });
+		
+		
 		buttonToPrePreviosPlus.setMargin(new Insets(2, 2, 2, 2));
 		buttonToPrePreviosPlus.setPreferredSize(new Dimension(30, 14));
 		buttonToPrePreviosPlus.setMinimumSize(new Dimension(30, 14));

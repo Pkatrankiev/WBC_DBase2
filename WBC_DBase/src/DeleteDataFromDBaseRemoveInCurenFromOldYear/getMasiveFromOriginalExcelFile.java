@@ -30,6 +30,7 @@ import Aplication.ReadMeasuringFromExcelFile;
 import Aplication.ReadPersonStatusFromExcelFile;
 import Aplication.ReadResultsWBCFromExcelFile;
 import Aplication.ReadSpisak_PrilogeniaFromExcelFile;
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.PersonDAO;
 import BasiClassDAO.PersonStatusNewDAO;
@@ -43,6 +44,7 @@ import BasicClassAccessDbase.ResultsWBC;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 import WBCUsersLogin.WBCUsersLogin;
 
@@ -481,7 +483,10 @@ public class getMasiveFromOriginalExcelFile {
 							+ sdfrmt.format(personStatusDbase.getStartDate()) + " "
 							+ sdfrmt.format(personStatusDbase.getEndDate()) + " "
 							+ personStatusDbase.getWorkplace().getOtdel());
+					String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStatusDbase);
 					PersonStatusNewDAO.deleteValuePersonStatusNew(personStatusDbase);
+					InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Delete", textInstance, WBCUsersLogin.getCurentUser());
+					
 					f++;
 				}
 
@@ -555,7 +560,9 @@ public class getMasiveFromOriginalExcelFile {
 			}
 			}
 			
+			String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStat);
 			PersonStatusNewDAO.deleteValuePersonStatusNew(personStat);
+			InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Delete", textInstance, WBCUsersLogin.getCurentUser());
 			
 			aProgressBar.setValue((int) ProgressBarSize);
 			ProgressBarSize += stepForProgressBar;

@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +36,6 @@ import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,9 +51,9 @@ import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.text.BadLocationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -67,13 +65,12 @@ import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
-import Aplication.RemouveDublikateFromList;
 import Aplication.ResourceLoader;
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.KodeGenerateDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
-import BasiClassDAO.PersonStatusDAO;
 import BasiClassDAO.PersonStatusNewDAO;
 import BasiClassDAO.Spisak_PrilogeniaDAO;
 import BasiClassDAO.UsersWBCDAO;
@@ -83,19 +80,17 @@ import BasicClassAccessDbase.KodeGenerate;
 import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
-import BasicClassAccessDbase.PersonStatus;
 import BasicClassAccessDbase.PersonStatusNew;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
 import BasicClassAccessDbase.Workplace;
 import BasicClassAccessDbase.Zone;
 import DatePicker.DatePicker;
-import DozeArt.DozeArtFrame;
-import DozeArt.DozeArt_Methods;
+import InsertMeasuting.LockedExcelFileWriter;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
 import PersonManagement.OpenedExcelClass;
 import PersonManagement.PersonManegement;
-import PersonManagement.PersonelManegementFrame;
 import PersonManagement.SelectSpisPrilFrame;
 import PersonReference.PersonReferenceExportToExcell;
 import PersonReference.PersonReferenceFrame;
@@ -145,7 +140,7 @@ public class SpisakPersonelManegementMethods {
 	static Object[][] dataTable;
 	
 
-	static KodeGenerate kodeGen;
+	static List<KodeGenerate> kodeGen;
 
 //	static List<String> listZvenaFromDBase = SearchFreeKodeMethods.generateListZvenaFromDBase();
 //	static List<List<String>> ListZvenaFromExcellFiles = SearchFreeKodeMethods.generateListZvenaFromExcellFiles();
@@ -187,6 +182,7 @@ public class SpisakPersonelManegementMethods {
 					int zoneID = ZoneDAO.getValueZoneByNameTerritory(getZonaFromRadioButtons()).getId_Zone();
 					kodeGen = getKodeGenerate(zoneID);
 					zoneArea = generateTextKodeArea(zoneID);
+					System.out.println(zoneArea);
 					SpisakPersonelManegementFrame.getLbl_OtdelKodeArea().setText(zoneArea);
 					btn_ReadFileListPerson.setEnabled(true);
 				} else {
@@ -320,7 +316,7 @@ public class SpisakPersonelManegementMethods {
 				
 				System.out.println("dataTable.length " + dataTable.length);
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy");
-				boolean checkbx_EnterInZone;
+				
 				Choice comboBox_svePerson_Otdel = SpisakPersonelManegementFrame.getComboBox_Otdel();
 				Choice comboBox_savePerson_Firm = SpisakPersonelManegementFrame.getComboBox_Firm();
 				JTextField textField_svePerson_Spisak = SpisakPersonelManegementFrame.getTextField_svePerson_Spisak();
@@ -341,6 +337,31 @@ public class SpisakPersonelManegementMethods {
 
 						int lastrekord = dataTable.length;
 
+						
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+						
+						String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
+						String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
+						String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
+						
+						String filePath[] = SaveToPersonelORExternalFile.getmasivePathToPersonalORExternalExcelFile();
+						String pathFile = filePath[1];
+						String firmName = comboBox_savePerson_Firm.getSelectedItem();
+						if (firmName.equals("АЕЦ Козлодуй")) {
+							pathFile = filePath[0];
+							
+						}
+
+						try {
+							
+							// Четене-модификация-запис под ексклузивно заключване на файла (FileLock),
+							// за да не се загуби информация при едновременен запис от друг потребител.
+							// Резервното копие (в "destinationDir", последните 3) се прави от
+							// LockedExcelFileWriter под същото заключване.
+				 LockedExcelFileWriter.modifyWorkbookFileWithLock(pathFile, workbook -> {			
+						
+					 boolean checkbx_EnterInZone;
+						
 						String[] infoForPersonFromFrame = new String[8];
 						for (int i = 0; i < lastrekord; i++) {
 
@@ -415,7 +436,7 @@ public class SpisakPersonelManegementMethods {
 									SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy");
 									Date curentDate = Calendar.getInstance().getTime();
 									try {
-										curentDate = sdf2.parse(sdf2.format(curentDate));
+									 	curentDate = sdf2.parse(sdf2.format(curentDate));
 									} catch (ParseException e1) {
 
 									}
@@ -425,6 +446,8 @@ public class SpisakPersonelManegementMethods {
 										PersonStatusNewDAO.setValuePersonStatusNew(person, workplace,
 												spisPril.getFormulyarName(), spisPril.getStartDate(),
 												spisPril.getEndDate(), spisPril.getYear(), user, curentDate, comment);
+										String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByLastPersonStatusNew();
+										InstanceDAO.setValueInstance("PersonStatusNew", "PersonManagementBySpis", "Insert", textInstance, user);
 									
 								}
 
@@ -438,14 +461,30 @@ public class SpisakPersonelManegementMethods {
 									UsersWBC user = WBCUsersLogin.getCurentUser();
 									SaveToPersonelORExternalFile.saveInfoFromPersonManegementToExcelFile(person,
 											comboBox_savePerson_Firm.getSelectedItem(), spisPril, user, comment,
-											workplace, oldOtdelPerson, checkbx_EnterInZone, false, obhodenList);
+											workplace, oldOtdelPerson, checkbx_EnterInZone, false, obhodenList,  workbook);
 
 								}
 							}
 
 						}
+						return null;
+							});
+
+						} catch (FileNotFoundException | OldExcelFormatException | LockedExcelFileWriter.FileLockTimeoutException e3) {
+							ResourceLoader.appendToFile(e3);
+							e3.printStackTrace();
+							JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);
+
+							} catch (IOException e3) {
+							ResourceLoader.appendToFile(e3);
+							e3.printStackTrace();
+							JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
+						}
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+						
+						
 					}
-				}
+				
 				textArea.setText("OK");
 				SpisakPersonelManegementFrame.viewInfoPanel();
 				textField_svePerson_Spisak.setText("");
@@ -453,7 +492,7 @@ public class SpisakPersonelManegementMethods {
 				textField_savePerson_EndDate.setText("");
 				dataTable = null;
 				GeneralMethods.setDefaultCursor(frame);
-
+				}
 			}
 
 		});
@@ -667,8 +706,8 @@ public class SpisakPersonelManegementMethods {
 //		return listPersonFromFile;
 	}
 
-	private static KodeGenerate getKodeGenerate(int zoneID) {
-		KodeGenerate kodeGen = null;
+	private static List<KodeGenerate> getKodeGenerate(int zoneID) {
+		List<KodeGenerate> kodeGen = null;
 		String otdelPerson = SpisakPersonelManegementFrame.getComboBox_Otdel().getSelectedItem();
 		Workplace workPl = WorkplaceDAO.getActualValueWorkplaceByOtdel(otdelPerson);
 		if (workPl != null) {
@@ -824,7 +863,7 @@ public class SpisakPersonelManegementMethods {
 					person.setFirstName(infoForPersonFromFrame[5]);
 					person.setSecondName(infoForPersonFromFrame[6]);
 					person.setLastName(infoForPersonFromFrame[7]);
-					PersonDAO.updateValuePerson(person);
+					PersonDAO.updateValuePerson(person, "PersonManegement");
 				}
 				if (fromListPersonManegement) {
 					return true;
@@ -1116,19 +1155,13 @@ public class SpisakPersonelManegementMethods {
 
 	private static List<Spisak_Prilogenia> getSisPril(String curentYear2, Workplace workPl) {
 		List<Integer> listSpInt = new ArrayList<>();
-		String PerStatNewSet = ReadFileBGTextVariable.getGlobalTextVariableMap().get("PerStatNewSet");
-		if (PerStatNewSet.equals("1")) {
+	
 			List<Spisak_Prilogenia> list = Spisak_PrilogeniaDAO.getListSpisak_PrilogeniaByYear_Workplace(curentYear,
 					workPl.getId_Workplace());
 			for (Spisak_Prilogenia spPr : list) {
 				listSpInt.add(spPr.getSpisak_Prilogenia_ID());
 			}
-		} else {
-			List<PersonStatus> list = PersonStatusDAO.getValuePersonStatusByWorkplace_Year(workPl, curentYear);
-			for (PersonStatus personStatus : list) {
-				listSpInt.add(personStatus.getSpisak_prilogenia().getSpisak_Prilogenia_ID());
-			}
-		}
+		
 		List<Integer> listSp2 = removeDuplicatess(listSpInt);
 		List<Spisak_Prilogenia> listSp = new ArrayList<>();
 		for (Integer personStatusInt : listSp2) {
@@ -1317,51 +1350,61 @@ public class SpisakPersonelManegementMethods {
 
 	public static String generateTextKodeArea(int zoneID) {
 		String textToolTipText = "";
-		
-		
-		if (kodeGen != null) {
-			String leterL = kodeGen.getLetter_L();
-			String leterR = kodeGen.getLetter_R();
-			int startCount = kodeGen.getStartCount();
-			int endCount = kodeGen.getEndCount();
-
+		if (kodeGen.size() >0) {
+			String[] leterL = new String[kodeGen.size()];
+			String[] leterR = new String[kodeGen.size()];
+			int[] startCount = new int[kodeGen.size()];
+			int[] endCount = new int[kodeGen.size()];
+			for (int i = 0; i < kodeGen.size(); i++) {
+				
+				leterL[i] = kodeGen.get(i).getLetter_L();
+				leterR[i] = kodeGen.get(i).getLetter_R();
+				startCount[i] = kodeGen.get(i).getStartCount();
+				endCount[i] = kodeGen.get(i).getEndCount();
+				
 			if (zoneID == 1) {
 
-				textToolTipText = svePersonManegement_textOtdelArea + " " + startCount + "÷" + endCount + "|" + leterR;
+				textToolTipText += startCount[i] + "÷" + endCount[i] + "|" + leterR[i]+ "; ";
 			}
 
 			if (zoneID == 2) {
-				textToolTipText = svePersonManegement_textOtdelArea + " " + leterL + "|" + startCount + "÷" + endCount;
+				textToolTipText +=  leterL[i] + "|" + startCount[i] + "÷" + endCount[i]+ "; ";
 			}
 			if (zoneID == 3) {
 
-				textToolTipText = svePersonManegement_textOtdelArea + " " + "Н|" + startCount + "÷" + endCount + "|" + leterR;
+				textToolTipText +=  "Н|" + startCount[i] + "÷" + endCount[i] + "|" + leterR[i]+ "; ";
 			}
 		}
+		}
 
-		return textToolTipText;
+		return  svePersonManegement_textOtdelArea + " " + (textToolTipText.length()>2 ? textToolTipText.substring(0, textToolTipText.length()-2): "");
 	}
 
 	public static boolean checkKorectKodeArea(int zoneID, int zoneKode_Colum, DefaultTableModel model, int Index_row) {
 		boolean fl = true;
-		if (kodeGen != null) {
-			String leterL = kodeGen.getLetter_L();
-			String leterR = kodeGen.getLetter_R();
+		if (kodeGen.size() >0) {
+			String[] leterL = new String[kodeGen.size()];
+			String[] leterR = new String[kodeGen.size()];
+			int[] startCount = new int[kodeGen.size()];
+			int[] endCount = new int[kodeGen.size()];
 			String strNum = "";
-			int startCount = kodeGen.getStartCount();
-			int endCount = kodeGen.getEndCount();
 
 			String kode = model.getValueAt(Index_row, zoneKode_Colum).toString();
 			int sizeKode = kode.length();
 			String leter = null;
 			String Fleter = null;
-
+				for (int i = 0; i < kodeGen.size(); i++) {
+				
+				leterL[i] = kodeGen.get(i).getLetter_L();
+				leterR[i] = kodeGen.get(i).getLetter_R();
+				startCount[i] = kodeGen.get(i).getStartCount();
+				endCount[i] = kodeGen.get(i).getEndCount();
 			if (sizeKode > 0) {
 				if (zoneID == 1) {
 					if (!kode.isEmpty() && !kode.equals("ЕП-2") && !kode.equals("н")) {
 						leter = kode.substring(sizeKode - 1, sizeKode);
 						strNum = kode.substring(0, sizeKode - 1);
-						Fleter = leterR;
+						Fleter = leterR[i];
 					}
 				}
 
@@ -1369,12 +1412,15 @@ public class SpisakPersonelManegementMethods {
 					if (!kode.isEmpty() && !kode.equals("н")) {
 						leter = kode.substring(0, 1);
 						strNum = kode.substring(1, sizeKode);
-						Fleter = leterL;
+						Fleter = leterL[i];
 					}
 				}
-				fl = checkLeterAndAreaNumber(Fleter, startCount, endCount, leter, strNum);
+				fl = checkLeterAndAreaNumber(Fleter, startCount[i], endCount[i], leter, strNum);
+				if(fl) {
+					return fl;	
+				}
 			}
-
+		}
 		}
 		return fl;
 	}

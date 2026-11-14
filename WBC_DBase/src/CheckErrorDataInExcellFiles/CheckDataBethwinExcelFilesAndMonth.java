@@ -2,7 +2,6 @@ package CheckErrorDataInExcellFiles;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -407,9 +406,8 @@ public class CheckDataBethwinExcelFilesAndMonth {
 						k = k + 17;
 						cell_Doze = sheet1.getRow(row0).getCell(k);
 						doze = ReadExcelFileWBC.getStringEGNfromCell(cell_Doze);
-						try {
-							if (!ReadExcelFileWBC.getStringEGNfromCell(cell_date).isEmpty() && CheckCurentDataInExcelFilesMetod.checkDateInKurentYeare(new SimpleDateFormat("dd.MM.yy")
-									.parse(ReadExcelFileWBC.getStringEGNfromCell(cell_date)))) {
+						
+							if (!ReadExcelFileWBC.getStringEGNfromCell(cell_date).isEmpty() && CheckCurentDataInExcelFilesMetod.checkDateInKurentYeare(date)) {
 								masiveStr0[mont][maxindexMonth[mont]][0] = EGN;
 								masiveStr0[mont][maxindexMonth[mont]][1] = doze;
 								masiveStr0[mont][maxindexMonth[mont]][2] = strDate;
@@ -417,9 +415,6 @@ public class CheckDataBethwinExcelFilesAndMonth {
 
 								maxindexMonth[mont]++;
 							}
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
 						if (k > 252) {
 							k = 6;
 							sheet1 = workbook.getSheetAt(2);

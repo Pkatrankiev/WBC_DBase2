@@ -2,8 +2,13 @@ package MenuClasses;
 
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,9 +19,15 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -26,22 +37,8 @@ import Aplication.MyDarkerLaf;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ResourceLoader;
 import BasicClassAccessDbase.UsersWBC;
-
 import UpdateDBaseFromExcelFiles.UpdateBDataFromExcellFiles;
 import WBCUsersLogin.WBCUsersLogin;
-
-
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Component;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 
 public class WBC_MainWindowFrame extends JFrame {
@@ -170,9 +167,9 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.add(new Menu_Reference_PersonMeasur());
 		personReferenceMenu.add(new Menu_ReferenceMeasuringLab());
 		personReferenceMenu.add(new Menu_MeasurInOderLab());
-		personReferenceMenu.add(new Menu_ResultFromMeasuringReference());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_ReferenceKontrolPerson());
+		personReferenceMenu.add(new Menu_QueryExecutor());
 		
 		return personReferenceMenu;
 	}
@@ -190,6 +187,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		personReferenceMenu.add(new Menu_Measuring_Results());
 		personReferenceMenu.add(new Menu_ChangeKodeInKD());
 		personReferenceMenu.add(new Menu_DeleteDublicateShortEGN());
+		personReferenceMenu.add(new Menu_InstanceMenagement());
 		personReferenceMenu.addSeparator();
 		personReferenceMenu.add(new Menu_DeleteDataFromDBaseRemoveInCurenFromOldYear());
 		
@@ -290,6 +288,7 @@ public class WBC_MainWindowFrame extends JFrame {
 		 checkErrorDataMenu.setMnemonic(KeyEvent.VK_E);
 			
 		 checkErrorDataMenu.add(new Menu_CheckErrorDataInExcellFiles());
+		 checkErrorDataMenu.add(new Menu_CheckKodeInExcellFilesAndOID());
 		return checkErrorDataMenu;
 	}
 	

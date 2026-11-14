@@ -2,7 +2,6 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 
-
 import Aplication.ReadFileBGTextVariable;
 import DeleteDataFromDBaseRemoveInCurenFromOldYear.DeleteDataFromDBaseRemoveInCurenFromOldYear_Frame;
 

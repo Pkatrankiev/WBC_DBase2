@@ -1,8 +1,6 @@
 package InsertMeasuting;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -14,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,6 +34,14 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 	
 	public static void SaveListReportMeasurClassToExcellFile(ActionIcone round, List<ReportMeasurClass> list,
 			boolean forPersonalExcellFile) {
+
+		if (!forPersonalExcellFile) {
+			// Това е ново, самостоятелно извикване (не рекурсивния опит към EXTERNAL.xls
+			// по-долу) - изчистваме статично натрупания списък от предишен запис, за да
+			// не се пренасят обекти между отделни отваряния на AutoInsertMeasutingFrame
+			// в рамките на едно и също стартиране на приложението (без рестарт).
+			listReportMeasurClass.clear();
+		}
 
 		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
 		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
@@ -64,17 +69,26 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 		}
 
 		try {
+			LockedExcelFileWriter.modifyWorkbookFileWithLock(pathFile, workbook -> {
 			int index = 1;
 			for (ReportMeasurClass reportMeasur : list) {
-			FileInputStream inputStream = new FileInputStream(pathFile);
-			Workbook workbook = new HSSFWorkbook(inputStream);
+
+			// Нулираме флага за ВСЕКИ обект поотделно - иначе, ако предходен обект (в
+			// текущия списък или от предишна сесия на прозореца, без рестарт на
+			// приложението) е оставил flNotDublicateData = false след избор "NotSave" на
+			// дублиран запис, следващ обект, който изобщо не е намерен в листа
+			// (row < 0, saveNuclideDataToExcelFile въобще не се извиква), наследява
+			// чуждото false и бива погрешно пропуснат от listForNotSaveMeasur - никога не
+			// стига до опита за запис в EXTERNAL.xls.
+			flNotDublicateData = true;
 
 			Person person = reportMeasur.getMeasur().getPerson();
 			String namePerson = person.getFirstName()+" "+person.getSecondName()+" "+person.getLastName();
 			roundWithText(round, namePerson , index);
-			
+
 				if (reportMeasur.getToExcell()) {
-					String excelPosition = SaveMeasurToExcel(reportMeasur, workbook);
+					  
+					 String excelPosition = SaveMeasurToExcel(reportMeasur, workbook);
 					if (!excelPosition.isEmpty()) {
 						Measuring measur = reportMeasur.getMeasur();
 						measur.setExcelPosition(excelPosition);
@@ -85,7 +99,7 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 						if(flNotDublicateData) {
 							listForNotSaveMeasur.add(reportMeasur);
 						}
-						
+
 					}
 				}else {
 					Measuring measur = reportMeasur.getMeasur();
@@ -94,13 +108,13 @@ public class SaveReportMeasurTo_PersonelORExternalExcelFile {
 					reportMeasur.setMeasur(measur);
 					listReportMeasurClass.add(reportMeasur);
 				}
-			
-			FileOutputStream fileOut = new FileOutputStream(pathFile);
-			workbook.write(fileOut);
-			fileOut.close();
+
 			index ++;
 			}
-		} catch (FileNotFoundException | OldExcelFormatException e) {
+			return null;
+			});
+			
+		} catch (FileNotFoundException | OldExcelFormatException | LockedExcelFileWriter.FileLockTimeoutException e) {
 			ResourceLoader.appendToFile(e);
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);

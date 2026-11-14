@@ -54,7 +54,7 @@ public class OID_Person_WBCDAO {
 		List<OID_Person_WBC> listKodeStatus = new ArrayList<>();
 		
 		Connection connection = conectToAccessDB.conectionBDtoAccessOID();
-		System.out.println("conectionBDtoAccessOID "+ connection.TRANSACTION_READ_COMMITTED);
+		System.out.println("conectionBDtoAccessOID "+ Connection.TRANSACTION_READ_COMMITTED);
 		String sql;
 		try {
 			
@@ -99,7 +99,7 @@ public class OID_Person_WBCDAO {
 		List<OID_Person_WBC> listKodeStatus = new ArrayList<>();
 		
 		Connection connection = conectToAccessDB.conectionBDtoAccessOID();
-		System.out.println("conectionBDtoAccessOID "+ connection.TRANSACTION_READ_COMMITTED);
+		System.out.println("conectionBDtoAccessOID "+ Connection.TRANSACTION_READ_COMMITTED);
 		String sql;
 		try {
 			

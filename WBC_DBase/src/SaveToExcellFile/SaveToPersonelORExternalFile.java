@@ -1,21 +1,24 @@
 package SaveToExcellFile;
 
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFCreationHelper;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -38,12 +41,10 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.usermodel.*;
 
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadKodeStatusFromExcelFile;
-import Aplication.ResourceLoader;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.Spisak_Prilogenia;
 import BasicClassAccessDbase.UsersWBC;
@@ -51,8 +52,6 @@ import BasicClassAccessDbase.Workplace;
 import PersonManagement.PersonelManegementMethods;
 
 public class SaveToPersonelORExternalFile {
-
-	private static String filePath[] = getmasive();
 
 	private static SimpleDateFormat sdfrmt = new SimpleDateFormat("dd.MM.yy");
 
@@ -64,65 +63,39 @@ public class SaveToPersonelORExternalFile {
 
 	
 	public static void saveInfoFromPersonManegementToExcelFile(Person person, String firmName, Spisak_Prilogenia spPril,
-			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, boolean checkbx_EnterInListChengeKode, boolean obhodenList) {
+			UsersWBC user, String comment, Workplace workplace, String oldWorkplace, boolean checkbx_EnterInZone, 
+			boolean checkbx_EnterInListChengeKode, boolean obhodenList, Workbook workbook) {
 	
-		String falseData = ReadFileBGTextVariable.getGlobalTextVariableMap().get("falseData");
-		String fileIsOpen = ReadFileBGTextVariable.getGlobalTextVariableMap().get("fileIsOpen");
-		String notSelectFile = ReadFileBGTextVariable.getGlobalTextVariableMap().get("notSelectFile");
-
+		
 		workingUser = user;
 		commentText = comment;
 
-		String pathFile = filePath[1];
 		defaltAreaName = "Шаблон";
 		if (firmName.equals("АЕЦ Козлодуй")) {
-			pathFile = filePath[0];
 			defaltAreaName = "Свободен";
 		}
 
-		try {
-			PersonelManegementMethods.copyExcelFileToDestDir(pathFile, null);
-			FileInputStream inputStream = new FileInputStream(pathFile);
-			Workbook workbook = new HSSFWorkbook(inputStream);
 
-			
-			firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
-			
-			writePersonToOtdel(person, workbook);
+				firstAndLastRowForOtdel = getAreaOtdel(workplace, workbook);
 
-			if (spPril != null && !obhodenList) {
-				writeFormulyarNameToOtdel(firmName, spPril, workbook, workplace);
+				writePersonToOtdel(person, workbook);
 
-				writeFormulyarNameToPersonRow(workbook, spPril, person);
-			}
+				if (spPril != null && !obhodenList) {
+					writeFormulyarNameToOtdel(firmName, spPril, workbook, workplace);
 
-			createCellComment(workbook, person);
+					writeFormulyarNameToPersonRow(workbook, spPril, person);
+				}
 
-			saveInfoByObhodenList(obhodenList, spPril, workbook, person, firmName);
-			
-			saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person, firmName, workplace);
-			
-			reformatSheetSpPr(workbook);
-			reformatSheetIzmervane( workbook);
-			
-			FileOutputStream outputStream = new FileOutputStream(pathFile);
-			workbook.write(outputStream);
+				createCellComment(workbook, person);
 
-			workbook.close();
+				saveInfoByObhodenList(obhodenList, spPril, workbook, person, firmName);
 
-			outputStream.flush();
-			outputStream.close();
-			
-		} catch (FileNotFoundException | OldExcelFormatException e) {
-			ResourceLoader.appendToFile(e);
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, fileIsOpen, falseData, JOptionPane.ERROR_MESSAGE);
+				saveInfoByInListChangeKode(checkbx_EnterInListChengeKode, oldWorkplace, spPril, workbook, person,
+						firmName, workplace);
 
-		} catch (IOException e) {
-			ResourceLoader.appendToFile(e);
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, notSelectFile, falseData, JOptionPane.ERROR_MESSAGE);
-		}
+				reformatSheetSpPr(workbook);
+				reformatSheetIzmervane(workbook);
+
 	}
 
 
@@ -394,69 +367,6 @@ public class SaveToPersonelORExternalFile {
 		
 	}
 
-//	private static void setYELLOWandREDCellStyle( Cell cel) {
-//		CellStyle style;
-//		Font font = cel.getSheet().getWorkbook().createFont();
-//		font.setColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
-//		font.setFontName("Times New Roman");
-//		font.setBold(true);
-//		font.setCharSet(10);
-//		style = cel.getSheet().getWorkbook().createCellStyle();
-//		style = cel.getCellStyle();
-////		style.cloneStyleFrom(cel.getCellStyle());
-//		style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-//		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-//		style.setFont(font);
-//		cel.setCellStyle(style);
-//	}
-	
-//	public static void setWHITEandBLACKCellStyle(Cell cel) {
-//		CellStyle style;
-//		Font font = cel.getSheet().getWorkbook().createFont();
-//		font.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
-//		font.setFontName("Times New Roman");
-//		font.setBold(true);
-//		font.setCharSet(10);
-//		style = cel.getSheet().getWorkbook().createCellStyle();
-//		style = cel.getCellStyle();
-////		style.cloneStyleFrom(cel.getCellStyle());
-//		style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-//		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-//		style.setFont(font);
-//		cel.setCellStyle(style);
-//	}
-
-//	private static void setInfoToEXTERNALSheet4(String text, Row newRow, Row rowPerson) {
-//		
-//		Cell newCel = newRow.createCell(1);
-//		Cell oldCel = rowPerson.getCell(0);
-//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-//		
-//		
-//		newCel = newRow.createCell(2);
-//		oldCel = rowPerson.getCell(1);
-//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-//		
-//		
-////		newCel = newRow.createCell(3);
-////		oldCel = rowPerson.getCell(2);
-////		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-//		
-//		
-//		newCel = newRow.createCell(3);
-//		oldCel = rowPerson.getCell(5);
-//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-//		
-//		
-//		newCel = newRow.createCell(4);
-//		oldCel = rowPerson.getCell(6);
-//		CopyValueFromOldCellToNewcell( oldCel, newCel,  true);
-//		
-//		
-//		newCel = newRow.createCell(6);
-//		newCel.setCellValue(text);
-//	}
-//	
 	private static void setInfoToPERSONELSheet4(String text, Row newRow, Row rowPerson) {
 		
 		Cell oldCel = rowPerson.getCell(0);
@@ -1103,7 +1013,7 @@ public class SaveToPersonelORExternalFile {
 		return dateStr;
 	}
 	
-	static  String[] getmasive(){
+	public static  String[] getmasivePathToPersonalORExternalExcelFile(){
 		 String filePathExternal = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathExternal_orig");
 		 String filePathPersonel = ReadFileBGTextVariable.getGlobalTextVariableMap().get("filePathPersonel_orig");
 				

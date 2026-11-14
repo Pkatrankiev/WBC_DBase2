@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -82,7 +81,7 @@ public class ReadPersonFromExcelFile {
 		int l=listPerson.size();
 		for (Person person : listPerson) {
 			if( ActualiztionENGORNewPerson(person)) {
-			PersonDAO.setObjectPersonToTable(person);
+			PersonDAO.setObjectPersonToTable(person, "ReadPersonFromExcelFile");
 			}
 			ActionIcone.roundWithText(round, textIcon, "Save", k, l);
 			k++;
@@ -104,7 +103,7 @@ public class ReadPersonFromExcelFile {
 					String dialogString = "<html>"+ personNew + "<br>" +" да замени <br>" + personOld;
 					if(OptionDialog(dialogString + "</html>", "Смяна на ЕГН")) {
 						personEGN.setEgn(egn);
-						PersonDAO.updateValuePerson(personEGN);
+						PersonDAO.updateValuePerson(personEGN, "ReadPersonFromExcelFile");
 						return false;
 					}
 				}

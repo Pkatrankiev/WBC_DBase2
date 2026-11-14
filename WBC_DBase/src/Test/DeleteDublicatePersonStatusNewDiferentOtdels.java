@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import BasiClassDAO.PersonStatusNewDAO;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
@@ -79,7 +80,7 @@ public class DeleteDublicatePersonStatusNewDiferentOtdels {
 							minDate = masiveDate[i];
 						}
 					}
-					deletePersonSatusNewBeforMinDate(endDate, minDate, personSatusList, masiveWorkplace, masiveDate);
+//					deletePersonSatusNewBeforMinDate(endDate, minDate, personSatusList, masiveWorkplace, masiveDate);
 
 				}
 				k++;
@@ -96,46 +97,6 @@ public class DeleteDublicatePersonStatusNewDiferentOtdels {
 		}
 	
 	}
-
-	
-	private static void deletePersonSatusNewBeforMinDate(Date endDate, Date minDate,
-			List<PersonStatusNew> personSatusList, String[] masiveWorkplace, Date[] masiveDate) {
-		String minWorkplace;
-		int index = 0;
-		
-		for (int i = 0; i < masiveDate.length; i++) {
-			if(minDate.equals(masiveDate[i])) {
-				index = i;
-			}
-		}
-		
-		minDate = masiveDate[index];
-		minWorkplace = masiveWorkplace[index];
-	for (PersonStatusNew personSataNew : personSatusList) {
-			if (!minWorkplace.equals(personSataNew.getWorkplace().getOtdel())) {
-				if (!personSataNew.getStartDate().after(minDate)) {
-					PersonStatusNewDAO.deleteValuePersonStatusNew(personSataNew);
-					personEGNListDeleteStatus.add(personSataNew.getPerson().getEgn());
-				}
-			}
-		}
-
-		if (masiveDate.length - 1 > 1) {
-			String[] masiveNewWorkplace = new String[masiveDate.length - 1];
-			Date[] masiveNewDate = new Date[masiveDate.length - 1];
-			index = 0;
-			for (int i = 0; i < masiveDate.length; i++) {
-				if (!minDate.equals(masiveDate[i])) {
-					masiveNewWorkplace[index] = masiveWorkplace[i];
-					masiveNewDate[index] = masiveDate[i];
-				}
-			}
-			deletePersonSatusNewBeforMinDate(endDate, minDate, personSatusList, masiveWorkplace, masiveDate);
-
-		}
-	}
-	
-	
 	
 	
 	

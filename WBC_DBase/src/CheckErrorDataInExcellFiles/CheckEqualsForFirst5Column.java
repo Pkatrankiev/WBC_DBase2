@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Aplication.GeneralMethods;
 import Aplication.ReadExcelFileWBC;
 import Aplication.ReadFileBGTextVariable;
+import SaveToExcellFile.BrokenComments;
 
 public class CheckEqualsForFirst5Column {
 
@@ -139,6 +141,8 @@ public class CheckEqualsForFirst5Column {
 
 				
 			}
+			
+			BrokenComments.BrokenCommentCells((HSSFWorkbook)workbook);
 		}
 		
 		GeneralMethods.setDefaultCursor(panel_AllSaerch);

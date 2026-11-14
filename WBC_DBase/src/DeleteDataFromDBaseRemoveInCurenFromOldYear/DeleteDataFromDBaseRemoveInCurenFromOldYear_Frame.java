@@ -22,17 +22,9 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import Aplication.ActionIcone;
 import Aplication.AplicationMetods;
 import Aplication.ReadFileBGTextVariable;
 import BasicClassAccessDbase.Person;
-import CheckErrorDataInExcellFiles.CheckCurentDataInExcelFilesMetod;
-import CheckErrorDataInExcellFiles.CheckDataBethwinExcelFilesAndMonth;
-import CheckErrorDataInExcellFiles.CheckEqualsForFirst5Column;
-import CheckErrorDataInExcellFiles.CheckErrorDataInExcellFiles_Frame;
-import CheckErrorDataInExcellFiles.CheckMeasurDBaseToMounthFile;
-import CheckErrorDataInExcellFiles.CheckPersonName_KodeStatus_DBseToExcelFiles;
-import CheckErrorDataInExcellFiles.CheckPersonStatus;
 import InsertMeasuting.SaveReportMeasurTo_PersonelORExternalExcelFile;
 
 public class DeleteDataFromDBaseRemoveInCurenFromOldYear_Frame extends JFrame {

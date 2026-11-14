@@ -1,18 +1,10 @@
 package TestDatePicker;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
-
-
-
-import javafx.scene.control.ComboBoxBase;
 
 
 

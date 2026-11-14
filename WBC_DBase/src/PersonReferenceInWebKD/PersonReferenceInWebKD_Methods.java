@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.By;
@@ -18,16 +17,22 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import Aplication.ActionIcone;
+import Aplication.ReadFileBGTextVariable;
 
 
 public class PersonReferenceInWebKD_Methods {
 
 	public static ChromeDriver openChromeDriver(boolean NOTviewBrauser) {
 		// Задай пътя към ChromeDriver (изтегли от https://chromedriver.chromium.org/)
-		System.setProperty("webdriver.chrome.driver", "D:/chromedriver-109/chromedriver.exe");
+		
+		String chromedriver = ReadFileBGTextVariable.getGlobalTextVariableMap().get("chromedriver");
+		String chromeApp = ReadFileBGTextVariable.getGlobalTextVariableMap().get("chromeApp");
+	
+		
+		System.setProperty("webdriver.chrome.driver", chromedriver);
 
 		ChromeOptions options = new ChromeOptions();
-		options.setBinary("d:/PKatrankiev/GoogleChromePortable/App/Chrome-bin/chrome.exe");
+		options.setBinary(chromeApp);
        if(NOTviewBrauser) {
     	   options.addArguments("--headless");
        }
@@ -217,6 +222,11 @@ public class PersonReferenceInWebKD_Methods {
 	
 	public static boolean logInToWebSheet(ActionIcone round, ChromeDriver driver) {
 		String nameWebSheet = "https://sis-09/ACS/Default.aspx";
+		
+		String chromeUser = ReadFileBGTextVariable.getGlobalTextVariableMap().get("chromeUser");
+		String chromePas = ReadFileBGTextVariable.getGlobalTextVariableMap().get("chromePas");
+		
+		
 		// 1. Отваряне на страницата за логване
 		driver.get(nameWebSheet);
 	boolean fl = true;
@@ -227,9 +237,9 @@ public class PersonReferenceInWebKD_Methods {
 		WebElement usernameField = driver.findElement(By.id("username")); // замени с реалното id/name
 		WebElement passwordField = driver.findElement(By.id("password"));
 		usernameField.clear();
-		usernameField.sendKeys("PVKatrankiev");
+		usernameField.sendKeys(chromeUser);
 		passwordField.clear();
-		passwordField.sendKeys("1969@qwer");
+		passwordField.sendKeys(chromePas);
 		try { Thread.sleep(1000); } catch (InterruptedException e) {}
 		// 3. Натискане на бутона за логин
 		WebElement loginButton = driver.findElement(By.id("submitButton"));

@@ -1,21 +1,21 @@
 package SearchFreeKode;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import Aplication.ActionIcone;
 import Aplication.ReadFileBGTextVariable;
-
-import java.awt.Color;
-import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class infoFrame extends JDialog {

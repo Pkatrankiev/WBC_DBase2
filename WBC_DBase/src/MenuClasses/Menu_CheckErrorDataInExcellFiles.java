@@ -2,7 +2,6 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 
-
 import Aplication.ReadFileBGTextVariable;
 import CheckErrorDataInExcellFiles.CheckErrorDataInExcellFiles_Frame;
 

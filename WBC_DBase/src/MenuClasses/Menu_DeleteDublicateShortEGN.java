@@ -2,8 +2,10 @@ package MenuClasses;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+
 import Aplication.ReadFileBGTextVariable;
 import Aplication.ReadPersonFromExcelFile;
+import BasiClassDAO.InstanceDAO;
 import BasiClassDAO.KodeStatusDAO;
 import BasiClassDAO.MeasuringDAO;
 import BasiClassDAO.PersonDAO;
@@ -12,6 +14,8 @@ import BasicClassAccessDbase.KodeStatus;
 import BasicClassAccessDbase.Measuring;
 import BasicClassAccessDbase.Person;
 import BasicClassAccessDbase.PersonStatusNew;
+import InstanceMenagement.PersonStatusNew_InstanceFrom;
+import WBCUsersLogin.WBCUsersLogin;
 
 
 public class Menu_DeleteDublicateShortEGN extends AbstractMenuAction{
@@ -51,9 +55,9 @@ public static void  getDublicateShortEGN() {
 						if(ReadPersonFromExcelFile.OptionDialog(dialogString + "</html>", "Смяна на ЕГН")) {
 							replaceDataInDBaseNewPerson(personShort, personBig);
 							String bigEGN = personBig.getEgn();
-							PersonDAO.deleteValuePerson(personShort);
+							PersonDAO.deleteValuePerson(personShort, "DublicateShortEGN");
 							personShort.setEgn(bigEGN);
-							PersonDAO.updateValuePerson(personShort);
+							PersonDAO.updateValuePerson(personShort, "DublicateShortEGN");
 							
 						}
 					}
@@ -73,7 +77,13 @@ private static void replaceDataInDBaseNewPerson(Person personShort, Person perso
 	
 	for (PersonStatusNew personStat : PersonStatusNewDAO.getValuePersonStatusNewByPerson(personShort)) {
 		personStat.setPerson(personBig);
+		
+		String textInstance = PersonStatusNew_InstanceFrom.getInstanceTetxByIDPersonStatusNew(personStat.getPersonStatusNew_ID());
 		PersonStatusNewDAO.updateValuePersonStatusNew(personStat);
+		textInstance += "!#!"+PersonStatusNew_InstanceFrom.getInstanceTetxByPersonStatusNew(personStat);
+		System.out.println("textInstance.length() "+textInstance.length());
+		InstanceDAO.setValueInstance("PersonStatusNew", "PersonReference_PersonStatus_Methods", "Edit", textInstance, WBCUsersLogin.getCurentUser());
+		
 	}
 	
 	for (Measuring measur : MeasuringDAO.getValueMeasuringByObject("Person_ID", personShort)) {

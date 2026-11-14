@@ -1,20 +1,19 @@
 package TestDatePicker;
 
-import javax.swing.*;
-
-
-import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
-import net.sourceforge.jdatepicker.impl.UtilCalendarModel;
-import net.sourceforge.jdatepicker.impl.UtilDateModel;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.Locale;
+
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 
 public class DatePickerFrame {
